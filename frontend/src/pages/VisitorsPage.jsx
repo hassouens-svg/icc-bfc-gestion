@@ -115,14 +115,16 @@ const VisitorsPage = () => {
     );
   }
 
-  // For "accueil" role, show simplified list
-  if (user?.role === 'accueil') {
+  // For "accueil" or "integration" role, show simplified list
+  if (user?.role === 'accueil' || user?.role === 'integration') {
     return (
       <Layout>
         <div className="space-y-6">
           <div>
             <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Liste des visiteurs</h2>
-            <p className="text-gray-500 mt-1">Département de l'accueil, de l'intégration et des promotions</p>
+            <p className="text-gray-500 mt-1">
+              {user?.role === 'accueil' ? 'Département Accueil' : 'Département Intégration'}
+            </p>
           </div>
 
           {/* Search */}
@@ -142,23 +144,35 @@ const VisitorsPage = () => {
               <CardTitle>Visiteurs ({filteredVisitors.length})</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                {filteredVisitors.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">Aucun visiteur trouvé</p>
-                ) : (
-                  filteredVisitors.map((visitor) => (
-                    <div
-                      key={visitor.id}
-                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50"
-                      data-testid={`visitor-item-${visitor.id}`}
-                    >
-                      <div>
-                        <p className="font-medium">{visitor.firstname} {visitor.lastname}</p>
-                        <p className="text-sm text-gray-500">{visitor.city}</p>
-                      </div>
-                    </div>
-                  ))
-                )}
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4">Nom</th>
+                      <th className="text-left py-3 px-4">Prénom</th>
+                      <th className="text-left py-3 px-4">Canal d'arrivée</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredVisitors.length === 0 ? (
+                      <tr>
+                        <td colSpan="3" className="text-center text-gray-500 py-8">Aucun visiteur trouvé</td>
+                      </tr>
+                    ) : (
+                      filteredVisitors.map((visitor) => (
+                        <tr
+                          key={visitor.id}
+                          className="border-b hover:bg-gray-50"
+                          data-testid={`visitor-item-${visitor.id}`}
+                        >
+                          <td className="py-3 px-4 font-medium">{visitor.lastname}</td>
+                          <td className="py-3 px-4">{visitor.firstname}</td>
+                          <td className="py-3 px-4">{visitor.arrival_channel}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>
