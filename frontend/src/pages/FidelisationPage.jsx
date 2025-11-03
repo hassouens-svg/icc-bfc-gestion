@@ -45,8 +45,8 @@ const FidelisationPage = () => {
   const handleFilter = async () => {
     setLoading(true);
     try {
-      const week = selectedWeek ? parseInt(selectedWeek) : null;
-      const month = selectedMonth || null;
+      const week = selectedWeek && selectedWeek !== 'all' ? parseInt(selectedWeek) : null;
+      const month = selectedMonth && selectedMonth !== 'all' ? selectedMonth : null;
       const result = await getAdminFidelisation(week, month);
       setAdminData(result);
     } catch (error) {
@@ -57,8 +57,8 @@ const FidelisationPage = () => {
   };
 
   const handleResetFilter = async () => {
-    setSelectedWeek('');
-    setSelectedMonth('');
+    setSelectedWeek('all');
+    setSelectedMonth('all');
     setLoading(true);
     try {
       const result = await getAdminFidelisation();
