@@ -312,6 +312,145 @@ const ReferentsPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Management Dialog */}
+        <Dialog open={isManageDialogOpen} onOpenChange={setIsManageDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Gérer le référent - {selectedReferent?.username}</DialogTitle>
+            </DialogHeader>
+            {selectedReferent && (
+              <form onSubmit={handleUpdateReferent} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="manage-username">Nom d'utilisateur</Label>
+                    <Input
+                      id="manage-username"
+                      value={selectedReferent.username}
+                      onChange={(e) => setSelectedReferent({...selectedReferent, username: e.target.value})}
+                      placeholder="Nom d'utilisateur"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="manage-month">Mois assigné</Label>
+                    <Select 
+                      value={selectedReferent.assigned_month || ''} 
+                      onValueChange={(value) => setSelectedReferent({...selectedReferent, assigned_month: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez un mois" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {generateMonthOptions().map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-medium text-gray-900">Permissions</h4>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Voir tous les mois</p>
+                        <p className="text-sm text-gray-500">Accès aux données de tous les mois</p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={selectedReferent.permissions?.can_view_all_months || false}
+                        onChange={() => togglePermission('can_view_all_months')}
+                        className="h-4 w-4 text-indigo-600 rounded"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Modifier les visiteurs</p>
+                        <p className="text-sm text-gray-500">Éditer les informations des visiteurs</p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={selectedReferent.permissions?.can_edit_visitors || false}
+                        onChange={() => togglePermission('can_edit_visitors')}
+                        className="h-4 w-4 text-indigo-600 rounded"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Arrêter le suivi</p>
+                        <p className="text-sm text-gray-500">Marquer les visiteurs comme arrêtés</p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={selectedReferent.permissions?.can_stop_tracking || false}
+                        onChange={() => togglePermission('can_stop_tracking')}
+                        className="h-4 w-4 text-indigo-600 rounded"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Ajouter des commentaires</p>
+                        <p className="text-sm text-gray-500">Commenter les fiches visiteurs</p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={selectedReferent.permissions?.can_add_comments || false}
+                        onChange={() => togglePermission('can_add_comments')}
+                        className="h-4 w-4 text-indigo-600 rounded"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Marquer les présences</p>
+                        <p className="text-sm text-gray-500">Gérer les présences aux événements</p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={selectedReferent.permissions?.can_mark_presence || false}
+                        onChange={() => togglePermission('can_mark_presence')}
+                        className="h-4 w-4 text-indigo-600 rounded"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Voir les analytics</p>
+                        <p className="text-sm text-gray-500">Accès aux statistiques et rapports</p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={selectedReferent.permissions?.can_view_analytics || false}
+                        onChange={() => togglePermission('can_view_analytics')}
+                        className="h-4 w-4 text-indigo-600 rounded"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsManageDialogOpen(false)}
+                  >
+                    Annuler
+                  </Button>
+                  <Button type="submit">
+                    Mettre à jour
+                  </Button>
+                </div>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
