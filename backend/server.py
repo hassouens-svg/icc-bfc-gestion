@@ -558,6 +558,163 @@ async def export_excel(current_user: dict = Depends(get_current_user)):
         headers={"Content-Disposition": f"attachment; filename=visiteurs_{current_user['city']}_{datetime.now().strftime('%Y%m%d')}.xlsx"}
     )
 
+# ==================== FIDELISATION ROUTES ====================
+
+def get_week_number(date_str):
+    """Get week number from date string"""
+    try:
+        date = datetime.fromisoformat(date_str)
+        return date.isocalendar()[1]
+    except:
+        return None
+
+def get_weeks_in_month(year, month):
+    """Get all week numbers in a given month"""
+    first_day = datetime(year, month, 1)
+    if month == 12:
+        last_day = datetime(year + 1, 1, 1) - timedelta(days=1)
+    else:
+        last_day = datetime(year, month + 1, 1) - timedelta(days=1)
+    
+    weeks = set()
+    current = first_day
+    while current <= last_day:
+        weeks.add(current.isocalendar()[1])
+        current += timedelta(days=1)
+    return sorted(list(weeks))
+
+@api_router.get("/fidelisation/referent")
+async def get_referent_fidelisation(current_user: dict = Depends(get_current_user)):
+    """Get fidelisation rate for current referent"""
+    if current_user["role"] != "referent":
+        raise HTTPException(status_code=403, detail="Only referents can access this")
+    
+    assigned_month = current_user.get("assigned_month")
+    if not assigned_month:
+        raise HTTPException(status_code=400, detail="No assigned month")
+    
+    # Get all visitors for this referent
+    visitors = await db.visitors.find({
+        "city": current_user["city"],
+        "assigned_month": assigned_month,
+        "tracking_stopped": False
+    }, {"_id": 0}).to_list(10000)
+    
+    total_visitors = len(visitors)
+    if total_visitors == 0:
+        return {
+            "total_visitors": 0,
+            "weekly_rates": [],
+            "monthly_average": 0
+        }
+    
+    # Parse month (format: "2025-01")
+    year, month = map(int, assigned_month.split("-"))
+    weeks = get_weeks_in_month(year, month)
+    
+    weekly_rates = []
+    for week in weeks:
+        # Count presences for this week
+        total_presences = 0
+        for visitor in visitors:
+            for presence in visitor.get("presences_dimanche", []) + visitor.get("presences_jeudi", []):
+                if get_week_number(presence["date"]) == week and presence.get("present", False):
+                    total_presences += 1
+        
+        # Calculate rate (2 services per week: dimanche + jeudi)
+        expected_presences = total_visitors * 2
+        rate = (total_presences / expected_presences * 100) if expected_presences > 0 else 0
+        
+        weekly_rates.append({
+            "week": week,
+            "rate": round(rate, 2),
+            "presences": total_presences,
+            "expected": expected_presences
+        })
+    
+    # Calculate monthly average
+    monthly_average = sum(w["rate"] for w in weekly_rates) / len(weekly_rates) if weekly_rates else 0
+    
+    return {
+        "total_visitors": total_visitors,
+        "weekly_rates": weekly_rates,
+        "monthly_average": round(monthly_average, 2)
+    }
+
+@api_router.get("/fidelisation/admin")
+async def get_admin_fidelisation(week: int = None, month: str = None, current_user: dict = Depends(get_current_user)):
+    """Get fidelisation rates for all referents (admin view)"""
+    if current_user["role"] not in ["admin", "promotions"]:
+        raise HTTPException(status_code=403, detail="Only admin can access this")
+    
+    # Get all referents in this city
+    referents = await db.users.find({
+        "city": current_user["city"],
+        "role": "referent"
+    }, {"_id": 0, "password": 0}).to_list(1000)
+    
+    results = []
+    
+    for referent in referents:
+        assigned_month = referent.get("assigned_month")
+        if not assigned_month:
+            continue
+        
+        # Get visitors for this referent
+        visitors = await db.visitors.find({
+            "city": current_user["city"],
+            "assigned_month": assigned_month,
+            "tracking_stopped": False
+        }, {"_id": 0}).to_list(10000)
+        
+        total_visitors = len(visitors)
+        if total_visitors == 0:
+            continue
+        
+        # Parse month
+        year, ref_month = map(int, assigned_month.split("-"))
+        
+        # Filter by month if specified
+        if month and assigned_month != month:
+            continue
+        
+        weeks = get_weeks_in_month(year, ref_month)
+        
+        # Filter by week if specified
+        if week:
+            weeks = [week] if week in weeks else []
+        
+        weekly_rates = []
+        for w in weeks:
+            total_presences = 0
+            for visitor in visitors:
+                for presence in visitor.get("presences_dimanche", []) + visitor.get("presences_jeudi", []):
+                    if get_week_number(presence["date"]) == w and presence.get("present", False):
+                        total_presences += 1
+            
+            expected_presences = total_visitors * 2
+            rate = (total_presences / expected_presences * 100) if expected_presences > 0 else 0
+            
+            weekly_rates.append({
+                "week": w,
+                "rate": round(rate, 2),
+                "presences": total_presences,
+                "expected": expected_presences
+            })
+        
+        monthly_average = sum(w["rate"] for w in weekly_rates) / len(weekly_rates) if weekly_rates else 0
+        
+        results.append({
+            "referent_username": referent["username"],
+            "referent_id": referent["id"],
+            "assigned_month": assigned_month,
+            "total_visitors": total_visitors,
+            "weekly_rates": weekly_rates,
+            "monthly_average": round(monthly_average, 2)
+        })
+    
+    return results
+
 # ==================== INIT DATA ====================
 
 @api_router.post("/init")
