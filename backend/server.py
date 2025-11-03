@@ -241,9 +241,13 @@ async def create_referent(user_data: UserCreate, current_user: dict = Depends(ge
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists in this city")
     
-    # Hash password
+    # Hash password and create user
     hashed_pw = hash_password(user_data.password)
-    user = User(**user_data.model_dump(), password=hashed_pw)
+    
+    # Create dict from user_data and replace password with hashed version
+    user_dict = user_data.model_dump()
+    user_dict['password'] = hashed_pw
+    user = User(**user_dict)
     
     doc = user.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
