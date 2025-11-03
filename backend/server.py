@@ -179,13 +179,16 @@ async def login(user_login: UserLogin):
     if not user or not verify_password(user_login.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    # If department is specified, update role accordingly
+    # If department is specified, use it; otherwise use user's default role
     final_role = user["role"]
-    if user["role"] == "admin" and user_login.department:
-        if user_login.department == "accueil":
-            final_role = "accueil"
-        elif user_login.department == "promotion":
-            final_role = "promotion"
+    if user_login.department:
+        # Map department choices to roles
+        dept_to_role = {
+            "accueil": "accueil",
+            "integration": "integration",
+            "promotions": "promotions"
+        }
+        final_role = dept_to_role.get(user_login.department, user["role"])
     
     # Create token
     token = create_access_token({"sub": user["id"], "role": final_role, "city": user["city"]})
