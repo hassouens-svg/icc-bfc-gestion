@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://icc-dijon-connect.preview.emergentagent.com/login
-- **Inscription Publique**: https://icc-dijon-connect.preview.emergentagent.com/register
+- **Connexion**: https://icc-management.preview.emergentagent.com/login
+- **Inscription Publique**: https://icc-management.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**
