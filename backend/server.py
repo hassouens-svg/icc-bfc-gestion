@@ -134,8 +134,9 @@ class VisitorCreate(BaseModel):
     lastname: str
     city: str
     types: List[str]
-    phone: Optional[str] = None
+    phone: str  # Required
     email: Optional[EmailStr] = None
+    address: Optional[str] = None  # Optional
     arrival_channel: str
     visit_date: str
 
@@ -143,6 +144,7 @@ class VisitorUpdate(BaseModel):
     firstname: Optional[str] = None
     lastname: Optional[str] = None
     phone: Optional[str] = None
+    address: Optional[str] = None
     email: Optional[EmailStr] = None
     arrival_channel: Optional[str] = None
     types: Optional[List[str]] = None
