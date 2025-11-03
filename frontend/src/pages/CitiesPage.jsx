@@ -17,7 +17,13 @@ const CitiesPage = () => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
+  const [isStatsDialogOpen, setIsStatsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [newCityName, setNewCityName] = useState('');
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [cityStats, setCityStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(false);
 
   useEffect(() => {
     if (!user || (user.role !== 'admin' && user.role !== 'promotions')) {
