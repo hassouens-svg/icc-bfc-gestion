@@ -84,7 +84,7 @@ const VisitorsPage = () => {
       const includeStopped = user?.role === 'accueil';
       const data = await getVisitors(includeStopped);
       setVisitors(data);
-      setFilteredVisitors(data);
+      // Don't set filteredVisitors here, let useEffect handle it
     } catch (error) {
       toast.error('Erreur lors du chargement des visiteurs');
     } finally {
