@@ -16,7 +16,7 @@ const AnalyticsPage = () => {
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#ef4444'];
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'promotion')) {
+    if (!user || (user.role !== 'admin' && user.role !== 'promotions')) {
       navigate('/dashboard');
       return;
     }
