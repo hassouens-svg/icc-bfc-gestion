@@ -318,19 +318,22 @@ class BackendTester:
             return False
             
         # Referent should NOT be able to access admin fidelisation endpoint
-        response = self.make_request('GET', '/fidelisation/admin', token=token)
-        
-        if not response:
-            self.log("❌ Request failed", "ERROR")
-            return False
+        try:
+            url = f"{API_URL}/fidelisation/admin"
+            headers = {'Authorization': f'Bearer {token}'}
+            response = self.session.get(url, headers=headers)
+            self.log(f"GET /fidelisation/admin -> {response.status_code}")
             
-        if response.status_code == 403:
-            self.log("✅ Permission boundary works - Referent correctly denied access to admin endpoint")
-            return True
-        else:
-            self.log(f"❌ Permission boundary failed - Status: {response.status_code} (expected 403)", "ERROR")
-            if response.text:
-                self.log(f"   Response: {response.text}")
+            if response.status_code == 403:
+                self.log("✅ Permission boundary works - Referent correctly denied access to admin endpoint")
+                return True
+            else:
+                self.log(f"❌ Permission boundary failed - Status: {response.status_code} (expected 403)", "ERROR")
+                if response.text:
+                    self.log(f"   Response: {response.text}")
+                return False
+        except Exception as e:
+            self.log(f"❌ Request failed with exception: {e}", "ERROR")
             return False
             
     def test_accueil_role_limited_view(self):
