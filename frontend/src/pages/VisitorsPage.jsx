@@ -318,16 +318,17 @@ const VisitorsPage = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="new-phone">Téléphone</Label>
+                      <Label htmlFor="new-phone">Téléphone *</Label>
                       <Input
                         id="new-phone"
                         type="tel"
+                        required
                         value={newVisitor.phone}
                         onChange={(e) => setNewVisitor({...newVisitor, phone: e.target.value})}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="new-email">Email</Label>
+                      <Label htmlFor="new-email">Email (optionnel)</Label>
                       <Input
                         id="new-email"
                         type="email"
@@ -335,6 +336,17 @@ const VisitorsPage = () => {
                         onChange={(e) => setNewVisitor({...newVisitor, email: e.target.value})}
                       />
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="new-address">Adresse (optionnel)</Label>
+                    <Input
+                      id="new-address"
+                      type="text"
+                      value={newVisitor.address}
+                      onChange={(e) => setNewVisitor({...newVisitor, address: e.target.value})}
+                      placeholder="Adresse complète"
+                    />
                   </div>
 
                   <div className="space-y-2">
