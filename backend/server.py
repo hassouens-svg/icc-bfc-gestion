@@ -211,6 +211,10 @@ async def login(user_login: UserLogin):
     if not user or not verify_password(user_login.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # Check if user is blocked
+    if user.get("is_blocked", False):
+        raise HTTPException(status_code=403, detail="Votre compte a été bloqué. Contactez l'administrateur.")
+    
     # If department is specified, use it; otherwise use user's default role
     final_role = user["role"]
     if user_login.department:
