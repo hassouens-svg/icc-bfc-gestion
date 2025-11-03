@@ -111,8 +111,9 @@ class Visitor(BaseModel):
     lastname: str
     city: str
     types: List[str]  # ["Nouveau Arrivant", "Nouveau Converti", "De Passage"]
-    phone: Optional[str] = None
+    phone: str  # Required now
     email: Optional[EmailStr] = None
+    address: Optional[str] = None  # New field
     arrival_channel: str  # Comment ils ont connu ICC
     visit_date: str
     assigned_month: str  # "2025-01"
