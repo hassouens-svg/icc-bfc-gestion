@@ -299,6 +299,41 @@ async def get_referents(current_user: dict = Depends(get_current_user)):
     
     return referents
 
+@api_router.put("/users/{user_id}")
+async def update_user(user_id: str, update_data: UserUpdate, current_user: dict = Depends(get_current_user)):
+    """Update user information (Admin only)"""
+    if current_user["role"] not in ["admin", "promotions"]:
+        raise HTTPException(status_code=403, detail="Only admin can update users")
+    
+    user = await db.users.find_one({"id": user_id, "city": current_user["city"]})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Build update dict with only provided fields
+    update_dict = {}
+    if update_data.username is not None:
+        # Check if new username already exists
+        existing = await db.users.find_one({
+            "username": update_data.username,
+            "city": current_user["city"],
+            "id": {"$ne": user_id}
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already exists")
+        update_dict["username"] = update_data.username
+    
+    if update_data.assigned_month is not None:
+        update_dict["assigned_month"] = update_data.assigned_month
+    
+    if update_data.permissions is not None:
+        update_dict["permissions"] = update_data.permissions
+    
+    if update_dict:
+        await db.users.update_one({"id": user_id}, {"$set": update_dict})
+    
+    return {"message": "User updated successfully"}
+
+
 # ==================== VISITOR ROUTES ====================
 
 @api_router.post("/visitors")
