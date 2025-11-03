@@ -29,10 +29,9 @@ const LoginPage = () => {
       setCity(preSelectedCity);
     }
     
-    // Initialize data and load cities
+    // Load cities only, don't call initData
     const loadData = async () => {
       try {
-        await initData();
         const citiesData = await getCities();
         setCities(citiesData);
       } catch (error) {
