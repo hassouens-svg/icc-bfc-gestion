@@ -190,3 +190,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Root cause identified: get_current_user function ignores role from JWT token and uses database role instead. This causes both bugs: (1) Referents see all data because their database role is used for filtering, (2) Fidelisation endpoints reject access because role check fails. Fix: Merge JWT payload (role) with database user data in get_current_user function. Will implement fix now."
+  - agent: "main"
+    message: "Fix implemented and backend restarted. Modified get_current_user function to override role and city from JWT token payload (lines 171-175 in server.py). This should fix both bugs. Ready for backend testing. Please test: (1) Login as referent and select 'promotions' department - should see all visitors, (2) Login as referent without department selection - should only see assigned month visitors, (3) Access fidelisation page with different roles."
