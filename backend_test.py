@@ -329,6 +329,8 @@ class BackendTester:
             return True
         else:
             self.log(f"❌ Permission boundary failed - Status: {response.status_code} (expected 403)", "ERROR")
+            if response.text:
+                self.log(f"   Response: {response.text}")
             return False
             
     def test_accueil_role_limited_view(self):
