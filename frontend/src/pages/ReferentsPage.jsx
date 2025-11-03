@@ -465,22 +465,77 @@ const ReferentsPage = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-3">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => setIsManageDialogOpen(false)}
-                  >
-                    Annuler
-                  </Button>
-                  <Button type="submit">
-                    Mettre à jour
-                  </Button>
+                <div className="flex justify-between items-center pt-4 border-t">
+                  <div className="flex space-x-2">
+                    <Button 
+                      type="button"
+                      variant="destructive"
+                      onClick={() => {
+                        setIsManageDialogOpen(false);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Supprimer
+                    </Button>
+                    
+                    {user.city === 'Dijon' && (
+                      <Button 
+                        type="button"
+                        variant={selectedReferent.is_blocked ? "default" : "outline"}
+                        onClick={handleBlockReferent}
+                      >
+                        {selectedReferent.is_blocked ? (
+                          <>
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Débloquer
+                          </>
+                        ) : (
+                          <>
+                            <Ban className="h-4 w-4 mr-2" />
+                            Bloquer
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                  
+                  <div className="flex space-x-2">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setIsManageDialogOpen(false)}
+                    >
+                      Annuler
+                    </Button>
+                    <Button type="submit">
+                      Mettre à jour
+                    </Button>
+                  </div>
                 </div>
               </form>
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+              <AlertDialogDescription>
+                Êtes-vous sûr de vouloir supprimer {selectedReferent?.username} ?
+                Cette action est irréversible.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteReferent} className="bg-red-600 hover:bg-red-700">
+                Supprimer
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </Layout>
   );
