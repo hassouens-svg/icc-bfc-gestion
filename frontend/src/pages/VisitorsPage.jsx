@@ -338,11 +338,10 @@ const VisitorsPage = () => {
                 filteredVisitors.map((visitor) => (
                   <div
                     key={visitor.id}
-                    className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition"
-                    onClick={() => navigate(`/visitor/${visitor.id}`)}
+                    className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 transition"
                     data-testid={`visitor-item-${visitor.id}`}
                   >
-                    <div className="flex-1">
+                    <div className="flex-1" onClick={() => navigate(`/visitor/${visitor.id}`)} className="cursor-pointer">
                       <p className="font-medium text-lg">{visitor.firstname} {visitor.lastname}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {visitor.types.map((type, idx) => (
@@ -355,15 +354,53 @@ const VisitorsPage = () => {
                         {visitor.arrival_channel} • {visitor.visit_date}
                       </p>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => navigate(`/visitor/${visitor.id}`)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      {(user.role === 'admin' || user.role === 'promotions' || user.role === 'referent') && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedVisitor(visitor);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))
               )}
             </div>
           </CardContent>
         </Card>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+              <AlertDialogDescription>
+                Êtes-vous sûr de vouloir supprimer {selectedVisitor?.firstname} {selectedVisitor?.lastname} ?
+                Cette action est irréversible.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteVisitor} className="bg-red-600 hover:bg-red-700">
+                Supprimer
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </Layout>
   );
