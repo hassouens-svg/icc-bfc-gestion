@@ -152,8 +152,8 @@ const ReferentsPage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="referent">Référent (mois spécifique)</SelectItem>
-                      <SelectItem value="accueil">Accueil et Intégration</SelectItem>
-                      <SelectItem value="promotion">Promotion</SelectItem>
+                      <SelectItem value="accueil">Accueil, Intégration et Promotions</SelectItem>
+                      <SelectItem value="promotion">Administration Complète</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
