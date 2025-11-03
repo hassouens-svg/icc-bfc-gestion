@@ -184,8 +184,7 @@ async def login(user_login: UserLogin):
     if user_login.department:
         # Map department choices to roles
         dept_to_role = {
-            "accueil": "accueil",
-            "integration": "integration",
+            "accueil": "accueil",  # Accueil et Intégration ensemble
             "promotions": "promotions"
         }
         final_role = dept_to_role.get(user_login.department, user["role"])
