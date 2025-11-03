@@ -15,8 +15,8 @@ const FidelisationPage = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [adminData, setAdminData] = useState([]);
-  const [selectedWeek, setSelectedWeek] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedWeek, setSelectedWeek] = useState('all');
+  const [selectedMonth, setSelectedMonth] = useState('all');
 
   useEffect(() => {
     if (!user) {
