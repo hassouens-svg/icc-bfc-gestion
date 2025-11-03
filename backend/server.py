@@ -269,6 +269,18 @@ async def create_referent(user_data: UserCreate, current_user: dict = Depends(ge
     # Create dict from user_data and replace password with hashed version
     user_dict = user_data.model_dump()
     user_dict['password'] = hashed_pw
+    
+    # Set default permissions for referents if not provided
+    if user_data.role == "referent" and not user_dict.get('permissions'):
+        user_dict['permissions'] = {
+            "can_view_all_months": False,
+            "can_edit_visitors": True,
+            "can_stop_tracking": True,
+            "can_add_comments": True,
+            "can_mark_presence": True,
+            "can_view_analytics": False
+        }
+    
     user = User(**user_dict)
     
     doc = user.model_dump()
