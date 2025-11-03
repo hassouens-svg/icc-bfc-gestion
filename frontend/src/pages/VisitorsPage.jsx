@@ -21,6 +21,8 @@ const VisitorsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedVisitor, setSelectedVisitor] = useState(null);
   
   const [newVisitor, setNewVisitor] = useState({
     firstname: '',
