@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getReferents, getUser, createReferent } from '../utils/api';
+import { getReferents, getUser, createReferent, getCities } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -15,12 +15,13 @@ const ReferentsPage = () => {
   const navigate = useNavigate();
   const user = getUser();
   const [referents, setReferents] = useState([]);
+  const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newReferent, setNewReferent] = useState({
     username: '',
     password: '',
-    city: user?.city || '',
+    city: '',
     role: 'referent',
     assigned_month: '',
   });
@@ -31,7 +32,17 @@ const ReferentsPage = () => {
       return;
     }
     loadReferents();
+    loadCities();
   }, [user, navigate]);
+
+  const loadCities = async () => {
+    try {
+      const citiesData = await getCities();
+      setCities(citiesData);
+    } catch (error) {
+      // Silent fail
+    }
+  };
 
   const loadReferents = async () => {
     try {
