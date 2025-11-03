@@ -101,8 +101,14 @@ export const createVisitor = async (data) => {
   return response.data;
 };
 
-export const getVisitors = async () => {
-  const response = await apiClient.get('/visitors');
+export const getVisitors = async (includeStopped = false) => {
+  const params = includeStopped ? { include_stopped: true } : {};
+  const response = await apiClient.get('/visitors', { params });
+  return response.data;
+};
+
+export const deleteVisitor = async (id) => {
+  const response = await apiClient.delete(`/visitors/${id}`);
   return response.data;
 };
 
