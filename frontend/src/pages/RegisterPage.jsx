@@ -158,13 +158,14 @@ const RegisterPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Téléphone (optionnel)</Label>
+                <Label htmlFor="phone">Téléphone *</Label>
                 <Input
                   id="phone"
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
                   placeholder="Votre numéro de téléphone"
+                  required
                   data-testid="phone-input"
                 />
               </div>
@@ -178,6 +179,22 @@ const RegisterPage = () => {
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                   placeholder="Votre email"
                   data-testid="email-input"
+                />
+              </div>
+            </div>
+
+            {/* Address Field */}
+            <div className="space-y-2">
+              <Label htmlFor="address">Adresse (optionnel)</Label>
+              <Input
+                id="address"
+                type="text"
+                value={formData.address}
+                onChange={(e) => setFormData({...formData, address: e.target.value})}
+                placeholder="Votre adresse complète"
+                data-testid="address-input"
+              />
+            </div>
                 />
               </div>
             </div>
