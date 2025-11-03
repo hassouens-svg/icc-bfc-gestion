@@ -16,6 +16,7 @@ const Layout = ({ children }) => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'referent', 'promotions'] },
     { path: '/visitors', label: 'Visiteurs', icon: Users, roles: ['admin', 'referent', 'accueil', 'promotions'] },
+    { path: '/fidelisation', label: 'Fidélisation', icon: TrendingUp, roles: ['admin', 'referent', 'promotions'] },
     { path: '/referents', label: 'Référents', icon: UserPlus, roles: ['admin', 'promotions'] },
     { path: '/cities', label: 'Villes', icon: MapPin, roles: ['admin', 'promotions'] },
     { path: '/analytics', label: 'Analytics', icon: BarChart3, roles: ['admin', 'promotions'] },
