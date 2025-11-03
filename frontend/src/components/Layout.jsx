@@ -14,12 +14,12 @@ const Layout = ({ children }) => {
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'referent', 'accueil', 'promotion'] },
-    { path: '/visitors', label: 'Visiteurs', icon: Users, roles: ['admin', 'referent', 'accueil', 'promotion'] },
-    { path: '/referents', label: 'Référents', icon: UserPlus, roles: ['admin', 'promotion'] },
-    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['admin', 'promotion'] },
-    { path: '/analytics', label: 'Analytics', icon: BarChart3, roles: ['admin', 'promotion'] },
-    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['admin', 'promotion'] },
+    { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'referent', 'promotions'] },
+    { path: '/visitors', label: 'Visiteurs', icon: Users, roles: ['admin', 'referent', 'accueil', 'integration', 'promotions'] },
+    { path: '/referents', label: 'Référents', icon: UserPlus, roles: ['admin', 'promotions'] },
+    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['admin', 'promotions'] },
+    { path: '/analytics', label: 'Analytics', icon: BarChart3, roles: ['admin', 'promotions'] },
+    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['admin', 'promotions'] },
   ];
 
   const filteredNavItems = navItems.filter(item => 
