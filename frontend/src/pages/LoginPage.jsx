@@ -59,8 +59,16 @@ const LoginPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png" 
+              alt="ICC Logo" 
+              className="h-24 w-auto"
+            />
+          </div>
           <CardTitle className="text-3xl font-bold text-indigo-600">ICC Dijon Connect</CardTitle>
-          <CardDescription>Connexion au système de suivi</CardDescription>
+          <CardDescription>Département de l'accueil, de l'intégration et des promotions</CardDescription>
+          <CardDescription className="text-xs mt-1">Gestion des nouveaux arrivants et nouveaux convertis</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
