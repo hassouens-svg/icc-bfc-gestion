@@ -61,7 +61,7 @@ const DashboardPage = () => {
             <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">Tableau de bord</h2>
             <p className="text-gray-500 mt-1">Vue d'ensemble de votre activité</p>
           </div>
-          {(user?.role === 'admin' || user?.role === 'promotion') && (
+          {(user?.role === 'admin' || user?.role === 'promotions') && (
             <Button onClick={handleExport} data-testid="export-excel-button">
               <Download className="h-4 w-4 mr-2" />
               Exporter Excel
@@ -127,7 +127,7 @@ const DashboardPage = () => {
                 <Users className="h-6 w-6 mr-2" />
                 Voir les visiteurs
               </Button>
-              {(user?.role === 'admin' || user?.role === 'promotion') && (
+              {(user?.role === 'admin' || user?.role === 'promotions') && (
                 <>
                   <Button 
                     variant="outline" 
