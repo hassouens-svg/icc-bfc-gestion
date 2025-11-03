@@ -161,6 +161,21 @@ export const getCities = async () => {
   return response.data;
 };
 
+export const updateCity = async (cityId, name) => {
+  const response = await apiClient.put(`/cities/${cityId}`, { name });
+  return response.data;
+};
+
+export const deleteCity = async (cityId) => {
+  const response = await apiClient.delete(`/cities/${cityId}`);
+  return response.data;
+};
+
+export const getCityStats = async (cityId) => {
+  const response = await apiClient.get(`/cities/${cityId}/stats`);
+  return response.data;
+};
+
 // Analytics APIs
 export const getStats = async () => {
   const response = await apiClient.get('/analytics/stats');
