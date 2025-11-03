@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import VisitorsPage from './pages/VisitorsPage';
+import VisitorsTablePage from './pages/VisitorsTablePage';
 import VisitorDetailPage from './pages/VisitorDetailPage';
 import ReferentsPage from './pages/ReferentsPage';
 import CitiesPage from './pages/CitiesPage';
@@ -23,6 +24,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/visitors" element={<VisitorsPage />} />
+          <Route path="/visitors-table" element={<VisitorsTablePage />} />
           <Route path="/visitor/:id" element={<VisitorDetailPage />} />
           <Route path="/referents" element={<ReferentsPage />} />
           <Route path="/cities" element={<CitiesPage />} />
