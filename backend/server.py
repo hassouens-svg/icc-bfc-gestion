@@ -338,6 +338,55 @@ async def update_user(user_id: str, update_data: UserUpdate, current_user: dict 
     
     return {"message": "User updated successfully"}
 
+@api_router.delete("/users/{user_id}")
+async def delete_user(user_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a user (Admin only)"""
+    user_to_delete = await db.users.find_one({"id": user_id})
+    if not user_to_delete:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Super admin can delete anyone
+    if is_super_admin(current_user):
+        await db.users.delete_one({"id": user_id})
+        return {"message": "User deleted successfully"}
+    
+    # Regular admin can only delete users from their city (but not other admins)
+    if current_user["role"] == "admin":
+        if user_to_delete["city"] != current_user["city"]:
+            raise HTTPException(status_code=403, detail="Cannot delete users from other cities")
+        if user_to_delete["role"] == "admin":
+            raise HTTPException(status_code=403, detail="Cannot delete other admins")
+        await db.users.delete_one({"id": user_id})
+        return {"message": "User deleted successfully"}
+    
+    raise HTTPException(status_code=403, detail="Only admin can delete users")
+
+@api_router.put("/users/{user_id}/block")
+async def block_user(user_id: str, current_user: dict = Depends(get_current_user)):
+    """Block a user (Super Admin only)"""
+    if not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Only super admin can block users")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    await db.users.update_one({"id": user_id}, {"$set": {"is_blocked": True}})
+    return {"message": "User blocked successfully"}
+
+@api_router.put("/users/{user_id}/unblock")
+async def unblock_user(user_id: str, current_user: dict = Depends(get_current_user)):
+    """Unblock a user (Super Admin only)"""
+    if not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Only super admin can unblock users")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    await db.users.update_one({"id": user_id}, {"$set": {"is_blocked": False}})
+    return {"message": "User unblocked successfully"}
+
 
 # ==================== VISITOR ROUTES ====================
 
