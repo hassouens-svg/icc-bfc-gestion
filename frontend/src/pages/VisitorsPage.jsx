@@ -122,7 +122,7 @@ const VisitorsPage = () => {
         <div className="space-y-6">
           <div>
             <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Liste des visiteurs</h2>
-            <p className="text-gray-500 mt-1">Vue simplifiée - Accueil et Intégration</p>
+            <p className="text-gray-500 mt-1">Département de l'accueil, de l'intégration et des promotions</p>
           </div>
 
           {/* Search */}
