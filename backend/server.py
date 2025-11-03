@@ -81,6 +81,12 @@ class UserCreate(BaseModel):
     city: str
     role: str
     assigned_month: Optional[str] = None
+    permissions: Optional[Dict[str, bool]] = None
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    assigned_month: Optional[str] = None
+    permissions: Optional[Dict[str, bool]] = None
 
 class UserLogin(BaseModel):
     username: str
