@@ -420,6 +420,12 @@ async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_us
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
+    # Check permissions for referents
+    if current_user["role"] == "referent":
+        permissions = current_user.get("permissions", {})
+        if not permissions.get("can_edit_visitors", True):
+            raise HTTPException(status_code=403, detail="Permission denied: cannot edit visitors")
+    
     # Update only provided fields
     update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
     
@@ -434,6 +440,12 @@ async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict =
     
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
+    
+    # Check permissions for referents
+    if current_user["role"] == "referent":
+        permissions = current_user.get("permissions", {})
+        if not permissions.get("can_add_comments", True):
+            raise HTTPException(status_code=403, detail="Permission denied: cannot add comments")
     
     comment_entry = CommentEntry(
         author=current_user["username"],
