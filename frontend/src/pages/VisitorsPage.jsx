@@ -33,7 +33,7 @@ const VisitorsPage = () => {
   });
 
   const visitorTypes = ['Nouveau Arrivant', 'Nouveau Converti', 'De Passage'];
-  const arrivalChannels = ['Réseaux sociaux', 'Bouche à oreille', 'Site web', 'Affiche', 'Autre'];
+  const arrivalChannels = ['Evangelisation', 'Réseaux sociaux', 'Invitation par un membre (hors evangelisation)', 'Par soi même'];
 
   useEffect(() => {
     if (!user) {
