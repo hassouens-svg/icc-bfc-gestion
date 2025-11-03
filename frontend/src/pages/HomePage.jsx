@@ -68,7 +68,7 @@ const HomePage = () => {
             <img
               src="https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png"
               alt="ICC Logo"
-              className="w-40 h-40 object-contain"
+              className="w-40 h-40 object-contain rounded-full"
             />
           </div>
         </div>
