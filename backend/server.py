@@ -411,11 +411,17 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
     return visitor
 
 @api_router.get("/visitors")
-async def get_visitors(current_user: dict = Depends(get_current_user)):
+async def get_visitors(
+    include_stopped: bool = False,
+    current_user: dict = Depends(get_current_user)
+):
     query = {
-        "city": current_user["city"],
-        "tracking_stopped": False
+        "city": current_user["city"]
     }
+    
+    # Include or exclude stopped visitors
+    if not include_stopped:
+        query["tracking_stopped"] = False
     
     # Filter by role and permissions
     if current_user["role"] == "referent":
