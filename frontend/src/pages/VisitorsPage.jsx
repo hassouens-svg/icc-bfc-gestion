@@ -189,7 +189,7 @@ const VisitorsPage = () => {
             <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Visiteurs</h2>
             <p className="text-gray-500 mt-1">Gérez vos visiteurs</p>
           </div>
-          {(user?.role !== 'accueil' && user?.role !== 'integration') && (
+          {(user?.role !== 'accueil') && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button data-testid="add-visitor-button">
