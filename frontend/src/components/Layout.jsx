@@ -35,8 +35,7 @@ const Layout = ({ children }) => {
             <h1 className="text-2xl font-bold text-indigo-600">ICC {user?.city}</h1>
             <p className="text-sm text-gray-500">
               {user?.username} ({user?.role === 'admin' ? 'Administrateur' : 
-                user?.role === 'accueil' ? 'Accueil' :
-                user?.role === 'integration' ? 'Intégration' :
+                user?.role === 'accueil' ? 'Accueil et Intégration' :
                 user?.role === 'promotions' ? 'Promotions' : 'Référent'})
             </p>
           </div>
