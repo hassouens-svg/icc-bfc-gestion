@@ -56,6 +56,14 @@ class City(BaseModel):
 class CityCreate(BaseModel):
     name: str
 
+class ReferentPermissions(BaseModel):
+    can_view_all_months: bool = False
+    can_edit_visitors: bool = True
+    can_stop_tracking: bool = True
+    can_add_comments: bool = True
+    can_mark_presence: bool = True
+    can_view_analytics: bool = False
+
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -64,6 +72,7 @@ class User(BaseModel):
     city: str
     role: str  # admin, referent, accueil, promotion
     assigned_month: Optional[str] = None  # For referents: "2025-01"
+    permissions: Optional[Dict[str, bool]] = None  # For referents permissions
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
