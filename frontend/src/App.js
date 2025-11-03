@@ -11,6 +11,7 @@ import ReferentsPage from './pages/ReferentsPage';
 import CitiesPage from './pages/CitiesPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
+import FidelisationPage from './pages/FidelisationPage';
 
 function App() {
   return (
