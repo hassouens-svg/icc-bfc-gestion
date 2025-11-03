@@ -95,6 +95,21 @@ export const updateUser = async (userId, data) => {
   return response.data;
 };
 
+export const deleteUser = async (userId) => {
+  const response = await apiClient.delete(`/users/${userId}`);
+  return response.data;
+};
+
+export const blockUser = async (userId) => {
+  const response = await apiClient.put(`/users/${userId}/block`);
+  return response.data;
+};
+
+export const unblockUser = async (userId) => {
+  const response = await apiClient.put(`/users/${userId}/unblock`);
+  return response.data;
+};
+
 // Visitor APIs
 export const createVisitor = async (data) => {
   const response = await apiClient.post('/visitors', data);
