@@ -75,8 +75,8 @@ const HomePage = () => {
 
         {/* Title */}
         <div className="text-center mb-12 animate-fade-in-up">
-          <h1 className="text-7xl font-bold text-white mb-4 tracking-tight">
-            ICC
+          <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
+            Impact Centre Chrétien
           </h1>
           <div className="max-w-2xl mx-auto">
             <p className="text-2xl text-blue-100 font-medium mb-2">
