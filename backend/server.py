@@ -327,8 +327,8 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
         if visitor["assigned_month"] != current_user.get("assigned_month"):
             raise HTTPException(status_code=403, detail="Access denied")
     
-    # Accueil can't see details
-    if current_user["role"] == "accueil":
+    # Accueil and integration can't see details
+    if current_user["role"] in ["accueil", "integration"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     return visitor
