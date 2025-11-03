@@ -112,7 +112,7 @@ user_problem_statement: |
 backend:
   - task: "JWT Role Authentication Bug - get_current_user returns database role instead of JWT role"
     implemented: true
-    working: false
+    working: "NA"
     file: "/app/backend/server.py"
     stuck_count: 1
     priority: "high"
@@ -124,6 +124,9 @@ backend:
       - working: false
         agent: "main"
         comment: "Bug identified in lines 159-172. The get_current_user function needs to merge JWT payload data (role) with database user data. Currently it only uses user_id from JWT and fetches everything else from database."
+      - working: "NA"
+        agent: "main"
+        comment: "Fixed: Modified get_current_user to override user role and city from JWT payload. Lines 171-175 now check for role and city in JWT payload and use those values instead of database values. Backend restarted successfully."
 
   - task: "Visitor filtering by referent role"
     implemented: true
