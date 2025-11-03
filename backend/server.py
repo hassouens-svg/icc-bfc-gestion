@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import warnings
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional, Dict, Any
@@ -16,6 +17,10 @@ from jwt.exceptions import InvalidTokenError
 import io
 import pandas as pd
 from fastapi.responses import StreamingResponse
+
+# Suppress warnings
+warnings.filterwarnings('ignore', message='.*bcrypt.*')
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
