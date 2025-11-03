@@ -14,12 +14,19 @@ const LoginPage = () => {
   const [city, setCity] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [department, setDepartment] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated()) {
       navigate('/dashboard');
+    }
+    
+    // Get pre-selected city and department from home page
+    const preSelectedCity = sessionStorage.getItem('selectedCity');
+    const preSelectedDept = sessionStorage.getItem('selectedDepartment');
+    
+    if (preSelectedCity) {
+      setCity(preSelectedCity);
     }
     
     // Initialize data and load cities
