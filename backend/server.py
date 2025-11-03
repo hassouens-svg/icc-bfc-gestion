@@ -225,8 +225,8 @@ async def register_visitor(visitor_data: VisitorCreate):
 
 @api_router.post("/users/referent")
 async def create_referent(user_data: UserCreate, current_user: dict = Depends(get_current_user)):
-    # Only admin can create referents
-    if current_user["role"] not in ["admin", "promotion"]:
+    # Only admin and promotions can create referents
+    if current_user["role"] not in ["admin", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can create referents")
     
     # Check if username already exists in this city
