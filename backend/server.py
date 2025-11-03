@@ -359,10 +359,13 @@ async def get_visitors(current_user: dict = Depends(get_current_user)):
         "tracking_stopped": False
     }
     
-    # Filter by role
+    # Filter by role and permissions
     if current_user["role"] == "referent":
-        # Referents see only their assigned month
-        query["assigned_month"] = current_user.get("assigned_month")
+        # Check if referent has permission to view all months
+        permissions = current_user.get("permissions", {})
+        if not permissions.get("can_view_all_months", False):
+            # Referents see only their assigned month (default behavior)
+            query["assigned_month"] = current_user.get("assigned_month")
     
     visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     
