@@ -149,12 +149,13 @@ const VisitorsPage = () => {
                       <th className="text-left py-3 px-4">Nom</th>
                       <th className="text-left py-3 px-4">Prénom</th>
                       <th className="text-left py-3 px-4">Canal d'arrivée</th>
+                      <th className="text-left py-3 px-4">Date d'arrivée</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredVisitors.length === 0 ? (
                       <tr>
-                        <td colSpan="3" className="text-center text-gray-500 py-8">Aucun visiteur trouvé</td>
+                        <td colSpan="4" className="text-center text-gray-500 py-8">Aucun visiteur trouvé</td>
                       </tr>
                     ) : (
                       filteredVisitors.map((visitor) => (
@@ -166,6 +167,9 @@ const VisitorsPage = () => {
                           <td className="py-3 px-4 font-medium">{visitor.lastname}</td>
                           <td className="py-3 px-4">{visitor.firstname}</td>
                           <td className="py-3 px-4">{visitor.arrival_channel}</td>
+                          <td className="py-3 px-4">
+                            {visitor.visit_date ? new Date(visitor.visit_date).toLocaleDateString('fr-FR') : '-'}
+                          </td>
                         </tr>
                       ))
                     )}
