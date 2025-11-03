@@ -87,6 +87,50 @@ const ReferentsPage = () => {
     }
   };
 
+  const handleManageReferent = (referent) => {
+    setSelectedReferent({
+      ...referent,
+      permissions: referent.permissions || {
+        can_view_all_months: false,
+        can_edit_visitors: true,
+        can_stop_tracking: true,
+        can_add_comments: true,
+        can_mark_presence: true,
+        can_view_analytics: false
+      }
+    });
+    setIsManageDialogOpen(true);
+  };
+
+  const handleUpdateReferent = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const updateData = {
+        username: selectedReferent.username,
+        assigned_month: selectedReferent.assigned_month,
+        permissions: selectedReferent.permissions
+      };
+      
+      await updateUser(selectedReferent.id, updateData);
+      toast.success('Référent mis à jour avec succès!');
+      setIsManageDialogOpen(false);
+      loadReferents();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la mise à jour');
+    }
+  };
+
+  const togglePermission = (permission) => {
+    setSelectedReferent({
+      ...selectedReferent,
+      permissions: {
+        ...selectedReferent.permissions,
+        [permission]: !selectedReferent.permissions[permission]
+      }
+    });
+  };
+
   // Generate month options for the next 12 months
   const generateMonthOptions = () => {
     const options = [];
