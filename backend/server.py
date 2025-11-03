@@ -476,7 +476,7 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     total_visitors = await db.visitors.count_documents({"city": city, "tracking_stopped": False})
     
     # Total referents
-    total_referents = await db.users.count_documents({"city": city, "role": {"$in": ["referent", "accueil", "promotion"]}})
+    total_referents = await db.users.count_documents({"city": city, "role": {"$in": ["referent", "accueil", "integration", "promotions"]}})
     
     # By arrival channel
     pipeline = [
