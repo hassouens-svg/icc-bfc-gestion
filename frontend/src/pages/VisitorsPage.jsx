@@ -120,6 +120,7 @@ const VisitorsPage = () => {
         types: [],
         phone: '',
         email: '',
+        address: '',
         arrival_channel: '',
         visit_date: new Date().toISOString().split('T')[0],
       });
