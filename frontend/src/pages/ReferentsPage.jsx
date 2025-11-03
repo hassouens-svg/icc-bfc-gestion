@@ -133,6 +133,34 @@ const ReferentsPage = () => {
     });
   };
 
+  const handleDeleteReferent = async () => {
+    try {
+      await deleteUser(selectedReferent.id);
+      toast.success('Utilisateur supprimé avec succès!');
+      setIsDeleteDialogOpen(false);
+      setIsManageDialogOpen(false);
+      loadReferents();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
+    }
+  };
+
+  const handleBlockReferent = async () => {
+    try {
+      if (selectedReferent.is_blocked) {
+        await unblockUser(selectedReferent.id);
+        toast.success('Utilisateur débloqué avec succès!');
+      } else {
+        await blockUser(selectedReferent.id);
+        toast.success('Utilisateur bloqué avec succès!');
+      }
+      setIsManageDialogOpen(false);
+      loadReferents();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors du blocage/déblocage');
+    }
+  };
+
   // Generate month options for the next 12 months
   const generateMonthOptions = () => {
     const options = [];
