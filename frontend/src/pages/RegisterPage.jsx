@@ -84,8 +84,16 @@ const RegisterPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-teal-100 p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png" 
+              alt="ICC Logo" 
+              className="h-20 w-auto"
+            />
+          </div>
           <CardTitle className="text-3xl font-bold text-teal-600">Bienvenue à ICC!</CardTitle>
-          <CardDescription>Formulaire d'inscription pour nouveaux visiteurs</CardDescription>
+          <CardDescription>Département de l'accueil, de l'intégration et des promotions</CardDescription>
+          <CardDescription className="text-xs mt-1">Formulaire d'inscription pour nouveaux visiteurs</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
