@@ -303,8 +303,8 @@ async def get_visitors(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/visitors/stopped")
 async def get_stopped_visitors(current_user: dict = Depends(get_current_user)):
-    # Only admin and promotion can see stopped visitors
-    if current_user["role"] not in ["admin", "promotion"]:
+    # Only admin and promotions can see stopped visitors
+    if current_user["role"] not in ["admin", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can view stopped visitors")
     
     query = {
