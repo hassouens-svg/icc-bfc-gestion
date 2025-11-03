@@ -130,6 +130,25 @@ const ReferentsPage = () => {
               </DialogHeader>
               <form onSubmit={handleCreateReferent} className="space-y-4">
                 <div className="space-y-2">
+                  <Label htmlFor="city">Ville ICC *</Label>
+                  <Select 
+                    value={newReferent.city} 
+                    onValueChange={(value) => setNewReferent({...newReferent, city: value})}
+                  >
+                    <SelectTrigger data-testid="referent-city-select">
+                      <SelectValue placeholder="Sélectionnez une ville" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.id} value={city.name}>
+                          {city.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="username">Nom d'utilisateur *</Label>
                   <Input
                     id="username"
