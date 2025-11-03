@@ -178,3 +178,18 @@ export const exportExcel = async () => {
   
   return response.data;
 };
+
+// Fidelisation APIs
+export const getReferentFidelisation = async () => {
+  const response = await apiClient.get('/fidelisation/referent');
+  return response.data;
+};
+
+export const getAdminFidelisation = async (week = null, month = null) => {
+  const params = {};
+  if (week) params.week = week;
+  if (month) params.month = month;
+  
+  const response = await apiClient.get('/fidelisation/admin', { params });
+  return response.data;
+};
