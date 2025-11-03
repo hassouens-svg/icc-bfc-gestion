@@ -79,7 +79,7 @@ const LoginPage = () => {
             <img 
               src="https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png" 
               alt="ICC Logo" 
-              className="h-24 w-auto"
+              className="h-24 w-24 object-contain rounded-full"
             />
           </div>
           <CardTitle className="text-3xl font-bold text-indigo-600">ICC Dijon Connect</CardTitle>
