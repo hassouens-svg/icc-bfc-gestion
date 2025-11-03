@@ -35,6 +35,12 @@ const webpackConfig = {
       '@': path.resolve(__dirname, 'src'),
     },
     configure: (webpackConfig) => {
+      
+      // Suppress warnings
+      webpackConfig.ignoreWarnings = [
+        /Failed to parse source map/,
+        /Critical dependency: the request of a dependency is an expression/,
+      ];
 
       // Disable hot reload completely if environment variable is set
       if (config.disableHotReload) {
