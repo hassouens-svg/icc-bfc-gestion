@@ -56,8 +56,8 @@ const VisitorsPage = () => {
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(v =>
-        v.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.lastname.toLowerCase().includes(searchTerm.toLowerCase())
+        (v.firstname && v.firstname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (v.lastname && v.lastname.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
     
@@ -71,7 +71,7 @@ const VisitorsPage = () => {
       
       // Filter by date
       if (filterDate) {
-        filtered = filtered.filter(v => v.visit_date === filterDate);
+        filtered = filtered.filter(v => v.visit_date && v.visit_date === filterDate);
       }
     }
     
