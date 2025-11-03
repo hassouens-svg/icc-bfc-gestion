@@ -209,8 +209,8 @@ const ReferentsPage = () => {
                         <p className="font-medium">{referent.username}</p>
                         <p className="text-sm text-gray-500">
                           {referent.role === 'referent' ? 'Référent' : 
-                           referent.role === 'accueil' ? 'Accueil et Intégration' : 
-                           'Promotion'}
+                           referent.role === 'accueil' ? 'Accueil, Intégration et Promotions' : 
+                           'Administration Complète'}
                           {referent.assigned_month && ` - ${referent.assigned_month}`}
                         </p>
                       </div>
