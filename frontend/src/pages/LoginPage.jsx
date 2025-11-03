@@ -82,7 +82,9 @@ const LoginPage = () => {
               className="h-24 w-24 object-contain rounded-full"
             />
           </div>
-          <CardTitle className="text-3xl font-bold text-indigo-600">ICC Dijon Connect</CardTitle>
+          <CardTitle className="text-3xl font-bold text-indigo-600">
+            ICC {city || 'Dijon'} Connect
+          </CardTitle>
           <CardDescription>Département de l'accueil, de l'intégration et des promotions</CardDescription>
           <CardDescription className="text-xs mt-1">Gestion des nouveaux arrivants et nouveaux convertis</CardDescription>
         </CardHeader>
