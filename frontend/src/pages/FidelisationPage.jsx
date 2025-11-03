@@ -201,7 +201,7 @@ const FidelisationPage = () => {
                       <SelectValue placeholder="Toutes les semaines" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Toutes</SelectItem>
+                      <SelectItem value="all">Toutes</SelectItem>
                       {Array.from({length: 52}, (_, i) => i + 1).map(w => (
                         <SelectItem key={w} value={w.toString()}>Semaine {w}</SelectItem>
                       ))}
@@ -216,7 +216,7 @@ const FidelisationPage = () => {
                       <SelectValue placeholder="Tous les mois" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Tous</SelectItem>
+                      <SelectItem value="all">Tous</SelectItem>
                       <SelectItem value="2024-12">Décembre 2024</SelectItem>
                       <SelectItem value="2025-01">Janvier 2025</SelectItem>
                       <SelectItem value="2025-02">Février 2025</SelectItem>
