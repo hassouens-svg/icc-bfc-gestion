@@ -19,7 +19,7 @@ const CitiesPage = () => {
   const [newCityName, setNewCityName] = useState('');
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'promotion')) {
+    if (!user || (user.role !== 'admin' && user.role !== 'promotions')) {
       navigate('/dashboard');
       return;
     }
