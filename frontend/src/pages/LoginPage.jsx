@@ -36,7 +36,7 @@ const LoginPage = () => {
         const citiesData = await getCities();
         setCities(citiesData);
       } catch (error) {
-        console.error('Error loading cities:', error);
+        // Silent fail
       }
     };
     loadData();
