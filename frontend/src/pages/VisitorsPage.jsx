@@ -49,17 +49,33 @@ const VisitorsPage = () => {
   }, [user, navigate]);
 
   useEffect(() => {
-    // Filter visitors based on search term
+    // Filter visitors based on search term, date, and status
+    let filtered = [...visitors];
+    
+    // Filter by search term
     if (searchTerm) {
-      const filtered = visitors.filter(v =>
+      filtered = filtered.filter(v =>
         v.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.lastname.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredVisitors(filtered);
-    } else {
-      setFilteredVisitors(visitors);
     }
-  }, [searchTerm, visitors]);
+    
+    // Filter by status (for accueil role)
+    if (user?.role === 'accueil') {
+      if (filterStatus === 'actif') {
+        filtered = filtered.filter(v => !v.tracking_stopped);
+      } else if (filterStatus === 'arrete') {
+        filtered = filtered.filter(v => v.tracking_stopped);
+      }
+      
+      // Filter by date
+      if (filterDate) {
+        filtered = filtered.filter(v => v.visit_date === filterDate);
+      }
+    }
+    
+    setFilteredVisitors(filtered);
+  }, [searchTerm, filterDate, filterStatus, visitors, user]);
 
   const loadVisitors = async () => {
     try {
