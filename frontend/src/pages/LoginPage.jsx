@@ -128,20 +128,6 @@ const LoginPage = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="department">Département (optionnel)</Label>
-              <Select value={department} onValueChange={setDepartment}>
-                <SelectTrigger data-testid="department-select">
-                  <SelectValue placeholder="Sélectionnez un département" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="accueil">Accueil, Intégration et Promotions</SelectItem>
-                  <SelectItem value="promotion">Administration Complète</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-gray-500">Laissez vide pour utiliser votre rôle par défaut</p>
-            </div>
-
             <Button 
               type="submit" 
               className="w-full" 
@@ -151,10 +137,17 @@ const LoginPage = () => {
               {loading ? 'Connexion...' : 'Se connecter'}
             </Button>
 
-            <div className="text-center pt-4">
+            <div className="text-center pt-4 space-y-2">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="text-sm text-indigo-600 hover:underline block w-full"
+              >
+                ← Retour à l'accueil
+              </button>
               <a 
                 href="/register" 
-                className="text-sm text-indigo-600 hover:underline"
+                className="text-sm text-indigo-600 hover:underline block"
                 data-testid="register-link"
               >
                 Nouveau visiteur? S'inscrire ici
