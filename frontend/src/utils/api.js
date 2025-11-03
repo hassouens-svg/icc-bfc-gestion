@@ -90,6 +90,11 @@ export const getReferents = async () => {
   return response.data;
 };
 
+export const updateUser = async (userId, data) => {
+  const response = await apiClient.put(`/users/${userId}`, data);
+  return response.data;
+};
+
 // Visitor APIs
 export const createVisitor = async (data) => {
   const response = await apiClient.post('/visitors', data);
