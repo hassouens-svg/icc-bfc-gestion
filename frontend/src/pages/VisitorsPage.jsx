@@ -104,7 +104,7 @@ const VisitorsPage = () => {
   const handleCreateVisitor = async (e) => {
     e.preventDefault();
     
-    if (!newVisitor.firstname || !newVisitor.lastname || newVisitor.types.length === 0 || !newVisitor.arrival_channel) {
+    if (!newVisitor.firstname || !newVisitor.lastname || newVisitor.types.length === 0 || !newVisitor.arrival_channel || !newVisitor.phone) {
       toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
