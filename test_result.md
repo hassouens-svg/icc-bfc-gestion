@@ -101,3 +101,89 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  User reported two critical bugs after deployment:
+  1. Fidélisation page does not display any data
+  2. Referent accounts are seeing all admin data instead of only their assigned month's visitors
+  
+  The application is a full-stack church visitor management system with role-based access control.
+
+backend:
+  - task: "JWT Role Authentication Bug - get_current_user returns database role instead of JWT role"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported that referent accounts see all admin data. Root cause identified: get_current_user function fetches user from database and returns original role, ignoring the role stored in JWT token. When a user selects a department at login (e.g., referent selecting 'promotions'), the JWT contains the selected role but API endpoints receive the database role."
+      - working: false
+        agent: "main"
+        comment: "Bug identified in lines 159-172. The get_current_user function needs to merge JWT payload data (role) with database user data. Currently it only uses user_id from JWT and fetches everything else from database."
+
+  - task: "Visitor filtering by referent role"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Referents see all visitors instead of only their assigned month. This is caused by the JWT role bug - the role check at line 294 uses the database role instead of the selected role from JWT."
+      - working: false
+        agent: "main"
+        comment: "Will be fixed by correcting get_current_user to respect JWT role. The filter logic at lines 294-296 is correct, it just receives wrong role from get_current_user."
+
+  - task: "Fidelisation API endpoints"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Fidélisation page shows no data. Backend endpoints at lines 586-710 check for specific roles (referent, admin, promotions) but receive incorrect role from get_current_user."
+      - working: false
+        agent: "main"
+        comment: "Will be fixed by correcting get_current_user. The fidelisation calculation logic appears correct, just needs proper role from JWT token."
+
+frontend:
+  - task: "Fidelisation page data display"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/FidelisationPage.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Page shows no data. Frontend code looks correct, issue is likely backend returning 403 or empty data due to role mismatch."
+      - working: false
+        agent: "main"
+        comment: "Will test after backend JWT fix is implemented."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "JWT Role Authentication Bug - get_current_user returns database role instead of JWT role"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Root cause identified: get_current_user function ignores role from JWT token and uses database role instead. This causes both bugs: (1) Referents see all data because their database role is used for filtering, (2) Fidelisation endpoints reject access because role check fails. Fix: Merge JWT payload (role) with database user data in get_current_user function. Will implement fix now."
