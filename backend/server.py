@@ -172,6 +172,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(data: dict) -> str:
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
+def is_super_admin(user: dict) -> bool:
+    """Check if user is super admin (Admin from Dijon)"""
+    return user.get("role") == "admin" and user.get("city") == "Dijon"
+
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
     try:
         token = credentials.credentials
