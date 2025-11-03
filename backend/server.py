@@ -251,7 +251,7 @@ async def get_referents(current_user: dict = Depends(get_current_user)):
     # Get all referents in current user's city
     referents = await db.users.find({
         "city": current_user["city"],
-        "role": {"$in": ["referent", "accueil", "integration", "promotions"]}
+        "role": {"$in": ["referent", "accueil", "promotions"]}
     }, {"_id": 0, "password": 0}).to_list(1000)
     
     return referents
