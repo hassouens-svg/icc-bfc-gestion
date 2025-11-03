@@ -151,11 +151,11 @@ backend:
 
   - task: "Fidelisation API endpoints"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "user"
@@ -163,6 +163,9 @@ backend:
       - working: false
         agent: "main"
         comment: "Will be fixed by correcting get_current_user. The fidelisation calculation logic appears correct, just needs proper role from JWT token."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Fidelisation endpoints working correctly. Tested: (1) GET /api/fidelisation/referent with referent role returns proper data (total_visitors, weekly_rates, monthly_average), (2) GET /api/fidelisation/admin with promotions role returns array of referent data, (3) Permission boundaries work - referent role gets 403 when accessing admin endpoint. Role checks at lines 596 and 654 working properly with JWT roles."
 
 frontend:
   - task: "Fidelisation page data display"
