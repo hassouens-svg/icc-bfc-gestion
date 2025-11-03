@@ -641,6 +641,82 @@ async def delete_city(city_id: str, current_user: dict = Depends(get_current_use
     
     return {"message": "City deleted successfully"}
 
+@api_router.get("/cities/{city_id}/stats")
+async def get_city_stats(city_id: str, current_user: dict = Depends(get_current_user)):
+    """Get detailed statistics for a specific city"""
+    if current_user["role"] not in ["admin", "promotions"]:
+        raise HTTPException(status_code=403, detail="Only admin can view city stats")
+    
+    city = await db.cities.find_one({"id": city_id})
+    if not city:
+        raise HTTPException(status_code=404, detail="City not found")
+    
+    city_name = city["name"]
+    
+    # Get all referents in this city
+    referents = await db.users.find({
+        "city": city_name,
+        "role": "referent"
+    }, {"_id": 0, "password": 0}).to_list(1000)
+    
+    referent_stats = []
+    
+    for referent in referents:
+        assigned_month = referent.get("assigned_month")
+        if not assigned_month:
+            continue
+        
+        # Get visitors for this referent
+        visitors = await db.visitors.find({
+            "city": city_name,
+            "assigned_month": assigned_month,
+            "tracking_stopped": False
+        }).to_list(10000)
+        
+        # Count by type
+        nouveaux_arrivants = sum(1 for v in visitors if "Nouveau Arrivant" in v.get("types", []))
+        nouveaux_convertis = sum(1 for v in visitors if "Nouveau Converti" in v.get("types", []))
+        de_passage = sum(1 for v in visitors if "De Passage" in v.get("types", []))
+        
+        # Calculate fidelity rate
+        total_visitors = len(visitors)
+        if total_visitors > 0:
+            year, month = map(int, assigned_month.split("-"))
+            weeks = get_weeks_in_month(year, month)
+            
+            total_rate = 0
+            for week in weeks:
+                total_presences = 0
+                for visitor in visitors:
+                    for presence in visitor.get("presences_dimanche", []) + visitor.get("presences_jeudi", []):
+                        if get_week_number(presence["date"]) == week and presence.get("present", False):
+                            total_presences += 1
+                
+                expected_presences = total_visitors * 2
+                rate = (total_presences / expected_presences * 100) if expected_presences > 0 else 0
+                total_rate += rate
+            
+            avg_fidelity = total_rate / len(weeks) if weeks else 0
+        else:
+            avg_fidelity = 0
+        
+        referent_stats.append({
+            "referent_id": referent["id"],
+            "referent_name": referent["username"],
+            "assigned_month": assigned_month,
+            "total_visitors": total_visitors,
+            "nouveaux_arrivants": nouveaux_arrivants,
+            "nouveaux_convertis": nouveaux_convertis,
+            "de_passage": de_passage,
+            "avg_fidelity_rate": round(avg_fidelity, 2)
+        })
+    
+    return {
+        "city_name": city_name,
+        "total_referents": len(referents),
+        "referent_stats": referent_stats
+    }
+
 # ==================== ANALYTICS ROUTES ====================
 
 @api_router.get("/analytics/stats")
