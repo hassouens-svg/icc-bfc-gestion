@@ -31,11 +31,10 @@ const RegisterPage = () => {
   ];
 
   const arrivalChannels = [
+    'Evangelisation',
     'Réseaux sociaux',
-    'Bouche à oreille',
-    'Site web',
-    'Affiche',
-    'Autre'
+    'Invitation par un membre (hors evangelisation)',
+    'Par soi même'
   ];
 
   useEffect(() => {
