@@ -511,7 +511,7 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/analytics/export")
 async def export_excel(current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "promotion"]:
+    if current_user["role"] not in ["admin", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can export data")
     
     visitors = await db.visitors.find({"city": current_user["city"]}, {"_id": 0}).to_list(10000)
