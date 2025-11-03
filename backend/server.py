@@ -530,6 +530,12 @@ async def stop_tracking(visitor_id: str, stop_data: StopTracking, current_user: 
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
+    # Check permissions for referents
+    if current_user["role"] == "referent":
+        permissions = current_user.get("permissions", {})
+        if not permissions.get("can_stop_tracking", True):
+            raise HTTPException(status_code=403, detail="Permission denied: cannot stop tracking")
+    
     await db.visitors.update_one(
         {"id": visitor_id},
         {"$set": {
