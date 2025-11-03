@@ -18,6 +18,8 @@ const ReferentsPage = () => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
+  const [selectedReferent, setSelectedReferent] = useState(null);
   const [newReferent, setNewReferent] = useState({
     username: '',
     password: '',
