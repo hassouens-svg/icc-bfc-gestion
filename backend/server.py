@@ -492,6 +492,25 @@ async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_us
     
     return {"message": "Visitor updated successfully"}
 
+@api_router.delete("/visitors/{visitor_id}")
+async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a visitor"""
+    visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
+    
+    if not visitor:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    
+    # Check permissions based on role
+    if current_user["role"] == "referent":
+        # Referents can only delete visitors from their assigned month
+        if visitor["assigned_month"] != current_user.get("assigned_month"):
+            raise HTTPException(status_code=403, detail="Vous ne pouvez supprimer que vos visiteurs assignés")
+    elif current_user["role"] not in ["admin", "promotions"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    await db.visitors.delete_one({"id": visitor_id})
+    return {"message": "Visitor deleted successfully"}
+
 @api_router.post("/visitors/{visitor_id}/comment")
 async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict = Depends(get_current_user)):
     visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
