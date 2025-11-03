@@ -159,17 +159,52 @@ const VisitorsPage = () => {
             <p className="text-gray-500 mt-1">Accueil et Intégration - Consultation uniquement</p>
           </div>
 
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Rechercher par nom..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              data-testid="search-input"
-            />
-          </div>
+          {/* Filters */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Search */}
+                <div className="space-y-2">
+                  <Label>Recherche</Label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Nom ou prénom..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                      data-testid="search-input"
+                    />
+                  </div>
+                </div>
+
+                {/* Date Filter */}
+                <div className="space-y-2">
+                  <Label>Date d'arrivée</Label>
+                  <Input
+                    type="date"
+                    value={filterDate}
+                    onChange={(e) => setFilterDate(e.target.value)}
+                  />
+                </div>
+
+                {/* Status Filter */}
+                <div className="space-y-2">
+                  <Label>Statut</Label>
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="actif">Actifs</SelectItem>
+                      <SelectItem value="arrete">Arrêtés</SelectItem>
+                      <SelectItem value="tous">Tous</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
