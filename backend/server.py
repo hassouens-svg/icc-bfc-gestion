@@ -288,8 +288,8 @@ async def get_visitors(current_user: dict = Depends(get_current_user)):
     
     visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     
-    # For "accueil" and "integration" roles, return limited info
-    if current_user["role"] in ["accueil", "integration"]:
+    # For "accueil" role, return limited info (just for consultation)
+    if current_user["role"] == "accueil":
         return [{
             "id": v["id"], 
             "firstname": v["firstname"], 
