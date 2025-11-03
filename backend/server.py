@@ -289,9 +289,15 @@ async def get_visitors(current_user: dict = Depends(get_current_user)):
     
     visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     
-    # For "accueil" role, return only basic info (name only)
-    if current_user["role"] == "accueil":
-        return [{"id": v["id"], "firstname": v["firstname"], "lastname": v["lastname"], "city": v["city"]} for v in visitors]
+    # For "accueil" and "integration" roles, return limited info
+    if current_user["role"] in ["accueil", "integration"]:
+        return [{
+            "id": v["id"], 
+            "firstname": v["firstname"], 
+            "lastname": v["lastname"],
+            "arrival_channel": v.get("arrival_channel", ""),
+            "city": v["city"]
+        } for v in visitors]
     
     return visitors
 
