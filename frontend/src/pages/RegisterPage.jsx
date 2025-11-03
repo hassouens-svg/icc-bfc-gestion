@@ -195,9 +195,6 @@ const RegisterPage = () => {
                 data-testid="address-input"
               />
             </div>
-                />
-              </div>
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="arrival_channel">Comment avez-vous connu ICC? *</Label>
