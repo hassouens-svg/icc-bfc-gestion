@@ -79,7 +79,9 @@ const VisitorsPage = () => {
 
   const loadVisitors = async () => {
     try {
-      const data = await getVisitors();
+      // Load all visitors including stopped ones for accueil role
+      const includeStopped = user?.role === 'accueil';
+      const data = await getVisitors(includeStopped);
       setVisitors(data);
       setFilteredVisitors(data);
     } catch (error) {
