@@ -63,6 +63,56 @@ const CitiesPage = () => {
     }
   };
 
+  const handleManageCity = (city) => {
+    setSelectedCity({ ...city });
+    setIsManageDialogOpen(true);
+  };
+
+  const handleUpdateCity = async (e) => {
+    e.preventDefault();
+    
+    if (!selectedCity.name.trim()) {
+      toast.error('Veuillez entrer un nom de ville');
+      return;
+    }
+
+    try {
+      await updateCity(selectedCity.id, selectedCity.name);
+      toast.success('Ville mise à jour avec succès!');
+      setIsManageDialogOpen(false);
+      loadCities();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la mise à jour');
+    }
+  };
+
+  const handleDeleteCity = async () => {
+    try {
+      await deleteCity(selectedCity.id);
+      toast.success('Ville supprimée avec succès!');
+      setIsDeleteDialogOpen(false);
+      setIsManageDialogOpen(false);
+      loadCities();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
+    }
+  };
+
+  const handleViewStats = async (city) => {
+    setSelectedCity(city);
+    setIsStatsDialogOpen(true);
+    setStatsLoading(true);
+    
+    try {
+      const stats = await getCityStats(city.id);
+      setCityStats(stats);
+    } catch (error) {
+      toast.error('Erreur lors du chargement des statistiques');
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
