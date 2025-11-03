@@ -603,12 +603,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configure logging
+# Configure logging - set to ERROR level to reduce noise
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.ERROR,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Suppress uvicorn access logs
+logging.getLogger("uvicorn.access").setLevel(logging.ERROR)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
