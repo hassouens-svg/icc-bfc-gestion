@@ -88,7 +88,7 @@ const RegisterPage = () => {
             <img 
               src="https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png" 
               alt="ICC Logo" 
-              className="h-20 w-auto"
+              className="h-20 w-20 object-contain rounded-full"
             />
           </div>
           <CardTitle className="text-3xl font-bold text-teal-600">Bienvenue à ICC!</CardTitle>
