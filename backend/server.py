@@ -807,22 +807,34 @@ async def get_city_stats(city_id: str, current_user: dict = Depends(get_current_
 async def get_stats(current_user: dict = Depends(get_current_user)):
     city = current_user["city"]
     
-    # Total visitors (not stopped)
-    total_visitors = await db.visitors.count_documents({"city": city, "tracking_stopped": False})
+    # Base query filter
+    base_query = {"city": city, "tracking_stopped": False}
     
-    # Total referents
-    total_referents = await db.users.count_documents({"city": city, "role": {"$in": ["referent", "accueil", "promotions"]}})
+    # If referent, filter by their assigned month
+    if current_user["role"] == "referent":
+        assigned_month = current_user.get("assigned_month")
+        if assigned_month:
+            base_query["assigned_month"] = assigned_month
+    
+    # Total visitors
+    total_visitors = await db.visitors.count_documents(base_query)
+    
+    # Total referents (only for admin/promotions)
+    if current_user["role"] in ["admin", "promotions"]:
+        total_referents = await db.users.count_documents({"city": city, "role": {"$in": ["referent", "accueil", "promotions"]}})
+    else:
+        total_referents = 0
     
     # By arrival channel
     pipeline = [
-        {"$match": {"city": city, "tracking_stopped": False}},
+        {"$match": base_query},
         {"$group": {"_id": "$arrival_channel", "count": {"$sum": 1}}}
     ]
     by_channel = await db.visitors.aggregate(pipeline).to_list(1000)
     
     # By month
     pipeline = [
-        {"$match": {"city": city, "tracking_stopped": False}},
+        {"$match": base_query},
         {"$group": {"_id": "$assigned_month", "count": {"$sum": 1}}},
         {"$sort": {"_id": 1}}
     ]
@@ -830,7 +842,7 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     
     # By type
     pipeline = [
-        {"$match": {"city": city, "tracking_stopped": False}},
+        {"$match": base_query},
         {"$unwind": "$types"},
         {"$group": {"_id": "$types", "count": {"$sum": 1}}}
     ]
