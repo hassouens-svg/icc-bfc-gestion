@@ -119,8 +119,8 @@ const LoginPage = () => {
                   <SelectValue placeholder="Sélectionnez un département" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="accueil">Accueil et Intégration</SelectItem>
-                  <SelectItem value="promotion">Promotion</SelectItem>
+                  <SelectItem value="accueil">Accueil, Intégration et Promotions</SelectItem>
+                  <SelectItem value="promotion">Administration Complète</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-gray-500">Laissez vide pour utiliser votre rôle par défaut</p>
