@@ -570,6 +570,77 @@ async def get_cities():
     cities = await db.cities.find({}, {"_id": 0}).to_list(1000)
     return cities
 
+@api_router.put("/cities/{city_id}")
+async def update_city(city_id: str, city_data: CityCreate, current_user: dict = Depends(get_current_user)):
+    """Update city name (Admin only)"""
+    if current_user["role"] not in ["admin", "promotions"]:
+        raise HTTPException(status_code=403, detail="Only admin can update cities")
+    
+    # Check if new name already exists (excluding current city)
+    existing = await db.cities.find_one({
+        "name": city_data.name,
+        "id": {"$ne": city_id}
+    })
+    if existing:
+        raise HTTPException(status_code=400, detail="City name already exists")
+    
+    # Get the old city name before updating
+    old_city = await db.cities.find_one({"id": city_id})
+    if not old_city:
+        raise HTTPException(status_code=404, detail="City not found")
+    
+    old_name = old_city["name"]
+    
+    # Update city name
+    result = await db.cities.update_one(
+        {"id": city_id},
+        {"$set": {"name": city_data.name}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="City not found")
+    
+    # Update all users with this city
+    await db.users.update_many(
+        {"city": old_name},
+        {"$set": {"city": city_data.name}}
+    )
+    
+    # Update all visitors with this city
+    await db.visitors.update_many(
+        {"city": old_name},
+        {"$set": {"city": city_data.name}}
+    )
+    
+    return {"message": "City updated successfully"}
+
+@api_router.delete("/cities/{city_id}")
+async def delete_city(city_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a city (Admin only)"""
+    if current_user["role"] not in ["admin", "promotions"]:
+        raise HTTPException(status_code=403, detail="Only admin can delete cities")
+    
+    city = await db.cities.find_one({"id": city_id})
+    if not city:
+        raise HTTPException(status_code=404, detail="City not found")
+    
+    city_name = city["name"]
+    
+    # Check if city has users or visitors
+    users_count = await db.users.count_documents({"city": city_name})
+    visitors_count = await db.visitors.count_documents({"city": city_name})
+    
+    if users_count > 0 or visitors_count > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot delete city with {users_count} users and {visitors_count} visitors"
+        )
+    
+    # Delete the city
+    await db.cities.delete_one({"id": city_id})
+    
+    return {"message": "City deleted successfully"}
+
 # ==================== ANALYTICS ROUTES ====================
 
 @api_router.get("/analytics/stats")
