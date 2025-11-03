@@ -191,7 +191,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "JWT Role Authentication Bug - get_current_user returns database role instead of JWT role"
+    - "Fidelisation page data display"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
