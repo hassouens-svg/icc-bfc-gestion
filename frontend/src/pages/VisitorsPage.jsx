@@ -108,6 +108,17 @@ const VisitorsPage = () => {
     }
   };
 
+  const handleDeleteVisitor = async () => {
+    try {
+      await deleteVisitor(selectedVisitor.id);
+      toast.success('Visiteur supprimé avec succès');
+      setDeleteDialogOpen(false);
+      loadVisitors();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
