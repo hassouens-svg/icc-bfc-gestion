@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { logout, getUser } from '../utils/api';
 import { Button } from './ui/button';
-import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp } from 'lucide-react';
+import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ const Layout = ({ children }) => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'referent', 'promotions'] },
     { path: '/visitors', label: 'Visiteurs', icon: Users, roles: ['admin', 'referent', 'accueil', 'promotions'] },
+    { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['admin', 'referent', 'promotions'] },
     { path: '/fidelisation', label: 'Fidélisation', icon: TrendingUp, roles: ['admin', 'referent', 'promotions'] },
     { path: '/referents', label: 'Référents', icon: UserPlus, roles: ['admin', 'promotions'] },
     { path: '/cities', label: 'Villes', icon: MapPin, roles: ['admin', 'promotions'] },
