@@ -35,8 +35,9 @@ const Layout = ({ children }) => {
             <h1 className="text-2xl font-bold text-indigo-600">ICC {user?.city}</h1>
             <p className="text-sm text-gray-500">
               {user?.username} ({user?.role === 'admin' ? 'Administrateur' : 
-                user?.role === 'accueil' ? 'Accueil, Intégration et Promotions' :
-                user?.role === 'promotion' ? 'Administration Complète' : 'Référent'})
+                user?.role === 'accueil' ? 'Accueil' :
+                user?.role === 'integration' ? 'Intégration' :
+                user?.role === 'promotions' ? 'Promotions' : 'Référent'})
             </p>
           </div>
           <Button onClick={handleLogout} variant="outline" data-testid="logout-button">
