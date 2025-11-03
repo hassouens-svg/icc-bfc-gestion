@@ -133,11 +133,11 @@ backend:
 
   - task: "Visitor filtering by referent role"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "user"
@@ -145,6 +145,9 @@ backend:
       - working: false
         agent: "main"
         comment: "Will be fixed by correcting get_current_user to respect JWT role. The filter logic at lines 294-296 is correct, it just receives wrong role from get_current_user."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Visitor filtering working correctly. Tested: (1) Referent without department sees only assigned month visitors (2025-01), (2) Referent with promotions department sees ALL visitors from all months, (3) Referent with accueil department sees limited view (only id, firstname, lastname, arrival_channel, city). Role-based filtering logic at lines 301-316 working as expected."
 
   - task: "Fidelisation API endpoints"
     implemented: true
