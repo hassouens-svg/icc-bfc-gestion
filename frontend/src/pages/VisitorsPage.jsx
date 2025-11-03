@@ -62,7 +62,8 @@ const VisitorsPage = () => {
     }
     
     // Filter by status (for accueil role)
-    if (user?.role === 'accueil') {
+    const currentUser = getUser();
+    if (currentUser?.role === 'accueil') {
       if (filterStatus === 'actif') {
         filtered = filtered.filter(v => !v.tracking_stopped);
       } else if (filterStatus === 'arrete') {
@@ -76,7 +77,7 @@ const VisitorsPage = () => {
     }
     
     setFilteredVisitors(filtered);
-  }, [searchTerm, filterDate, filterStatus, visitors, user]);
+  }, [searchTerm, filterDate, filterStatus, visitors]); // Removed 'user' from dependencies
 
   const loadVisitors = async () => {
     try {
