@@ -50,10 +50,19 @@ const LoginPage = () => {
       return;
     }
 
+    // Get pre-selected department from home page
+    const preSelectedDept = sessionStorage.getItem('selectedDepartment');
+    const departmentToUse = preSelectedDept || null;
+
     setLoading(true);
     try {
-      await login(username, password, city, department || null);
+      await login(username, password, city, departmentToUse);
       toast.success('Connexion réussie!');
+      
+      // Clear session storage
+      sessionStorage.removeItem('selectedCity');
+      sessionStorage.removeItem('selectedDepartment');
+      
       navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur de connexion');
