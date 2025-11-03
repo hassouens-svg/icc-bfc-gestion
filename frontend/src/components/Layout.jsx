@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { logout, getUser } from '../utils/api';
 import { Button } from './ui/button';
-import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX } from 'lucide-react';
+import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
