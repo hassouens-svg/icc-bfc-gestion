@@ -28,6 +28,7 @@ function App() {
           <Route path="/cities" element={<CitiesPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/stopped-visitors" element={<StoppedVisitorsPage />} />
+          <Route path="/fidelisation" element={<FidelisationPage />} />
         </Routes>
       </BrowserRouter>
     </div>
