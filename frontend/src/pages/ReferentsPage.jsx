@@ -58,7 +58,7 @@ const ReferentsPage = () => {
   const handleCreateReferent = async (e) => {
     e.preventDefault();
     
-    if (!newReferent.username || !newReferent.password || !newReferent.role) {
+    if (!newReferent.username || !newReferent.password || !newReferent.role || !newReferent.city) {
       toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
@@ -75,7 +75,7 @@ const ReferentsPage = () => {
       setNewReferent({
         username: '',
         password: '',
-        city: user?.city || '',
+        city: '',
         role: 'referent',
         assigned_month: '',
       });
