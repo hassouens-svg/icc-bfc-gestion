@@ -73,6 +73,7 @@ class User(BaseModel):
     role: str  # admin, referent, accueil, promotion
     assigned_month: Optional[str] = None  # For referents: "2025-01"
     permissions: Optional[Dict[str, bool]] = None  # For referents permissions
+    is_blocked: bool = False  # For blocking users
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
