@@ -440,6 +440,7 @@ async def get_visitors(
             "firstname": v["firstname"], 
             "lastname": v["lastname"],
             "arrival_channel": v.get("arrival_channel", ""),
+            "visit_date": v.get("visit_date", ""),
             "city": v["city"]
         } for v in visitors]
     
