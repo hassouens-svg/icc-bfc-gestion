@@ -115,16 +115,14 @@ const VisitorsPage = () => {
     );
   }
 
-  // For "accueil" or "integration" role, show simplified list
-  if (user?.role === 'accueil' || user?.role === 'integration') {
+  // For "accueil" role, show simplified list
+  if (user?.role === 'accueil') {
     return (
       <Layout>
         <div className="space-y-6">
           <div>
             <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Liste des visiteurs</h2>
-            <p className="text-gray-500 mt-1">
-              {user?.role === 'accueil' ? 'Département Accueil' : 'Département Intégration'}
-            </p>
+            <p className="text-gray-500 mt-1">Accueil et Intégration - Consultation uniquement</p>
           </div>
 
           {/* Search */}
