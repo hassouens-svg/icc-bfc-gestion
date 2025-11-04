@@ -50,7 +50,7 @@ const Responsable de promossPage = () => {
 
   const loadResponsable de promoss = async () => {
     try {
-      const data = await getResponsable de promoss();
+      const data = await getReferents();
       setResponsable de promoss(data);
     } catch (error) {
       toast.error('Erreur lors du chargement des responsable de promoss');
