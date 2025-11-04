@@ -473,6 +473,14 @@ async def unblock_user(user_id: str, current_user: dict = Depends(get_current_us
 
 @api_router.post("/visitors")
 async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depends(get_current_user)):
+    # Restrict accueil role from creating visitors (read-only)
+    if current_user["role"] == "accueil":
+        raise HTTPException(status_code=403, detail="Accueil role is read-only, cannot create visitors")
+    
+    # Only superviseur_promos, referent, promotions, super_admin, pasteur can create
+    if current_user["role"] not in ["superviseur_promos", "referent", "promotions", "super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied to create visitors")
+    
     # Calculate assigned_month
     try:
         visit_dt = datetime.fromisoformat(visitor_data.visit_date)
