@@ -55,6 +55,13 @@ const HomePage = () => {
       description: 'Gestion des cellules de prière et suivi des membres',
       icon: Users,
       color: 'from-green-400 to-green-600'
+    },
+    {
+      id: 'acces-specifiques',
+      title: 'Accès Spécifiques',
+      description: 'Tableau de bord Pasteur et Super Admin',
+      icon: Shield,
+      color: 'from-red-400 to-red-600'
     }
   ];
 
