@@ -23,7 +23,11 @@ const DashboardSuperviseurFIPage = () => {
 
   const loadStats = async () => {
     try {
-      const data = await getStatsSuperviseurFI(user.city);
+      // Pour super_admin et pasteur, utiliser la ville sélectionnée
+      const selectedCity = localStorage.getItem('selected_city_view');
+      const ville = ['super_admin', 'pasteur'].includes(user.role) && selectedCity ? selectedCity : user.city;
+      
+      const data = await getStatsSuperviseurFI(ville);
       setStats(data);
     } catch (error) {
       toast.error('Erreur lors du chargement des statistiques');
