@@ -10,32 +10,32 @@ Votre application de gestion des visiteurs ICC est maintenant complète et opér
 
 ### 📱 Interface Principale (Connexion)
 ```
-https://icc-management.preview.emergentagent.com/login
+https://visitor-management-3.preview.emergentagent.com/login
 ```
 
 ### 📝 Formulaire Public d'Inscription
 ```
-https://icc-management.preview.emergentagent.com/register
+https://visitor-management-3.preview.emergentagent.com/register
 ```
 
 ### 🏠 Dashboard
 ```
-https://icc-management.preview.emergentagent.com/dashboard
+https://visitor-management-3.preview.emergentagent.com/dashboard
 ```
 
 ### 👥 Gestion des Visiteurs
 ```
-https://icc-management.preview.emergentagent.com/visitors
+https://visitor-management-3.preview.emergentagent.com/visitors
 ```
 
 ### 📊 Analytics
 ```
-https://icc-management.preview.emergentagent.com/analytics
+https://visitor-management-3.preview.emergentagent.com/analytics
 ```
 
 ### 🚫 Visiteurs avec Suivi Arrêté (Admin)
 ```
-https://icc-management.preview.emergentagent.com/stopped-visitors
+https://visitor-management-3.preview.emergentagent.com/stopped-visitors
 ```
 
 ---
@@ -43,7 +43,7 @@ https://icc-management.preview.emergentagent.com/stopped-visitors
 ## 🔑 IDENTIFIANTS PAR DÉFAUT
 
 ### Admin Principal (Dijon)
-- **URL**: https://icc-management.preview.emergentagent.com/login
+- **URL**: https://visitor-management-3.preview.emergentagent.com/login
 - **Ville**: Dijon
 - **Nom d'utilisateur**: `admin`
 - **Mot de passe**: `admin123`

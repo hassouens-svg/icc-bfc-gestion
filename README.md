@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://icc-management.preview.emergentagent.com/login
-- **Inscription Publique**: https://icc-management.preview.emergentagent.com/register
+- **Connexion**: https://visitor-management-3.preview.emergentagent.com/login
+- **Inscription Publique**: https://visitor-management-3.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**
