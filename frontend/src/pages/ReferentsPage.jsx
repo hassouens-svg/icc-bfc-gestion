@@ -104,7 +104,7 @@ const ReferentsPage = () => {
     setIsManageDialogOpen(true);
   };
 
-  const handleUpdateResponsable de promos = async (e) => {
+  const handleUpdateResponsableDePromos = async (e) => {
     e.preventDefault();
     
     try {
