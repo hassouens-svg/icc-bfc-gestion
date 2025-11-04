@@ -110,6 +110,17 @@ export const unblockUser = async (userId) => {
   return response.data;
 };
 
+// User Management APIs
+export const getUsers = async () => {
+  const response = await apiClient.get('/users/referents');
+  return response.data;
+};
+
+export const createUser = async (userData) => {
+  const response = await apiClient.post('/users/referents', userData);
+  return response.data;
+};
+
 // Visitor APIs
 export const createVisitor = async (data) => {
   const response = await apiClient.post('/visitors', data);
