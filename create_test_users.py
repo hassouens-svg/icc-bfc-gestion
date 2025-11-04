@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://visitor-management-3.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://church-connect-53.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 def create_test_users():

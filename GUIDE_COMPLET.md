@@ -10,32 +10,32 @@ Votre application de gestion des visiteurs ICC est maintenant complète et opér
 
 ### 📱 Interface Principale (Connexion)
 ```
-https://visitor-management-3.preview.emergentagent.com/login
+https://church-connect-53.preview.emergentagent.com/login
 ```
 
 ### 📝 Formulaire Public d'Inscription
 ```
-https://visitor-management-3.preview.emergentagent.com/register
+https://church-connect-53.preview.emergentagent.com/register
 ```
 
 ### 🏠 Dashboard
 ```
-https://visitor-management-3.preview.emergentagent.com/dashboard
+https://church-connect-53.preview.emergentagent.com/dashboard
 ```
 
 ### 👥 Gestion des Visiteurs
 ```
-https://visitor-management-3.preview.emergentagent.com/visitors
+https://church-connect-53.preview.emergentagent.com/visitors
 ```
 
 ### 📊 Analytics
 ```
-https://visitor-management-3.preview.emergentagent.com/analytics
+https://church-connect-53.preview.emergentagent.com/analytics
 ```
 
 ### 🚫 Visiteurs avec Suivi Arrêté (Admin)
 ```
-https://visitor-management-3.preview.emergentagent.com/stopped-visitors
+https://church-connect-53.preview.emergentagent.com/stopped-visitors
 ```
 
 ---
@@ -43,7 +43,7 @@ https://visitor-management-3.preview.emergentagent.com/stopped-visitors
 ## 🔑 IDENTIFIANTS PAR DÉFAUT
 
 ### Admin Principal (Dijon)
-- **URL**: https://visitor-management-3.preview.emergentagent.com/login
+- **URL**: https://church-connect-53.preview.emergentagent.com/login
 - **Ville**: Dijon
 - **Nom d'utilisateur**: `admin`
 - **Mot de passe**: `admin123`
