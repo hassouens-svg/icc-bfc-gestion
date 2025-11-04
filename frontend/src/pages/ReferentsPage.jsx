@@ -73,7 +73,7 @@ const Responsable de promossPage = () => {
     }
 
     try {
-      await createResponsable de promos(newResponsable de promos);
+      await createReferent(newReferent);
       toast.success('Responsable de promos créé avec succès!');
       setIsDialogOpen(false);
       setNewResponsable de promos({
