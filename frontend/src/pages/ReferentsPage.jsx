@@ -35,7 +35,7 @@ const Responsable de promossPage = () => {
       navigate('/dashboard');
       return;
     }
-    loadResponsable de promoss();
+    loadReferents();
     loadCities();
   }, [user, navigate]);
 
@@ -48,7 +48,7 @@ const Responsable de promossPage = () => {
     }
   };
 
-  const loadResponsable de promoss = async () => {
+  const loadReferents = async () => {
     try {
       const data = await getReferents();
       setResponsable de promoss(data);
@@ -83,13 +83,13 @@ const Responsable de promossPage = () => {
         role: 'referent',
         assigned_month: '',
       });
-      loadResponsable de promoss();
+      loadReferents();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la création');
     }
   };
 
-  const handleManageResponsable de promos = (referent) => {
+  const handleManageReferent = (referent) => {
     setSelectedReferent({
       ...referent,
       permissions: referent.permissions || {
@@ -117,7 +117,7 @@ const Responsable de promossPage = () => {
       await updateUser(selectedReferent.id, updateData);
       toast.success('Responsable de promos mis à jour avec succès!');
       setIsManageDialogOpen(false);
-      loadResponsable de promoss();
+      loadReferents();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la mise à jour');
     }
@@ -139,7 +139,7 @@ const Responsable de promossPage = () => {
       toast.success('Utilisateur supprimé avec succès!');
       setIsDeleteDialogOpen(false);
       setIsManageDialogOpen(false);
-      loadResponsable de promoss();
+      loadReferents();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
     }
@@ -155,7 +155,7 @@ const Responsable de promossPage = () => {
         toast.success('Utilisateur bloqué avec succès!');
       }
       setIsManageDialogOpen(false);
-      loadResponsable de promoss();
+      loadReferents();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors du blocage/déblocage');
     }
@@ -327,7 +327,7 @@ const Responsable de promossPage = () => {
                       </div>
                       {referent.role === 'referent' && (
                         <Button 
-                          onClick={() => handleManageResponsable de promos(referent)}
+                          onClick={() => handleManageReferent(referent)}
                           variant="outline"
                           size="sm"
                         >
