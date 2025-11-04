@@ -51,7 +51,7 @@ const ReferentsPage = () => {
   const loadReferents = async () => {
     try {
       const data = await getReferents();
-      setResponsable de promoss(data);
+      setReferents(data);
     } catch (error) {
       toast.error('Erreur lors du chargement des responsable de promoss');
     } finally {
