@@ -80,12 +80,12 @@ export const initData = async () => {
 };
 
 // User APIs
-export const createResponsable de promos = async (data) => {
+export const createReferent = async (data) => {
   const response = await apiClient.post('/users/referent', data);
   return response.data;
 };
 
-export const getResponsable de promoss = async () => {
+export const getReferents = async () => {
   const response = await apiClient.get('/users/referents');
   return response.data;
 };
