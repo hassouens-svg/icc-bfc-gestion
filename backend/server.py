@@ -1475,6 +1475,250 @@ async def get_indicateurs_affectation(ville: Optional[str] = None, current_user:
         "pourcentage_affectation": round(percentage, 2)
     }
 
+# ========== STATISTIQUES FI ==========
+
+@api_router.get("/fi/stats/pilote")
+async def get_stats_pilote(current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "pilote_fi":
+        raise HTTPException(status_code=403, detail="Only for pilote_fi")
+    
+    fi_id = current_user.get("assigned_fi_id")
+    if not fi_id:
+        raise HTTPException(status_code=400, detail="No FI assigned")
+    
+    # Get FI info
+    fi = await db.familles_impact.find_one({"id": fi_id}, {"_id": 0})
+    if not fi:
+        raise HTTPException(status_code=404, detail="FI not found")
+    
+    # Get membres count and evolution
+    membres = await db.membres_fi.find({"fi_id": fi_id}, {"_id": 0}).to_list(length=None)
+    total_membres = len(membres)
+    
+    # Calculate evolution by month
+    from collections import defaultdict
+    evolution_membres = defaultdict(int)
+    for membre in membres:
+        date_ajout = membre.get("date_ajout")
+        if isinstance(date_ajout, str):
+            month = date_ajout[:7]  # YYYY-MM
+        else:
+            month = date_ajout.strftime("%Y-%m")
+        evolution_membres[month] += 1
+    
+    # Cumulative
+    cumulative = {}
+    total = 0
+    for month in sorted(evolution_membres.keys()):
+        total += evolution_membres[month]
+        cumulative[month] = total
+    
+    # Get presences and calculate fidelisation
+    membre_ids = [m["id"] for m in membres]
+    presences = await db.presences_fi.find(
+        {"membre_fi_id": {"$in": membre_ids}},
+        {"_id": 0}
+    ).to_list(length=None)
+    
+    # Calculate fidelisation by week/month/year
+    from datetime import datetime
+    presences_by_date = {}
+    for p in presences:
+        if p["present"]:
+            presences_by_date[p["date"]] = presences_by_date.get(p["date"], 0) + 1
+    
+    # Get unique jeudis count
+    unique_jeudis = len(set([p["date"] for p in presences]))
+    total_presences = sum([1 for p in presences if p["present"]])
+    max_possible = total_membres * unique_jeudis if unique_jeudis > 0 else 0
+    fidelisation_globale = (total_presences / max_possible * 100) if max_possible > 0 else 0
+    
+    return {
+        "fi": fi,
+        "total_membres": total_membres,
+        "evolution_membres": cumulative,
+        "fidelisation_globale": round(fidelisation_globale, 2),
+        "total_presences": total_presences,
+        "jeudis_count": unique_jeudis
+    }
+
+@api_router.get("/fi/stats/secteur")
+async def get_stats_secteur(current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "responsable_secteur":
+        raise HTTPException(status_code=403, detail="Only for responsable_secteur")
+    
+    secteur_id = current_user.get("assigned_secteur_id")
+    if not secteur_id:
+        raise HTTPException(status_code=400, detail="No secteur assigned")
+    
+    # Get secteur info
+    secteur = await db.secteurs.find_one({"id": secteur_id}, {"_id": 0})
+    if not secteur:
+        raise HTTPException(status_code=404, detail="Secteur not found")
+    
+    # Get all FI in this secteur
+    fis = await db.familles_impact.find({"secteur_id": secteur_id}, {"_id": 0}).to_list(length=None)
+    
+    # Stats per FI
+    fi_stats = []
+    for fi in fis:
+        membres = await db.membres_fi.find({"fi_id": fi["id"]}, {"_id": 0}).to_list(length=None)
+        total_membres = len(membres)
+        
+        # Get pilote info
+        pilote = None
+        if fi.get("pilote_id"):
+            pilote = await db.users.find_one({"id": fi["pilote_id"]}, {"_id": 0, "password": 0})
+        
+        # Calculate fidelisation
+        membre_ids = [m["id"] for m in membres]
+        presences = await db.presences_fi.find(
+            {"membre_fi_id": {"$in": membre_ids}},
+            {"_id": 0}
+        ).to_list(length=None)
+        
+        unique_jeudis = len(set([p["date"] for p in presences]))
+        total_presences = sum([1 for p in presences if p["present"]])
+        max_possible = total_membres * unique_jeudis if unique_jeudis > 0 else 0
+        fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
+        
+        fi_stats.append({
+            "fi": fi,
+            "pilote": pilote,
+            "total_membres": total_membres,
+            "fidelisation": round(fidelisation, 2)
+        })
+    
+    # Count pilotes
+    pilotes_count = len([fi for fi in fis if fi.get("pilote_id")])
+    
+    return {
+        "secteur": secteur,
+        "nombre_fi": len(fis),
+        "nombre_pilotes": pilotes_count,
+        "fi_details": fi_stats
+    }
+
+@api_router.get("/fi/stats/superviseur")
+async def get_stats_superviseur(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["superviseur_fi", "admin", "super_admin", "pasteur"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    if ville:
+        query["ville"] = ville
+    elif current_user["role"] == "superviseur_fi":
+        query["ville"] = current_user["city"]
+    
+    # Get all secteurs
+    secteurs = await db.secteurs.find(query, {"_id": 0}).to_list(length=None)
+    
+    # Get all FI
+    fi_query = {}
+    if ville:
+        fi_query["ville"] = ville
+    elif current_user["role"] == "superviseur_fi":
+        fi_query["ville"] = current_user["city"]
+    
+    fis = await db.familles_impact.find(fi_query, {"_id": 0}).to_list(length=None)
+    
+    # Get all membres
+    fi_ids = [fi["id"] for fi in fis]
+    membres = await db.membres_fi.find({"fi_id": {"$in": fi_ids}}, {"_id": 0}).to_list(length=None)
+    
+    # Evolution membres by month
+    from collections import defaultdict
+    evolution_membres = defaultdict(int)
+    for membre in membres:
+        date_ajout = membre.get("date_ajout")
+        if isinstance(date_ajout, str):
+            month = date_ajout[:7]
+        else:
+            month = date_ajout.strftime("%Y-%m")
+        evolution_membres[month] += 1
+    
+    cumulative = {}
+    total = 0
+    for month in sorted(evolution_membres.keys()):
+        total += evolution_membres[month]
+        cumulative[month] = total
+    
+    # Calculate global fidelisation
+    membre_ids = [m["id"] for m in membres]
+    presences = await db.presences_fi.find(
+        {"membre_fi_id": {"$in": membre_ids}},
+        {"_id": 0}
+    ).to_list(length=None)
+    
+    unique_jeudis = len(set([p["date"] for p in presences]))
+    total_presences = sum([1 for p in presences if p["present"]])
+    max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
+    fidelisation_globale = (total_presences / max_possible * 100) if max_possible > 0 else 0
+    
+    # FI by secteur
+    fi_by_secteur = defaultdict(int)
+    for fi in fis:
+        fi_by_secteur[fi["secteur_id"]] += 1
+    
+    secteur_details = []
+    for secteur in secteurs:
+        secteur_details.append({
+            "secteur": secteur,
+            "nombre_fi": fi_by_secteur[secteur["id"]]
+        })
+    
+    return {
+        "nombre_secteurs": len(secteurs),
+        "nombre_fi_total": len(fis),
+        "nombre_membres_total": len(membres),
+        "evolution_membres": cumulative,
+        "fidelisation_globale": round(fidelisation_globale, 2),
+        "secteurs_details": secteur_details
+    }
+
+@api_router.get("/fi/stats/pasteur")
+async def get_stats_pasteur(current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["pasteur", "super_admin"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Only for pasteur or super_admin")
+    
+    # Get all cities
+    cities = await db.cities.find({}, {"_id": 0}).to_list(length=None)
+    
+    stats_by_city = []
+    for city in cities:
+        ville = city["name"]
+        
+        # Get stats for this city
+        secteurs = await db.secteurs.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        fis = await db.familles_impact.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        
+        fi_ids = [fi["id"] for fi in fis]
+        membres = await db.membres_fi.find({"fi_id": {"$in": fi_ids}}, {"_id": 0}).to_list(length=None)
+        
+        # Fidelisation
+        membre_ids = [m["id"] for m in membres]
+        presences = await db.presences_fi.find(
+            {"membre_fi_id": {"$in": membre_ids}},
+            {"_id": 0}
+        ).to_list(length=None)
+        
+        unique_jeudis = len(set([p["date"] for p in presences]))
+        total_presences = sum([1 for p in presences if p["present"]])
+        max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
+        fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
+        
+        stats_by_city.append({
+            "ville": ville,
+            "nombre_secteurs": len(secteurs),
+            "nombre_fi": len(fis),
+            "nombre_membres": len(membres),
+            "fidelisation": round(fidelisation, 2)
+        })
+    
+    return {
+        "stats_by_city": stats_by_city
+    }
+
 # ==================== ROOT ====================
 
 @api_router.get("/")
