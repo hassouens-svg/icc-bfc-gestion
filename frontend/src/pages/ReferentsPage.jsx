@@ -12,10 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Plus, UserPlus, Settings, Trash2, Ban, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-const Responsable de promossPage = () => {
+const ReferentsPage = () => {
   const navigate = useNavigate();
   const user = getUser();
-  const [referents, setResponsable de promoss] = useState([]);
+  const [referents, setReferents] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
