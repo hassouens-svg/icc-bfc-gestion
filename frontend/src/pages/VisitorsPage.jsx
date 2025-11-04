@@ -87,7 +87,7 @@ const VisitorsPage = () => {
       setVisitors(data);
       // Don't set filteredVisitors here, let useEffect handle it
     } catch (error) {
-      toast.error('Erreur lors du chargement des visiteurs');
+      toast.error('Erreur lors du chargement des nouveaux arrivants et nouveaux convertiss');
     } finally {
       setLoading(false);
     }
@@ -158,7 +158,7 @@ const VisitorsPage = () => {
       <Layout>
         <div className="space-y-6">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Liste des visiteurs</h2>
+            <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Liste des nouveaux arrivants et nouveaux convertiss</h2>
             <p className="text-gray-500 mt-1">Accueil et Intégration - Consultation uniquement</p>
           </div>
 
@@ -211,7 +211,7 @@ const VisitorsPage = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Visiteurs ({filteredVisitors.length})</CardTitle>
+              <CardTitle>Nouveaux Arrivants ({filteredVisitors.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -227,7 +227,7 @@ const VisitorsPage = () => {
                   <tbody>
                     {filteredVisitors.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="text-center text-gray-500 py-8">Aucun visiteur trouvé</td>
+                        <td colSpan="4" className="text-center text-gray-500 py-8">Aucun nouveaux arrivants et nouveaux convertis trouvé</td>
                       </tr>
                     ) : (
                       filteredVisitors.map((visitor) => (
@@ -262,8 +262,8 @@ const VisitorsPage = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Visiteurs</h2>
-            <p className="text-gray-500 mt-1">Gérez vos visiteurs</p>
+            <h2 className="text-3xl font-bold text-gray-900" data-testid="visitors-title">Nouveaux Arrivants</h2>
+            <p className="text-gray-500 mt-1">Gérez vos nouveaux arrivants et nouveaux convertiss</p>
           </div>
           {(user?.role !== 'accueil') && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -275,7 +275,7 @@ const VisitorsPage = () => {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Ajouter un nouveau visiteur</DialogTitle>
+                  <DialogTitle>Ajouter un nouveau nouveaux arrivants et nouveaux convertis</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreateVisitor} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -300,7 +300,7 @@ const VisitorsPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Type de visiteur *</Label>
+                    <Label>Type de nouveaux arrivants et nouveaux convertis *</Label>
                     <div className="space-y-2">
                       {visitorTypes.map((type) => (
                         <div key={type} className="flex items-center space-x-2">
@@ -375,7 +375,7 @@ const VisitorsPage = () => {
                   </div>
 
                   <Button type="submit" className="w-full" data-testid="submit-new-visitor">
-                    Créer le visiteur
+                    Créer le nouveaux arrivants et nouveaux convertis
                   </Button>
                 </form>
               </DialogContent>
@@ -398,12 +398,12 @@ const VisitorsPage = () => {
         {/* Visitors List */}
         <Card>
           <CardHeader>
-            <CardTitle>Liste des visiteurs ({filteredVisitors.length})</CardTitle>
+            <CardTitle>Liste des nouveaux arrivants et nouveaux convertiss ({filteredVisitors.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {filteredVisitors.length === 0 ? (
-                <p className="text-center text-gray-500 py-8" data-testid="no-visitors">Aucun visiteur trouvé</p>
+                <p className="text-center text-gray-500 py-8" data-testid="no-visitors">Aucun nouveaux arrivants et nouveaux convertis trouvé</p>
               ) : (
                 filteredVisitors.map((visitor) => (
                   <div

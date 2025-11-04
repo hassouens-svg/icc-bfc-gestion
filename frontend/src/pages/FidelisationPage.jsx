@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getReferentFidelisation, getAdminFidelisation, getUser } from '../utils/api';
+import { getResponsable de promosFidelisation, getAdminFidelisation, getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
@@ -29,7 +29,7 @@ const FidelisationPage = () => {
   const loadData = async () => {
     try {
       if (user.role === 'referent') {
-        const result = await getReferentFidelisation();
+        const result = await getResponsable de promosFidelisation();
         setData(result);
       } else if (user.role === 'admin' || user.role === 'promotions') {
         const result = await getAdminFidelisation();
@@ -80,7 +80,7 @@ const FidelisationPage = () => {
     );
   }
 
-  // Referent View
+  // Responsable de promos View
   if (user.role === 'referent' && data) {
     return (
       <Layout>
@@ -96,7 +96,7 @@ const FidelisationPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Visiteurs</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Nouveaux Arrivants</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -184,7 +184,7 @@ const FidelisationPage = () => {
         <div className="space-y-6">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Taux de Fidélisation - Vue Globale</h2>
-            <p className="text-gray-500 mt-1">Tous les référents de {user.city}</p>
+            <p className="text-gray-500 mt-1">Tous les responsable de promoss de {user.city}</p>
           </div>
 
           {/* Filters */}
@@ -233,7 +233,7 @@ const FidelisationPage = () => {
             </CardContent>
           </Card>
 
-          {/* Referents List */}
+          {/* Responsable de promoss List */}
           {adminData.length === 0 ? (
             <Card>
               <CardContent className="py-8">
@@ -260,7 +260,7 @@ const FidelisationPage = () => {
                     <div className="mb-4">
                       <p className="text-sm text-gray-600">
                         <Users className="inline h-4 w-4 mr-1" />
-                        {ref.total_visitors} visiteurs assignés
+                        {ref.total_visitors} nouveaux arrivants et nouveaux convertiss assignés
                       </p>
                     </div>
                     

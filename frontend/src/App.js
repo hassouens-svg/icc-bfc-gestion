@@ -8,7 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import VisitorsPage from './pages/VisitorsPage';
 import VisitorsTablePage from './pages/VisitorsTablePage';
 import VisitorDetailPage from './pages/VisitorDetailPage';
-import ReferentsPage from './pages/ReferentsPage';
+import Responsable de promossPage from './pages/Responsable de promossPage';
 import CitiesPage from './pages/CitiesPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
@@ -26,7 +26,7 @@ function App() {
           <Route path="/visitors" element={<VisitorsPage />} />
           <Route path="/visitors-table" element={<VisitorsTablePage />} />
           <Route path="/visitor/:id" element={<VisitorDetailPage />} />
-          <Route path="/referents" element={<ReferentsPage />} />
+          <Route path="/referents" element={<Responsable de promossPage />} />
           <Route path="/cities" element={<CitiesPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/stopped-visitors" element={<StoppedVisitorsPage />} />

@@ -64,9 +64,9 @@ const StoppedVisitorsPage = () => {
         {/* Header */}
         <div>
           <h2 className="text-3xl font-bold text-gray-900" data-testid="stopped-visitors-title">
-            Visiteurs - Suivi Arrêté
+            Nouveaux Arrivants - Suivi Arrêté
           </h2>
-          <p className="text-gray-500 mt-1">Liste des visiteurs dont le suivi a été arrêté</p>
+          <p className="text-gray-500 mt-1">Liste des nouveaux arrivants et nouveaux convertiss dont le suivi a été arrêté</p>
         </div>
 
         {/* Search */}
@@ -86,14 +86,14 @@ const StoppedVisitorsPage = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <UserX className="h-5 w-5 mr-2" />
-              Visiteurs ({filteredVisitors.length})
+              Nouveaux Arrivants ({filteredVisitors.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {filteredVisitors.length === 0 ? (
                 <p className="text-center text-gray-500 py-8" data-testid="no-stopped-visitors">
-                  Aucun visiteur avec suivi arrêté
+                  Aucun nouveaux arrivants et nouveaux convertis avec suivi arrêté
                 </p>
               ) : (
                 filteredVisitors.map((visitor) => (

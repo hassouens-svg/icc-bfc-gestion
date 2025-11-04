@@ -80,12 +80,12 @@ export const initData = async () => {
 };
 
 // User APIs
-export const createReferent = async (data) => {
+export const createResponsable de promos = async (data) => {
   const response = await apiClient.post('/users/referent', data);
   return response.data;
 };
 
-export const getReferents = async () => {
+export const getResponsable de promoss = async () => {
   const response = await apiClient.get('/users/referents');
   return response.data;
 };
@@ -212,7 +212,7 @@ export const exportExcel = async () => {
   const url = window.URL.createObjectURL(new Blob([response.data]));
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', `visiteurs_${new Date().toISOString().split('T')[0]}.xlsx`);
+  link.setAttribute('download', `nouveaux arrivants et nouveaux convertiss_${new Date().toISOString().split('T')[0]}.xlsx`);
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -221,7 +221,7 @@ export const exportExcel = async () => {
 };
 
 // Fidelisation APIs
-export const getReferentFidelisation = async () => {
+export const getResponsable de promosFidelisation = async () => {
   const response = await apiClient.get('/fidelisation/referent');
   return response.data;
 };

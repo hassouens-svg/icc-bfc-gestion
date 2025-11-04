@@ -151,7 +151,7 @@ const LoginPage = () => {
                 className="text-sm text-indigo-600 hover:underline block"
                 data-testid="register-link"
               >
-                Nouveau visiteur? S'inscrire ici
+                Nouveau nouveaux arrivants et nouveaux convertis? S'inscrire ici
               </a>
             </div>
           </form>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getReferents, getUser, createReferent, getCities, updateUser, deleteUser, blockUser, unblockUser } from '../utils/api';
+import { getResponsable de promoss, getUser, createResponsable de promos, getCities, updateUser, deleteUser, blockUser, unblockUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -12,17 +12,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Plus, UserPlus, Settings, Trash2, Ban, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-const ReferentsPage = () => {
+const Responsable de promossPage = () => {
   const navigate = useNavigate();
   const user = getUser();
-  const [referents, setReferents] = useState([]);
+  const [referents, setResponsable de promoss] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedReferent, setSelectedReferent] = useState(null);
-  const [newReferent, setNewReferent] = useState({
+  const [selectedResponsable de promos, setSelectedResponsable de promos] = useState(null);
+  const [newResponsable de promos, setNewResponsable de promos] = useState({
     username: '',
     password: '',
     city: '',
@@ -35,7 +35,7 @@ const ReferentsPage = () => {
       navigate('/dashboard');
       return;
     }
-    loadReferents();
+    loadResponsable de promoss();
     loadCities();
   }, [user, navigate]);
 
@@ -48,49 +48,49 @@ const ReferentsPage = () => {
     }
   };
 
-  const loadReferents = async () => {
+  const loadResponsable de promoss = async () => {
     try {
-      const data = await getReferents();
-      setReferents(data);
+      const data = await getResponsable de promoss();
+      setResponsable de promoss(data);
     } catch (error) {
-      toast.error('Erreur lors du chargement des référents');
+      toast.error('Erreur lors du chargement des responsable de promoss');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateReferent = async (e) => {
+  const handleCreateResponsable de promos = async (e) => {
     e.preventDefault();
     
-    if (!newReferent.username || !newReferent.password || !newReferent.role || !newReferent.city) {
+    if (!newResponsable de promos.username || !newResponsable de promos.password || !newResponsable de promos.role || !newResponsable de promos.city) {
       toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
 
-    if (newReferent.role === 'referent' && !newReferent.assigned_month) {
-      toast.error('Veuillez sélectionner un mois pour le référent');
+    if (newResponsable de promos.role === 'referent' && !newResponsable de promos.assigned_month) {
+      toast.error('Veuillez sélectionner un mois pour le responsable de promos');
       return;
     }
 
     try {
-      await createReferent(newReferent);
-      toast.success('Référent créé avec succès!');
+      await createResponsable de promos(newResponsable de promos);
+      toast.success('Responsable de promos créé avec succès!');
       setIsDialogOpen(false);
-      setNewReferent({
+      setNewResponsable de promos({
         username: '',
         password: '',
         city: '',
         role: 'referent',
         assigned_month: '',
       });
-      loadReferents();
+      loadResponsable de promoss();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la création');
     }
   };
 
-  const handleManageReferent = (referent) => {
-    setSelectedReferent({
+  const handleManageResponsable de promos = (referent) => {
+    setSelectedResponsable de promos({
       ...referent,
       permissions: referent.permissions || {
         can_view_all_months: false,
@@ -104,58 +104,58 @@ const ReferentsPage = () => {
     setIsManageDialogOpen(true);
   };
 
-  const handleUpdateReferent = async (e) => {
+  const handleUpdateResponsable de promos = async (e) => {
     e.preventDefault();
     
     try {
       const updateData = {
-        username: selectedReferent.username,
-        assigned_month: selectedReferent.assigned_month,
-        permissions: selectedReferent.permissions
+        username: selectedResponsable de promos.username,
+        assigned_month: selectedResponsable de promos.assigned_month,
+        permissions: selectedResponsable de promos.permissions
       };
       
-      await updateUser(selectedReferent.id, updateData);
-      toast.success('Référent mis à jour avec succès!');
+      await updateUser(selectedResponsable de promos.id, updateData);
+      toast.success('Responsable de promos mis à jour avec succès!');
       setIsManageDialogOpen(false);
-      loadReferents();
+      loadResponsable de promoss();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la mise à jour');
     }
   };
 
   const togglePermission = (permission) => {
-    setSelectedReferent({
-      ...selectedReferent,
+    setSelectedResponsable de promos({
+      ...selectedResponsable de promos,
       permissions: {
-        ...selectedReferent.permissions,
-        [permission]: !selectedReferent.permissions[permission]
+        ...selectedResponsable de promos.permissions,
+        [permission]: !selectedResponsable de promos.permissions[permission]
       }
     });
   };
 
-  const handleDeleteReferent = async () => {
+  const handleDeleteResponsable de promos = async () => {
     try {
-      await deleteUser(selectedReferent.id);
+      await deleteUser(selectedResponsable de promos.id);
       toast.success('Utilisateur supprimé avec succès!');
       setIsDeleteDialogOpen(false);
       setIsManageDialogOpen(false);
-      loadReferents();
+      loadResponsable de promoss();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
     }
   };
 
-  const handleBlockReferent = async () => {
+  const handleBlockResponsable de promos = async () => {
     try {
-      if (selectedReferent.is_blocked) {
-        await unblockUser(selectedReferent.id);
+      if (selectedResponsable de promos.is_blocked) {
+        await unblockUser(selectedResponsable de promos.id);
         toast.success('Utilisateur débloqué avec succès!');
       } else {
-        await blockUser(selectedReferent.id);
+        await blockUser(selectedResponsable de promos.id);
         toast.success('Utilisateur bloqué avec succès!');
       }
       setIsManageDialogOpen(false);
-      loadReferents();
+      loadResponsable de promoss();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors du blocage/déblocage');
     }
@@ -190,26 +190,26 @@ const ReferentsPage = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900" data-testid="referents-title">Référents</h2>
-            <p className="text-gray-500 mt-1">Gérez vos référents et membres de l'équipe</p>
+            <h2 className="text-3xl font-bold text-gray-900" data-testid="referents-title">Responsable de promoss</h2>
+            <p className="text-gray-500 mt-1">Gérez vos responsable de promoss et membres de l'équipe</p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button data-testid="add-referent-button">
                 <Plus className="h-4 w-4 mr-2" />
-                Nouveau Référent
+                Nouveau Responsable de promos
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Créer un nouveau référent</DialogTitle>
+                <DialogTitle>Créer un nouveau responsable de promos</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleCreateReferent} className="space-y-4">
+              <form onSubmit={handleCreateResponsable de promos} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">Ville ICC *</Label>
                   <Select 
-                    value={newReferent.city} 
-                    onValueChange={(value) => setNewReferent({...newReferent, city: value})}
+                    value={newResponsable de promos.city} 
+                    onValueChange={(value) => setNewResponsable de promos({...newResponsable de promos, city: value})}
                   >
                     <SelectTrigger data-testid="referent-city-select">
                       <SelectValue placeholder="Sélectionnez une ville" />
@@ -228,8 +228,8 @@ const ReferentsPage = () => {
                   <Label htmlFor="username">Nom d'utilisateur *</Label>
                   <Input
                     id="username"
-                    value={newReferent.username}
-                    onChange={(e) => setNewReferent({...newReferent, username: e.target.value})}
+                    value={newResponsable de promos.username}
+                    onChange={(e) => setNewResponsable de promos({...newResponsable de promos, username: e.target.value})}
                     placeholder="ex: referent_janvier"
                     data-testid="referent-username-input"
                   />
@@ -240,8 +240,8 @@ const ReferentsPage = () => {
                   <Input
                     id="password"
                     type="password"
-                    value={newReferent.password}
-                    onChange={(e) => setNewReferent({...newReferent, password: e.target.value})}
+                    value={newResponsable de promos.password}
+                    onChange={(e) => setNewResponsable de promos({...newResponsable de promos, password: e.target.value})}
                     placeholder="Choisissez un mot de passe"
                     data-testid="referent-password-input"
                   />
@@ -250,26 +250,26 @@ const ReferentsPage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="role">Rôle *</Label>
                   <Select 
-                    value={newReferent.role} 
-                    onValueChange={(value) => setNewReferent({...newReferent, role: value, assigned_month: value !== 'referent' ? '' : newReferent.assigned_month})}
+                    value={newResponsable de promos.role} 
+                    onValueChange={(value) => setNewResponsable de promos({...newResponsable de promos, role: value, assigned_month: value !== 'referent' ? '' : newResponsable de promos.assigned_month})}
                   >
                     <SelectTrigger data-testid="referent-role-select">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="referent">Référent (mois spécifique)</SelectItem>
+                      <SelectItem value="referent">Responsable de promos (mois spécifique)</SelectItem>
                       <SelectItem value="accueil">Accueil et Intégration</SelectItem>
                       <SelectItem value="promotions">Promotions</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {newReferent.role === 'referent' && (
+                {newResponsable de promos.role === 'referent' && (
                   <div className="space-y-2">
                     <Label htmlFor="assigned_month">Mois assigné *</Label>
                     <Select 
-                      value={newReferent.assigned_month} 
-                      onValueChange={(value) => setNewReferent({...newReferent, assigned_month: value})}
+                      value={newResponsable de promos.assigned_month} 
+                      onValueChange={(value) => setNewResponsable de promos({...newResponsable de promos, assigned_month: value})}
                     >
                       <SelectTrigger data-testid="referent-month-select">
                         <SelectValue placeholder="Sélectionnez un mois" />
@@ -286,22 +286,22 @@ const ReferentsPage = () => {
                 )}
 
                 <Button type="submit" className="w-full" data-testid="submit-referent">
-                  Créer le référent
+                  Créer le responsable de promos
                 </Button>
               </form>
             </DialogContent>
           </Dialog>
         </div>
 
-        {/* Referents List */}
+        {/* Responsable de promoss List */}
         <Card>
           <CardHeader>
-            <CardTitle>Liste des référents ({referents.length})</CardTitle>
+            <CardTitle>Liste des responsable de promoss ({referents.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {referents.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">Aucun référent</p>
+                <p className="text-center text-gray-500 py-8">Aucun responsable de promos</p>
               ) : (
                 referents.map((referent) => (
                   <div
@@ -314,7 +314,7 @@ const ReferentsPage = () => {
                       <div>
                         <p className="font-medium">{referent.username}</p>
                         <p className="text-sm text-gray-500">
-                          {referent.role === 'referent' ? 'Référent' : 
+                          {referent.role === 'referent' ? 'Responsable de promos' : 
                            referent.role === 'accueil' ? 'Accueil et Intégration' : 
                            'Promotions'}
                           {referent.assigned_month && ` - ${referent.assigned_month}`}
@@ -327,7 +327,7 @@ const ReferentsPage = () => {
                       </div>
                       {referent.role === 'referent' && (
                         <Button 
-                          onClick={() => handleManageReferent(referent)}
+                          onClick={() => handleManageResponsable de promos(referent)}
                           variant="outline"
                           size="sm"
                         >
@@ -347,17 +347,17 @@ const ReferentsPage = () => {
         <Dialog open={isManageDialogOpen} onOpenChange={setIsManageDialogOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Gérer le référent - {selectedReferent?.username}</DialogTitle>
+              <DialogTitle>Gérer le responsable de promos - {selectedResponsable de promos?.username}</DialogTitle>
             </DialogHeader>
-            {selectedReferent && (
-              <form onSubmit={handleUpdateReferent} className="space-y-6">
+            {selectedResponsable de promos && (
+              <form onSubmit={handleUpdateResponsable de promos} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="manage-username">Nom d'utilisateur</Label>
                     <Input
                       id="manage-username"
-                      value={selectedReferent.username}
-                      onChange={(e) => setSelectedReferent({...selectedReferent, username: e.target.value})}
+                      value={selectedResponsable de promos.username}
+                      onChange={(e) => setSelectedResponsable de promos({...selectedResponsable de promos, username: e.target.value})}
                       placeholder="Nom d'utilisateur"
                     />
                   </div>
@@ -365,8 +365,8 @@ const ReferentsPage = () => {
                   <div className="space-y-2">
                     <Label htmlFor="manage-month">Mois assigné</Label>
                     <Select 
-                      value={selectedReferent.assigned_month || ''} 
-                      onValueChange={(value) => setSelectedReferent({...selectedReferent, assigned_month: value})}
+                      value={selectedResponsable de promos.assigned_month || ''} 
+                      onValueChange={(value) => setSelectedResponsable de promos({...selectedResponsable de promos, assigned_month: value})}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Sélectionnez un mois" />
@@ -392,7 +392,7 @@ const ReferentsPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedReferent.permissions?.can_view_all_months || false}
+                        checked={selectedResponsable de promos.permissions?.can_view_all_months || false}
                         onChange={() => togglePermission('can_view_all_months')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -400,12 +400,12 @@ const ReferentsPage = () => {
 
                     <div className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
-                        <p className="font-medium">Modifier les visiteurs</p>
-                        <p className="text-sm text-gray-500">Éditer les informations des visiteurs</p>
+                        <p className="font-medium">Modifier les nouveaux arrivants et nouveaux convertiss</p>
+                        <p className="text-sm text-gray-500">Éditer les informations des nouveaux arrivants et nouveaux convertiss</p>
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedReferent.permissions?.can_edit_visitors || false}
+                        checked={selectedResponsable de promos.permissions?.can_edit_visitors || false}
                         onChange={() => togglePermission('can_edit_visitors')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -414,11 +414,11 @@ const ReferentsPage = () => {
                     <div className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
                         <p className="font-medium">Arrêter le suivi</p>
-                        <p className="text-sm text-gray-500">Marquer les visiteurs comme arrêtés</p>
+                        <p className="text-sm text-gray-500">Marquer les nouveaux arrivants et nouveaux convertiss comme arrêtés</p>
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedReferent.permissions?.can_stop_tracking || false}
+                        checked={selectedResponsable de promos.permissions?.can_stop_tracking || false}
                         onChange={() => togglePermission('can_stop_tracking')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -427,11 +427,11 @@ const ReferentsPage = () => {
                     <div className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
                         <p className="font-medium">Ajouter des commentaires</p>
-                        <p className="text-sm text-gray-500">Commenter les fiches visiteurs</p>
+                        <p className="text-sm text-gray-500">Commenter les fiches nouveaux arrivants et nouveaux convertiss</p>
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedReferent.permissions?.can_add_comments || false}
+                        checked={selectedResponsable de promos.permissions?.can_add_comments || false}
                         onChange={() => togglePermission('can_add_comments')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -444,7 +444,7 @@ const ReferentsPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedReferent.permissions?.can_mark_presence || false}
+                        checked={selectedResponsable de promos.permissions?.can_mark_presence || false}
                         onChange={() => togglePermission('can_mark_presence')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -457,7 +457,7 @@ const ReferentsPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedReferent.permissions?.can_view_analytics || false}
+                        checked={selectedResponsable de promos.permissions?.can_view_analytics || false}
                         onChange={() => togglePermission('can_view_analytics')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -482,10 +482,10 @@ const ReferentsPage = () => {
                     {user.city === 'Dijon' && (
                       <Button 
                         type="button"
-                        variant={selectedReferent.is_blocked ? "default" : "outline"}
-                        onClick={handleBlockReferent}
+                        variant={selectedResponsable de promos.is_blocked ? "default" : "outline"}
+                        onClick={handleBlockResponsable de promos}
                       >
-                        {selectedReferent.is_blocked ? (
+                        {selectedResponsable de promos.is_blocked ? (
                           <>
                             <CheckCircle className="h-4 w-4 mr-2" />
                             Débloquer
@@ -524,13 +524,13 @@ const ReferentsPage = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
               <AlertDialogDescription>
-                Êtes-vous sûr de vouloir supprimer {selectedReferent?.username} ?
+                Êtes-vous sûr de vouloir supprimer {selectedResponsable de promos?.username} ?
                 Cette action est irréversible.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteReferent} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDeleteResponsable de promos} className="bg-red-600 hover:bg-red-700">
                 Supprimer
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -541,4 +541,4 @@ const ReferentsPage = () => {
   );
 };
 
-export default ReferentsPage;
+export default Responsable de promossPage;

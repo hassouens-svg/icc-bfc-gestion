@@ -262,7 +262,7 @@ const CitiesPage = () => {
               <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
               <AlertDialogDescription>
                 Cette action supprimera définitivement la ville "{selectedCity?.name}".
-                Cette opération ne peut pas être annulée et échouera si la ville contient des utilisateurs ou visiteurs.
+                Cette opération ne peut pas être annulée et échouera si la ville contient des utilisateurs ou nouveaux arrivants et nouveaux convertiss.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -289,7 +289,7 @@ const CitiesPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-sm">Total Référents</CardTitle>
+                      <CardTitle className="text-sm">Total Responsable de promoss</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-3xl font-bold">{cityStats.total_referents}</p>
@@ -298,7 +298,7 @@ const CitiesPage = () => {
                   
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-sm">Total Visiteurs</CardTitle>
+                      <CardTitle className="text-sm">Total Nouveaux Arrivants</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-3xl font-bold">
@@ -309,9 +309,9 @@ const CitiesPage = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-lg">Statistiques par Référent</h4>
+                  <h4 className="font-semibold text-lg">Statistiques par Responsable de promos</h4>
                   {cityStats.referent_stats.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4">Aucun référent avec des données</p>
+                    <p className="text-gray-500 text-center py-4">Aucun responsable de promos avec des données</p>
                   ) : (
                     cityStats.referent_stats.map((ref) => (
                       <Card key={ref.referent_id}>

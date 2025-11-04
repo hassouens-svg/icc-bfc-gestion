@@ -15,10 +15,10 @@ const Layout = ({ children }) => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'referent', 'promotions'] },
-    { path: '/visitors', label: 'Visiteurs', icon: Users, roles: ['admin', 'referent', 'accueil', 'promotions'] },
+    { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['admin', 'referent', 'accueil', 'promotions'] },
     { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['admin', 'referent', 'promotions'] },
     { path: '/fidelisation', label: 'Fidélisation', icon: TrendingUp, roles: ['admin', 'referent', 'promotions'] },
-    { path: '/referents', label: 'Référents', icon: UserPlus, roles: ['admin', 'promotions'] },
+    { path: '/referents', label: 'Responsable de promoss', icon: UserPlus, roles: ['admin', 'promotions'] },
     { path: '/cities', label: 'Villes', icon: MapPin, roles: ['admin', 'promotions'] },
     { path: '/analytics', label: 'Analytics', icon: BarChart3, roles: ['admin', 'promotions'] },
     { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['admin', 'promotions'] },
@@ -38,7 +38,7 @@ const Layout = ({ children }) => {
             <p className="text-sm text-gray-500">
               {user?.username} ({user?.role === 'admin' ? 'Administrateur' : 
                 user?.role === 'accueil' ? 'Accueil et Intégration' :
-                user?.role === 'promotions' ? 'Promotions' : 'Référent'})
+                user?.role === 'promotions' ? 'Promotions' : 'Responsable de promos'})
             </p>
           </div>
           <Button onClick={handleLogout} variant="outline" data-testid="logout-button">

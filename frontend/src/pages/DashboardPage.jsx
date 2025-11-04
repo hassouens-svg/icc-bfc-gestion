@@ -73,20 +73,20 @@ const DashboardPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Visiteurs</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Nouveaux Arrivants</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold" data-testid="total-visitors">
                 {stats?.total_visitors || 0}
               </div>
-              <p className="text-xs text-muted-foreground">Visiteurs actifs</p>
+              <p className="text-xs text-muted-foreground">Nouveaux Arrivants actifs</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Référents</CardTitle>
+              <CardTitle className="text-sm font-medium">Responsable de promoss</CardTitle>
               <UserPlus className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -125,7 +125,7 @@ const DashboardPage = () => {
                 data-testid="quick-action-visitors"
               >
                 <Users className="h-6 w-6 mr-2" />
-                Voir les visiteurs
+                Voir les nouveaux arrivants et nouveaux convertiss
               </Button>
               {(user?.role === 'admin' || user?.role === 'promotions') && (
                 <>
@@ -136,7 +136,7 @@ const DashboardPage = () => {
                     data-testid="quick-action-referents"
                   >
                     <UserPlus className="h-6 w-6 mr-2" />
-                    Gérer les référents
+                    Gérer les responsable de promoss
                   </Button>
                   <Button 
                     variant="outline" 
@@ -157,14 +157,14 @@ const DashboardPage = () => {
         {stats?.by_month && stats.by_month.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Visiteurs par mois</CardTitle>
+              <CardTitle>Nouveaux Arrivants par mois</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {stats.by_month.slice(-6).reverse().map((item) => (
                   <div key={item._id} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
                     <span className="font-medium">{item._id}</span>
-                    <span className="text-gray-600">{item.count} visiteurs</span>
+                    <span className="text-gray-600">{item.count} nouveaux arrivants et nouveaux convertiss</span>
                   </div>
                 ))}
               </div>
@@ -176,14 +176,14 @@ const DashboardPage = () => {
         {stats?.by_type && stats.by_type.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Par type de visiteur</CardTitle>
+              <CardTitle>Par type de nouveaux arrivants et nouveaux convertis</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {stats.by_type.map((item) => (
                   <div key={item._id} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
                     <span className="font-medium">{item._id}</span>
-                    <span className="text-gray-600">{item.count} visiteurs</span>
+                    <span className="text-gray-600">{item.count} nouveaux arrivants et nouveaux convertiss</span>
                   </div>
                 ))}
               </div>

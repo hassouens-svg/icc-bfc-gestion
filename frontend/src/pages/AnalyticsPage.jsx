@@ -46,7 +46,7 @@ const AnalyticsPage = () => {
 
   const monthData = stats?.by_month?.map(item => ({
     month: item._id,
-    visiteurs: item.count
+    nouveaux arrivants et nouveaux convertiss: item.count
   })) || [];
 
   const channelData = stats?.by_channel?.map(item => ({
@@ -72,7 +72,7 @@ const AnalyticsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-medium">Total Visiteurs</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Nouveaux Arrivants</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-indigo-600" data-testid="analytics-total-visitors">
@@ -110,7 +110,7 @@ const AnalyticsPage = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <TrendingUp className="h-5 w-5 mr-2" />
-                Visiteurs par mois
+                Nouveaux Arrivants par mois
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -121,7 +121,7 @@ const AnalyticsPage = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="visiteurs" fill="#6366f1" />
+                  <Bar dataKey="nouveaux arrivants et nouveaux convertiss" fill="#6366f1" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -204,7 +204,7 @@ const AnalyticsPage = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="visiteurs" stroke="#6366f1" strokeWidth={2} />
+                  <Line type="monotone" dataKey="nouveaux arrivants et nouveaux convertiss" stroke="#6366f1" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>

@@ -45,7 +45,7 @@ const HomePage = () => {
     {
       id: 'promotions',
       title: 'Promotions',
-      description: 'Suivi complet des visiteurs avec les référents',
+      description: 'Suivi complet des nouveaux arrivants et nouveaux convertiss avec les responsable de promoss',
       icon: TrendingUp,
       color: 'from-purple-400 to-purple-600'
     }
@@ -144,7 +144,7 @@ const HomePage = () => {
 
         {/* Footer Links */}
         <div className="mt-16 text-center animate-fade-in" style={{animationDelay: '0.4s'}}>
-          <p className="text-white/90 mb-3 text-lg">Nouveau visiteur?</p>
+          <p className="text-white/90 mb-3 text-lg">Nouveau nouveaux arrivants et nouveaux convertis?</p>
           <Button
             variant="outline"
             className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-xl px-8 py-6 text-lg font-medium shadow-lg"

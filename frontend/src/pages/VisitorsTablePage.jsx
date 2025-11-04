@@ -49,7 +49,7 @@ const VisitorsTablePage = () => {
       const data = await getVisitors(includeStopped);
       setVisitors(data);
     } catch (error) {
-      toast.error('Erreur lors du chargement des visiteurs');
+      toast.error('Erreur lors du chargement des nouveaux arrivants et nouveaux convertiss');
     } finally {
       setLoading(false);
     }
@@ -148,9 +148,9 @@ const VisitorsTablePage = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Visiteurs - Vue Tableau</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Nouveaux Arrivants - Vue Tableau</h2>
             <p className="text-gray-500 mt-1">
-              {filteredVisitors.length} visiteur(s) 
+              {filteredVisitors.length} nouveaux arrivants et nouveaux convertis(s) 
               {user.role === 'referent' && ` - Mois: ${user.assigned_month}`}
             </p>
           </div>
@@ -289,7 +289,7 @@ const VisitorsTablePage = () => {
                   {filteredVisitors.length === 0 ? (
                     <tr>
                       <td colSpan="8" className="px-4 py-8 text-center text-gray-500">
-                        Aucun visiteur trouvé
+                        Aucun nouveaux arrivants et nouveaux convertis trouvé
                       </td>
                     </tr>
                   ) : (

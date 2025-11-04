@@ -93,7 +93,7 @@ const RegisterPage = () => {
           </div>
           <CardTitle className="text-3xl font-bold text-teal-600">Bienvenue à ICC!</CardTitle>
           <CardDescription>Département de l'accueil, de l'intégration et des promotions</CardDescription>
-          <CardDescription className="text-xs mt-1">Formulaire d'inscription pour nouveaux visiteurs</CardDescription>
+          <CardDescription className="text-xs mt-1">Formulaire d'inscription pour nouveaux nouveaux arrivants et nouveaux convertiss</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -138,7 +138,7 @@ const RegisterPage = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Type de visiteur *</Label>
+              <Label>Type de nouveaux arrivants et nouveaux convertis *</Label>
               <div className="space-y-2">
                 {visitorTypes.map((type) => (
                   <div key={type} className="flex items-center space-x-2">

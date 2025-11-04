@@ -43,7 +43,7 @@ const VisitorDetailPage = () => {
       const data = await getVisitor(id);
       setVisitor(data);
     } catch (error) {
-      toast.error('Erreur lors du chargement du visiteur');
+      toast.error('Erreur lors du chargement du nouveaux arrivants et nouveaux convertis');
       navigate('/visitors');
     } finally {
       setLoading(false);
@@ -141,7 +141,7 @@ const VisitorDetailPage = () => {
               <h2 className="text-3xl font-bold text-gray-900" data-testid="visitor-name">
                 {visitor.firstname} {visitor.lastname}
               </h2>
-              <p className="text-gray-500 mt-1">Détails et suivi du visiteur</p>
+              <p className="text-gray-500 mt-1">Détails et suivi du nouveaux arrivants et nouveaux convertis</p>
             </div>
           </div>
           <Button
@@ -405,7 +405,7 @@ const VisitorDetailPage = () => {
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-gray-500">
-              Veuillez indiquer la raison pour laquelle vous souhaitez arrêter le suivi de ce visiteur.
+              Veuillez indiquer la raison pour laquelle vous souhaitez arrêter le suivi de ce nouveaux arrivants et nouveaux convertis.
             </p>
             <Textarea
               placeholder="Raison de l'arrêt du suivi..."
