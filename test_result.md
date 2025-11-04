@@ -103,9 +103,10 @@
 #====================================================================================================
 
 user_problem_statement: |
-  User reported two critical bugs after deployment:
-  1. Fidélisation page does not display any data
-  2. Referent accounts are seeing all admin data instead of only their assigned month's visitors
+  User reported critical bugs after deployment:
+  1. Fidélisation page does not display any data (RESOLVED)
+  2. Referent accounts are seeing all admin data instead of only their assigned month's visitors (RESOLVED)
+  3. Visitor registration form shows blank page after submission instead of success confirmation (NEW ISSUE)
   
   The application is a full-stack church visitor management system with role-based access control.
 
