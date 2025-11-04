@@ -36,9 +36,15 @@ const HomePage = () => {
       return;
     }
 
-    // Store the selected department in sessionStorage
-    sessionStorage.setItem('selectedDepartment', deptId);
-    sessionStorage.setItem('selectedCity', selectedCity);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Veuillez vous connecter');
+      navigate('/login');
+      return;
+    }
+
+    // Store the selected role in localStorage
+    localStorage.setItem('selected_role', deptId);
     
     // Navigate based on department
     if (deptId === 'accueil') {
@@ -47,8 +53,6 @@ const HomePage = () => {
       navigate('/dashboard');
     } else if (deptId === 'familles-impact') {
       navigate('/familles-impact');
-    } else {
-      navigate('/login');
     }
   };
 
