@@ -32,7 +32,7 @@ const HomePage = () => {
     }
 
     if (!selectedCity) {
-      alert('Veuillez sélectionner une ville');
+      toast.error('Veuillez sélectionner une ville d\'abord');
       return;
     }
 
