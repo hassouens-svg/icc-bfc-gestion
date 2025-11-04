@@ -168,6 +168,21 @@ backend:
         comment: "✅ VERIFIED: Fidelisation endpoints working correctly. Tested: (1) GET /api/fidelisation/referent with referent role returns proper data (total_visitors, weekly_rates, monthly_average), (2) GET /api/fidelisation/admin with promotions role returns array of referent data, (3) Permission boundaries work - referent role gets 403 when accessing admin endpoint. Role checks at lines 596 and 654 working properly with JWT roles."
 
 frontend:
+  - task: "Frontend compilation - Fix invalid JavaScript identifiers"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/ReferentsPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Frontend failing to compile with SyntaxError due to invalid function names with spaces (e.g., 'handleUpdateResponsable de promos' at line 107 in ReferentsPage.jsx)"
+      - working: true
+        agent: "main"
+        comment: "Fixed all invalid JavaScript identifiers. Changed 'handleUpdateResponsable de promos' to 'handleUpdateResponsableDePromos' in ReferentsPage.jsx (lines 107 and 353). Frontend now compiles successfully without errors."
+
   - task: "Fidelisation page data display"
     implemented: true
     working: false
