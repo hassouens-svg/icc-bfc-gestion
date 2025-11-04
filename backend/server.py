@@ -166,6 +166,74 @@ class FormationUpdate(BaseModel):
 class StopTracking(BaseModel):
     reason: str
 
+# ==================== FAMILLES D'IMPACT MODELS ====================
+
+class Secteur(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nom: str
+    ville: str
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SecteurCreate(BaseModel):
+    nom: str
+    ville: str
+
+class FamilleImpact(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nom: str
+    secteur_id: str
+    ville: str
+    pilote_id: Optional[str] = None
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FamilleImpactCreate(BaseModel):
+    nom: str
+    secteur_id: str
+    ville: str
+    pilote_id: Optional[str] = None
+
+class MembreFI(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    prenom: str
+    nom: str
+    fi_id: str
+    date_ajout: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    source: str  # "manuel" or "nouveau_arrivant"
+    nouveau_arrivant_id: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class MembreFICreate(BaseModel):
+    prenom: str
+    nom: str
+    fi_id: str
+    source: str = "manuel"
+    nouveau_arrivant_id: Optional[str] = None
+
+class PresenceFI(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    membre_fi_id: str
+    date: str  # Format: "2025-01-09" (jeudi)
+    present: bool
+    commentaire: Optional[str] = None
+    marked_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PresenceFICreate(BaseModel):
+    membre_fi_id: str
+    date: str
+    present: bool
+    commentaire: Optional[str] = None
+
+class AffectationFI(BaseModel):
+    nouveau_arrivant_id: str
+    fi_id: str
+
 # ==================== AUTH HELPERS ====================
 
 def hash_password(password: str) -> str:
