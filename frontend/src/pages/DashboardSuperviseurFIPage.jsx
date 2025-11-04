@@ -57,7 +57,11 @@ const DashboardSuperviseurFIPage = () => {
       <div className="space-y-6">
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Tableau de Bord - Superviseur FI</h2>
-          <p className="text-gray-500 mt-1">{user.city}</p>
+          <p className="text-gray-500 mt-1">
+            {['super_admin', 'pasteur'].includes(user.role) && localStorage.getItem('selected_city_view') 
+              ? localStorage.getItem('selected_city_view') 
+              : user.city}
+          </p>
         </div>
 
         {/* KPIs */}
