@@ -44,7 +44,15 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     
-    if (!city || !username || !password) {
+    // Check if special access (pasteur or superadmin) - they don't need city
+    const isSpecialAccess = username === 'pasteur' || username === 'superadmin';
+    
+    if (!isSpecialAccess && !city) {
+      toast.error('Veuillez sélectionner une ville');
+      return;
+    }
+    
+    if (!username || !password) {
       toast.error('Veuillez remplir tous les champs');
       return;
     }
@@ -55,14 +63,21 @@ const LoginPage = () => {
 
     setLoading(true);
     try {
-      await login(username, password, city, departmentToUse);
+      // Use "Dijon" as default for special access users
+      const cityToUse = isSpecialAccess ? 'Dijon' : city;
+      await login(username, password, cityToUse, departmentToUse);
       toast.success('Connexion réussie!');
       
       // Clear session storage
       sessionStorage.removeItem('selectedCity');
       sessionStorage.removeItem('selectedDepartment');
       
-      navigate('/dashboard');
+      // Redirect special access users to department selection page
+      if (isSpecialAccess) {
+        navigate('/select-department');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur de connexion');
     } finally {
