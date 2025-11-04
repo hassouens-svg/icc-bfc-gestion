@@ -221,7 +221,7 @@ export const exportExcel = async () => {
 };
 
 // Fidelisation APIs
-export const getResponsable de promosFidelisation = async () => {
+export const getReferentFidelisation = async () => {
   const response = await apiClient.get('/fidelisation/referent');
   return response.data;
 };
