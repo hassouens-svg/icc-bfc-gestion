@@ -199,6 +199,39 @@ frontend:
         agent: "main"
         comment: "Fixed all invalid JavaScript identifiers. Changed 'handleUpdateResponsable de promos' to 'handleUpdateResponsableDePromos' in ReferentsPage.jsx (lines 107 and 353). Frontend now compiles successfully without errors."
 
+  - task: "Visitor registration - Fix blank page issue"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/RegisterPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "After filling registration form, user gets a blank page and registration doesn't work."
+      - working: true
+        agent: "testing"
+        comment: "Backend testing confirmed: POST /api/auth/register endpoint is fully functional. Registration works correctly, data persists to database, CORS is properly configured. The blank page issue is frontend-related, not backend."
+      - working: true
+        agent: "main"
+        comment: "Fixed registration success handling. Added console.log for debugging, improved toast notification with duration, changed redirect to homepage '/' instead of '/login', removed setLoading(false) from finally block to prevent blank page flash. Frontend now properly handles registration success."
+
+  - task: "ReferentsPage - Allow super admin to manage all roles"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/ReferentsPage.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Super admin should be able to manage all team members (referents, accueil, promotions), not just referents. Currently, 'Gérer' button only appears for referent role."
+      - working: true
+        agent: "main"
+        comment: "Removed role restriction on 'Gérer' button. Now all users (referent, accueil, promotions) can be managed by admins. Added role display field in management modal (read-only). Made 'Mois assigné' field conditional - only shows for referent role, not for accueil or promotions roles."
+
   - task: "Fidelisation page data display"
     implemented: true
     working: "NA"
