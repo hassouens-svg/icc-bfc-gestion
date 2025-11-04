@@ -13,22 +13,32 @@ const Layout = ({ children }) => {
     logout();
   };
 
+  // Déterminer le département actif depuis localStorage
+  const activeDepartment = localStorage.getItem('selected_department');
+
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['superviseur_promos', 'referent', 'promotions', 'pilote_fi', 'responsable_secteur', 'superviseur_fi', 'pasteur', 'super_admin'] },
-    { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['superviseur_promos', 'referent', 'accueil', 'promotions', 'super_admin', 'pasteur'] },
-    { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['superviseur_promos', 'referent', 'promotions', 'super_admin', 'pasteur'] },
-    { path: '/fidelisation', label: 'Fidélisation', icon: TrendingUp, roles: ['superviseur_promos', 'referent', 'promotions', 'super_admin', 'pasteur'] },
-    { path: '/referents', label: 'Responsable de promoss', icon: UserPlus, roles: ['superviseur_promos', 'promotions', 'super_admin', 'pasteur'] },
-    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['superviseur_promos', 'promotions', 'super_admin', 'pasteur'] },
-    { path: '/analytics', label: 'Analytics', icon: BarChart3, roles: ['superviseur_promos', 'promotions', 'super_admin', 'pasteur'] },
-    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['superviseur_promos', 'promotions', 'super_admin', 'pasteur'] },
-    { path: '/familles-impact', label: 'Familles d\'Impact', icon: Heart, roles: ['superviseur_fi', 'pilote_fi', 'responsable_secteur', 'super_admin', 'pasteur'] },
-    { path: '/familles-impact/affectation', label: 'Affectation FI', icon: UserPlus, roles: ['superviseur_fi', 'super_admin', 'pasteur'] },
-    { path: '/familles-impact/dashboard-pilote', label: 'Dashboard Pilote', icon: BarChart3, roles: ['pilote_fi'] },
-    { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi', 'super_admin'] },
-    { path: '/dashboard-pasteur', label: 'Dashboard Pasteur', icon: BarChart3, roles: ['pasteur', 'super_admin'] },
-    { path: '/select-department', label: 'Sélection Département', icon: Home, roles: ['pasteur', 'super_admin'] },
-    { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin'] },
+    // PROMOTIONS - visible uniquement si département promotions ou rôles promos
+    { path: '/dashboard', label: 'Dashboard Promotions', icon: Home, roles: ['superviseur_promos', 'referent', 'promotions'], department: 'promotions' },
+    { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['superviseur_promos', 'referent', 'accueil', 'promotions'], department: 'promotions' },
+    { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['superviseur_promos', 'referent', 'promotions'], department: 'promotions' },
+    { path: '/fidelisation', label: 'Fidélisation Promos', icon: TrendingUp, roles: ['superviseur_promos', 'referent', 'promotions'], department: 'promotions' },
+    { path: '/referents', label: 'Responsables Promos', icon: UserPlus, roles: ['superviseur_promos', 'promotions'], department: 'promotions' },
+    { path: '/analytics', label: 'Analytics Promos', icon: BarChart3, roles: ['superviseur_promos', 'promotions'], department: 'promotions' },
+    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['superviseur_promos', 'promotions'], department: 'promotions' },
+    
+    // FAMILLES D'IMPACT - visible uniquement si département FI ou rôles FI
+    { path: '/familles-impact/dashboard-pilote', label: 'Mon Dashboard FI', icon: Home, roles: ['pilote_fi'], department: 'familles-impact' },
+    { path: '/familles-impact', label: 'Familles d\'Impact', icon: Heart, roles: ['superviseur_fi', 'responsable_secteur'], department: 'familles-impact' },
+    { path: '/familles-impact/affectation', label: 'Affectation FI', icon: UserPlus, roles: ['superviseur_fi'], department: 'familles-impact' },
+    { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi'], department: 'familles-impact' },
+    { path: '/familles-impact/secteurs', label: 'Gérer Secteurs', icon: MapPin, roles: ['superviseur_fi'], department: 'familles-impact' },
+    
+    // COMMUNES - Villes accessible depuis les deux départements
+    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['superviseur_promos', 'superviseur_fi', 'super_admin'], department: null },
+    
+    // SUPER ADMIN / PASTEUR - toujours visibles
+    { path: '/select-department', label: 'Changer Département', icon: Home, roles: ['pasteur', 'super_admin'], department: null },
+    { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin'], department: null },
   ];
 
   const filteredNavItems = navItems.filter(item => 
