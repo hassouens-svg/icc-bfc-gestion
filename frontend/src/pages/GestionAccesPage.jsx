@@ -17,14 +17,23 @@ const GestionAccesPage = () => {
   const currentUser = getUser();
   const [users, setUsers] = useState([]);
   const [cities, setCities] = useState([]);
+  const [secteurs, setSecteurs] = useState([]);
+  const [famillesImpact, setFamillesImpact] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [showPasswords, setShowPasswords] = useState(false);
   const [newUser, setNewUser] = useState({
     username: '',
     password: '',
     city: '',
     role: 'referent',
-    assigned_month: null
+    assigned_month: null,
+    assigned_fi_id: null,
+    assigned_secteur_id: null
   });
 
   useEffect(() => {
