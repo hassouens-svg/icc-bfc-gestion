@@ -41,9 +41,31 @@ const Layout = ({ children }) => {
     { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin'], department: null },
   ];
 
-  const filteredNavItems = navItems.filter(item => 
-    item.roles.includes(user?.role)
-  );
+  const filteredNavItems = navItems.filter(item => {
+    // Vérifier le rôle
+    if (!item.roles.includes(user?.role)) return false;
+    
+    // Pour super_admin et pasteur, filtrer selon le département actif
+    if (['super_admin', 'pasteur'].includes(user?.role)) {
+      if (item.department === null) return true; // Items communs toujours visibles
+      return item.department === activeDepartment;
+    }
+    
+    // Pour les autres rôles, filtrer selon leur département
+    if (item.department === null) return true; // Items communs
+    
+    // Rôles Promos voient uniquement items Promos
+    if (['superviseur_promos', 'referent', 'promotions', 'accueil'].includes(user?.role)) {
+      return item.department === 'promotions';
+    }
+    
+    // Rôles FI voient uniquement items FI
+    if (['superviseur_fi', 'pilote_fi', 'responsable_secteur'].includes(user?.role)) {
+      return item.department === 'familles-impact';
+    }
+    
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
