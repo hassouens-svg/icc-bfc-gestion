@@ -361,23 +361,38 @@ const ReferentsPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="manage-month">Mois assigné</Label>
-                    <Select 
-                      value={selectedReferent.assigned_month || ''} 
-                      onValueChange={(value) => setSelectedReferent({...selectedReferent, assigned_month: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez un mois" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {generateMonthOptions().map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="manage-role">Rôle</Label>
+                    <Input
+                      id="manage-role"
+                      value={selectedReferent.role === 'referent' ? 'Responsable de promos' : 
+                             selectedReferent.role === 'accueil' ? 'Accueil et Intégration' : 
+                             selectedReferent.role === 'promotions' ? 'Promotions' : 
+                             selectedReferent.role}
+                      disabled
+                      className="bg-gray-100"
+                    />
                   </div>
+
+                  {selectedReferent.role === 'referent' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="manage-month">Mois assigné</Label>
+                      <Select 
+                        value={selectedReferent.assigned_month || ''} 
+                        onValueChange={(value) => setSelectedReferent({...selectedReferent, assigned_month: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez un mois" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {generateMonthOptions().map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-4">
