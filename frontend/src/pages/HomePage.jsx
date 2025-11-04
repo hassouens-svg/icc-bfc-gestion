@@ -112,9 +112,9 @@ const HomePage = () => {
         {/* Title */}
         <div className="text-center mb-12 animate-fade-in-up">
           <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-            ICC BFC
+            ICC BFC-ITALIE
           </h1>
-          <p className="text-lg text-blue-100 mb-2">Impact Centre Chrétien - Bourgogne-Franche-Comté</p>
+          <p className="text-lg text-blue-100 mb-2">Impact Centre Chrétien - Bourgogne-Franche-Comté et Italie</p>
           <div className="max-w-2xl mx-auto">
             <p className="text-2xl text-blue-100 font-medium mb-2">
               Département de l'accueil, de l'intégration et des promotions
