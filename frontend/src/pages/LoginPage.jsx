@@ -97,7 +97,7 @@ const LoginPage = () => {
             />
           </div>
           <CardTitle className="text-3xl font-bold text-indigo-600">
-            ICC {city || 'Dijon'} Connect
+            ICC BFC-ITALIE {city ? `- ${city}` : ''} Connect
           </CardTitle>
           <CardDescription>Département de l'accueil, de l'intégration et des promotions</CardDescription>
           <CardDescription className="text-xs mt-1">Gestion des nouveaux arrivants et nouveaux convertis</CardDescription>
