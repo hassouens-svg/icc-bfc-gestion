@@ -28,6 +28,7 @@ const Layout = ({ children }) => {
     { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi', 'super_admin'] },
     { path: '/dashboard-pasteur', label: 'Dashboard Pasteur', icon: BarChart3, roles: ['pasteur', 'super_admin'] },
     { path: '/select-department', label: 'Sélection Département', icon: Home, roles: ['pasteur', 'super_admin'] },
+    { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin'] },
   ];
 
   const filteredNavItems = navItems.filter(item => 
