@@ -350,7 +350,7 @@ const ReferentsPage = () => {
               <DialogTitle>Gérer le responsable de promos - {selectedReferent?.username}</DialogTitle>
             </DialogHeader>
             {selectedReferent && (
-              <form onSubmit={handleUpdateResponsable de promos} className="space-y-6">
+              <form onSubmit={handleUpdateResponsableDePromos} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="manage-username">Nom d'utilisateur</Label>
