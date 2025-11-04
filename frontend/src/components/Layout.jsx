@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { logout, getUser } from '../utils/api';
 import { Button } from './ui/button';
-import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table } from 'lucide-react';
+import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table, Heart } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -14,14 +14,19 @@ const Layout = ({ children }) => {
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'referent', 'promotions'] },
-    { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['admin', 'referent', 'accueil', 'promotions'] },
-    { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['admin', 'referent', 'promotions'] },
-    { path: '/fidelisation', label: 'Fidélisation', icon: TrendingUp, roles: ['admin', 'referent', 'promotions'] },
-    { path: '/referents', label: 'Responsable de promoss', icon: UserPlus, roles: ['admin', 'promotions'] },
-    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['admin', 'promotions'] },
-    { path: '/analytics', label: 'Analytics', icon: BarChart3, roles: ['admin', 'promotions'] },
-    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['admin', 'promotions'] },
+    { path: '/dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'referent', 'promotions', 'pilote_fi', 'responsable_secteur', 'superviseur_fi', 'pasteur', 'super_admin'] },
+    { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['admin', 'referent', 'accueil', 'promotions', 'super_admin', 'pasteur'] },
+    { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['admin', 'referent', 'promotions', 'super_admin', 'pasteur'] },
+    { path: '/fidelisation', label: 'Fidélisation', icon: TrendingUp, roles: ['admin', 'referent', 'promotions', 'super_admin', 'pasteur'] },
+    { path: '/referents', label: 'Responsable de promoss', icon: UserPlus, roles: ['admin', 'promotions', 'super_admin', 'pasteur'] },
+    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['admin', 'promotions', 'super_admin', 'pasteur'] },
+    { path: '/analytics', label: 'Analytics', icon: BarChart3, roles: ['admin', 'promotions', 'super_admin', 'pasteur'] },
+    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['admin', 'promotions', 'super_admin', 'pasteur'] },
+    { path: '/familles-impact', label: 'Familles d\'Impact', icon: Heart, roles: ['admin', 'pilote_fi', 'responsable_secteur', 'superviseur_fi', 'super_admin', 'pasteur'] },
+    { path: '/familles-impact/affectation', label: 'Affectation FI', icon: UserPlus, roles: ['admin', 'superviseur_fi', 'super_admin', 'pasteur'] },
+    { path: '/familles-impact/dashboard-pilote', label: 'Dashboard Pilote', icon: BarChart3, roles: ['pilote_fi'] },
+    { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi', 'admin', 'super_admin'] },
+    { path: '/dashboard-pasteur', label: 'Dashboard Pasteur', icon: BarChart3, roles: ['pasteur', 'super_admin'] },
   ];
 
   const filteredNavItems = navItems.filter(item => 
