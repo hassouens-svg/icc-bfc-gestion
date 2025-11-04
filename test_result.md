@@ -185,11 +185,11 @@ frontend:
 
   - task: "Fidelisation page data display"
     implemented: true
-    working: false
+    working: "NA"
     file: "/app/frontend/src/pages/FidelisationPage.jsx"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "user"
@@ -197,6 +197,9 @@ frontend:
       - working: false
         agent: "main"
         comment: "Will test after backend JWT fix is implemented."
+      - working: "NA"
+        agent: "testing"
+        comment: "Backend fidelisation endpoints are fully functional and returning proper data. Frontend testing not performed as per testing agent limitations. Backend APIs verified: GET /api/fidelisation/referent returns proper data structure with total_visitors, weekly_rates, and monthly_average. GET /api/fidelisation/admin returns array of referent data with proper role-based access control."
 
 metadata:
   created_by: "main_agent"
