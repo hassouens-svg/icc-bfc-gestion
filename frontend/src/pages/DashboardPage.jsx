@@ -58,8 +58,12 @@ const DashboardPage = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">Tableau de bord</h2>
-            <p className="text-gray-500 mt-1">Vue d'ensemble de votre activité</p>
+            <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">Tableau de bord - Promotions</h2>
+            <p className="text-gray-500 mt-1">
+              {['super_admin', 'pasteur'].includes(user?.role) && localStorage.getItem('selected_city_view') 
+                ? localStorage.getItem('selected_city_view') 
+                : 'Vue d\'ensemble de votre activité'}
+            </p>
           </div>
           {(user?.role === 'admin' || user?.role === 'promotions') && (
             <Button onClick={handleExport} data-testid="export-excel-button">
