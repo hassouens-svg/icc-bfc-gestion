@@ -368,7 +368,7 @@ class BackendTester:
         # Check if response contains only limited fields
         if visitors and len(visitors) > 0:
             first_visitor = visitors[0]
-            expected_fields = {'id', 'firstname', 'lastname', 'arrival_channel', 'city'}
+            expected_fields = {'id', 'firstname', 'lastname', 'arrival_channel', 'visit_date', 'city'}
             actual_fields = set(first_visitor.keys())
             
             # Should only have limited fields
