@@ -338,7 +338,7 @@ async def register_visitor(visitor_data: VisitorCreate):
 @api_router.post("/users/referent")
 async def create_referent(user_data: UserCreate, current_user: dict = Depends(get_current_user)):
     # Only admin and promotions can create referents
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can create referents")
     
     # Check if username already exists in this city
@@ -388,7 +388,7 @@ async def get_referents(current_user: dict = Depends(get_current_user)):
 @api_router.put("/users/{user_id}")
 async def update_user(user_id: str, update_data: UserUpdate, current_user: dict = Depends(get_current_user)):
     """Update user information (Admin only)"""
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can update users")
     
     user = await db.users.find_one({"id": user_id, "city": current_user["city"]})
@@ -432,10 +432,10 @@ async def delete_user(user_id: str, current_user: dict = Depends(get_current_use
         return {"message": "User deleted successfully"}
     
     # Regular admin or promotions can only delete users from their city (but not other admins)
-    if current_user["role"] in ["admin", "promotions"]:
+    if current_user["role"] in ["superviseur_promos", "promotions"]:
         if user_to_delete["city"] != current_user["city"]:
             raise HTTPException(status_code=403, detail="Cannot delete users from other cities")
-        if user_to_delete["role"] in ["admin", "promotions"]:
+        if user_to_delete["role"] in ["superviseur_promos", "promotions"]:
             raise HTTPException(status_code=403, detail="Cannot delete other admins")
         await db.users.delete_one({"id": user_id})
         return {"message": "User deleted successfully"}
@@ -526,7 +526,7 @@ async def get_visitors(
 @api_router.get("/visitors/stopped")
 async def get_stopped_visitors(current_user: dict = Depends(get_current_user)):
     # Only admin and promotions can see stopped visitors
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can view stopped visitors")
     
     query = {
@@ -589,7 +589,7 @@ async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_curre
         # Referents can only delete visitors from their assigned month
         if visitor["assigned_month"] != current_user.get("assigned_month"):
             raise HTTPException(status_code=403, detail="Vous ne pouvez supprimer que vos visiteurs assignés")
-    elif current_user["role"] not in ["admin", "promotions"]:
+    elif current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     await db.visitors.delete_one({"id": visitor_id})
@@ -713,7 +713,7 @@ async def stop_tracking(visitor_id: str, stop_data: StopTracking, current_user: 
 
 @api_router.post("/cities")
 async def create_city(city_data: CityCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can create cities")
     
     # Check if city already exists
@@ -734,7 +734,7 @@ async def get_cities():
 @api_router.put("/cities/{city_id}")
 async def update_city(city_id: str, city_data: CityCreate, current_user: dict = Depends(get_current_user)):
     """Update city name (Admin only)"""
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can update cities")
     
     # Check if new name already exists (excluding current city)
@@ -778,7 +778,7 @@ async def update_city(city_id: str, city_data: CityCreate, current_user: dict = 
 @api_router.delete("/cities/{city_id}")
 async def delete_city(city_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a city (Admin only)"""
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can delete cities")
     
     city = await db.cities.find_one({"id": city_id})
@@ -805,7 +805,7 @@ async def delete_city(city_id: str, current_user: dict = Depends(get_current_use
 @api_router.get("/cities/{city_id}/stats")
 async def get_city_stats(city_id: str, current_user: dict = Depends(get_current_user)):
     """Get detailed statistics for a specific city"""
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can view city stats")
     
     city = await db.cities.find_one({"id": city_id})
@@ -897,7 +897,7 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     total_visitors = await db.visitors.count_documents(base_query)
     
     # Total referents (only for admin/promotions)
-    if current_user["role"] in ["admin", "promotions"]:
+    if current_user["role"] in ["superviseur_promos", "promotions"]:
         total_referents = await db.users.count_documents({"city": city, "role": {"$in": ["referent", "accueil", "promotions"]}})
     else:
         total_referents = 0
@@ -935,7 +935,7 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/analytics/export")
 async def export_excel(current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can export data")
     
     visitors = await db.visitors.find({"city": current_user["city"]}, {"_id": 0}).to_list(10000)
@@ -1060,7 +1060,7 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
 @api_router.get("/fidelisation/admin")
 async def get_admin_fidelisation(week: int = None, month: str = None, current_user: dict = Depends(get_current_user)):
     """Get fidelisation rates for all referents (admin view)"""
-    if current_user["role"] not in ["admin", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions"]:
         raise HTTPException(status_code=403, detail="Only admin can access this")
     
     # Get all referents in this city
