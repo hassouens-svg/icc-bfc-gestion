@@ -195,6 +195,30 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: Visitor registration endpoint working perfectly. Comprehensive testing performed: (1) Successful registration with valid data returns 200 with success message and visitor ID, (2) Data persistence confirmed - visitor correctly saved to database with proper assigned_month calculation (2025-01 from visit_date 2025-01-04), (3) Error handling working - returns 422 for missing required fields and invalid email formats, (4) CORS properly configured with Access-Control-Allow-Origin: *, (5) All required fields validated correctly. Backend registration endpoint is fully functional. Blank page issue is FRONTEND-RELATED - check browser console for JavaScript errors, verify frontend redirect logic after registration, and ensure frontend properly handles success response."
 
+  - task: "Role-based Access Control - POST /visitors endpoint restrictions"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE FOUND: POST /visitors endpoint (lines 474-488) lacks role-based restrictions. Currently ANY authenticated user can create visitors, including 'accueil' role which should be read-only. The endpoint needs role checks to restrict visitor creation to appropriate roles only (referent, promotions, superviseur_promos, etc.). Accueil role should be denied with 403 status."
+
+  - task: "User Management - assigned_fi_id field support"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ API LIMITATION: UserUpdate model (lines 89-93) missing assigned_fi_id field. Pilote FI users cannot be properly assigned to their Famille d'Impact via API, causing GET /fi/stats/pilote to fail with 'No FI assigned' error. Need to add assigned_fi_id and assigned_secteur_id fields to UserUpdate model and update PUT /users/{user_id} endpoint to handle these assignments."
+
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
