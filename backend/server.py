@@ -1070,8 +1070,8 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
 @api_router.get("/fidelisation/admin")
 async def get_admin_fidelisation(week: int = None, month: str = None, current_user: dict = Depends(get_current_user)):
     """Get fidelisation rates for all referents (admin view)"""
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
-        raise HTTPException(status_code=403, detail="Only admin can access this")
+    if current_user["role"] not in ["superviseur_promos", "superviseur_fi", "promotions", "super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
     
     # Get all referents in this city
     referents = await db.users.find({
