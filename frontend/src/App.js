@@ -52,6 +52,7 @@ function App() {
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardPasteurPage />} />
           <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
+          <Route path="/select-department" element={<SelectDepartmentPage />} />
         </Routes>
       </BrowserRouter>
     </div>
