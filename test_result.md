@@ -293,7 +293,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Role-based Access Control - POST /visitors endpoint restrictions"
+    - "User Management - assigned_fi_id field support"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
