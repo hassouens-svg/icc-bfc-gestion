@@ -21,6 +21,7 @@ import DashboardSuperviseurFIPage from './pages/DashboardSuperviseurFIPage';
 import DashboardPasteurPage from './pages/DashboardPasteurPage';
 import AffectationFIPage from './pages/AffectationFIPage';
 import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
+import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
 
 function App() {
   return (
