@@ -70,12 +70,18 @@ const RegisterPage = () => {
 
     setLoading(true);
     try {
-      await registerVisitor(formData);
-      toast.success('Inscription réussie! Merci de votre visite.');
-      setTimeout(() => navigate('/login'), 2000);
+      const result = await registerVisitor(formData);
+      console.log('Registration successful:', result);
+      toast.success('Inscription réussie! Merci de votre visite.', {
+        duration: 3000,
+      });
+      // Navigate after showing toast
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (error) {
+      console.error('Registration error:', error);
       toast.error(error.response?.data?.detail || 'Erreur lors de l\'inscription');
-    } finally {
       setLoading(false);
     }
   };
