@@ -470,6 +470,24 @@ async def unblock_user(user_id: str, current_user: dict = Depends(get_current_us
     await db.users.update_one({"id": user_id}, {"$set": {"is_blocked": False}})
     return {"message": "User unblocked successfully"}
 
+class PasswordReset(BaseModel):
+    new_password: str
+
+@api_router.put("/users/{user_id}/reset-password")
+async def reset_user_password(user_id: str, password_data: PasswordReset, current_user: dict = Depends(get_current_user)):
+    """Reset user password (Super Admin only)"""
+    if not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Only super admin can reset passwords")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Hash new password
+    hashed_password = hash_password(password_data.new_password)
+    await db.users.update_one({"id": user_id}, {"$set": {"password": hashed_password}})
+    return {"message": "Password reset successfully"}
+
 
 # ==================== VISITOR ROUTES ====================
 
