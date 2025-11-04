@@ -23,6 +23,7 @@ import AffectationFIPage from './pages/AffectationFIPage';
 import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
 import SelectDepartmentPage from './pages/SelectDepartmentPage';
+import GestionAccesPage from './pages/GestionAccesPage';
 
 function App() {
   return (
