@@ -22,6 +22,7 @@ import DashboardPasteurPage from './pages/DashboardPasteurPage';
 import AffectationFIPage from './pages/AffectationFIPage';
 import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
+import SelectDepartmentPage from './pages/SelectDepartmentPage';
 
 function App() {
   return (
