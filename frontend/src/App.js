@@ -8,7 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import VisitorsPage from './pages/VisitorsPage';
 import VisitorsTablePage from './pages/VisitorsTablePage';
 import VisitorDetailPage from './pages/VisitorDetailPage';
-import Responsable de promossPage from './pages/Responsable de promossPage';
+import ReferentsPage from './pages/ReferentsPage';
 import CitiesPage from './pages/CitiesPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
