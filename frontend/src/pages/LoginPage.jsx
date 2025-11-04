@@ -104,21 +104,31 @@ const LoginPage = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="city">Ville / City</Label>
-              <Select value={city} onValueChange={setCity}>
-                <SelectTrigger data-testid="city-select">
-                  <SelectValue placeholder="Sélectionnez votre ville" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((c) => (
-                    <SelectItem key={c.id} value={c.name} data-testid={`city-option-${c.name}`}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {username !== 'pasteur' && username !== 'superadmin' && (
+              <div className="space-y-2">
+                <Label htmlFor="city">Ville / City</Label>
+                <Select value={city} onValueChange={setCity}>
+                  <SelectTrigger data-testid="city-select">
+                    <SelectValue placeholder="Sélectionnez votre ville" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cities.map((c) => (
+                      <SelectItem key={c.id} value={c.name} data-testid={`city-option-${c.name}`}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            {(username === 'pasteur' || username === 'superadmin') && (
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  ℹ️ Accès multi-villes - Pas besoin de sélectionner une ville
+                </p>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="username">Nom d'utilisateur</Label>
