@@ -357,11 +357,11 @@ async def delete_user(user_id: str, current_user: dict = Depends(get_current_use
         await db.users.delete_one({"id": user_id})
         return {"message": "User deleted successfully"}
     
-    # Regular admin can only delete users from their city (but not other admins)
-    if current_user["role"] == "admin":
+    # Regular admin or promotions can only delete users from their city (but not other admins)
+    if current_user["role"] in ["admin", "promotions"]:
         if user_to_delete["city"] != current_user["city"]:
             raise HTTPException(status_code=403, detail="Cannot delete users from other cities")
-        if user_to_delete["role"] == "admin":
+        if user_to_delete["role"] in ["admin", "promotions"]:
             raise HTTPException(status_code=403, detail="Cannot delete other admins")
         await db.users.delete_one({"id": user_id})
         return {"message": "User deleted successfully"}
