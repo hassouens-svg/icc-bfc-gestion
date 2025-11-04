@@ -46,7 +46,7 @@ const AnalyticsPage = () => {
 
   const monthData = stats?.by_month?.map(item => ({
     month: item._id,
-    nouveaux arrivants et nouveaux convertiss: item.count
+    count: item.count
   })) || [];
 
   const channelData = stats?.by_channel?.map(item => ({
