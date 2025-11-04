@@ -29,7 +29,7 @@ const FidelisationPage = () => {
   const loadData = async () => {
     try {
       if (user.role === 'referent') {
-        const result = await getResponsable de promosFidelisation();
+        const result = await getReferentFidelisation();
         setData(result);
       } else if (user.role === 'admin' || user.role === 'promotions') {
         const result = await getAdminFidelisation();
