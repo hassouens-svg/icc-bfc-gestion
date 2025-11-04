@@ -26,7 +26,7 @@ const CitiesPage = () => {
   const [statsLoading, setStatsLoading] = useState(false);
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'promotions')) {
+    if (!user || !['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
