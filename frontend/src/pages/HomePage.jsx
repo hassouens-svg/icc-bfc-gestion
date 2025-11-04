@@ -48,6 +48,13 @@ const HomePage = () => {
       description: 'Suivi complet des nouveaux arrivants et nouveaux convertiss avec les responsable de promoss',
       icon: TrendingUp,
       color: 'from-purple-400 to-purple-600'
+    },
+    {
+      id: 'familles-impact',
+      title: 'Familles d\'Impact',
+      description: 'Gestion des cellules de prière et suivi des membres',
+      icon: Users,
+      color: 'from-green-400 to-green-600'
     }
   ];
 
