@@ -22,14 +22,8 @@ const SelectDepartmentPage = () => {
     // Store the selected department
     localStorage.setItem('selected_department', deptId);
     
-    // Navigate based on department
-    if (deptId === 'accueil') {
-      navigate('/visitors');
-    } else if (deptId === 'promotions') {
-      navigate('/dashboard');
-    } else if (deptId === 'familles-impact') {
-      navigate('/familles-impact');
-    }
+    // Pour super_admin et pasteur, rediriger vers sélection de ville
+    navigate('/select-ville', { state: { department: deptId } });
   };
 
   const departments = [
