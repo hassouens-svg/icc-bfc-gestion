@@ -24,6 +24,7 @@ import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
 import SelectDepartmentPage from './pages/SelectDepartmentPage';
 import GestionAccesPage from './pages/GestionAccesPage';
+import SelectVillePage from './pages/SelectVillePage';
 
 function App() {
   return (
