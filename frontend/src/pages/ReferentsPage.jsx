@@ -133,7 +133,7 @@ const Responsable de promossPage = () => {
     });
   };
 
-  const handleDeleteResponsable de promos = async () => {
+  const handleDeleteReferent = async () => {
     try {
       await deleteUser(selectedReferent.id);
       toast.success('Utilisateur supprimé avec succès!');
@@ -145,7 +145,7 @@ const Responsable de promossPage = () => {
     }
   };
 
-  const handleBlockResponsable de promos = async () => {
+  const handleBlockReferent = async () => {
     try {
       if (selectedReferent.is_blocked) {
         await unblockUser(selectedReferent.id);
@@ -483,7 +483,7 @@ const Responsable de promossPage = () => {
                       <Button 
                         type="button"
                         variant={selectedReferent.is_blocked ? "default" : "outline"}
-                        onClick={handleBlockResponsable de promos}
+                        onClick={handleBlockReferent}
                       >
                         {selectedReferent.is_blocked ? (
                           <>
@@ -530,7 +530,7 @@ const Responsable de promossPage = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteResponsable de promos} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDeleteReferent} className="bg-red-600 hover:bg-red-700">
                 Supprimer
               </AlertDialogAction>
             </AlertDialogFooter>
