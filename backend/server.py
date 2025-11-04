@@ -246,8 +246,12 @@ def create_access_token(data: dict) -> str:
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
 def is_super_admin(user: dict) -> bool:
-    """Check if user is super admin (Admin from Dijon)"""
-    return user.get("role") == "admin" and user.get("city") == "Dijon"
+    """Check if user is Super Admin"""
+    return user.get("role") == "super_admin"
+
+def is_superviseur(user: dict) -> bool:
+    """Check if user is Superviseur (Promos or FI)"""
+    return user.get("role") in ["superviseur_promos", "superviseur_fi"]
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
     try:
