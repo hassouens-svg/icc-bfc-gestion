@@ -1187,6 +1187,12 @@ async def init_data():
         doc['created_at'] = doc['created_at'].isoformat()
         await db.users.insert_one(doc)
     
+    # Migrate old "admin" roles to "superviseur_promos"
+    await db.users.update_many(
+        {"role": "admin"},
+        {"$set": {"role": "superviseur_promos"}}
+    )
+    
     return {"message": "Initialization complete"}
 
 # ==================== FAMILLES D'IMPACT ROUTES ====================
