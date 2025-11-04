@@ -1157,6 +1157,32 @@ async def init_data():
         doc['created_at'] = doc['created_at'].isoformat()
         await db.users.insert_one(doc)
     
+    # Create Super Admin account
+    existing_superadmin = await db.users.find_one({"username": "superadmin"})
+    if not existing_superadmin:
+        superadmin = User(
+            username="superadmin",
+            password=hash_password("superadmin123"),
+            city="Dijon",
+            role="super_admin"
+        )
+        doc = superadmin.model_dump()
+        doc['created_at'] = doc['created_at'].isoformat()
+        await db.users.insert_one(doc)
+    
+    # Create Pasteur account
+    existing_pasteur = await db.users.find_one({"username": "pasteur"})
+    if not existing_pasteur:
+        pasteur = User(
+            username="pasteur",
+            password=hash_password("pasteur123"),
+            city="Dijon",
+            role="pasteur"
+        )
+        doc = pasteur.model_dump()
+        doc['created_at'] = doc['created_at'].isoformat()
+        await db.users.insert_one(doc)
+    
     return {"message": "Initialization complete"}
 
 # ==================== FAMILLES D'IMPACT ROUTES ====================
