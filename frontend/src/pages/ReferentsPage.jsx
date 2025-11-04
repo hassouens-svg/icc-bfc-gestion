@@ -541,4 +541,4 @@ const ReferentsPage = () => {
   );
 };
 
-export default Responsable de promossPage;
+export default ReferentsPage;
