@@ -259,13 +259,24 @@ const RegisterPage = () => {
               {loading ? 'Inscription en cours...' : 'S\'inscrire'}
             </Button>
 
-            <div className="text-center pt-4">
-              <a 
-                href="/login" 
-                className="text-sm text-teal-600 hover:underline"
-              >
-                Retour à la connexion
-              </a>
+            <div className="text-center pt-4 space-y-2">
+              <div>
+                <a 
+                  href="/login" 
+                  className="text-sm text-teal-600 hover:underline"
+                >
+                  Retour à la connexion
+                </a>
+              </div>
+              <div className="border-t pt-3 mt-3">
+                <p className="text-xs text-gray-600 mb-2">Nouveau membre d'une Famille d'Impact ?</p>
+                <a 
+                  href="/register-membre-fi" 
+                  className="text-sm font-semibold text-green-600 hover:underline"
+                >
+                  S'inscrire en tant que membre FI →
+                </a>
+              </div>
             </div>
           </form>
         </CardContent>
