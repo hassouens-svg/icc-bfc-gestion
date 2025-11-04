@@ -14,6 +14,10 @@ const DashboardPiloteFIPage = () => {
   const navigate = useNavigate();
   const user = getUser();
   const [stats, setStats] = useState(null);
+  const [membres, setMembres] = useState([]);
+  const [presences, setPresences] = useState({});
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [comments, setComments] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,17 +25,55 @@ const DashboardPiloteFIPage = () => {
       navigate('/dashboard');
       return;
     }
-    loadStats();
+    loadData();
   }, [user, navigate]);
 
-  const loadStats = async () => {
+  useEffect(() => {
+    if (membres.length > 0) {
+      loadPresences();
+    }
+  }, [selectedDate, membres]);
+
+  const loadData = async () => {
     try {
-      const data = await getStatsPiloteFI();
-      setStats(data);
+      const [statsData, membresData] = await Promise.all([
+        getStatsPiloteFI(),
+        getMembresFI()
+      ]);
+      setStats(statsData);
+      setMembres(membresData);
     } catch (error) {
       toast.error('Erreur lors du chargement des statistiques');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPresences = async () => {
+    try {
+      const presencesData = await getPresencesFI(stats?.fi?.id, selectedDate);
+      const presencesMap = {};
+      presencesData.forEach(p => {
+        presencesMap[p.membre_fi_id] = p;
+      });
+      setPresences(presencesMap);
+    } catch (error) {
+      console.error('Error loading presences:', error);
+    }
+  };
+
+  const handlePresenceChange = async (membreId, present) => {
+    try {
+      await createPresenceFI({
+        membre_fi_id: membreId,
+        date: selectedDate,
+        present: present,
+        commentaire: comments[membreId] || null
+      });
+      toast.success('Présence enregistrée');
+      loadPresences();
+    } catch (error) {
+      toast.error('Erreur lors de l\'enregistrement');
     }
   };
 
