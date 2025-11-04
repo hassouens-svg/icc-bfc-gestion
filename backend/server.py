@@ -1159,6 +1159,322 @@ async def init_data():
     
     return {"message": "Initialization complete"}
 
+# ==================== FAMILLES D'IMPACT ROUTES ====================
+
+# ========== SECTEURS ==========
+
+@api_router.post("/fi/secteurs")
+async def create_secteur(secteur_data: SecteurCreate, current_user: dict = Depends(get_current_user)):
+    # Only admin, super_admin, superviseur_fi can create secteurs
+    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    secteur = Secteur(**secteur_data.model_dump(), created_by=current_user["username"])
+    doc = secteur.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.secteurs.insert_one(doc)
+    return secteur
+
+@api_router.get("/fi/secteurs")
+async def get_secteurs(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    secteurs = await db.secteurs.find(query, {"_id": 0}).to_list(length=None)
+    return secteurs
+
+@api_router.put("/fi/secteurs/{secteur_id}")
+async def update_secteur(secteur_id: str, secteur_data: SecteurCreate, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    result = await db.secteurs.update_one(
+        {"id": secteur_id},
+        {"$set": secteur_data.model_dump()}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Secteur not found")
+    
+    return {"message": "Secteur updated"}
+
+@api_router.delete("/fi/secteurs/{secteur_id}")
+async def delete_secteur(secteur_id: str, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Check if there are FI in this secteur
+    fi_count = await db.familles_impact.count_documents({"secteur_id": secteur_id})
+    if fi_count > 0:
+        raise HTTPException(status_code=400, detail=f"Cannot delete secteur with {fi_count} Familles d'Impact")
+    
+    result = await db.secteurs.delete_one({"id": secteur_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Secteur not found")
+    
+    return {"message": "Secteur deleted"}
+
+# ========== FAMILLES D'IMPACT ==========
+
+@api_router.post("/fi/familles-impact")
+async def create_famille_impact(fi_data: FamilleImpactCreate, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    fi = FamilleImpact(**fi_data.model_dump(), created_by=current_user["username"])
+    doc = fi.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.familles_impact.insert_one(doc)
+    return fi
+
+@api_router.get("/fi/familles-impact")
+async def get_familles_impact(
+    secteur_id: Optional[str] = None, 
+    ville: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    query = {}
+    if secteur_id:
+        query["secteur_id"] = secteur_id
+    if ville:
+        query["ville"] = ville
+    
+    # Filter based on role
+    if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id"):
+        query["id"] = current_user["assigned_fi_id"]
+    elif current_user["role"] == "responsable_secteur" and current_user.get("assigned_secteur_id"):
+        query["secteur_id"] = current_user["assigned_secteur_id"]
+    
+    fis = await db.familles_impact.find(query, {"_id": 0}).to_list(length=None)
+    return fis
+
+@api_router.get("/fi/familles-impact/{fi_id}")
+async def get_famille_impact(fi_id: str, current_user: dict = Depends(get_current_user)):
+    fi = await db.familles_impact.find_one({"id": fi_id}, {"_id": 0})
+    if not fi:
+        raise HTTPException(status_code=404, detail="Famille d'Impact not found")
+    
+    # Check permissions
+    if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id") != fi_id:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    return fi
+
+@api_router.put("/fi/familles-impact/{fi_id}")
+async def update_famille_impact(fi_id: str, fi_data: FamilleImpactCreate, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    result = await db.familles_impact.update_one(
+        {"id": fi_id},
+        {"$set": fi_data.model_dump()}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Famille d'Impact not found")
+    
+    return {"message": "Famille d'Impact updated"}
+
+@api_router.delete("/fi/familles-impact/{fi_id}")
+async def delete_famille_impact(fi_id: str, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Check if there are membres
+    membre_count = await db.membres_fi.count_documents({"fi_id": fi_id})
+    if membre_count > 0:
+        raise HTTPException(status_code=400, detail=f"Cannot delete FI with {membre_count} members")
+    
+    result = await db.familles_impact.delete_one({"id": fi_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Famille d'Impact not found")
+    
+    return {"message": "Famille d'Impact deleted"}
+
+# ========== MEMBRES FI ==========
+
+@api_router.post("/fi/membres")
+async def create_membre_fi(membre_data: MembreFICreate, current_user: dict = Depends(get_current_user)):
+    # Pilote can add to their FI, others need admin permissions
+    if current_user["role"] == "pilote_fi":
+        if current_user.get("assigned_fi_id") != membre_data.fi_id:
+            raise HTTPException(status_code=403, detail="Can only add members to your FI")
+    elif current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    membre = MembreFI(**membre_data.model_dump())
+    doc = membre.model_dump()
+    doc['date_ajout'] = doc['date_ajout'].isoformat()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.membres_fi.insert_one(doc)
+    return membre
+
+@api_router.get("/fi/membres")
+async def get_membres_fi(fi_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {}
+    if fi_id:
+        query["fi_id"] = fi_id
+    
+    # Filter for pilote
+    if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id"):
+        query["fi_id"] = current_user["assigned_fi_id"]
+    
+    membres = await db.membres_fi.find(query, {"_id": 0}).to_list(length=None)
+    return membres
+
+@api_router.delete("/fi/membres/{membre_id}")
+async def delete_membre_fi(membre_id: str, current_user: dict = Depends(get_current_user)):
+    membre = await db.membres_fi.find_one({"id": membre_id})
+    if not membre:
+        raise HTTPException(status_code=404, detail="Membre not found")
+    
+    # Check permissions
+    if current_user["role"] == "pilote_fi":
+        if current_user.get("assigned_fi_id") != membre["fi_id"]:
+            raise HTTPException(status_code=403, detail="Permission denied")
+    elif current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Delete all presences for this member
+    await db.presences_fi.delete_many({"membre_fi_id": membre_id})
+    
+    result = await db.membres_fi.delete_one({"id": membre_id})
+    return {"message": "Membre deleted"}
+
+# ========== PRESENCES FI ==========
+
+@api_router.post("/fi/presences")
+async def create_presence_fi(presence_data: PresenceFICreate, current_user: dict = Depends(get_current_user)):
+    # Get membre to check FI
+    membre = await db.membres_fi.find_one({"id": presence_data.membre_fi_id})
+    if not membre:
+        raise HTTPException(status_code=404, detail="Membre not found")
+    
+    # Check permissions
+    if current_user["role"] == "pilote_fi":
+        if current_user.get("assigned_fi_id") != membre["fi_id"]:
+            raise HTTPException(status_code=403, detail="Permission denied")
+    elif current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Check if presence already exists for this date
+    existing = await db.presences_fi.find_one({
+        "membre_fi_id": presence_data.membre_fi_id,
+        "date": presence_data.date
+    })
+    
+    if existing:
+        # Update existing
+        await db.presences_fi.update_one(
+            {"id": existing["id"]},
+            {"$set": {
+                "present": presence_data.present,
+                "commentaire": presence_data.commentaire
+            }}
+        )
+        return {"message": "Presence updated"}
+    
+    presence = PresenceFI(**presence_data.model_dump(), marked_by=current_user["username"])
+    doc = presence.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.presences_fi.insert_one(doc)
+    return presence
+
+@api_router.get("/fi/presences")
+async def get_presences_fi(
+    fi_id: Optional[str] = None,
+    date: Optional[str] = None,
+    membre_fi_id: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    query = {}
+    
+    if membre_fi_id:
+        query["membre_fi_id"] = membre_fi_id
+    elif fi_id:
+        # Get all membres of this FI
+        membres = await db.membres_fi.find({"fi_id": fi_id}, {"_id": 0}).to_list(length=None)
+        membre_ids = [m["id"] for m in membres]
+        query["membre_fi_id"] = {"$in": membre_ids}
+    
+    if date:
+        query["date"] = date
+    
+    presences = await db.presences_fi.find(query, {"_id": 0}).to_list(length=None)
+    return presences
+
+# ========== AFFECTATION NOUVEAUX ARRIVANTS ==========
+
+@api_router.post("/fi/affecter-visiteur")
+async def affecter_visiteur_to_fi(affectation: AffectationFI, current_user: dict = Depends(get_current_user)):
+    # Get visitor
+    visitor = await db.visitors.find_one({"id": affectation.nouveau_arrivant_id})
+    if not visitor:
+        raise HTTPException(status_code=404, detail="Nouveau arrivant not found")
+    
+    # Get FI
+    fi = await db.familles_impact.find_one({"id": affectation.fi_id})
+    if not fi:
+        raise HTTPException(status_code=404, detail="Famille d'Impact not found")
+    
+    # Check if already membre
+    existing = await db.membres_fi.find_one({
+        "nouveau_arrivant_id": affectation.nouveau_arrivant_id,
+        "fi_id": affectation.fi_id
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="Already membre of this FI")
+    
+    # Create membre
+    membre = MembreFI(
+        prenom=visitor["firstname"],
+        nom=visitor["lastname"],
+        fi_id=affectation.fi_id,
+        source="nouveau_arrivant",
+        nouveau_arrivant_id=affectation.nouveau_arrivant_id
+    )
+    
+    doc = membre.model_dump()
+    doc['date_ajout'] = doc['date_ajout'].isoformat()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.membres_fi.insert_one(doc)
+    return membre
+
+@api_router.get("/fi/indicateurs/affectation")
+async def get_indicateurs_affectation(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    # Get all nouveaux arrivants
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    total_visitors = await db.visitors.count_documents(query)
+    
+    # Get affected visitors
+    membres = await db.membres_fi.find(
+        {"source": "nouveau_arrivant", "nouveau_arrivant_id": {"$ne": None}},
+        {"_id": 0}
+    ).to_list(length=None)
+    
+    affected_ids = [m["nouveau_arrivant_id"] for m in membres]
+    affected_count = len(set(affected_ids))
+    
+    non_affected_count = total_visitors - affected_count
+    percentage = (affected_count / total_visitors * 100) if total_visitors > 0 else 0
+    
+    return {
+        "total_nouveaux_arrivants": total_visitors,
+        "affectes": affected_count,
+        "non_affectes": non_affected_count,
+        "pourcentage_affectation": round(percentage, 2)
+    }
+
 # ==================== ROOT ====================
 
 @api_router.get("/")
