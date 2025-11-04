@@ -59,7 +59,7 @@ const Responsable de promossPage = () => {
     }
   };
 
-  const handleCreateResponsable de promos = async (e) => {
+  const handleCreateReferent = async (e) => {
     e.preventDefault();
     
     if (!newReferent.username || !newReferent.password || !newReferent.role || !newReferent.city) {
@@ -204,7 +204,7 @@ const Responsable de promossPage = () => {
               <DialogHeader>
                 <DialogTitle>Créer un nouveau responsable de promos</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleCreateResponsable de promos} className="space-y-4">
+              <form onSubmit={handleCreateReferent} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">Ville ICC *</Label>
                   <Select 
