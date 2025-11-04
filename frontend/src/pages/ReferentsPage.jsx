@@ -21,7 +21,7 @@ const Responsable de promossPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedResponsable de promos, setSelectedResponsable de promos] = useState(null);
+  const [selectedReferent, setSelectedReferent] = useState(null);
   const [newReferent, setNewReferent] = useState({
     username: '',
     password: '',
@@ -90,7 +90,7 @@ const Responsable de promossPage = () => {
   };
 
   const handleManageResponsable de promos = (referent) => {
-    setSelectedResponsable de promos({
+    setSelectedReferent({
       ...referent,
       permissions: referent.permissions || {
         can_view_all_months: false,
@@ -109,12 +109,12 @@ const Responsable de promossPage = () => {
     
     try {
       const updateData = {
-        username: selectedResponsable de promos.username,
-        assigned_month: selectedResponsable de promos.assigned_month,
-        permissions: selectedResponsable de promos.permissions
+        username: selectedReferent.username,
+        assigned_month: selectedReferent.assigned_month,
+        permissions: selectedReferent.permissions
       };
       
-      await updateUser(selectedResponsable de promos.id, updateData);
+      await updateUser(selectedReferent.id, updateData);
       toast.success('Responsable de promos mis à jour avec succès!');
       setIsManageDialogOpen(false);
       loadResponsable de promoss();
@@ -124,18 +124,18 @@ const Responsable de promossPage = () => {
   };
 
   const togglePermission = (permission) => {
-    setSelectedResponsable de promos({
-      ...selectedResponsable de promos,
+    setSelectedReferent({
+      ...selectedReferent,
       permissions: {
-        ...selectedResponsable de promos.permissions,
-        [permission]: !selectedResponsable de promos.permissions[permission]
+        ...selectedReferent.permissions,
+        [permission]: !selectedReferent.permissions[permission]
       }
     });
   };
 
   const handleDeleteResponsable de promos = async () => {
     try {
-      await deleteUser(selectedResponsable de promos.id);
+      await deleteUser(selectedReferent.id);
       toast.success('Utilisateur supprimé avec succès!');
       setIsDeleteDialogOpen(false);
       setIsManageDialogOpen(false);
@@ -147,11 +147,11 @@ const Responsable de promossPage = () => {
 
   const handleBlockResponsable de promos = async () => {
     try {
-      if (selectedResponsable de promos.is_blocked) {
-        await unblockUser(selectedResponsable de promos.id);
+      if (selectedReferent.is_blocked) {
+        await unblockUser(selectedReferent.id);
         toast.success('Utilisateur débloqué avec succès!');
       } else {
-        await blockUser(selectedResponsable de promos.id);
+        await blockUser(selectedReferent.id);
         toast.success('Utilisateur bloqué avec succès!');
       }
       setIsManageDialogOpen(false);
@@ -347,17 +347,17 @@ const Responsable de promossPage = () => {
         <Dialog open={isManageDialogOpen} onOpenChange={setIsManageDialogOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Gérer le responsable de promos - {selectedResponsable de promos?.username}</DialogTitle>
+              <DialogTitle>Gérer le responsable de promos - {selectedReferent?.username}</DialogTitle>
             </DialogHeader>
-            {selectedResponsable de promos && (
+            {selectedReferent && (
               <form onSubmit={handleUpdateResponsable de promos} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="manage-username">Nom d'utilisateur</Label>
                     <Input
                       id="manage-username"
-                      value={selectedResponsable de promos.username}
-                      onChange={(e) => setSelectedResponsable de promos({...selectedResponsable de promos, username: e.target.value})}
+                      value={selectedReferent.username}
+                      onChange={(e) => setSelectedReferent({...selectedReferent, username: e.target.value})}
                       placeholder="Nom d'utilisateur"
                     />
                   </div>
@@ -365,8 +365,8 @@ const Responsable de promossPage = () => {
                   <div className="space-y-2">
                     <Label htmlFor="manage-month">Mois assigné</Label>
                     <Select 
-                      value={selectedResponsable de promos.assigned_month || ''} 
-                      onValueChange={(value) => setSelectedResponsable de promos({...selectedResponsable de promos, assigned_month: value})}
+                      value={selectedReferent.assigned_month || ''} 
+                      onValueChange={(value) => setSelectedReferent({...selectedReferent, assigned_month: value})}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Sélectionnez un mois" />
@@ -392,7 +392,7 @@ const Responsable de promossPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedResponsable de promos.permissions?.can_view_all_months || false}
+                        checked={selectedReferent.permissions?.can_view_all_months || false}
                         onChange={() => togglePermission('can_view_all_months')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -405,7 +405,7 @@ const Responsable de promossPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedResponsable de promos.permissions?.can_edit_visitors || false}
+                        checked={selectedReferent.permissions?.can_edit_visitors || false}
                         onChange={() => togglePermission('can_edit_visitors')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -418,7 +418,7 @@ const Responsable de promossPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedResponsable de promos.permissions?.can_stop_tracking || false}
+                        checked={selectedReferent.permissions?.can_stop_tracking || false}
                         onChange={() => togglePermission('can_stop_tracking')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -431,7 +431,7 @@ const Responsable de promossPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedResponsable de promos.permissions?.can_add_comments || false}
+                        checked={selectedReferent.permissions?.can_add_comments || false}
                         onChange={() => togglePermission('can_add_comments')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -444,7 +444,7 @@ const Responsable de promossPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedResponsable de promos.permissions?.can_mark_presence || false}
+                        checked={selectedReferent.permissions?.can_mark_presence || false}
                         onChange={() => togglePermission('can_mark_presence')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -457,7 +457,7 @@ const Responsable de promossPage = () => {
                       </div>
                       <input
                         type="checkbox"
-                        checked={selectedResponsable de promos.permissions?.can_view_analytics || false}
+                        checked={selectedReferent.permissions?.can_view_analytics || false}
                         onChange={() => togglePermission('can_view_analytics')}
                         className="h-4 w-4 text-indigo-600 rounded"
                       />
@@ -482,10 +482,10 @@ const Responsable de promossPage = () => {
                     {user.city === 'Dijon' && (
                       <Button 
                         type="button"
-                        variant={selectedResponsable de promos.is_blocked ? "default" : "outline"}
+                        variant={selectedReferent.is_blocked ? "default" : "outline"}
                         onClick={handleBlockResponsable de promos}
                       >
-                        {selectedResponsable de promos.is_blocked ? (
+                        {selectedReferent.is_blocked ? (
                           <>
                             <CheckCircle className="h-4 w-4 mr-2" />
                             Débloquer
@@ -524,7 +524,7 @@ const Responsable de promossPage = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
               <AlertDialogDescription>
-                Êtes-vous sûr de vouloir supprimer {selectedResponsable de promos?.username} ?
+                Êtes-vous sûr de vouloir supprimer {selectedReferent?.username} ?
                 Cette action est irréversible.
               </AlertDialogDescription>
             </AlertDialogHeader>
