@@ -121,7 +121,7 @@ const AnalyticsPage = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="nouveaux arrivants et nouveaux convertiss" fill="#6366f1" />
+                  <Bar dataKey="count" fill="#6366f1" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
