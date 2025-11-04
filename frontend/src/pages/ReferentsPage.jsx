@@ -325,16 +325,14 @@ const ReferentsPage = () => {
                       <div className="text-sm text-gray-500">
                         {referent.city}
                       </div>
-                      {referent.role === 'referent' && (
-                        <Button 
-                          onClick={() => handleManageReferent(referent)}
-                          variant="outline"
-                          size="sm"
-                        >
-                          <Settings className="h-4 w-4 mr-2" />
-                          Gérer
-                        </Button>
-                      )}
+                      <Button 
+                        onClick={() => handleManageReferent(referent)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Gérer
+                      </Button>
                     </div>
                   </div>
                 ))
