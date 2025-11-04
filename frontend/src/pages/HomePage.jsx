@@ -23,15 +23,32 @@ const HomePage = () => {
     loadCities();
   }, []);
 
-  const handleDepartmentChoice = (department) => {
+  const handleDepartmentChoice = (deptId) => {
+    // Handle special access page
+    if (deptId === 'acces-specifiques') {
+      navigate('/acces-specifiques');
+      return;
+    }
+
     if (!selectedCity) {
       alert('Veuillez sélectionner une ville');
       return;
     }
+
     // Store the selected department in sessionStorage
-    sessionStorage.setItem('selectedDepartment', department);
+    sessionStorage.setItem('selectedDepartment', deptId);
     sessionStorage.setItem('selectedCity', selectedCity);
-    navigate('/login');
+    
+    // Navigate based on department
+    if (deptId === 'accueil') {
+      navigate('/visitors');
+    } else if (deptId === 'promotions') {
+      navigate('/dashboard');
+    } else if (deptId === 'familles-impact') {
+      navigate('/familles-impact');
+    } else {
+      navigate('/login');
+    }
   };
 
   const departments = [
