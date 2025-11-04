@@ -81,7 +81,28 @@ const RegisterPage = () => {
       }, 2000);
     } catch (error) {
       console.error('Registration error:', error);
-      toast.error(error.response?.data?.detail || 'Erreur lors de l\'inscription');
+      
+      // Handle different error formats
+      let errorMessage = 'Erreur lors de l\'inscription';
+      
+      if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        
+        // If detail is an array (validation errors)
+        if (Array.isArray(detail)) {
+          errorMessage = detail.map(err => err.msg || err.message || JSON.stringify(err)).join(', ');
+        } 
+        // If detail is a string
+        else if (typeof detail === 'string') {
+          errorMessage = detail;
+        }
+        // If detail is an object
+        else if (typeof detail === 'object') {
+          errorMessage = detail.msg || detail.message || 'Erreur de validation';
+        }
+      }
+      
+      toast.error(errorMessage);
       setLoading(false);
     }
   };
