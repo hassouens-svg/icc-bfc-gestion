@@ -42,10 +42,13 @@ const Layout = ({ children }) => {
             <h1 className="text-2xl font-bold text-indigo-600">ICC {user?.city}</h1>
             <p className="text-sm text-gray-500">
               {user?.username} ({user?.role === 'admin' ? 'Administrateur' : 
+                user?.role === 'super_admin' ? 'Super Administrateur' :
+                user?.role === 'pasteur' ? 'Pasteur' :
                 user?.role === 'accueil' ? 'Accueil et Intégration' :
                 user?.role === 'promotions' ? 'Promotions' : 
-                user?.role === 'admin' && user?.city === 'Dijon' ? 'Superviseur des promos' :
-                user?.role === 'admin' ? 'Administrateur' :
+                user?.role === 'pilote_fi' ? 'Pilote FI' :
+                user?.role === 'responsable_secteur' ? 'Responsable Secteur' :
+                user?.role === 'superviseur_fi' ? 'Superviseur FI' :
                 'Responsable de promos'})
             </p>
           </div>
