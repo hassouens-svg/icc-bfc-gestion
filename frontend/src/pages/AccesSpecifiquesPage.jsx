@@ -94,11 +94,10 @@ const AccesSpecifiquesPage = () => {
               </div>
 
               <div className="bg-blue-50 p-3 rounded-lg text-sm">
-                <p className="text-blue-700">
-                  💡 <strong>Identifiants valides :</strong>
+                <p className="text-blue-700 text-center">
+                  💡 <strong>Accès réservé au Pasteur et au Super Administrateur</strong>
                 </p>
-                <p className="text-blue-600 mt-1">• pasteur / pasteur123</p>
-                <p className="text-blue-600">• superadmin / superadmin123</p>
+                <p className="text-blue-600 text-center text-xs mt-1">Veuillez utiliser vos identifiants officiels</p>
               </div>
 
               <Button 
