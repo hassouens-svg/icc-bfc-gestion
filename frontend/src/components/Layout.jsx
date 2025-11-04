@@ -38,7 +38,10 @@ const Layout = ({ children }) => {
             <p className="text-sm text-gray-500">
               {user?.username} ({user?.role === 'admin' ? 'Administrateur' : 
                 user?.role === 'accueil' ? 'Accueil et Intégration' :
-                user?.role === 'promotions' ? 'Promotions' : 'Responsable de promos'})
+                user?.role === 'promotions' ? 'Promotions' : 
+                user?.role === 'admin' && user?.city === 'Dijon' ? 'Superviseur des promos' :
+                user?.role === 'admin' ? 'Administrateur' :
+                'Responsable de promos'})
             </p>
           </div>
           <Button onClick={handleLogout} variant="outline" data-testid="logout-button">
