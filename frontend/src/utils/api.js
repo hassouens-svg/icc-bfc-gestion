@@ -110,6 +110,11 @@ export const unblockUser = async (userId) => {
   return response.data;
 };
 
+export const resetUserPassword = async (userId, newPassword) => {
+  const response = await apiClient.put(`/users/${userId}/reset-password`, { new_password: newPassword });
+  return response.data;
+};
+
 // User Management APIs
 export const getUsers = async () => {
   const response = await apiClient.get('/users/referents');
