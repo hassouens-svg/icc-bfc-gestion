@@ -14,12 +14,12 @@ BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://visitor-management-3.prev
 API_URL = f"{BASE_URL}/api"
 
 def create_test_users():
-    # Login as superadmin
+    # Login as superviseur_promos (can create users)
     login_response = requests.post(f'{API_URL}/auth/login', 
-                                  json={'username': 'superadmin', 'password': 'superadmin123', 'city': 'Dijon'})
+                                  json={'username': 'superviseur_promos', 'password': 'superviseur123', 'city': 'Dijon'})
     
     if login_response.status_code != 200:
-        print("Failed to login as superadmin")
+        print("Failed to login as superviseur_promos")
         return
     
     token = login_response.json()['token']
