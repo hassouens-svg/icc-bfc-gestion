@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getResponsable de promoss, getUser, createResponsable de promos, getCities, updateUser, deleteUser, blockUser, unblockUser } from '../utils/api';
+import { getReferents, getUser, createReferent, getCities, updateUser, deleteUser, blockUser, unblockUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
