@@ -167,6 +167,21 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: Fidelisation endpoints working correctly. Tested: (1) GET /api/fidelisation/referent with referent role returns proper data (total_visitors, weekly_rates, monthly_average), (2) GET /api/fidelisation/admin with promotions role returns array of referent data, (3) Permission boundaries work - referent role gets 403 when accessing admin endpoint. Role checks at lines 596 and 654 working properly with JWT roles."
 
+  - task: "Visitor Registration Endpoint - POST /api/auth/register"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reports blank page after filling registration form at /register. Registration doesn't work and user gets blank page instead of success confirmation."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Visitor registration endpoint working perfectly. Comprehensive testing performed: (1) Successful registration with valid data returns 200 with success message and visitor ID, (2) Data persistence confirmed - visitor correctly saved to database with proper assigned_month calculation (2025-01 from visit_date 2025-01-04), (3) Error handling working - returns 422 for missing required fields and invalid email formats, (4) CORS properly configured with Access-Control-Allow-Origin: *, (5) All required fields validated correctly. Backend registration endpoint is fully functional. Blank page issue is FRONTEND-RELATED - check browser console for JavaScript errors, verify frontend redirect logic after registration, and ensure frontend properly handles success response."
+
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
