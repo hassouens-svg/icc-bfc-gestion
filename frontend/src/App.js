@@ -26,7 +26,7 @@ function App() {
           <Route path="/visitors" element={<VisitorsPage />} />
           <Route path="/visitors-table" element={<VisitorsTablePage />} />
           <Route path="/visitor/:id" element={<VisitorDetailPage />} />
-          <Route path="/referents" element={<Responsable de promossPage />} />
+          <Route path="/referents" element={<ReferentsPage />} />
           <Route path="/cities" element={<CitiesPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/stopped-visitors" element={<StoppedVisitorsPage />} />
