@@ -48,6 +48,7 @@ function App() {
           <Route path="/familles-impact/dashboard-pilote" element={<DashboardPiloteFIPage />} />
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardPasteurPage />} />
+          <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
         </Routes>
       </BrowserRouter>
     </div>
