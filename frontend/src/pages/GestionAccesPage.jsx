@@ -46,12 +46,16 @@ const GestionAccesPage = () => {
 
   const loadData = async () => {
     try {
-      const [usersData, citiesData] = await Promise.all([
+      const [usersData, citiesData, secteursData, fisData] = await Promise.all([
         getUsers(),
-        getCities()
+        getCities(),
+        getSecteurs(),
+        getFamillesImpact()
       ]);
       setUsers(usersData);
       setCities(citiesData);
+      setSecteurs(secteursData);
+      setFamillesImpact(fisData);
     } catch (error) {
       toast.error('Erreur lors du chargement');
     } finally {
