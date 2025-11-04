@@ -22,7 +22,7 @@ const Responsable de promossPage = () => {
   const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedResponsable de promos, setSelectedResponsable de promos] = useState(null);
-  const [newResponsable de promos, setNewResponsable de promos] = useState({
+  const [newReferent, setNewReferent] = useState({
     username: '',
     password: '',
     city: '',
@@ -62,12 +62,12 @@ const Responsable de promossPage = () => {
   const handleCreateResponsable de promos = async (e) => {
     e.preventDefault();
     
-    if (!newResponsable de promos.username || !newResponsable de promos.password || !newResponsable de promos.role || !newResponsable de promos.city) {
+    if (!newReferent.username || !newReferent.password || !newReferent.role || !newReferent.city) {
       toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
 
-    if (newResponsable de promos.role === 'referent' && !newResponsable de promos.assigned_month) {
+    if (newReferent.role === 'referent' && !newReferent.assigned_month) {
       toast.error('Veuillez sélectionner un mois pour le responsable de promos');
       return;
     }
@@ -76,7 +76,7 @@ const Responsable de promossPage = () => {
       await createReferent(newReferent);
       toast.success('Responsable de promos créé avec succès!');
       setIsDialogOpen(false);
-      setNewResponsable de promos({
+      setNewReferent({
         username: '',
         password: '',
         city: '',
@@ -208,8 +208,8 @@ const Responsable de promossPage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="city">Ville ICC *</Label>
                   <Select 
-                    value={newResponsable de promos.city} 
-                    onValueChange={(value) => setNewResponsable de promos({...newResponsable de promos, city: value})}
+                    value={newReferent.city} 
+                    onValueChange={(value) => setNewReferent({...newReferent, city: value})}
                   >
                     <SelectTrigger data-testid="referent-city-select">
                       <SelectValue placeholder="Sélectionnez une ville" />
@@ -228,8 +228,8 @@ const Responsable de promossPage = () => {
                   <Label htmlFor="username">Nom d'utilisateur *</Label>
                   <Input
                     id="username"
-                    value={newResponsable de promos.username}
-                    onChange={(e) => setNewResponsable de promos({...newResponsable de promos, username: e.target.value})}
+                    value={newReferent.username}
+                    onChange={(e) => setNewReferent({...newReferent, username: e.target.value})}
                     placeholder="ex: referent_janvier"
                     data-testid="referent-username-input"
                   />
@@ -240,8 +240,8 @@ const Responsable de promossPage = () => {
                   <Input
                     id="password"
                     type="password"
-                    value={newResponsable de promos.password}
-                    onChange={(e) => setNewResponsable de promos({...newResponsable de promos, password: e.target.value})}
+                    value={newReferent.password}
+                    onChange={(e) => setNewReferent({...newReferent, password: e.target.value})}
                     placeholder="Choisissez un mot de passe"
                     data-testid="referent-password-input"
                   />
@@ -250,8 +250,8 @@ const Responsable de promossPage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="role">Rôle *</Label>
                   <Select 
-                    value={newResponsable de promos.role} 
-                    onValueChange={(value) => setNewResponsable de promos({...newResponsable de promos, role: value, assigned_month: value !== 'referent' ? '' : newResponsable de promos.assigned_month})}
+                    value={newReferent.role} 
+                    onValueChange={(value) => setNewReferent({...newReferent, role: value, assigned_month: value !== 'referent' ? '' : newReferent.assigned_month})}
                   >
                     <SelectTrigger data-testid="referent-role-select">
                       <SelectValue />
@@ -264,12 +264,12 @@ const Responsable de promossPage = () => {
                   </Select>
                 </div>
 
-                {newResponsable de promos.role === 'referent' && (
+                {newReferent.role === 'referent' && (
                   <div className="space-y-2">
                     <Label htmlFor="assigned_month">Mois assigné *</Label>
                     <Select 
-                      value={newResponsable de promos.assigned_month} 
-                      onValueChange={(value) => setNewResponsable de promos({...newResponsable de promos, assigned_month: value})}
+                      value={newReferent.assigned_month} 
+                      onValueChange={(value) => setNewReferent({...newReferent, assigned_month: value})}
                     >
                       <SelectTrigger data-testid="referent-month-select">
                         <SelectValue placeholder="Sélectionnez un mois" />
