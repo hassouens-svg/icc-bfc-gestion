@@ -234,3 +234,126 @@ export const getAdminFidelisation = async (week = null, month = null) => {
   const response = await apiClient.get('/fidelisation/admin', { params });
   return response.data;
 };
+
+// ==================== FAMILLES D'IMPACT APIs ====================
+
+// Secteurs
+export const createSecteur = async (data) => {
+  const response = await apiClient.post('/fi/secteurs', data);
+  return response.data;
+};
+
+export const getSecteurs = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/fi/secteurs', { params });
+  return response.data;
+};
+
+export const updateSecteur = async (secteurId, data) => {
+  const response = await apiClient.put(`/fi/secteurs/${secteurId}`, data);
+  return response.data;
+};
+
+export const deleteSecteur = async (secteurId) => {
+  const response = await apiClient.delete(`/fi/secteurs/${secteurId}`);
+  return response.data;
+};
+
+// Familles d'Impact
+export const createFamilleImpact = async (data) => {
+  const response = await apiClient.post('/fi/familles-impact', data);
+  return response.data;
+};
+
+export const getFamillesImpact = async (secteurId = null, ville = null) => {
+  const params = {};
+  if (secteurId) params.secteur_id = secteurId;
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/fi/familles-impact', { params });
+  return response.data;
+};
+
+export const getFamilleImpact = async (fiId) => {
+  const response = await apiClient.get(`/fi/familles-impact/${fiId}`);
+  return response.data;
+};
+
+export const updateFamilleImpact = async (fiId, data) => {
+  const response = await apiClient.put(`/fi/familles-impact/${fiId}`, data);
+  return response.data;
+};
+
+export const deleteFamilleImpact = async (fiId) => {
+  const response = await apiClient.delete(`/fi/familles-impact/${fiId}`);
+  return response.data;
+};
+
+// Membres FI
+export const createMembreFI = async (data) => {
+  const response = await apiClient.post('/fi/membres', data);
+  return response.data;
+};
+
+export const getMembresFI = async (fiId = null) => {
+  const params = {};
+  if (fiId) params.fi_id = fiId;
+  const response = await apiClient.get('/fi/membres', { params });
+  return response.data;
+};
+
+export const deleteMembreFI = async (membreId) => {
+  const response = await apiClient.delete(`/fi/membres/${membreId}`);
+  return response.data;
+};
+
+// Présences FI
+export const createPresenceFI = async (data) => {
+  const response = await apiClient.post('/fi/presences', data);
+  return response.data;
+};
+
+export const getPresencesFI = async (fiId = null, date = null, membreFiId = null) => {
+  const params = {};
+  if (fiId) params.fi_id = fiId;
+  if (date) params.date = date;
+  if (membreFiId) params.membre_fi_id = membreFiId;
+  const response = await apiClient.get('/fi/presences', { params });
+  return response.data;
+};
+
+// Affectation
+export const affecterVisiteurToFI = async (data) => {
+  const response = await apiClient.post('/fi/affecter-visiteur', data);
+  return response.data;
+};
+
+export const getIndicateursAffectation = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/fi/indicateurs/affectation', { params });
+  return response.data;
+};
+
+// Stats FI
+export const getStatsPiloteFI = async () => {
+  const response = await apiClient.get('/fi/stats/pilote');
+  return response.data;
+};
+
+export const getStatsSecteur = async () => {
+  const response = await apiClient.get('/fi/stats/secteur');
+  return response.data;
+};
+
+export const getStatsSuperviseurFI = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/fi/stats/superviseur', { params });
+  return response.data;
+};
+
+export const getStatsPasteur = async () => {
+  const response = await apiClient.get('/fi/stats/pasteur');
+  return response.data;
+};
