@@ -54,6 +54,7 @@ function App() {
           <Route path="/dashboard-pasteur" element={<DashboardPasteurPage />} />
           <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
           <Route path="/select-department" element={<SelectDepartmentPage />} />
+          <Route path="/gestion-acces" element={<GestionAccesPage />} />
         </Routes>
       </BrowserRouter>
     </div>
