@@ -1,15 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Shield, Crown, ArrowLeft } from 'lucide-react';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Shield, ArrowLeft } from 'lucide-react';
+import { login } from '../utils/api';
+import { toast } from 'sonner';
 
 const AccesSpecifiquesPage = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (role) => {
-    // Naviguer vers la page de login avec le rôle pré-sélectionné
-    navigate('/login', { state: { specialAccess: role } });
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    
+    if (!username || !password) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    // Vérifier que c'est bien pasteur ou superadmin
+    if (username !== 'pasteur' && username !== 'superadmin') {
+      toast.error('Accès non autorisé. Réservé au Pasteur et Super Admin uniquement.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Login avec ville par défaut "Dijon" (requis par l'API)
+      await login(username, password, 'Dijon', null);
+      toast.success('Connexion réussie!');
+      
+      // Rediriger vers la page de sélection de département
+      navigate('/select-department');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Identifiants incorrects');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
