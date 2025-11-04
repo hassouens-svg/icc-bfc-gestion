@@ -204,7 +204,7 @@ const AnalyticsPage = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="nouveaux arrivants et nouveaux convertiss" stroke="#6366f1" strokeWidth={2} />
+                  <Line type="monotone" dataKey="count" stroke="#6366f1" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
