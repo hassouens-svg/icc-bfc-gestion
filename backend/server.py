@@ -1196,7 +1196,7 @@ async def init_data():
 @api_router.post("/fi/secteurs")
 async def create_secteur(secteur_data: SecteurCreate, current_user: dict = Depends(get_current_user)):
     # Only admin, super_admin, superviseur_fi can create secteurs
-    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
+    if current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     secteur = Secteur(**secteur_data.model_dump(), created_by=current_user["username"])
@@ -1217,7 +1217,7 @@ async def get_secteurs(ville: Optional[str] = None, current_user: dict = Depends
 
 @api_router.put("/fi/secteurs/{secteur_id}")
 async def update_secteur(secteur_id: str, secteur_data: SecteurCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
+    if current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     result = await db.secteurs.update_one(
@@ -1232,7 +1232,7 @@ async def update_secteur(secteur_id: str, secteur_data: SecteurCreate, current_u
 
 @api_router.delete("/fi/secteurs/{secteur_id}")
 async def delete_secteur(secteur_id: str, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
+    if current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     # Check if there are FI in this secteur
@@ -1250,7 +1250,7 @@ async def delete_secteur(secteur_id: str, current_user: dict = Depends(get_curre
 
 @api_router.post("/fi/familles-impact")
 async def create_famille_impact(fi_data: FamilleImpactCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+    if current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     fi = FamilleImpact(**fi_data.model_dump(), created_by=current_user["username"])
@@ -1295,7 +1295,7 @@ async def get_famille_impact(fi_id: str, current_user: dict = Depends(get_curren
 
 @api_router.put("/fi/familles-impact/{fi_id}")
 async def update_famille_impact(fi_id: str, fi_data: FamilleImpactCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+    if current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     result = await db.familles_impact.update_one(
@@ -1310,7 +1310,7 @@ async def update_famille_impact(fi_id: str, fi_data: FamilleImpactCreate, curren
 
 @api_router.delete("/fi/familles-impact/{fi_id}")
 async def delete_famille_impact(fi_id: str, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+    if current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     # Check if there are membres
@@ -1332,7 +1332,7 @@ async def create_membre_fi(membre_data: MembreFICreate, current_user: dict = Dep
     if current_user["role"] == "pilote_fi":
         if current_user.get("assigned_fi_id") != membre_data.fi_id:
             raise HTTPException(status_code=403, detail="Can only add members to your FI")
-    elif current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+    elif current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     membre = MembreFI(**membre_data.model_dump())
@@ -1366,7 +1366,7 @@ async def delete_membre_fi(membre_id: str, current_user: dict = Depends(get_curr
     if current_user["role"] == "pilote_fi":
         if current_user.get("assigned_fi_id") != membre["fi_id"]:
             raise HTTPException(status_code=403, detail="Permission denied")
-    elif current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+    elif current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     # Delete all presences for this member
@@ -1388,7 +1388,7 @@ async def create_presence_fi(presence_data: PresenceFICreate, current_user: dict
     if current_user["role"] == "pilote_fi":
         if current_user.get("assigned_fi_id") != membre["fi_id"]:
             raise HTTPException(status_code=403, detail="Permission denied")
-    elif current_user["role"] not in ["admin", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
+    elif current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     # Check if presence already exists for this date
@@ -1631,7 +1631,7 @@ async def get_stats_secteur(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/fi/stats/superviseur")
 async def get_stats_superviseur(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["superviseur_fi", "admin", "super_admin", "pasteur"] and not is_super_admin(current_user):
+    if current_user["role"] not in ["superviseur_fi", "superviseur_promos", "super_admin", "pasteur"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Permission denied")
     
     query = {}
