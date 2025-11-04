@@ -1144,16 +1144,16 @@ async def init_data():
             city = City(name=city_name)
             await db.cities.insert_one(city.model_dump())
     
-    # Create default admin for Dijon
-    existing_admin = await db.users.find_one({"username": "admin", "city": "Dijon"})
+    # Create default superviseur_promos for Dijon
+    existing_admin = await db.users.find_one({"username": "superviseur_promos", "city": "Dijon"})
     if not existing_admin:
-        admin = User(
-            username="admin",
-            password=hash_password("admin123"),
+        superviseur = User(
+            username="superviseur_promos",
+            password=hash_password("superviseur123"),
             city="Dijon",
-            role="admin"
+            role="superviseur_promos"
         )
-        doc = admin.model_dump()
+        doc = superviseur.model_dump()
         doc['created_at'] = doc['created_at'].isoformat()
         await db.users.insert_one(doc)
     
