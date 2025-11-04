@@ -161,6 +161,59 @@ const DashboardPiloteFIPage = () => {
             </ResponsiveContainer>
           </CardContent>
         </Card>
+
+        {/* Présences Jeudis */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Calendar className="h-5 w-5 mr-2" />
+              Marquer les Présences (Jeudis)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="max-w-xs"
+              />
+            </div>
+            <div className="space-y-3">
+              {membres.map((membre) => {
+                const presence = presences[membre.id];
+                return (
+                  <div key={membre.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex-1">
+                      <p className="font-medium">{membre.prenom} {membre.nom}</p>
+                      {membre.source === 'nouveau_arrivant' && (
+                        <p className="text-xs text-green-600">Nouveau arrivant</p>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={presence?.present || false}
+                          onCheckedChange={(checked) => handlePresenceChange(membre.id, checked)}
+                        />
+                        <label className="cursor-pointer">Présent</label>
+                      </div>
+                      <Input
+                        placeholder="Commentaire..."
+                        value={comments[membre.id] || presence?.commentaire || ''}
+                        onChange={(e) => setComments({...comments, [membre.id]: e.target.value})}
+                        className="w-48"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+              {membres.length === 0 && (
+                <p className="text-center text-gray-500 py-8">Aucun membre dans votre FI</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
