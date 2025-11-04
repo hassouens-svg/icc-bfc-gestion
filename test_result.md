@@ -132,6 +132,18 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: JWT role authentication fix working correctly. Tested login scenarios: (1) Referent without department returns role='referent', (2) Referent with department='promotions' returns role='promotions', (3) Referent with department='accueil' returns role='accueil'. All JWT tokens contain correct role and get_current_user properly uses JWT role instead of database role."
 
+  - task: "Familles d'Impact System - Complete CRUD Operations"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 FAMILLES D'IMPACT SYSTEM FULLY FUNCTIONAL! Comprehensive testing completed with 7/7 test suites passing. All endpoints working correctly: (1) SECTEURS CRUD - Create/Read/Update/Delete secteurs for Dijon ✅, (2) FAMILLES D'IMPACT CRUD - Create FI République, list by secteur, get details, modify, delete ✅, (3) MEMBRES CRUD - Add/list/delete membres in FI ✅, (4) PRESENCES CRUD - Mark presence for jeudi, list by FI and date ✅, (5) AFFECTATION SYSTEM - Affect nouveaux arrivants to FI, get indicators ✅, (6) STATISTICS ENDPOINTS - Superviseur and pasteur stats working ✅, (7) PERMISSIONS - Role-based access control enforced ✅. Authentication with admin/admin123 for Dijon working perfectly. All review request requirements satisfied."
+
   - task: "Visitor filtering by referent role"
     implemented: true
     working: true
