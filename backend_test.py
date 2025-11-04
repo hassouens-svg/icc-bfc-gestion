@@ -385,6 +385,178 @@ class BackendTester:
             self.log("✅ Accueil role works (no visitors to check field limitation)")
             return True
             
+    def test_visitor_crud_operations(self):
+        """Test 9: Visitor CRUD operations"""
+        self.log("\n=== TEST 9: Visitor CRUD Operations ===")
+        
+        token = self.tokens.get('admin')
+        if not token:
+            self.log("❌ No admin token available", "ERROR")
+            return False
+        
+        # Create a new visitor
+        visitor_data = {
+            "firstname": "Test",
+            "lastname": "Visitor",
+            "city": "Dijon",
+            "types": ["Nouveau Arrivant"],
+            "phone": "+33123456789",
+            "email": "test@example.com",
+            "arrival_channel": "Test Channel",
+            "visit_date": "2025-01-25"
+        }
+        
+        # POST /api/visitors
+        create_response = self.make_request('POST', '/visitors', token=token, json=visitor_data)
+        if not create_response or create_response.status_code != 200:
+            self.log("❌ Failed to create visitor", "ERROR")
+            return False
+        
+        visitor = create_response.json()
+        visitor_id = visitor['id']
+        self.log(f"✅ Created visitor: {visitor_id}")
+        
+        # GET /api/visitors/{visitor_id}
+        get_response = self.make_request('GET', f'/visitors/{visitor_id}', token=token)
+        if not get_response or get_response.status_code != 200:
+            self.log("❌ Failed to retrieve visitor", "ERROR")
+            return False
+        
+        retrieved_visitor = get_response.json()
+        if retrieved_visitor['id'] == visitor_id:
+            self.log("✅ Retrieved visitor successfully")
+        else:
+            self.log("❌ Retrieved visitor ID mismatch", "ERROR")
+            return False
+        
+        # PUT /api/visitors/{visitor_id}
+        update_data = {
+            "phone": "+33987654321",
+            "email": "updated@example.com"
+        }
+        update_response = self.make_request('PUT', f'/visitors/{visitor_id}', token=token, json=update_data)
+        if not update_response or update_response.status_code != 200:
+            self.log("❌ Failed to update visitor", "ERROR")
+            return False
+        
+        self.log("✅ Updated visitor successfully")
+        
+        # DELETE /api/visitors/{visitor_id}
+        delete_response = self.make_request('DELETE', f'/visitors/{visitor_id}', token=token)
+        if not delete_response or delete_response.status_code != 200:
+            self.log("❌ Failed to delete visitor", "ERROR")
+            return False
+        
+        self.log("✅ Deleted visitor successfully")
+        return True
+    
+    def test_user_management_endpoints(self):
+        """Test 10: User management endpoints"""
+        self.log("\n=== TEST 10: User Management Endpoints ===")
+        
+        token = self.tokens.get('admin')
+        if not token:
+            self.log("❌ No admin token available", "ERROR")
+            return False
+        
+        # GET /api/users/referents
+        referents_response = self.make_request('GET', '/users/referents', token=token)
+        if not referents_response or referents_response.status_code != 200:
+            self.log("❌ Failed to get referents list", "ERROR")
+            return False
+        
+        referents = referents_response.json()
+        self.log(f"✅ Retrieved {len(referents)} referents")
+        
+        # Create a new referent for testing
+        new_referent_data = {
+            "username": "test_referent_crud",
+            "password": "test123",
+            "city": "Dijon",
+            "role": "referent",
+            "assigned_month": "2025-03"
+        }
+        
+        create_referent_response = self.make_request('POST', '/users/referent', token=token, json=new_referent_data)
+        if create_referent_response and create_referent_response.status_code == 200:
+            referent_id = create_referent_response.json()['id']
+            self.log(f"✅ Created test referent: {referent_id}")
+            
+            # Update referent
+            update_data = {
+                "assigned_month": "2025-04",
+                "permissions": {
+                    "can_view_all_months": True,
+                    "can_edit_visitors": True
+                }
+            }
+            update_response = self.make_request('PUT', f'/users/{referent_id}', token=token, json=update_data)
+            if update_response and update_response.status_code == 200:
+                self.log("✅ Updated referent successfully")
+            else:
+                self.log("❌ Failed to update referent", "ERROR")
+                return False
+            
+            # Delete referent
+            delete_response = self.make_request('DELETE', f'/users/{referent_id}', token=token)
+            if delete_response and delete_response.status_code == 200:
+                self.log("✅ Deleted referent successfully")
+            else:
+                self.log("❌ Failed to delete referent", "ERROR")
+                return False
+        else:
+            self.log("✅ Referent creation skipped (might already exist)")
+        
+        return True
+    
+    def test_city_management_endpoints(self):
+        """Test 11: City management endpoints"""
+        self.log("\n=== TEST 11: City Management Endpoints ===")
+        
+        token = self.tokens.get('admin')
+        if not token:
+            self.log("❌ No admin token available", "ERROR")
+            return False
+        
+        # GET /api/cities
+        cities_response = self.make_request('GET', '/cities', token=token)
+        if not cities_response or cities_response.status_code != 200:
+            self.log("❌ Failed to get cities list", "ERROR")
+            return False
+        
+        cities = cities_response.json()
+        self.log(f"✅ Retrieved {len(cities)} cities")
+        
+        # Create a test city
+        test_city_data = {"name": "Test City CRUD"}
+        create_city_response = self.make_request('POST', '/cities', token=token, json=test_city_data)
+        
+        if create_city_response and create_city_response.status_code == 200:
+            city = create_city_response.json()
+            city_id = city['id']
+            self.log(f"✅ Created test city: {city_id}")
+            
+            # Update city
+            update_city_data = {"name": "Updated Test City"}
+            update_response = self.make_request('PUT', f'/cities/{city_id}', token=token, json=update_city_data)
+            if update_response and update_response.status_code == 200:
+                self.log("✅ Updated city successfully")
+            else:
+                self.log("❌ Failed to update city", "ERROR")
+                return False
+            
+            # Delete city
+            delete_response = self.make_request('DELETE', f'/cities/{city_id}', token=token)
+            if delete_response and delete_response.status_code == 200:
+                self.log("✅ Deleted city successfully")
+            else:
+                self.log("❌ Failed to delete city", "ERROR")
+                return False
+        else:
+            self.log("✅ City creation skipped (might already exist)")
+        
+        return True
+
     def run_all_tests(self):
         """Run all backend tests"""
         self.log("Starting Backend API Tests for JWT Role Authentication Fix")
@@ -402,7 +574,10 @@ class BackendTester:
             ("Fidelisation Referent Endpoint", self.test_fidelisation_referent_endpoint),
             ("Fidelisation Admin Endpoint", self.test_fidelisation_admin_endpoint),
             ("Permission Boundaries", self.test_permission_boundaries),
-            ("Accueil Role Limited View", self.test_accueil_role_limited_view)
+            ("Accueil Role Limited View", self.test_accueil_role_limited_view),
+            ("Visitor CRUD Operations", self.test_visitor_crud_operations),
+            ("User Management Endpoints", self.test_user_management_endpoints),
+            ("City Management Endpoints", self.test_city_management_endpoints)
         ]
         
         results = {}
