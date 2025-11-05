@@ -519,10 +519,17 @@ async def create_test_data():
             "email": f"visiteur_jan_chalon_{i}@test.com",
             "phone": f"0612349{i:03d}",
             "city": "Chalon-Sur-Saone",
+            "types": ["Nouveau Arrivant"],
             "visit_date": f"2025-01-{random.randint(1, 28):02d}",
             "assigned_month": "2025-01",
             "arrival_channel": random.choice(["Réseaux sociaux", "Bouche à oreille", "Site web"]),
-            "status": "nouveau"
+            "tracking_stopped": False,
+            "presences_dimanche": [],
+            "presences_jeudi": [],
+            "formation_pcnc": False,
+            "formation_au_coeur_bible": False,
+            "formation_star": False,
+            "comments": []
         })
     
     # Visiteurs Feb 2025 (Milan)
