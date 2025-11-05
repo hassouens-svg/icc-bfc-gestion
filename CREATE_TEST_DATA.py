@@ -114,12 +114,11 @@ async def create_test_data():
     for secteur in secteurs_chalon:
         familles.append({
             "id": str(uuid.uuid4()),
-            "name": f"FI {secteur['name']}",
-            "city": "Chalon-Sur-Saone",
+            "nom": f"FI {secteur['nom']}",
+            "ville": "Chalon-Sur-Saone",
             "secteur_id": secteur['id'],
-            "pilote_name": f"Pilote {secteur['name']}",
-            "meeting_day": "Jeudi",
-            "meeting_time": "19:00"
+            "created_by": "admin",
+            "created_at": datetime.now().isoformat()
         })
     
     # FI pour Milan
