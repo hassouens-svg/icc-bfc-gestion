@@ -1603,11 +1603,12 @@ async def get_stats_pilote(current_user: dict = Depends(get_current_user)):
     evolution_membres = defaultdict(int)
     for membre in membres:
         date_ajout = membre.get("date_ajout")
-        if isinstance(date_ajout, str):
-            month = date_ajout[:7]  # YYYY-MM
-        else:
-            month = date_ajout.strftime("%Y-%m")
-        evolution_membres[month] += 1
+        if date_ajout:
+            if isinstance(date_ajout, str):
+                month = date_ajout[:7]  # YYYY-MM
+            else:
+                month = date_ajout.strftime("%Y-%m")
+            evolution_membres[month] += 1
     
     # Cumulative
     cumulative = {}
