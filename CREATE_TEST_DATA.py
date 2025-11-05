@@ -253,10 +253,10 @@ async def create_test_data():
     })
     
     # Pilotes FI (assignés aux FI créées)
-    fi_dijon = [f for f in familles if f['city'] == 'Dijon']
-    fi_chalon = [f for f in familles if f['city'] == 'Chalon-Sur-Saone']
-    fi_milan = [f for f in familles if f['city'] == 'Milan']
-    fi_rome = [f for f in familles if f['city'] == 'Rome']
+    fi_dijon = [f for f in familles if f['ville'] == 'Dijon']
+    fi_chalon = [f for f in familles if f['ville'] == 'Chalon-Sur-Saone']
+    fi_milan = [f for f in familles if f['ville'] == 'Milan']
+    fi_rome = [f for f in familles if f['ville'] == 'Rome']
     
     users.append({
         "id": str(uuid.uuid4()),
