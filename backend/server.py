@@ -1141,9 +1141,9 @@ async def get_admin_fidelisation(week: int = None, month: str = None, current_us
         if not assigned_month:
             continue
         
-        # Get visitors for this referent
+        # Get visitors for this referent  
         visitors = await db.visitors.find({
-            "city": current_user["city"],
+            "city": referent["city"],
             "assigned_month": assigned_month,
             "tracking_stopped": False
         }, {"_id": 0}).to_list(10000)
