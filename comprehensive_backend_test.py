@@ -402,7 +402,8 @@ class ComprehensiveBackendTester:
                 self.log("Attempting to create visitor with accueil role...")
                 response = self.make_request('POST', '/visitors', token=token, json=visitor_data)
                 self.log(f"Response object: {response}")
-                if response:
+                self.log(f"Response type: {type(response)}")
+                if response is not None:
                     self.log(f"Response status: {response.status_code}")
                     self.log(f"Response text: {response.text}")
                 else:
