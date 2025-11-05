@@ -27,7 +27,8 @@ async def assign_secteur():
         await db.secteurs.insert_one(secteur)
         print(f"✅ Secteur créé: {secteur['name']}")
     else:
-        print(f"✅ Secteur trouvé: {secteur['name']}")
+        secteur_name = secteur.get('name') or secteur.get('nom', 'Inconnu')
+        print(f"✅ Secteur trouvé: {secteur_name}")
     
     # Assigner ce secteur au responsable_secteur1
     result = await db.users.update_one(
@@ -36,14 +37,14 @@ async def assign_secteur():
     )
     
     if result.modified_count > 0:
-        print(f"✅ Secteur '{secteur['name']}' assigné à responsable_secteur1")
+        print(f"✅ Secteur assigné à responsable_secteur1")
     else:
         print("⚠️  Utilisateur déjà à jour ou non trouvé")
     
     # Vérifier
     user = await db.users.find_one({"username": "responsable_secteur1"})
     if user:
-        print(f"Secteur assigné: {user.get('assigned_secteur_id', 'Aucun')}")
+        print(f"Secteur assigné ID: {user.get('assigned_secteur_id', 'Aucun')}")
     
     client.close()
 
