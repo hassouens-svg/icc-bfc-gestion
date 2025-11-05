@@ -51,7 +51,7 @@ const DashboardSuperAdminCompletPage = () => {
   const canEdit = user?.role === 'super_admin';
   const isReadOnly = user?.role === 'pasteur';
   
-  const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi'
+  const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi' or 'presences'
   const [selectedCity, setSelectedCity] = useState('all');
   const [loading, setLoading] = useState(true);
   
@@ -61,10 +61,15 @@ const DashboardSuperAdminCompletPage = () => {
   const [visitorsTable, setVisitorsTable] = useState([]);
   const [fiData, setFiData] = useState(null);
   const [membresTable, setMembresTable] = useState([]);
+  const [presencesDimancheData, setPresencesDimancheData] = useState(null);
   
   // Filters for tables
   const [visitorsFilter, setVisitorsFilter] = useState('');
   const [membresFilter, setMembresFilter] = useState('');
+  
+  // Filters for presences dimanche
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     if (!user || !['super_admin', 'pasteur'].includes(user.role)) {
