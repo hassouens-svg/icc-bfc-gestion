@@ -122,9 +122,15 @@ const DashboardPiloteFIPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">Tableau de Bord - Pilote FI</h2>
-          <p className="text-gray-500 mt-1">{stats?.fi?.nom}</p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Tableau de Bord - Pilote FI</h2>
+            <p className="text-gray-500 mt-1">{stats?.fi?.nom}</p>
+          </div>
+          <Button onClick={() => setIsAddMemberDialogOpen(true)} className="bg-green-600 hover:bg-green-700">
+            <UserPlus className="h-4 w-4 mr-2" />
+            Ajouter un Membre
+          </Button>
         </div>
 
         {/* KPIs */}
