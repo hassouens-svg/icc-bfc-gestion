@@ -401,39 +401,44 @@ class ComprehensiveBackendTester:
                 
                 response = self.make_request('POST', '/visitors', token=token, json=visitor_data)
                 
-                if response and response.status_code == 403:
-                    self.log("✅ PASS: Accueil role correctly denied visitor creation (403)")
-                    
-                    # Vérifier que la lecture fonctionne
-                    read_response = self.make_request('GET', '/visitors', token=token)
-                    if read_response and read_response.status_code == 200:
-                        visitors = read_response.json()
-                        self.log(f"✅ PASS: Accueil can read visitors ({len(visitors)} visitors)")
+                if response:
+                    if response.status_code == 403:
+                        self.log("✅ PASS: Accueil role correctly denied visitor creation (403)")
                         
-                        # Vérifier les champs limités
-                        if visitors and len(visitors) > 0:
-                            first_visitor = visitors[0]
-                            expected_fields = {'id', 'firstname', 'lastname', 'arrival_channel', 'visit_date', 'city'}
-                            actual_fields = set(first_visitor.keys())
+                        # Vérifier que la lecture fonctionne
+                        read_response = self.make_request('GET', '/visitors', token=token)
+                        if read_response and read_response.status_code == 200:
+                            visitors = read_response.json()
+                            self.log(f"✅ PASS: Accueil can read visitors ({len(visitors)} visitors)")
                             
-                            if actual_fields == expected_fields:
-                                self.log("✅ PASS: Accueil role returns limited fields only")
+                            # Vérifier les champs limités
+                            if visitors and len(visitors) > 0:
+                                first_visitor = visitors[0]
+                                expected_fields = {'id', 'firstname', 'lastname', 'arrival_channel', 'visit_date', 'city'}
+                                actual_fields = set(first_visitor.keys())
+                                
+                                if actual_fields == expected_fields:
+                                    self.log("✅ PASS: Accueil role returns limited fields only")
+                                    self.test_results['test_5_accueil_readonly'] = True
+                                    return True
+                                else:
+                                    self.log(f"❌ FAIL: Wrong fields returned. Expected: {expected_fields}, Got: {actual_fields}", "ERROR")
+                                    self.test_results['test_5_accueil_readonly'] = False
+                                    return False
+                            else:
+                                self.log("✅ PASS: Accueil role works (no visitors to check fields)")
                                 self.test_results['test_5_accueil_readonly'] = True
                                 return True
-                            else:
-                                self.log(f"❌ FAIL: Wrong fields returned. Expected: {expected_fields}, Got: {actual_fields}", "ERROR")
-                                self.test_results['test_5_accueil_readonly'] = False
-                                return False
                         else:
-                            self.log("✅ PASS: Accueil role works (no visitors to check fields)")
-                            self.test_results['test_5_accueil_readonly'] = True
-                            return True
+                            self.log("❌ FAIL: Accueil cannot read visitors", "ERROR")
+                            self.test_results['test_5_accueil_readonly'] = False
+                            return False
                     else:
-                        self.log("❌ FAIL: Accueil cannot read visitors", "ERROR")
+                        self.log(f"❌ FAIL: Accueil should get 403, got {response.status_code}", "ERROR")
                         self.test_results['test_5_accueil_readonly'] = False
                         return False
                 else:
-                    self.log(f"❌ FAIL: Accueil should get 403, got {response.status_code if response else 'No response'}", "ERROR")
+                    self.log("❌ FAIL: No response from POST /visitors", "ERROR")
                     self.test_results['test_5_accueil_readonly'] = False
                     return False
             else:
