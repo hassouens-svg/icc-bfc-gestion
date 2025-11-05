@@ -939,10 +939,14 @@ async def get_city_stats(city_id: str, current_user: dict = Depends(get_current_
 
 @api_router.get("/analytics/stats")
 async def get_stats(current_user: dict = Depends(get_current_user)):
-    city = current_user["city"]
-    
     # Base query filter
-    base_query = {"city": city, "tracking_stopped": False}
+    base_query = {"tracking_stopped": False}
+    
+    # For pasteur and super_admin, don't filter by city (see all)
+    if current_user["role"] not in ["pasteur", "super_admin"]:
+        base_query["city"] = current_user["city"]
+    
+    city = current_user["city"]
     
     # If referent, filter by their assigned month
     if current_user["role"] == "referent":
