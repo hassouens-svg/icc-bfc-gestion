@@ -2230,6 +2230,97 @@ async def get_membres_table(current_user: dict = Depends(get_current_user)):
         })
     
     return enriched_membres
+
+@api_router.get("/analytics/presences-dimanche")
+async def get_presences_dimanche(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    ville: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get presences dimanche aggregated by date with NA/NC breakdown"""
+    # Only super_admin and pasteur can access
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get all visitors with presences_dimanche
+    query = {"tracking_stopped": False}
+    if ville and ville != "all":
+        query["city"] = ville
+    
+    visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
+    
+    # Aggregate presences by date
+    presences_by_date = {}
+    
+    for visitor in visitors:
+        types = visitor.get("types", [])
+        is_na = "Nouveau Arrivant" in types
+        is_nc = "Nouveau Converti" in types
+        
+        for presence in visitor.get("presences_dimanche", []):
+            date = presence.get("date")
+            is_present = presence.get("present", False)
+            
+            # Filter by date range
+            if start_date and date < start_date:
+                continue
+            if end_date and date > end_date:
+                continue
+            
+            if date not in presences_by_date:
+                presences_by_date[date] = {
+                    "date": date,
+                    "total_present": 0,
+                    "total_absent": 0,
+                    "na_present": 0,
+                    "na_absent": 0,
+                    "nc_present": 0,
+                    "nc_absent": 0,
+                    "visitors_details": []
+                }
+            
+            if is_present:
+                presences_by_date[date]["total_present"] += 1
+                if is_na:
+                    presences_by_date[date]["na_present"] += 1
+                if is_nc:
+                    presences_by_date[date]["nc_present"] += 1
+            else:
+                presences_by_date[date]["total_absent"] += 1
+                if is_na:
+                    presences_by_date[date]["na_absent"] += 1
+                if is_nc:
+                    presences_by_date[date]["nc_absent"] += 1
+            
+            # Add visitor details
+            presences_by_date[date]["visitors_details"].append({
+                "name": f"{visitor.get('firstname')} {visitor.get('lastname')}",
+                "city": visitor.get("city"),
+                "types": types,
+                "present": is_present
+            })
+    
+    # Convert to sorted list
+    presences_list = sorted(presences_by_date.values(), key=lambda x: x["date"], reverse=True)
+    
+    # Calculate totals
+    total_dimanches = len(presences_list)
+    total_presences = sum(p["total_present"] for p in presences_list)
+    total_na = sum(p["na_present"] for p in presences_list)
+    total_nc = sum(p["nc_present"] for p in presences_list)
+    avg_per_dimanche = total_presences / total_dimanches if total_dimanches > 0 else 0
+    
+    return {
+        "presences": presences_list,
+        "summary": {
+            "total_dimanches": total_dimanches,
+            "total_presences": total_presences,
+            "total_na": total_na,
+            "total_nc": total_nc,
+            "avg_per_dimanche": round(avg_per_dimanche, 1)
+        }
+    }
 # ==================== ROOT ====================
 
 @api_router.get("/")
