@@ -136,12 +136,11 @@ async def create_test_data():
     for secteur in secteurs_rome:
         familles.append({
             "id": str(uuid.uuid4()),
-            "name": f"FI {secteur['name']}",
-            "city": "Rome",
+            "nom": f"FI {secteur['nom']}",
+            "ville": "Rome",
             "secteur_id": secteur['id'],
-            "pilote_name": f"Pilote {secteur['name']}",
-            "meeting_day": "Giovedì",
-            "meeting_time": "19:30"
+            "created_by": "admin",
+            "created_at": datetime.now().isoformat()
         })
     
     await db.familles_impact.insert_many(familles)
