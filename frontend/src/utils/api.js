@@ -392,3 +392,24 @@ export const getStatsPasteur = async () => {
   const response = await apiClient.get('/fi/stats/pasteur');
   return response.data;
 };
+
+// Advanced Analytics for Super Admin/Pasteur
+export const getPromotionsDetailed = async () => {
+  const response = await apiClient.get('/analytics/promotions-detailed');
+  return response.data;
+};
+
+export const getVisitorsTable = async () => {
+  const response = await apiClient.get('/analytics/visitors-table');
+  return response.data;
+};
+
+export const getFIDetailed = async () => {
+  const response = await apiClient.get('/analytics/fi-detailed');
+  return response.data;
+};
+
+export const getMembresTable = async () => {
+  const response = await apiClient.get('/analytics/membres-table');
+  return response.data;
+};
