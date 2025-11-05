@@ -49,12 +49,12 @@ const DashboardResponsableSecteurPage = () => {
       const secteurFIs = fisData.filter(fi => fi.secteur_id === user.assigned_secteur_id);
       setFamillesImpact(secteurFIs);
 
-      // Charger les membres de toutes les FI du secteur
+      // Charger les membres de toutes les FI du secteur avec leurs présences pour calculer fidélisation
       let membres = [];
       for (const fi of secteurFIs) {
         try {
           const fiMembres = await getMembresFI(fi.id);
-          membres = [...membres, ...fiMembres.map(m => ({ ...m, fi_name: fi.name }))];
+          membres = [...membres, ...fiMembres.map(m => ({ ...m, fi_name: fi.name, fi_id: fi.id }))];
         } catch (error) {
           console.error(`Erreur chargement membres FI ${fi.name}:`, error);
         }
