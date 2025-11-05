@@ -498,10 +498,17 @@ async def create_test_data():
             "email": f"visiteur_jan_dijon_{i}@test.com",
             "phone": f"0612348{i:03d}",
             "city": "Dijon",
+            "types": ["Nouveau Arrivant"],
             "visit_date": f"2025-01-{random.randint(1, 28):02d}",
             "assigned_month": "2025-01",
             "arrival_channel": random.choice(["Réseaux sociaux", "Bouche à oreille", "Site web"]),
-            "status": "nouveau"
+            "tracking_stopped": False,
+            "presences_dimanche": [],
+            "presences_jeudi": [],
+            "formation_pcnc": False,
+            "formation_au_coeur_bible": False,
+            "formation_star": False,
+            "comments": []
         })
     
     for i in range(4):
