@@ -30,8 +30,8 @@ const AccesSpecifiquesPage = () => {
 
     setLoading(true);
     try {
-      // Login avec ville par défaut "Dijon" (requis par l'API)
-      await login(username, password, 'Dijon', null);
+      // Pour pasteur et super_admin, utiliser Dijon par défaut (requis par le backend mais pas utilisé pour le filtrage)
+      const data = await login(username, password, 'Dijon');
       toast.success('Connexion réussie!');
       
       // Rediriger selon le rôle
