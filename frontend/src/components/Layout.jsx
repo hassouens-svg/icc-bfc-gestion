@@ -61,9 +61,10 @@ const Layout = ({ children }) => {
     
     // FAMILLES D'IMPACT - visible uniquement si département FI ou rôles FI
     { path: '/familles-impact/dashboard-pilote', label: 'Mon Dashboard FI', icon: Home, roles: ['pilote_fi'], department: 'familles-impact' },
+    { path: '/familles-impact/dashboard-responsable-secteur', label: 'Dashboard Secteur', icon: Home, roles: ['responsable_secteur'], department: 'familles-impact' },
+    { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi'], department: 'familles-impact' },
     { path: '/familles-impact', label: 'Familles d\'Impact', icon: Heart, roles: ['superviseur_fi', 'responsable_secteur'], department: 'familles-impact' },
     { path: '/familles-impact/affectation', label: 'Affectation FI', icon: UserPlus, roles: ['superviseur_fi'], department: 'familles-impact' },
-    { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi'], department: 'familles-impact' },
     { path: '/familles-impact/secteurs', label: 'Gérer Secteurs', icon: MapPin, roles: ['superviseur_fi'], department: 'familles-impact' },
     
     // COMMUNES - Villes accessible depuis les deux départements
