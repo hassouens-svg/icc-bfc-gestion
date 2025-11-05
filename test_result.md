@@ -365,11 +365,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Branding Update - ICC BFC-ITALIE"
-    - "GestionAccesPage - Edit and Password Reset Modals"
-    - "Notifications System - Backend and Frontend"
-    - "Timeline Extension - Promotions 2025-2030"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
