@@ -267,6 +267,18 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: Notifications system fully functional! Comprehensive testing completed: (1) GET /api/notifications returns user-specific notifications with proper filtering by user_id, (2) GET /api/notifications?unread_only=true correctly filters unread notifications, (3) PUT /api/notifications/{id}/read successfully marks notifications as read, (4) POST /api/notifications/generate creates automated notifications for appropriate user roles (superviseurs receive unassigned visitor alerts, low fidelisation alerts), (5) Role-based permission checks working - only superviseur_fi, superviseur_promos, super_admin can generate notifications. All endpoints at lines 1805-1960 working correctly with proper user filtering and permission controls."
 
+  - task: "Multi-City Access Control - Pasteur & Super Admin vs Superviseur"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎯 COMPREHENSIVE MULTI-CITY ACCESS TESTING COMPLETE! Executed 10/10 specialized tests covering all review requirements: (1) Super Admin Multi-City Analytics - sees 31 visitors from ALL cities vs 28 city-restricted ✅, (2) Pasteur Multi-City Analytics - sees 31 visitors from ALL cities ✅, (3) Superviseur City-Restricted Analytics - correctly limited to Dijon only (28 visitors) ✅, (4) Super Admin Multi-City Fidelisation - access to 6 referents from all cities ✅, (5) Pasteur Multi-City Fidelisation - access to 6 referents from all cities ✅, (6) Super Admin Multi-City Users - sees 25 users from Dijon + Chalon ✅, (7) Pasteur Multi-City Users - sees 25 users from multiple cities ✅, (8) Superviseur City-Restricted Users - sees only 24 Dijon users ✅, (9) Super Admin Cross-City User Management - can update users from any city ✅, (10) FI Stats Multi-City Access - Pasteur can access with proper data structure ✅. Multi-city filtering working perfectly: Pasteur and Super Admin see ALL data across ALL cities, Superviseur roles properly restricted to their city only. No data leakage confirmed."
+
   - task: "Notifications System - Frontend Implementation"
     implemented: true
     working: true
