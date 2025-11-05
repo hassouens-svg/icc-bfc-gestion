@@ -331,7 +331,9 @@ async def login(user_login: UserLogin):
             "username": user["username"],
             "city": user["city"],
             "role": final_role,
-            "assigned_month": user.get("assigned_month")
+            "assigned_month": user.get("assigned_month"),
+            "assigned_secteur_id": user.get("assigned_secteur_id"),
+            "assigned_fi_id": user.get("assigned_fi_id")
         }
     }
 
