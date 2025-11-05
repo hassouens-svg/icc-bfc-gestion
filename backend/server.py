@@ -93,6 +93,7 @@ class UserUpdate(BaseModel):
     assigned_fi_id: Optional[str] = None
     assigned_secteur_id: Optional[str] = None
     permissions: Optional[Dict[str, bool]] = None
+    dashboard_permissions: Optional[Dict[str, bool]] = None
 
 class UserLogin(BaseModel):
     username: str
