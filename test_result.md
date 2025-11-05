@@ -196,16 +196,19 @@ backend:
         comment: "✅ VERIFIED: Visitor registration endpoint working perfectly. Comprehensive testing performed: (1) Successful registration with valid data returns 200 with success message and visitor ID, (2) Data persistence confirmed - visitor correctly saved to database with proper assigned_month calculation (2025-01 from visit_date 2025-01-04), (3) Error handling working - returns 422 for missing required fields and invalid email formats, (4) CORS properly configured with Access-Control-Allow-Origin: *, (5) All required fields validated correctly. Backend registration endpoint is fully functional. Blank page issue is FRONTEND-RELATED - check browser console for JavaScript errors, verify frontend redirect logic after registration, and ensure frontend properly handles success response."
 
   - task: "Role-based Access Control - POST /visitors endpoint restrictions"
-    implemented: false
-    working: false
+    implemented: true
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUE FOUND: POST /visitors endpoint (lines 474-488) lacks role-based restrictions. Currently ANY authenticated user can create visitors, including 'accueil' role which should be read-only. The endpoint needs role checks to restrict visitor creation to appropriate roles only (referent, promotions, superviseur_promos, etc.). Accueil role should be denied with 403 status."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: POST /visitors endpoint role restrictions working correctly. Comprehensive testing confirmed: (1) Admin users (superviseur_promos) can create visitors successfully, (2) Accueil role correctly denied with 403 status and message 'Accueil role is read-only, cannot create visitors', (3) Role checks at lines 514-519 properly implemented and enforced. The endpoint restricts creation to allowed roles: superviseur_promos, referent, promotions, super_admin, pasteur. Access control working as expected."
 
   - task: "User Management - assigned_fi_id field support"
     implemented: true
