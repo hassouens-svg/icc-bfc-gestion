@@ -476,10 +476,17 @@ async def create_test_data():
             "email": f"visiteur_dec_{i}@test.com",
             "phone": f"0612347{i:03d}",
             "city": "Dijon",
+            "types": ["Nouveau Arrivant"],
             "visit_date": f"2024-12-{random.randint(1, 28):02d}",
             "assigned_month": "2024-12",
             "arrival_channel": random.choice(["Réseaux sociaux", "Bouche à oreille", "Site web"]),
-            "status": "nouveau"
+            "tracking_stopped": False,
+            "presences_dimanche": [],
+            "presences_jeudi": [],
+            "formation_pcnc": False,
+            "formation_au_coeur_bible": False,
+            "formation_star": False,
+            "comments": []
         })
     
     # Visiteurs Jan 2025 (Dijon et Chalon)
