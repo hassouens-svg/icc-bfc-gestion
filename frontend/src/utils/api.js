@@ -305,6 +305,25 @@ export const deleteFamilleImpact = async (fiId) => {
   return response.data;
 };
 
+// Notifications APIs
+export const getNotifications = async (unreadOnly = false) => {
+  const params = {};
+  if (unreadOnly) params.unread_only = true;
+  const response = await apiClient.get('/notifications', { params });
+  return response.data;
+};
+
+export const markNotificationRead = async (notificationId) => {
+  const response = await apiClient.put(`/notifications/${notificationId}/read`);
+  return response.data;
+};
+
+export const generateNotifications = async () => {
+  const response = await apiClient.post('/notifications/generate');
+  return response.data;
+};
+
+
 // Membres FI
 export const createMembreFI = async (data) => {
   const response = await apiClient.post('/fi/membres', data);
