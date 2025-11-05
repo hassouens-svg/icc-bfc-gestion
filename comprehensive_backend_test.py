@@ -399,15 +399,7 @@ class ComprehensiveBackendTester:
                     "visit_date": "2024-12-15"
                 }
                 
-                self.log("Attempting to create visitor with accueil role...")
                 response = self.make_request('POST', '/visitors', token=token, json=visitor_data)
-                self.log(f"Response object: {response}")
-                self.log(f"Response type: {type(response)}")
-                if response is not None:
-                    self.log(f"Response status: {response.status_code}")
-                    self.log(f"Response text: {response.text}")
-                else:
-                    self.log("Response is None")
                 
                 if response is not None:
                     if response.status_code == 403:
