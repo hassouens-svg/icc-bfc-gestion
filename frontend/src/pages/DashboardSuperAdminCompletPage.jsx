@@ -6,6 +6,7 @@ import {
   getVisitorsTable, 
   getFIDetailed, 
   getMembresTable,
+  getPresencesDimanche,
   getCities,
   getUser 
 } from '../utils/api';
