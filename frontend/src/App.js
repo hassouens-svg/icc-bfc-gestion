@@ -54,6 +54,7 @@ function App() {
           <Route path="/familles-impact/fi/:fiId" element={<FamilleImpactDetailPage />} />
           <Route path="/familles-impact/affectation" element={<AffectationFIPage />} />
           <Route path="/familles-impact/dashboard-pilote" element={<DashboardPiloteFIPage />} />
+          <Route path="/familles-impact/presences-table" element={<PresencesFITablePage />} />
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardPasteurPage />} />
