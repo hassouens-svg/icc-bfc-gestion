@@ -86,6 +86,24 @@ const SelectVillePage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Option "Toutes les villes" pour Pasteur et Super Admin */}
+          {['super_admin', 'pasteur'].includes(user?.role) && (
+            <Card
+              className="cursor-pointer hover:scale-105 transition-all duration-300 bg-gradient-to-br from-indigo-600 to-purple-700 shadow-lg hover:shadow-indigo-500/50 border-0 group"
+              onClick={() => handleCitySelect('all')}
+            >
+              <CardContent className="p-8 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <MapPin className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">
+                  Toutes les villes
+                </h3>
+                <p className="text-indigo-100 text-sm mt-2">Vue globale</p>
+              </CardContent>
+            </Card>
+          )}
+          
           {cities.map((city) => (
             <Card
               key={city.id}
