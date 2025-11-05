@@ -19,6 +19,7 @@ import FamilleImpactDetailPage from './pages/FamilleImpactDetailPage';
 import DashboardPiloteFIPage from './pages/DashboardPiloteFIPage';
 import DashboardSuperviseurFIPage from './pages/DashboardSuperviseurFIPage';
 import DashboardPasteurPage from './pages/DashboardPasteurPage';
+import DashboardSuperAdminPage from './pages/DashboardSuperAdminPage';
 import AffectationFIPage from './pages/AffectationFIPage';
 import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
