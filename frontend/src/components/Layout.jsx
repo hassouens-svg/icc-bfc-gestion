@@ -106,7 +106,7 @@ const Layout = ({ children }) => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-indigo-600">ICC {user?.city}</h1>
+            <h1 className="text-2xl font-bold text-indigo-600">ICC BFC-ITALIE {user?.city}</h1>
             <p className="text-sm text-gray-500">
               {user?.username} ({user?.role === 'superviseur_promos' ? 'Superviseur Promotions' : 
                 user?.role === 'superviseur_fi' ? 'Superviseur FI' :
@@ -119,10 +119,49 @@ const Layout = ({ children }) => {
                 'Responsable de promos'})
             </p>
           </div>
-          <Button onClick={handleLogout} variant="outline" data-testid="logout-button">
-            <LogOut className="h-4 w-4 mr-2" />
-            Déconnexion
-          </Button>
+          
+          <div className="flex items-center space-x-2">
+            {/* Notifications */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="icon" className="relative">
+                  <Bell className="h-4 w-4" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 max-h-96 overflow-y-auto">
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-sm mb-2">Notifications</h3>
+                  {notifications.length === 0 ? (
+                    <p className="text-sm text-gray-500">Aucune notification</p>
+                  ) : (
+                    notifications.slice(0, 10).map((notif) => (
+                      <div
+                        key={notif.id}
+                        className={`p-2 rounded border text-sm ${!notif.read ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'}`}
+                        onClick={() => !notif.read && handleMarkAsRead(notif.id)}
+                        style={{ cursor: !notif.read ? 'pointer' : 'default' }}
+                      >
+                        <p className="text-xs text-gray-500 mb-1">
+                          {new Date(notif.created_at).toLocaleString('fr-FR')}
+                        </p>
+                        <p>{notif.message}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Button onClick={handleLogout} variant="outline" data-testid="logout-button">
+              <LogOut className="h-4 w-4 mr-2" />
+              Déconnexion
+            </Button>
+          </div>
         </div>
       </header>
 
