@@ -1984,6 +1984,250 @@ async def generate_notifications(current_user: dict = Depends(get_current_user))
         "count": len(notifications_created)
     }
 
+# ==================== ADVANCED ANALYTICS FOR SUPER ADMIN/PASTEUR ====================
+
+@api_router.get("/analytics/promotions-detailed")
+async def get_promotions_detailed(current_user: dict = Depends(get_current_user)):
+    """Get detailed promotions analytics for Super Admin/Pasteur with:
+    - Fidélisation par promo (12 mois)
+    - Total NA vs NC
+    - Évolution par mois
+    """
+    # Only super_admin and pasteur can access
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get all visitors (multi-ville pour super admin/pasteur)
+    base_query = {"tracking_stopped": False}
+    
+    visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
+    
+    # Group by assigned_month
+    promos_by_month = {}
+    for visitor in visitors:
+        month = visitor.get("assigned_month", "N/A")
+        if month not in promos_by_month:
+            promos_by_month[month] = {
+                "month": month,
+                "total_visitors": 0,
+                "na_count": 0,
+                "nc_count": 0,
+                "visitors": [],
+                "presences_dimanche": [],
+                "presences_jeudi": []
+            }
+        
+        promos_by_month[month]["total_visitors"] += 1
+        promos_by_month[month]["visitors"].append(visitor)
+        
+        # Count NA vs NC
+        types = visitor.get("types", [])
+        if "Nouveau Arrivant" in types:
+            promos_by_month[month]["na_count"] += 1
+        if "Nouveau Converti" in types:
+            promos_by_month[month]["nc_count"] += 1
+        
+        # Aggregate presences
+        promos_by_month[month]["presences_dimanche"].extend(visitor.get("presences_dimanche", []))
+        promos_by_month[month]["presences_jeudi"].extend(visitor.get("presences_jeudi", []))
+    
+    # Calculate fidelisation for each promo
+    promos_stats = []
+    for month, data in sorted(promos_by_month.items()):
+        total = data["total_visitors"]
+        if total == 0:
+            fidelisation = 0
+        else:
+            # Count visitors with at least 3 presences
+            visitors_with_presences = 0
+            for visitor in data["visitors"]:
+                total_presences = len([p for p in visitor.get("presences_dimanche", []) if p.get("present")])
+                total_presences += len([p for p in visitor.get("presences_jeudi", []) if p.get("present")])
+                if total_presences >= 3:
+                    visitors_with_presences += 1
+            
+            fidelisation = (visitors_with_presences / total) * 100
+        
+        promos_stats.append({
+            "month": month,
+            "total_visitors": total,
+            "na_count": data["na_count"],
+            "nc_count": data["nc_count"],
+            "fidelisation": round(fidelisation, 1),
+            "total_presences_dimanche": len([p for p in data["presences_dimanche"] if p.get("present")]),
+            "total_presences_jeudi": len([p for p in data["presences_jeudi"] if p.get("present")])
+        })
+    
+    # Global totals
+    total_na = sum(p["na_count"] for p in promos_stats)
+    total_nc = sum(p["nc_count"] for p in promos_stats)
+    total_visitors = sum(p["total_visitors"] for p in promos_stats)
+    avg_fidelisation = sum(p["fidelisation"] for p in promos_stats) / len(promos_stats) if promos_stats else 0
+    
+    return {
+        "promos": promos_stats,
+        "summary": {
+            "total_promos": len(promos_stats),
+            "total_visitors": total_visitors,
+            "total_na": total_na,
+            "total_nc": total_nc,
+            "avg_fidelisation": round(avg_fidelisation, 1)
+        }
+    }
+
+@api_router.get("/analytics/visitors-table")
+async def get_visitors_table(current_user: dict = Depends(get_current_user)):
+    """Get complete visitors table with all details for Super Admin/Pasteur"""
+    # Only super_admin and pasteur can access
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    visitors = await db.visitors.find({}, {"_id": 0}).to_list(10000)
+    
+    # Enrich with assigned FI info
+    enriched_visitors = []
+    for visitor in visitors:
+        # Calculate total presences
+        presences_dimanche_count = len([p for p in visitor.get("presences_dimanche", []) if p.get("present")])
+        presences_jeudi_count = len([p for p in visitor.get("presences_jeudi", []) if p.get("present")])
+        
+        # Check if assigned to FI
+        membre = await db.membres_fi.find_one({"visitor_id": visitor["id"]}, {"_id": 0})
+        assigned_fi = None
+        assigned_fi_id = None
+        if membre:
+            fi = await db.familles_impact.find_one({"id": membre["fi_id"]}, {"_id": 0})
+            if fi:
+                assigned_fi = fi.get("nom", "N/A")
+                assigned_fi_id = fi.get("id")
+        
+        enriched_visitors.append({
+            **visitor,
+            "presences_dimanche_count": presences_dimanche_count,
+            "presences_jeudi_count": presences_jeudi_count,
+            "total_presences": presences_dimanche_count + presences_jeudi_count,
+            "assigned_fi": assigned_fi,
+            "assigned_fi_id": assigned_fi_id,
+            "comments_count": len(visitor.get("comments", []))
+        })
+    
+    return enriched_visitors
+
+@api_router.get("/analytics/fi-detailed")
+async def get_fi_detailed(current_user: dict = Depends(get_current_user)):
+    """Get detailed FI analytics with:
+    - Nombre de secteurs, FI, membres
+    - Évolution par secteur
+    - Fidélisation par FI
+    """
+    # Only super_admin and pasteur can access
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get all secteurs
+    secteurs = await db.secteurs.find({}, {"_id": 0}).to_list(1000)
+    
+    # Get all FI
+    familles = await db.familles_impact.find({}, {"_id": 0}).to_list(1000)
+    
+    # Get all membres
+    membres = await db.membres_fi.find({}, {"_id": 0}).to_list(10000)
+    
+    # Get all presences
+    presences = await db.presences_fi.find({}, {"_id": 0}).to_list(100000)
+    
+    # Group by secteur
+    secteurs_stats = []
+    for secteur in secteurs:
+        secteur_fi = [f for f in familles if f.get("secteur_id") == secteur["id"]]
+        secteur_membres = []
+        
+        for fi in secteur_fi:
+            fi_membres = [m for m in membres if m.get("fi_id") == fi["id"]]
+            secteur_membres.extend(fi_membres)
+        
+        secteurs_stats.append({
+            "secteur_id": secteur["id"],
+            "secteur_nom": secteur.get("nom", "N/A"),
+            "ville": secteur.get("ville", "N/A"),
+            "nombre_fi": len(secteur_fi),
+            "nombre_membres": len(secteur_membres),
+            "fi_list": [{"id": f["id"], "nom": f.get("nom", "N/A")} for f in secteur_fi]
+        })
+    
+    # Fidélisation par FI
+    fi_fidelisation = []
+    for fi in familles:
+        fi_membres = [m for m in membres if m.get("fi_id") == fi["id"]]
+        fi_presences = [p for p in presences if p.get("fi_id") == fi["id"]]
+        
+        total_membres = len(fi_membres)
+        if total_membres == 0:
+            fidelisation = 0
+        else:
+            # Count membres with at least 3 presences
+            membres_fideles = 0
+            for membre in fi_membres:
+                membre_presences = [p for p in fi_presences if p.get("membre_id") == membre["id"] and p.get("present")]
+                if len(membre_presences) >= 3:
+                    membres_fideles += 1
+            
+            fidelisation = (membres_fideles / total_membres) * 100
+        
+        fi_fidelisation.append({
+            "fi_id": fi["id"],
+            "fi_nom": fi.get("nom", "N/A"),
+            "ville": fi.get("ville", "N/A"),
+            "secteur_id": fi.get("secteur_id"),
+            "total_membres": total_membres,
+            "total_presences": len([p for p in fi_presences if p.get("present")]),
+            "fidelisation": round(fidelisation, 1)
+        })
+    
+    return {
+        "secteurs": secteurs_stats,
+        "fi_fidelisation": fi_fidelisation,
+        "summary": {
+            "total_secteurs": len(secteurs),
+            "total_fi": len(familles),
+            "total_membres": len(membres),
+            "avg_fidelisation": round(sum(f["fidelisation"] for f in fi_fidelisation) / len(fi_fidelisation), 1) if fi_fidelisation else 0
+        }
+    }
+
+@api_router.get("/analytics/membres-table")
+async def get_membres_table(current_user: dict = Depends(get_current_user)):
+    """Get complete membres table with presences for Super Admin/Pasteur"""
+    # Only super_admin and pasteur can access
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    membres = await db.membres_fi.find({}, {"_id": 0}).to_list(10000)
+    presences = await db.presences_fi.find({}, {"_id": 0}).to_list(100000)
+    
+    enriched_membres = []
+    for membre in membres:
+        # Get FI info
+        fi = await db.familles_impact.find_one({"id": membre.get("fi_id")}, {"_id": 0})
+        fi_nom = fi.get("nom", "N/A") if fi else "N/A"
+        
+        # Get secteur info
+        secteur = await db.secteurs.find_one({"id": fi.get("secteur_id")}, {"_id": 0}) if fi else None
+        secteur_nom = secteur.get("nom", "N/A") if secteur else "N/A"
+        
+        # Get presences for this membre
+        membre_presences = [p for p in presences if p.get("membre_id") == membre["id"]]
+        presences_count = len([p for p in membre_presences if p.get("present")])
+        
+        enriched_membres.append({
+            **membre,
+            "fi_nom": fi_nom,
+            "secteur_nom": secteur_nom,
+            "presences": membre_presences,
+            "presences_count": presences_count
+        })
+    
+    return enriched_membres
 # ==================== ROOT ====================
 
 @api_router.get("/")
