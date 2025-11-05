@@ -134,7 +134,7 @@ const DashboardResponsableSecteurPage = () => {
         </div>
 
         {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Familles d'Impact</CardTitle>
@@ -167,6 +167,17 @@ const DashboardResponsableSecteurPage = () => {
                 {famillesImpact.length > 0 ? Math.round(allMembres.length / famillesImpact.length) : 0}
               </div>
               <p className="text-xs text-muted-foreground">Membres par FI</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Taux de Fidélisation</CardTitle>
+              <Percent className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-indigo-600">{fidelisation.toFixed(1)}%</div>
+              <p className="text-xs text-muted-foreground">Présences aux jeudis</p>
             </CardContent>
           </Card>
         </div>
