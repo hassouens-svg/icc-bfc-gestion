@@ -53,6 +53,28 @@ const DashboardPiloteFIPage = () => {
     }
   };
 
+  const handleAddMember = async (e) => {
+    e.preventDefault();
+    
+    if (!newMember.prenom || !newMember.nom || !newMember.telephone) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    try {
+      await createMembreFI({
+        ...newMember,
+        fi_id: user.assigned_fi_id
+      });
+      toast.success('Membre ajouté avec succès!');
+      setIsAddMemberDialogOpen(false);
+      setNewMember({ prenom: '', nom: '', telephone: '' });
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de l\'ajout');
+    }
+  };
+
   const loadPresences = async () => {
     try {
       const presencesData = await getPresencesFI(stats?.fi?.id, selectedDate);
