@@ -10,32 +10,32 @@ Votre application de gestion des visiteurs ICC est maintenant complète et opér
 
 ### 📱 Interface Principale (Connexion)
 ```
-https://church-connect-53.preview.emergentagent.com/login
+https://bfc-italie.preview.emergentagent.com/login
 ```
 
 ### 📝 Formulaire Public d'Inscription
 ```
-https://church-connect-53.preview.emergentagent.com/register
+https://bfc-italie.preview.emergentagent.com/register
 ```
 
 ### 🏠 Dashboard
 ```
-https://church-connect-53.preview.emergentagent.com/dashboard
+https://bfc-italie.preview.emergentagent.com/dashboard
 ```
 
 ### 👥 Gestion des Visiteurs
 ```
-https://church-connect-53.preview.emergentagent.com/visitors
+https://bfc-italie.preview.emergentagent.com/visitors
 ```
 
 ### 📊 Analytics
 ```
-https://church-connect-53.preview.emergentagent.com/analytics
+https://bfc-italie.preview.emergentagent.com/analytics
 ```
 
 ### 🚫 Visiteurs avec Suivi Arrêté (Admin)
 ```
-https://church-connect-53.preview.emergentagent.com/stopped-visitors
+https://bfc-italie.preview.emergentagent.com/stopped-visitors
 ```
 
 ---
@@ -43,7 +43,7 @@ https://church-connect-53.preview.emergentagent.com/stopped-visitors
 ## 🔑 IDENTIFIANTS PAR DÉFAUT
 
 ### Admin Principal (Dijon)
-- **URL**: https://church-connect-53.preview.emergentagent.com/login
+- **URL**: https://bfc-italie.preview.emergentagent.com/login
 - **Ville**: Dijon
 - **Nom d'utilisateur**: `admin`
 - **Mot de passe**: `admin123`

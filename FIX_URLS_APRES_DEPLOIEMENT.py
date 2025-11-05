@@ -51,7 +51,7 @@ def fix_urls_after_deployment():
         # Remplacer l'ancienne URL par la nouvelle
         # Chercher toutes les variantes possibles
         old_urls = [
-            'https://church-connect-53.preview.emergentagent.com',
+            'https://bfc-italie.preview.emergentagent.com',
             'http://localhost:8001',
             'http://localhost:3000',
         ]
