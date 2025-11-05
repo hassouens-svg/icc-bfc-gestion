@@ -22,6 +22,7 @@ import DashboardResponsableSecteurPage from './pages/DashboardResponsableSecteur
 import PresencesFITablePage from './pages/PresencesFITablePage';
 import DashboardPasteurPage from './pages/DashboardPasteurPage';
 import DashboardSuperAdminPage from './pages/DashboardSuperAdminPage';
+import DashboardSuperAdminCompletPage from './pages/DashboardSuperAdminCompletPage';
 import AffectationFIPage from './pages/AffectationFIPage';
 import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
