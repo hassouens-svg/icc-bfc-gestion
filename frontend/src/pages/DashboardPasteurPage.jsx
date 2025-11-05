@@ -1,34 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getStatsPasteur, getUser } from '../utils/api';
+import { getStats, getAdminFidelisation, getStatsPasteur, getCities, getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Users, MapPin, TrendingUp, Percent } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Button } from '../components/ui/button';
+import { Users, MapPin, TrendingUp, Percent, Heart, BarChart3, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DashboardPasteurPage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const user = getUser();
-  const [stats, setStats] = useState(null);
+  
+  const [selectedCity, setSelectedCity] = useState(searchParams.get('city') || 'all');
+  const [selectedDepartment, setSelectedDepartment] = useState(searchParams.get('department') || 'promotions');
+  const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Promos stats
+  const [promosStats, setPromosStats] = useState(null);
+  const [promosFidelisation, setPromosFidelisation] = useState(null);
+  
+  // FI stats
+  const [fiStats, setFiStats] = useState(null);
 
   useEffect(() => {
-    if (!user || !['pasteur', 'super_admin'].includes(user.role)) {
+    if (!user || user.role !== 'pasteur') {
       navigate('/dashboard');
       return;
     }
-    loadStats();
-  }, [user, navigate]);
+    loadData();
+  }, [user, navigate, selectedCity, selectedDepartment]);
 
-  const loadStats = async () => {
+  const loadData = async () => {
+    setLoading(true);
     try {
-      const data = await getStatsPasteur();
-      setStats(data);
+      const citiesData = await getCities();
+      setCities(citiesData);
+      
+      if (selectedDepartment === 'promotions') {
+        await loadPromosData();
+      } else {
+        await loadFIData();
+      }
     } catch (error) {
-      toast.error('Erreur lors du chargement des statistiques');
+      toast.error('Erreur lors du chargement');
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadPromosData = async () => {
+    try {
+      const [statsData, fidelisationData] = await Promise.all([
+        getStats(),
+        getAdminFidelisation()
+      ]);
+      
+      // Filter by city if needed
+      if (selectedCity !== 'all') {
+        const cityVisitors = statsData.visitors?.filter(v => v.city === selectedCity) || [];
+        const cityReferents = fidelisationData?.filter(r => r.city === selectedCity) || [];
+        
+        setPromosStats({
+          total_visitors: cityVisitors.length,
+          active_referents: cityReferents.length,
+          monthly_arrivals: statsData.monthly_arrivals?.filter(m => 
+            cityVisitors.some(v => v.assigned_month === m.month)
+          ) || [],
+          visitors: cityVisitors
+        });
+        setPromosFidelisation(cityReferents);
+      } else {
+        setPromosStats({
+          total_visitors: statsData.total_visitors || 0,
+          active_referents: fidelisationData?.length || 0,
+          monthly_arrivals: statsData.monthly_arrivals || [],
+          visitors: statsData.visitors || []
+        });
+        setPromosFidelisation(fidelisationData);
+      }
+    } catch (error) {
+      console.error('Error loading promos data:', error);
+    }
+  };
+
+  const loadFIData = async () => {
+    try {
+      const pasteurStats = await getStatsPasteur();
+      
+      if (selectedCity !== 'all') {
+        const cityStats = pasteurStats.stats_by_city?.find(c => c.ville === selectedCity);
+        setFiStats(cityStats ? [cityStats] : []);
+      } else {
+        setFiStats(pasteurStats.stats_by_city || []);
+      }
+    } catch (error) {
+      console.error('Error loading FI data:', error);
+    }
+  };
+
+  const handleCityChange = (value) => {
+    setSelectedCity(value);
+    setSearchParams({ city: value, department: selectedDepartment });
+  };
+
+  const handleDepartmentChange = (value) => {
+    setSelectedDepartment(value);
+    setSearchParams({ city: selectedCity, department: value });
   };
 
   if (loading) {
@@ -41,63 +121,204 @@ const DashboardPasteurPage = () => {
     );
   }
 
-  const totalStats = stats?.stats_by_city?.reduce((acc, city) => {
-    acc.secteurs += city.nombre_secteurs;
-    acc.fi += city.nombre_fi;
-    acc.membres += city.nombre_membres;
+  // Calculate totals for FI
+  const totalFIStats = fiStats?.reduce((acc, city) => {
+    acc.secteurs += city.nombre_secteurs || 0;
+    acc.fi += city.nombre_fi || 0;
+    acc.membres += city.nombre_membres || 0;
+    acc.fidelisation += city.fidelisation || 0;
     return acc;
-  }, { secteurs: 0, fi: 0, membres: 0 });
+  }, { secteurs: 0, fi: 0, membres: 0, fidelisation: 0 });
+
+  if (totalFIStats && fiStats && fiStats.length > 0) {
+    totalFIStats.fidelisation = totalFIStats.fidelisation / fiStats.length;
+  }
+
+  // Calculate totals for Promos
+  const avgFidelisationPromos = promosFidelisation?.length > 0
+    ? promosFidelisation.reduce((sum, r) => sum + (r.monthly_average || 0), 0) / promosFidelisation.length
+    : 0;
 
   return (
     <Layout>
       <div className="space-y-6">
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Tableau de Bord - Pasteur</h2>
-          <p className="text-gray-500 mt-1">Vue d'ensemble multi-villes</p>
+          <p className="text-gray-500 mt-1">Vue d'ensemble multi-villes et multi-départements</p>
         </div>
 
-        {/* Global KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Secteurs Totaux</CardTitle>
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalStats?.secteurs || 0}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">FI Totales</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalStats?.fi || 0}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Membres Totaux</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalStats?.membres || 0}</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Stats par ville */}
+        {/* Filters */}
         <Card>
-          <CardHeader>
-            <CardTitle>Statistiques par Ville</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {stats?.stats_by_city?.map((city, index) => (
-                <div key={index} className="p-4 border rounded-lg">
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Département</label>
+                <Select value={selectedDepartment} onValueChange={handleDepartmentChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="promotions">Promotions</SelectItem>
+                    <SelectItem value="familles-impact">Familles d'Impact</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Ville</label>
+                <Select value={selectedCity} onValueChange={handleCityChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les villes</SelectItem>
+                    {cities.map((city) => (
+                      <SelectItem key={city.id} value={city.name}>
+                        {city.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* PROMOTIONS VIEW */}
+        {selectedDepartment === 'promotions' && (
+          <>
+            {/* Global KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Nouveaux Arrivants</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{promosStats?.total_visitors || 0}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Responsables Actifs</CardTitle>
+                  <UserPlus className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{promosStats?.active_referents || 0}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Taux Fidélisation Moyen</CardTitle>
+                  <Percent className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{avgFidelisationPromos.toFixed(1)}%</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Villes Actives</CardTitle>
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{cities.length}</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Fidélisation par Responsable */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Fidélisation par Responsable de Promos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {promosFidelisation && promosFidelisation.length > 0 ? (
+                  <div className="space-y-3">
+                    {promosFidelisation.map((referent, index) => (
+                      <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
+                        <div>
+                          <p className="font-medium">{referent.referent_name}</p>
+                          <p className="text-sm text-gray-500">
+                            {referent.total_visitors} visiteurs - {referent.city}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-indigo-600">
+                            {referent.monthly_average?.toFixed(1)}%
+                          </p>
+                          <p className="text-xs text-gray-500">Moyenne mensuelle</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center text-gray-500 py-4">Aucune donnée disponible</p>
+                )}
+              </CardContent>
+            </Card>
+          </>
+        )}
+
+        {/* FAMILLES D'IMPACT VIEW */}
+        {selectedDepartment === 'familles-impact' && (
+          <>
+            {/* Global KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Secteurs Totaux</CardTitle>
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{totalFIStats?.secteurs || 0}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">FI Totales</CardTitle>
+                  <Heart className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{totalFIStats?.fi || 0}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Membres Totaux</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{totalFIStats?.membres || 0}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Fidélisation Moyenne</CardTitle>
+                  <Percent className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{totalFIStats?.fidelisation?.toFixed(1) || 0}%</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Stats par ville */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Statistiques par Ville</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {fiStats && fiStats.length > 0 ? (
+                  <div className="space-y-4">
+                    {fiStats.map((city, index) => (
+                      <div key={index} className="p-4 border rounded-lg">
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="text-xl font-bold">{city.ville}</h3>
                     <div className="flex items-center space-x-2">
