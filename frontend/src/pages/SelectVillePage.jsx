@@ -42,9 +42,9 @@ const SelectVillePage = () => {
     
     // Rediriger selon le rôle et département
     if (user.role === 'super_admin') {
-      navigate(`/dashboard-superadmin?city=${cityName}&department=${department}`);
+      navigate('/dashboard-superadmin-complet');
     } else if (user.role === 'pasteur') {
-      navigate(`/dashboard-pasteur?city=${cityName}&department=${department}`);
+      navigate('/dashboard-superadmin-complet'); // Même dashboard, mais en lecture seule
     } else if (department === 'familles-impact') {
       navigate('/familles-impact/dashboard-superviseur');
     } else {
