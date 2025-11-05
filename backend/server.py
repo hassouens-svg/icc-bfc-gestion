@@ -396,11 +396,13 @@ async def create_referent(user_data: UserCreate, current_user: dict = Depends(ge
 
 @api_router.get("/users/referents")
 async def get_referents(current_user: dict = Depends(get_current_user)):
-    # Get all referents in current user's city
-    referents = await db.users.find({
-        "city": current_user["city"],
-        "role": {"$in": ["referent", "accueil", "promotions"]}
-    }, {"_id": 0, "password": 0}).to_list(1000)
+    # Get all users (pasteur and super_admin see all, others see their city)
+    query = {"role": {"$in": ["referent", "accueil", "promotions", "superviseur_promos", "superviseur_fi", "pilote_fi", "responsable_secteur", "pasteur", "super_admin"]}}
+    
+    if current_user["role"] not in ["pasteur", "super_admin"]:
+        query["city"] = current_user["city"]
+    
+    referents = await db.users.find(query, {"_id": 0, "password": 0}).to_list(1000)
     
     return referents
 
