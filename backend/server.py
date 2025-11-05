@@ -1800,6 +1800,165 @@ async def get_stats_pasteur(current_user: dict = Depends(get_current_user)):
         "stats_by_city": stats_by_city
     }
 
+# ==================== NOTIFICATIONS ====================
+
+@api_router.get("/notifications")
+async def get_notifications(
+    unread_only: bool = False,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get notifications for current user"""
+    query = {"user_id": current_user["id"]}
+    if unread_only:
+        query["read"] = False
+    
+    notifications = await db.notifications.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return notifications
+
+@api_router.put("/notifications/{notification_id}/read")
+async def mark_notification_read(
+    notification_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Mark notification as read"""
+    result = await db.notifications.update_one(
+        {"id": notification_id, "user_id": current_user["id"]},
+        {"$set": {"read": True}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    
+    return {"message": "Notification marked as read"}
+
+@api_router.post("/notifications/generate")
+async def generate_notifications(current_user: dict = Depends(get_current_user)):
+    """Generate automated notifications (Admin/Supervisor only)"""
+    if current_user["role"] not in ["super_admin", "superviseur_fi", "superviseur_promos"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    notifications_created = []
+    
+    # 1. Rappels de présence pour Pilotes FI (tous les jeudis)
+    today = datetime.now(timezone.utc)
+    if today.weekday() == 3:  # Jeudi
+        pilotes = await db.users.find({"role": "pilote_fi"}, {"_id": 0}).to_list(length=None)
+        for pilote in pilotes:
+            if pilote.get("assigned_fi_id"):
+                fi = await db.familles_impact.find_one({"id": pilote["assigned_fi_id"]}, {"_id": 0})
+                if fi:
+                    notif = Notification(
+                        user_id=pilote["id"],
+                        type="presence_reminder",
+                        message=f"📝 N'oubliez pas de marquer les présences pour {fi['name']} aujourd'hui!",
+                        data={"fi_id": fi["id"], "fi_name": fi["name"]}
+                    )
+                    doc = notif.model_dump()
+                    doc['created_at'] = doc['created_at'].isoformat()
+                    await db.notifications.insert_one(doc)
+                    notifications_created.append(notif)
+    
+    # 2. Alertes FI stagnantes (pas de nouvelles présences depuis 2 semaines)
+    two_weeks_ago = (datetime.now(timezone.utc) - timedelta(weeks=2)).isoformat()
+    fis = await db.familles_impact.find({}, {"_id": 0}).to_list(length=None)
+    
+    for fi in fis:
+        # Check dernière présence
+        last_presence = await db.presences_fi.find_one(
+            {"fi_id": fi["id"]},
+            {"_id": 0},
+            sort=[("date", -1)]
+        )
+        
+        if not last_presence or last_presence["date"] < two_weeks_ago:
+            # Notifier responsable secteur
+            secteur = await db.secteurs.find_one({"id": fi["secteur_id"]}, {"_id": 0})
+            if secteur:
+                responsables = await db.users.find(
+                    {"role": "responsable_secteur", "assigned_secteur_id": secteur["id"]},
+                    {"_id": 0}
+                ).to_list(length=None)
+                
+                for resp in responsables:
+                    notif = Notification(
+                        user_id=resp["id"],
+                        type="fi_stagnation",
+                        message=f"⚠️ Aucune activité récente dans la FI {fi['name']} (Secteur {secteur['name']})",
+                        data={"fi_id": fi["id"], "secteur_id": secteur["id"]}
+                    )
+                    doc = notif.model_dump()
+                    doc['created_at'] = doc['created_at'].isoformat()
+                    await db.notifications.insert_one(doc)
+                    notifications_created.append(notif)
+    
+    # 3. Alertes fidélisation faible (< 50%)
+    superviseurs = await db.users.find(
+        {"role": {"$in": ["superviseur_fi", "superviseur_promos"]}},
+        {"_id": 0}
+    ).to_list(length=None)
+    
+    for sup in superviseurs:
+        city = sup["city"]
+        
+        if sup["role"] == "superviseur_fi":
+            # Calculer fidélisation FI
+            fis_city = await db.familles_impact.find({"city": city}, {"_id": 0}).to_list(length=None)
+            fi_ids = [fi["id"] for fi in fis_city]
+            membres = await db.membres_fi.find({"fi_id": {"$in": fi_ids}}, {"_id": 0}).to_list(length=None)
+            membre_ids = [m["id"] for m in membres]
+            presences = await db.presences_fi.find(
+                {"membre_fi_id": {"$in": membre_ids}},
+                {"_id": 0}
+            ).to_list(length=None)
+            
+            unique_jeudis = len(set([p["date"] for p in presences]))
+            total_presences = sum([1 for p in presences if p["present"]])
+            max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
+            fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
+            
+            if fidelisation < 50:
+                notif = Notification(
+                    user_id=sup["id"],
+                    type="low_fidelisation",
+                    message=f"📊 Taux de fidélisation FI bas: {fidelisation:.1f}% pour {city}",
+                    data={"city": city, "fidelisation": round(fidelisation, 2)}
+                )
+                doc = notif.model_dump()
+                doc['created_at'] = doc['created_at'].isoformat()
+                await db.notifications.insert_one(doc)
+                notifications_created.append(notif)
+    
+    # 4. Nouveaux arrivants non assignés
+    unassigned = await db.visitors.find(
+        {"assigned_fi_id": None, "tracking_stopped": False},
+        {"_id": 0}
+    ).to_list(length=None)
+    
+    if unassigned:
+        superviseurs_promos = await db.users.find(
+            {"role": "superviseur_promos"},
+            {"_id": 0}
+        ).to_list(length=None)
+        
+        for sup in superviseurs_promos:
+            city_unassigned = [v for v in unassigned if v["city"] == sup["city"]]
+            if city_unassigned:
+                notif = Notification(
+                    user_id=sup["id"],
+                    type="unassigned_visitor",
+                    message=f"👥 {len(city_unassigned)} nouveaux arrivants non assignés à une FI à {sup['city']}",
+                    data={"city": sup["city"], "count": len(city_unassigned)}
+                )
+                doc = notif.model_dump()
+                doc['created_at'] = doc['created_at'].isoformat()
+                await db.notifications.insert_one(doc)
+                notifications_created.append(notif)
+    
+    return {
+        "message": f"{len(notifications_created)} notifications créées",
+        "count": len(notifications_created)
+    }
+
 # ==================== ROOT ====================
 
 @api_router.get("/")
