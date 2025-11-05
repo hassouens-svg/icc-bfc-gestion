@@ -409,7 +409,7 @@ class ComprehensiveBackendTester:
                 else:
                     self.log("Response is None")
                 
-                if response:
+                if response is not None:
                     if response.status_code == 403:
                         self.log("✅ PASS: Accueil role correctly denied visitor creation (403)")
                         
