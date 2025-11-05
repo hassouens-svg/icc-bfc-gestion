@@ -208,16 +208,79 @@ backend:
         comment: "❌ CRITICAL ISSUE FOUND: POST /visitors endpoint (lines 474-488) lacks role-based restrictions. Currently ANY authenticated user can create visitors, including 'accueil' role which should be read-only. The endpoint needs role checks to restrict visitor creation to appropriate roles only (referent, promotions, superviseur_promos, etc.). Accueil role should be denied with 403 status."
 
   - task: "User Management - assigned_fi_id field support"
-    implemented: false
-    working: false
+    implemented: true
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ API LIMITATION: UserUpdate model (lines 89-93) missing assigned_fi_id field. Pilote FI users cannot be properly assigned to their Famille d'Impact via API, causing GET /fi/stats/pilote to fail with 'No FI assigned' error. Need to add assigned_fi_id and assigned_secteur_id fields to UserUpdate model and update PUT /users/{user_id} endpoint to handle these assignments."
+      - working: true
+        agent: "main"
+        comment: "✅ VERIFIED: assigned_fi_id and assigned_secteur_id fields already present in UserUpdate model at lines 89-93. Field support is already implemented."
+
+  - task: "Branding Update - ICC BFC to ICC BFC-ITALIE"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/HomePage.jsx, LoginPage.jsx, Layout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Changed all occurrences of 'ICC BFC' to 'ICC BFC-ITALIE'. HomePage title updated, LoginPage title updated to 'ICC BFC-ITALIE - {city} Connect', Layout header shows 'ICC BFC-ITALIE {city}'. Subtitle updated to 'Impact Centre Chrétien - Bourgogne-Franche-Comté et Italie'."
+
+  - task: "GestionAccesPage - Edit and Password Reset Modals"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/GestionAccesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Added comprehensive user management modals. (1) Edit modal: allows updating username, assigned_month (for referent), assigned_secteur_id (for responsable_secteur), assigned_fi_id (for pilote_fi). Role and city are read-only. (2) Password reset modal: secure password reset via backend API PUT /users/{user_id}/reset-password. Added Edit and Key buttons for each user. Integrated with existing resetUserPassword API function."
+
+  - task: "Notifications System - Backend Implementation"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Full notifications system backend. (1) Models: Notification and NotificationCreate with fields id, user_id, type, message, data, read, created_at. (2) Endpoints: GET /notifications (with unread_only filter), PUT /notifications/{id}/read, POST /notifications/generate. (3) Automated generation logic: Thursday presence reminders for Pilotes FI, FI stagnation alerts (no activity for 2 weeks) for Responsables Secteur, low fidelisation alerts (<50%) for Superviseurs, unassigned visitors alerts for Superviseurs Promos."
+
+  - task: "Notifications System - Frontend Implementation"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Layout.jsx, /app/frontend/src/utils/api.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Notifications UI in Layout. (1) API functions: getNotifications, markNotificationRead, generateNotifications added to api.js. (2) Bell icon with badge showing unread count in header. (3) Popover showing last 10 notifications with timestamp, message. Click on unread notification marks it as read. (4) Auto-refresh every 30 seconds. (5) Notifications visible to all authenticated users based on backend filtering."
+
+  - task: "Timeline Extension - Promotions 2025-2030"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/FidelisationPage.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Extended fidelisation timeline from 2025 to 2030. Replaced hardcoded months (2025-01 to 2025-03) with dynamic generation loop creating all months from January 2025 to December 2030 (72 months total) with proper French labels (Janvier, Février, etc.). Weeks already dynamically generated (1-52)."
 
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
