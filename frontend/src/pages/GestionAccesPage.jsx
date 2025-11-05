@@ -116,6 +116,49 @@ const GestionAccesPage = () => {
     }
   };
 
+  const handleEditUser = async (e) => {
+    e.preventDefault();
+    
+    if (!selectedUser) return;
+
+    try {
+      const updateData = {
+        username: selectedUser.username,
+        assigned_month: selectedUser.assigned_month,
+        assigned_fi_id: selectedUser.assigned_fi_id,
+        assigned_secteur_id: selectedUser.assigned_secteur_id
+      };
+      
+      await updateUser(selectedUser.id, updateData);
+      toast.success('Utilisateur modifié avec succès!');
+      setIsEditDialogOpen(false);
+      setSelectedUser(null);
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la modification');
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    
+    if (!selectedUser || !newPassword) {
+      toast.error('Veuillez entrer un nouveau mot de passe');
+      return;
+    }
+
+    try {
+      const resetPasswordFn = (await import('../utils/api')).resetPassword;
+      await resetPasswordFn(selectedUser.id, newPassword);
+      toast.success('Mot de passe réinitialisé avec succès!');
+      setIsResetPasswordDialogOpen(false);
+      setSelectedUser(null);
+      setNewPassword('');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la réinitialisation');
+    }
+  };
+
   const getRoleLabel = (role) => {
     const labels = {
       'superviseur_promos': 'Superviseur Promotions',
