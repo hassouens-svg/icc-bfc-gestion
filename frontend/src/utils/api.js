@@ -413,3 +413,13 @@ export const getMembresTable = async () => {
   const response = await apiClient.get('/analytics/membres-table');
   return response.data;
 };
+
+export const getPresencesDimanche = async (startDate = null, endDate = null, ville = null) => {
+  const params = {};
+  if (startDate) params.start_date = startDate;
+  if (endDate) params.end_date = endDate;
+  if (ville) params.ville = ville;
+  
+  const response = await apiClient.get('/analytics/presences-dimanche', { params });
+  return response.data;
+};
