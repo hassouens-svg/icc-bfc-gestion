@@ -363,6 +363,9 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{totalFIStats?.secteurs || 0}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {selectedCity === 'all' ? 'Toutes les villes' : selectedCity}
+                  </p>
                 </CardContent>
               </Card>
 
@@ -373,6 +376,7 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{totalFIStats?.fi || 0}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Familles d'Impact actives</p>
                 </CardContent>
               </Card>
 
@@ -383,6 +387,7 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{totalFIStats?.membres || 0}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Membres actifs</p>
                 </CardContent>
               </Card>
 
@@ -393,40 +398,80 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{totalFIStats?.fidelisation?.toFixed(1) || 0}%</div>
+                  <p className="text-xs text-muted-foreground mt-1">Présences jeudis</p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Stats par ville */}
+            {/* Stats détaillées par ville */}
             <Card>
               <CardHeader>
-                <CardTitle>Statistiques par Ville</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Vue Détaillée par Ville</span>
+                  <span className="text-sm font-normal text-gray-500">
+                    {fiStats?.length || 0} villes
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {fiStats && fiStats.length > 0 ? (
-                  <div className="space-y-4">
-                    {fiStats.map((city, index) => (
-                      <div key={index} className="p-4 border rounded-lg">
-                        <div className="flex justify-between items-start mb-3">
-                          <h3 className="text-lg font-semibold">{city.ville}</h3>
-                          <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
-                            {city.fidelisation?.toFixed(1)}% fidélisation
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-6">
+                    {fiStats.map((cityData, index) => (
+                      <div key={index} className="border-2 border-indigo-100 rounded-lg p-4">
+                        {/* En-tête ville */}
+                        <div className="flex justify-between items-center mb-4 pb-3 border-b">
                           <div>
-                            <p className="text-sm text-gray-500">Secteurs</p>
-                            <p className="text-xl font-bold">{city.nombre_secteurs}</p>
+                            <h3 className="text-xl font-bold text-gray-900">{cityData.ville}</h3>
+                            <p className="text-sm text-gray-500">
+                              {cityData.nombre_secteurs} secteurs • {cityData.nombre_fi} FI • {cityData.nombre_membres} membres
+                            </p>
                           </div>
-                          <div>
-                            <p className="text-sm text-gray-500">FI</p>
-                            <p className="text-xl font-bold">{city.nombre_fi}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Membres</p>
-                            <p className="text-xl font-bold">{city.nombre_membres}</p>
+                          <div className="text-right">
+                            <p className="text-3xl font-bold text-indigo-600">{cityData.fidelisation?.toFixed(1)}%</p>
+                            <p className="text-xs text-gray-500">Fidélisation</p>
                           </div>
                         </div>
+
+                        {/* KPIs ville */}
+                        <div className="grid grid-cols-4 gap-4 mb-4">
+                          <div className="bg-blue-50 rounded-lg p-3 text-center">
+                            <p className="text-sm text-gray-600">Secteurs</p>
+                            <p className="text-2xl font-bold text-blue-600">{cityData.nombre_secteurs}</p>
+                          </div>
+                          <div className="bg-purple-50 rounded-lg p-3 text-center">
+                            <p className="text-sm text-gray-600">FI</p>
+                            <p className="text-2xl font-bold text-purple-600">{cityData.nombre_fi}</p>
+                          </div>
+                          <div className="bg-green-50 rounded-lg p-3 text-center">
+                            <p className="text-sm text-gray-600">Membres</p>
+                            <p className="text-2xl font-bold text-green-600">{cityData.nombre_membres}</p>
+                          </div>
+                          <div className="bg-orange-50 rounded-lg p-3 text-center">
+                            <p className="text-sm text-gray-600">Moy./FI</p>
+                            <p className="text-2xl font-bold text-orange-600">
+                              {cityData.nombre_fi > 0 ? Math.round(cityData.nombre_membres / cityData.nombre_fi) : 0}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Détails secteurs si disponibles */}
+                        {cityData.details_secteurs && cityData.details_secteurs.length > 0 && (
+                          <div className="mt-4">
+                            <h4 className="font-semibold text-gray-700 mb-2">Détails par Secteur :</h4>
+                            <div className="space-y-2">
+                              {cityData.details_secteurs.map((secteur, idx) => (
+                                <div key={idx} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                  <span className="font-medium">{secteur.nom}</span>
+                                  <div className="flex space-x-4 text-sm">
+                                    <span>{secteur.nombre_fi} FI</span>
+                                    <span>{secteur.nombre_membres} membres</span>
+                                    <span className="font-bold text-indigo-600">{secteur.fidelisation?.toFixed(1)}%</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -435,6 +480,57 @@ const DashboardPasteurPage = () => {
                 )}
               </CardContent>
             </Card>
+
+            {/* Tableau récapitulatif toutes FI */}
+            {selectedCity === 'all' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Toutes les Familles d'Impact</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ville</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Secteurs</th>
+                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">FI</th>
+                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Membres</th>
+                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Moy./FI</th>
+                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Fidélisation</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {fiStats?.map((city, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="px-4 py-3 text-sm font-medium text-gray-900">{city.ville}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{city.nombre_secteurs}</td>
+                            <td className="px-4 py-3 text-sm text-center">
+                              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                                {city.nombre_fi}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-center">
+                              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                                {city.nombre_membres}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-center font-medium">
+                              {city.nombre_fi > 0 ? Math.round(city.nombre_membres / city.nombre_fi) : 0}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-center">
+                              <span className="text-lg font-bold text-indigo-600">
+                                {city.fidelisation?.toFixed(1)}%
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </>
         )}
       </div>
