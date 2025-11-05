@@ -541,10 +541,17 @@ async def create_test_data():
             "email": f"visiteur_milan_{i}@test.com",
             "phone": f"+39334123{i:03d}",
             "city": "Milan",
+            "types": ["Nuovo Arrivato"],
             "visit_date": f"2025-02-{random.randint(1, 28):02d}",
             "assigned_month": "2025-02",
             "arrival_channel": random.choice(["Social media", "Passaparola", "Sito web"]),
-            "status": "nuovo"
+            "tracking_stopped": False,
+            "presences_dimanche": [],
+            "presences_jeudi": [],
+            "formation_pcnc": False,
+            "formation_au_coeur_bible": False,
+            "formation_star": False,
+            "comments": []
         })
     
     await db.visitors.insert_many(visitors)
