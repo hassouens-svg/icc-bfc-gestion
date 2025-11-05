@@ -9,9 +9,41 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = getUser();
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
     logout();
+  };
+
+  // Charger les notifications
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const notifs = await getNotifications();
+        setNotifications(notifs);
+        setUnreadCount(notifs.filter(n => !n.read).length);
+      } catch (error) {
+        // Silent fail
+      }
+    };
+    
+    loadNotifications();
+    // Recharger toutes les 30 secondes
+    const interval = setInterval(loadNotifications, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleMarkAsRead = async (notificationId) => {
+    try {
+      await markNotificationRead(notificationId);
+      setNotifications(notifications.map(n => 
+        n.id === notificationId ? {...n, read: true} : n
+      ));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      // Silent fail
+    }
   };
 
   // Déterminer le département actif depuis localStorage
