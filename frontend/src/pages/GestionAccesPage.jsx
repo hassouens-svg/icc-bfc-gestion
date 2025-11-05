@@ -258,11 +258,34 @@ const GestionAccesPage = () => {
                       )}
                     </div>
                     <div className="flex space-x-2">
+                      <Button 
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsEditDialogOpen(true);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        title="Modifier"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsResetPasswordDialogOpen(true);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        title="Réinitialiser le mot de passe"
+                      >
+                        <Key className="h-4 w-4" />
+                      </Button>
                       {user.is_blocked ? (
                         <Button 
                           onClick={() => handleUnblockUser(user.id)}
                           variant="outline"
                           size="sm"
+                          title="Débloquer"
                         >
                           <Unlock className="h-4 w-4" />
                         </Button>
@@ -271,6 +294,7 @@ const GestionAccesPage = () => {
                           onClick={() => handleBlockUser(user.id)}
                           variant="outline"
                           size="sm"
+                          title="Bloquer"
                         >
                           <Lock className="h-4 w-4" />
                         </Button>
@@ -279,6 +303,7 @@ const GestionAccesPage = () => {
                         onClick={() => handleDeleteUser(user.id)}
                         variant="destructive"
                         size="sm"
+                        title="Supprimer"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
