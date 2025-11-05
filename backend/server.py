@@ -2168,7 +2168,7 @@ async def get_fi_detailed(current_user: dict = Depends(get_current_user)):
             # Count membres with at least 3 presences
             membres_fideles = 0
             for membre in fi_membres:
-                membre_presences = [p for p in fi_presences if p.get("membre_id") == membre["id"] and p.get("present")]
+                membre_presences = [p for p in fi_presences if p.get("membre_fi_id") == membre["id"] and p.get("present")]
                 if len(membre_presences) >= 3:
                     membres_fideles += 1
             
