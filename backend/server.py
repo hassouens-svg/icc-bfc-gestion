@@ -1127,11 +1127,12 @@ async def get_admin_fidelisation(week: int = None, month: str = None, current_us
     if current_user["role"] not in ["superviseur_promos", "superviseur_fi", "promotions", "super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
-    # Get all referents in this city
-    referents = await db.users.find({
-        "city": current_user["city"],
-        "role": "referent"
-    }, {"_id": 0, "password": 0}).to_list(1000)
+    # Get all referents (all cities for pasteur/super_admin, own city for others)
+    ref_query = {"role": "referent"}
+    if current_user["role"] not in ["pasteur", "super_admin"]:
+        ref_query["city"] = current_user["city"]
+    
+    referents = await db.users.find(ref_query, {"_id": 0, "password": 0}).to_list(1000)
     
     results = []
     
