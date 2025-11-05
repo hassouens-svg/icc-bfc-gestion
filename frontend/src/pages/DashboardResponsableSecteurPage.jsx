@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 import { getSecteurs, getFamillesImpact, getMembresFI, getPresencesFI, getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { MapPin, Heart, Users, TrendingUp } from 'lucide-react';
+import { MapPin, Heart, Users, TrendingUp, Percent } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DashboardResponsableSecteurPage = () => {
