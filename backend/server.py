@@ -75,6 +75,7 @@ class User(BaseModel):
     assigned_secteur_id: Optional[str] = None  # For responsable_secteur
     assigned_fi_id: Optional[str] = None  # For pilote_fi
     permissions: Optional[Dict[str, bool]] = None  # For referents permissions
+    dashboard_permissions: Optional[Dict[str, bool]] = None  # What user can see in their dashboard (controlled by super_admin)
     is_blocked: bool = False  # For blocking users
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
