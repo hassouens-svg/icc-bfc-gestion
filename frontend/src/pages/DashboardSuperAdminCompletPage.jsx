@@ -88,8 +88,10 @@ const DashboardSuperAdminCompletPage = () => {
       
       if (selectedView === 'promotions') {
         await loadPromotionsData();
-      } else {
+      } else if (selectedView === 'fi') {
         await loadFIData();
+      } else if (selectedView === 'presences') {
+        await loadPresencesDimancheData();
       }
     } catch (error) {
       console.error('Error loading data:', error);
