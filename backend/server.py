@@ -236,6 +236,23 @@ class AffectationFI(BaseModel):
     nouveau_arrivant_id: str
     fi_id: str
 
+
+class Notification(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str  # Utilisateur qui reçoit la notification
+    type: str  # 'presence_reminder', 'fi_stagnation', 'low_fidelisation', 'unassigned_visitor'
+    message: str
+    data: Optional[Dict[str, Any]] = None  # Données supplémentaires (IDs, etc.)
+    read: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class NotificationCreate(BaseModel):
+    user_id: str
+    type: str
+    message: str
+    data: Optional[Dict[str, Any]] = None
+
 # ==================== AUTH HELPERS ====================
 
 def hash_password(password: str) -> str:
