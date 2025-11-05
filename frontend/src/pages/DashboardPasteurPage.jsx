@@ -197,6 +197,9 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{promosStats?.total_visitors || 0}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {selectedCity === 'all' ? 'Toutes les villes' : selectedCity}
+                  </p>
                 </CardContent>
               </Card>
 
@@ -207,6 +210,7 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{promosStats?.active_referents || 0}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Référents en service</p>
                 </CardContent>
               </Card>
 
@@ -217,6 +221,7 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{avgFidelisationPromos.toFixed(1)}%</div>
+                  <p className="text-xs text-muted-foreground mt-1">Moyenne globale</p>
                 </CardContent>
               </Card>
 
@@ -227,40 +232,122 @@ const DashboardPasteurPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{cities.length}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Villes avec promos</p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Fidélisation par Responsable */}
+            {/* Détails par Responsable de Promos */}
             <Card>
               <CardHeader>
-                <CardTitle>Fidélisation par Responsable de Promos</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Détails par Responsable de Promos</span>
+                  <span className="text-sm font-normal text-gray-500">
+                    {promosFidelisation?.length || 0} responsables
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {promosFidelisation && promosFidelisation.length > 0 ? (
-                  <div className="space-y-3">
-                    {promosFidelisation.map((referent, index) => (
-                      <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
-                        <div>
-                          <p className="font-medium">{referent.referent_name}</p>
-                          <p className="text-sm text-gray-500">
-                            {referent.total_visitors} visiteurs - {referent.city}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-indigo-600">
-                            {referent.monthly_average?.toFixed(1)}%
-                          </p>
-                          <p className="text-xs text-gray-500">Moyenne mensuelle</p>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Responsable</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ville</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mois Assigné</th>
+                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Visiteurs</th>
+                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Fidélisation</th>
+                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {promosFidelisation.map((referent, index) => {
+                          const monthLabel = referent.assigned_month ? 
+                            new Date(referent.assigned_month + '-01').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : 
+                            'Non assigné';
+                          const fidelisation = referent.monthly_average || 0;
+                          const status = fidelisation >= 75 ? 'Excellent' : fidelisation >= 50 ? 'Bon' : 'À améliorer';
+                          const statusColor = fidelisation >= 75 ? 'bg-green-100 text-green-800' : 
+                                            fidelisation >= 50 ? 'bg-yellow-100 text-yellow-800' : 
+                                            'bg-red-100 text-red-800';
+                          
+                          return (
+                            <tr key={index} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                {referent.referent_name}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-600">{referent.city}</td>
+                              <td className="px-4 py-3 text-sm text-gray-600">{monthLabel}</td>
+                              <td className="px-4 py-3 text-sm text-center">
+                                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                  {referent.total_visitors}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-center">
+                                <span className="text-lg font-bold text-indigo-600">
+                                  {fidelisation.toFixed(1)}%
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-center">
+                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+                                  {status}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 ) : (
                   <p className="text-center text-gray-500 py-4">Aucune donnée disponible</p>
                 )}
               </CardContent>
             </Card>
+
+            {/* Stats par Ville */}
+            {selectedCity === 'all' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Statistiques par Ville - Promotions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {cities.map((city) => {
+                      const cityReferents = promosFidelisation?.filter(r => r.city === city.name) || [];
+                      const cityVisitors = promosStats?.visitors?.filter(v => v.city === city.name).length || 0;
+                      const avgFid = cityReferents.length > 0 ? 
+                        cityReferents.reduce((sum, r) => sum + (r.monthly_average || 0), 0) / cityReferents.length : 0;
+                      
+                      return (
+                        <div key={city.id} className="p-4 border rounded-lg">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h3 className="text-lg font-semibold">{city.name}</h3>
+                              <p className="text-sm text-gray-500">{cityReferents.length} responsables actifs</p>
+                            </div>
+                            <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
+                              {avgFid.toFixed(1)}% fidélisation
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm text-gray-500">Nouveaux Arrivants</p>
+                              <p className="text-2xl font-bold">{cityVisitors}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Responsables</p>
+                              <p className="text-2xl font-bold">{cityReferents.length}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </>
         )}
 
