@@ -1,0 +1,265 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Layout from '../components/Layout';
+import { getSecteurs, getFamillesImpact, getMembresFI, getUser } from '../utils/api';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { MapPin, Heart, Users, TrendingUp } from 'lucide-react';
+import { toast } from 'sonner';
+
+const DashboardResponsableSecteurPage = () => {
+  const navigate = useNavigate();
+  const user = getUser();
+  const [secteur, setSecteur] = useState(null);
+  const [famillesImpact, setFamillesImpact] = useState([]);
+  const [allMembres, setAllMembres] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user || user.role !== 'responsable_secteur') {
+      navigate('/dashboard');
+      return;
+    }
+    loadData();
+  }, [user, navigate]);
+
+  const loadData = async () => {
+    try {
+      // Charger le secteur assigné
+      if (!user.assigned_secteur_id) {
+        toast.error('Aucun secteur assigné. Contactez le superviseur.');
+        setLoading(false);
+        return;
+      }
+
+      // Charger tous les secteurs pour trouver le sien
+      const secteursData = await getSecteurs(user.city);
+      const mySecteur = secteursData.find(s => s.id === user.assigned_secteur_id);
+      
+      if (!mySecteur) {
+        toast.error('Secteur non trouvé');
+        setLoading(false);
+        return;
+      }
+      
+      setSecteur(mySecteur);
+
+      // Charger les FI de ce secteur
+      const fisData = await getFamillesImpact(user.city);
+      const secteurFIs = fisData.filter(fi => fi.secteur_id === user.assigned_secteur_id);
+      setFamillesImpact(secteurFIs);
+
+      // Charger les membres de toutes les FI du secteur
+      let membres = [];
+      for (const fi of secteurFIs) {
+        try {
+          const fiMembres = await getMembresFI(fi.id);
+          membres = [...membres, ...fiMembres.map(m => ({ ...m, fi_name: fi.name }))];
+        } catch (error) {
+          console.error(`Erreur chargement membres FI ${fi.name}:`, error);
+        }
+      }
+      setAllMembres(membres);
+
+    } catch (error) {
+      toast.error('Erreur lors du chargement');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!secteur) {
+    return (
+      <Layout>
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-8">
+                <MapPin className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun secteur assigné</h3>
+                <p className="text-gray-500">
+                  Veuillez contacter le Superviseur Familles d'Impact pour vous assigner un secteur.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900">Tableau de Bord - Responsable de Secteur</h2>
+          <p className="text-gray-500 mt-1">Secteur : {secteur.name} - {user.city}</p>
+        </div>
+
+        {/* KPIs */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Familles d'Impact</CardTitle>
+              <Heart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{famillesImpact.length}</div>
+              <p className="text-xs text-muted-foreground">Dans votre secteur</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Membres Totaux</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{allMembres.length}</div>
+              <p className="text-xs text-muted-foreground">Tous secteurs confondus</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Moyenne Membres/FI</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {famillesImpact.length > 0 ? Math.round(allMembres.length / famillesImpact.length) : 0}
+              </div>
+              <p className="text-xs text-muted-foreground">Membres par FI</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Liste des Familles d'Impact */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Familles d'Impact de votre secteur</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {famillesImpact.length === 0 ? (
+              <div className="text-center py-8">
+                <Heart className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <p className="text-gray-500">Aucune Famille d'Impact dans ce secteur</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {famillesImpact.map((fi) => {
+                  const fiMembres = allMembres.filter(m => 
+                    famillesImpact.find(f => f.id === fi.id && m.fi_name === f.name)
+                  );
+                  const fiMembreCount = allMembres.filter(m => m.fi_name === fi.name).length;
+                  
+                  return (
+                    <div
+                      key={fi.id}
+                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                      onClick={() => navigate(`/familles-impact/fi/${fi.id}`)}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center">
+                          <Heart className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{fi.name}</h3>
+                          <p className="text-sm text-gray-500">
+                            {fi.pilote_name || 'Aucun pilote assigné'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-indigo-600">{fiMembreCount}</p>
+                          <p className="text-xs text-gray-500">membres</p>
+                        </div>
+                        <Button variant="ghost" size="sm">
+                          Voir détails →
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Liste des Membres */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tous les Membres du Secteur</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {allMembres.length === 0 ? (
+              <div className="text-center py-8">
+                <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <p className="text-gray-500">Aucun membre dans ce secteur</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Téléphone</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Famille d'Impact</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {allMembres.map((membre) => (
+                      <tr key={membre.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                          {membre.prenom} {membre.nom}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{membre.telephone}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{membre.fi_name}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                            Actif
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Message d'information */}
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="pt-6">
+            <div className="flex items-start space-x-3">
+              <MapPin className="h-5 w-5 text-blue-600 mt-0.5" />
+              <div>
+                <h3 className="font-medium text-blue-900 mb-1">Votre Rôle</h3>
+                <p className="text-sm text-blue-700">
+                  En tant que Responsable de Secteur, vous avez accès aux informations de toutes les Familles d'Impact
+                  de votre secteur "{secteur.name}". Vous pouvez consulter les statistiques et suivre l'évolution des membres.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </Layout>
+  );
+};
+
+export default DashboardResponsableSecteurPage;
