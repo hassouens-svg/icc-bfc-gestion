@@ -2092,7 +2092,7 @@ async def get_visitors_table(current_user: dict = Depends(get_current_user)):
         presences_jeudi_count = len([p for p in visitor.get("presences_jeudi", []) if p.get("present")])
         
         # Check if assigned to FI
-        membre = await db.membres_fi.find_one({"visitor_id": visitor["id"]}, {"_id": 0})
+        membre = await db.membres_fi.find_one({"nouveau_arrivant_id": visitor["id"]}, {"_id": 0})
         assigned_fi = None
         assigned_fi_id = None
         if membre:
