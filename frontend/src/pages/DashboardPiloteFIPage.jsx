@@ -246,6 +246,63 @@ const DashboardPiloteFIPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Modal Ajouter Membre */}
+        <Dialog open={isAddMemberDialogOpen} onOpenChange={setIsAddMemberDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Ajouter un Membre à votre FI</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddMember} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Prénom *</Label>
+                <Input
+                  value={newMember.prenom}
+                  onChange={(e) => setNewMember({...newMember, prenom: e.target.value})}
+                  placeholder="Prénom"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Nom *</Label>
+                <Input
+                  value={newMember.nom}
+                  onChange={(e) => setNewMember({...newMember, nom: e.target.value})}
+                  placeholder="Nom"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Téléphone *</Label>
+                <Input
+                  value={newMember.telephone}
+                  onChange={(e) => setNewMember({...newMember, telephone: e.target.value})}
+                  placeholder="+33..."
+                  required
+                />
+              </div>
+
+              <div className="flex space-x-2">
+                <Button type="submit" className="flex-1">
+                  Ajouter
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setIsAddMemberDialogOpen(false);
+                    setNewMember({ prenom: '', nom: '', telephone: '' });
+                  }}
+                  className="flex-1"
+                >
+                  Annuler
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
