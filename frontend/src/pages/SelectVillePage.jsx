@@ -38,9 +38,14 @@ const SelectVillePage = () => {
   const handleCitySelect = (cityName) => {
     // Stocker la ville sélectionnée
     localStorage.setItem('selected_city_view', cityName);
+    localStorage.setItem('selected_department', department);
     
-    // Rediriger selon le département
-    if (department === 'familles-impact') {
+    // Rediriger selon le rôle et département
+    if (user.role === 'super_admin') {
+      navigate(`/dashboard-superadmin?city=${cityName}&department=${department}`);
+    } else if (user.role === 'pasteur') {
+      navigate(`/dashboard-pasteur?city=${cityName}&department=${department}`);
+    } else if (department === 'familles-impact') {
       navigate('/familles-impact/dashboard-superviseur');
     } else {
       navigate('/dashboard');
