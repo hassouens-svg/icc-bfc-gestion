@@ -407,10 +407,15 @@ async def get_referents(current_user: dict = Depends(get_current_user)):
 @api_router.put("/users/{user_id}")
 async def update_user(user_id: str, update_data: UserUpdate, current_user: dict = Depends(get_current_user)):
     """Update user information (Admin only)"""
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin"]:
         raise HTTPException(status_code=403, detail="Only admin can update users")
     
-    user = await db.users.find_one({"id": user_id, "city": current_user["city"]})
+    # Super admin can update users from any city, others only from their city
+    if current_user["role"] == "super_admin":
+        user = await db.users.find_one({"id": user_id})
+    else:
+        user = await db.users.find_one({"id": user_id, "city": current_user["city"]})
+    
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -418,10 +423,11 @@ async def update_user(user_id: str, update_data: UserUpdate, current_user: dict 
     update_dict = {}
     if update_data.username is not None:
         # Check if new username already exists
+        city_filter = {} if current_user["role"] == "super_admin" else {"city": current_user["city"]}
         existing = await db.users.find_one({
             "username": update_data.username,
-            "city": current_user["city"],
-            "id": {"$ne": user_id}
+            "id": {"$ne": user_id},
+            **city_filter
         })
         if existing:
             raise HTTPException(status_code=400, detail="Username already exists")
@@ -429,6 +435,12 @@ async def update_user(user_id: str, update_data: UserUpdate, current_user: dict 
     
     if update_data.assigned_month is not None:
         update_dict["assigned_month"] = update_data.assigned_month
+    
+    if update_data.assigned_fi_id is not None:
+        update_dict["assigned_fi_id"] = update_data.assigned_fi_id
+    
+    if update_data.assigned_secteur_id is not None:
+        update_dict["assigned_secteur_id"] = update_data.assigned_secteur_id
     
     if update_data.permissions is not None:
         update_dict["permissions"] = update_data.permissions
