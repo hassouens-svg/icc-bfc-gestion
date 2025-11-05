@@ -357,6 +357,172 @@ const GestionAccesPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Edit User Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Modifier l'utilisateur</DialogTitle>
+            </DialogHeader>
+            {selectedUser && (
+              <form onSubmit={handleEditUser} className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Nom d'utilisateur</Label>
+                  <Input
+                    value={selectedUser.username}
+                    onChange={(e) => setSelectedUser({...selectedUser, username: e.target.value})}
+                    placeholder="Nom d'utilisateur"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Rôle</Label>
+                  <Input
+                    value={getRoleLabel(selectedUser.role)}
+                    disabled
+                    className="bg-gray-100"
+                  />
+                  <p className="text-xs text-gray-500">Le rôle ne peut pas être modifié. Créez un nouvel utilisateur si nécessaire.</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Ville</Label>
+                  <Input
+                    value={selectedUser.city}
+                    disabled
+                    className="bg-gray-100"
+                  />
+                  <p className="text-xs text-gray-500">La ville ne peut pas être modifiée. Créez un nouvel utilisateur si nécessaire.</p>
+                </div>
+
+                {selectedUser.role === 'referent' && (
+                  <div className="space-y-2">
+                    <Label>Mois assigné (YYYY-MM)</Label>
+                    <Input
+                      type="month"
+                      value={selectedUser.assigned_month || ''}
+                      onChange={(e) => setSelectedUser({...selectedUser, assigned_month: e.target.value})}
+                    />
+                  </div>
+                )}
+
+                {selectedUser.role === 'responsable_secteur' && (
+                  <div className="space-y-2">
+                    <Label>Secteur assigné</Label>
+                    <Select 
+                      value={selectedUser.assigned_secteur_id || ''} 
+                      onValueChange={(value) => setSelectedUser({...selectedUser, assigned_secteur_id: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez un secteur" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {secteurs
+                          .filter(s => s.city === selectedUser.city)
+                          .map((secteur) => (
+                            <SelectItem key={secteur.id} value={secteur.id}>
+                              {secteur.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {selectedUser.role === 'pilote_fi' && (
+                  <div className="space-y-2">
+                    <Label>Famille d'Impact assignée</Label>
+                    <Select 
+                      value={selectedUser.assigned_fi_id || ''} 
+                      onValueChange={(value) => setSelectedUser({...selectedUser, assigned_fi_id: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez une FI" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {famillesImpact
+                          .filter(fi => fi.city === selectedUser.city)
+                          .map((fi) => (
+                            <SelectItem key={fi.id} value={fi.id}>
+                              {fi.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="flex space-x-2">
+                  <Button type="submit" className="flex-1">
+                    Enregistrer
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => {
+                      setIsEditDialogOpen(false);
+                      setSelectedUser(null);
+                    }}
+                    className="flex-1"
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Reset Password Dialog */}
+        <Dialog open={isResetPasswordDialogOpen} onOpenChange={setIsResetPasswordDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Réinitialiser le mot de passe</DialogTitle>
+            </DialogHeader>
+            {selectedUser && (
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Utilisateur</Label>
+                  <Input
+                    value={selectedUser.username}
+                    disabled
+                    className="bg-gray-100"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Nouveau mot de passe *</Label>
+                  <Input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Entrez le nouveau mot de passe"
+                    required
+                  />
+                  <p className="text-xs text-gray-500">Minimum 6 caractères recommandés</p>
+                </div>
+
+                <div className="flex space-x-2">
+                  <Button type="submit" className="flex-1">
+                    Réinitialiser
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => {
+                      setIsResetPasswordDialogOpen(false);
+                      setSelectedUser(null);
+                      setNewPassword('');
+                    }}
+                    className="flex-1"
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
