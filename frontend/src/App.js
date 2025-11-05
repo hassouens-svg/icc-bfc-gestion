@@ -62,6 +62,7 @@ function App() {
           <Route path="/dashboard-pasteur" element={<DashboardPasteurPage />} />
           <Route path="/dashboard-superadmin" element={<DashboardSuperAdminPage />} />
           <Route path="/dashboard-superadmin-complet" element={<DashboardSuperAdminCompletPage />} />
+          <Route path="/gestion-permissions-dashboard" element={<GestionPermissionsDashboardPage />} />
           <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
           <Route path="/select-department" element={<SelectDepartmentPage />} />
           <Route path="/select-ville" element={<SelectVillePage />} />
