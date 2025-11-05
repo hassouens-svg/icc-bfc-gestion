@@ -2216,7 +2216,7 @@ async def get_membres_table(current_user: dict = Depends(get_current_user)):
         secteur_nom = secteur.get("nom", "N/A") if secteur else "N/A"
         
         # Get presences for this membre
-        membre_presences = [p for p in presences if p.get("membre_id") == membre["id"]]
+        membre_presences = [p for p in presences if p.get("membre_fi_id") == membre["id"]]
         presences_count = len([p for p in membre_presences if p.get("present")])
         
         enriched_membres.append({
