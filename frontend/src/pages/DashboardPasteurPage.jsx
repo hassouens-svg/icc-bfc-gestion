@@ -319,32 +319,36 @@ const DashboardPasteurPage = () => {
                   <div className="space-y-4">
                     {fiStats.map((city, index) => (
                       <div key={index} className="p-4 border rounded-lg">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-xl font-bold">{city.ville}</h3>
-                    <div className="flex items-center space-x-2">
-                      <Percent className="h-4 w-4 text-gray-400" />
-                      <span className="text-lg font-semibold">{city.fidelisation}%</span>
-                    </div>
+                        <div className="flex justify-between items-start mb-3">
+                          <h3 className="text-lg font-semibold">{city.ville}</h3>
+                          <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
+                            {city.fidelisation?.toFixed(1)}% fidélisation
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-500">Secteurs</p>
+                            <p className="text-xl font-bold">{city.nombre_secteurs}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">FI</p>
+                            <p className="text-xl font-bold">{city.nombre_fi}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Membres</p>
+                            <p className="text-xl font-bold">{city.nombre_membres}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Secteurs</p>
-                      <p className="text-2xl font-bold">{city.nombre_secteurs}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Familles d'Impact</p>
-                      <p className="text-2xl font-bold">{city.nombre_fi}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Membres</p>
-                      <p className="text-2xl font-bold">{city.nombre_membres}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ) : (
+                  <p className="text-center text-gray-500 py-4">Aucune donnée disponible</p>
+                )}
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
     </Layout>
   );
