@@ -62,6 +62,31 @@ const DashboardResponsableSecteurPage = () => {
       }
       setAllMembres(membres);
 
+      // Calculer la fidélisation du secteur
+      if (membres.length > 0) {
+        try {
+          let totalPresences = 0;
+          let totalJeudis = 0;
+          
+          for (const fi of secteurFIs) {
+            try {
+              const presences = await getPresencesFI(fi.id);
+              const uniqueJeudis = [...new Set(presences.map(p => p.date))];
+              totalJeudis = Math.max(totalJeudis, uniqueJeudis.length);
+              totalPresences += presences.filter(p => p.present).length;
+            } catch (error) {
+              console.error(`Erreur chargement présences FI ${fi.name}:`, error);
+            }
+          }
+          
+          const maxPossible = membres.length * totalJeudis;
+          const tauxFidelisation = maxPossible > 0 ? (totalPresences / maxPossible) * 100 : 0;
+          setFidelisation(tauxFidelisation);
+        } catch (error) {
+          console.error('Erreur calcul fidélisation:', error);
+        }
+      }
+
     } catch (error) {
       toast.error('Erreur lors du chargement');
       console.error(error);
