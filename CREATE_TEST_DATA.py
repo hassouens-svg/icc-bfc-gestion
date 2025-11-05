@@ -55,27 +55,27 @@ async def create_test_data():
     
     # Secteurs pour Dijon
     secteurs_dijon = [
-        {"id": str(uuid.uuid4()), "name": "Centre-Ville Dijon", "city": "Dijon", "responsable_name": "Marie Dubois"},
-        {"id": str(uuid.uuid4()), "name": "Fontaine d'Ouche", "city": "Dijon", "responsable_name": "Jean Martin"},
-        {"id": str(uuid.uuid4()), "name": "Chenôve", "city": "Dijon", "responsable_name": "Sophie Laurent"},
+        {"id": str(uuid.uuid4()), "nom": "Centre-Ville Dijon", "ville": "Dijon", "created_by": "admin", "created_at": datetime.now().isoformat()},
+        {"id": str(uuid.uuid4()), "nom": "Fontaine d'Ouche", "ville": "Dijon", "created_by": "admin", "created_at": datetime.now().isoformat()},
+        {"id": str(uuid.uuid4()), "nom": "Chenôve", "ville": "Dijon", "created_by": "admin", "created_at": datetime.now().isoformat()},
     ]
     
     # Secteurs pour Chalon
     secteurs_chalon = [
-        {"id": str(uuid.uuid4()), "name": "Centre Chalon", "city": "Chalon-Sur-Saone", "responsable_name": "Pierre Durand"},
-        {"id": str(uuid.uuid4()), "name": "Saint-Jean", "city": "Chalon-Sur-Saone", "responsable_name": "Claire Moreau"},
+        {"id": str(uuid.uuid4()), "nom": "Centre Chalon", "ville": "Chalon-Sur-Saone", "created_by": "admin", "created_at": datetime.now().isoformat()},
+        {"id": str(uuid.uuid4()), "nom": "Saint-Jean", "ville": "Chalon-Sur-Saone", "created_by": "admin", "created_at": datetime.now().isoformat()},
     ]
     
     # Secteurs pour Milan
     secteurs_milan = [
-        {"id": str(uuid.uuid4()), "name": "Milano Centro", "city": "Milan", "responsable_name": "Giuseppe Rossi"},
-        {"id": str(uuid.uuid4()), "name": "Porta Venezia", "city": "Milan", "responsable_name": "Maria Bianchi"},
+        {"id": str(uuid.uuid4()), "nom": "Milano Centro", "ville": "Milan", "created_by": "admin", "created_at": datetime.now().isoformat()},
+        {"id": str(uuid.uuid4()), "nom": "Porta Venezia", "ville": "Milan", "created_by": "admin", "created_at": datetime.now().isoformat()},
     ]
     
     # Secteurs pour Rome
     secteurs_rome = [
-        {"id": str(uuid.uuid4()), "name": "Roma Centro", "city": "Rome", "responsable_name": "Marco Ferrari"},
-        {"id": str(uuid.uuid4()), "name": "Trastevere", "city": "Rome", "responsable_name": "Elena Romano"},
+        {"id": str(uuid.uuid4()), "nom": "Roma Centro", "ville": "Rome", "created_by": "admin", "created_at": datetime.now().isoformat()},
+        {"id": str(uuid.uuid4()), "nom": "Trastevere", "ville": "Rome", "created_by": "admin", "created_at": datetime.now().isoformat()},
     ]
     
     secteurs = secteurs_dijon + secteurs_chalon + secteurs_milan + secteurs_rome
