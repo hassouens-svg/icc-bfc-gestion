@@ -129,6 +129,19 @@ const DashboardSuperAdminCompletPage = () => {
     }
   };
 
+  const loadPresencesDimancheData = async () => {
+    try {
+      const data = await getPresencesDimanche(
+        startDate || null, 
+        endDate || null, 
+        selectedCity !== 'all' ? selectedCity : null
+      );
+      setPresencesDimancheData(data);
+    } catch (error) {
+      console.error('Error loading presences dimanche:', error);
+    }
+  };
+
   // Filter data by city
   const filterByCity = (data, cityField = 'city') => {
     if (selectedCity === 'all') return data;
