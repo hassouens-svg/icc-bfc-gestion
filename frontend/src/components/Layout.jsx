@@ -60,7 +60,8 @@ const Layout = ({ children }) => {
     { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['superviseur_promos', 'promotions'], department: 'promotions' },
     
     // FAMILLES D'IMPACT - visible uniquement si département FI ou rôles FI
-    { path: '/familles-impact/dashboard-pilote', label: 'Mon Dashboard FI', icon: Home, roles: ['pilote_fi'], department: 'familles-impact' },
+    { path: '/familles-impact/dashboard-pilote', label: 'Tableau de Bord Pilote', icon: Home, roles: ['pilote_fi'], department: 'familles-impact' },
+    { path: '/familles-impact/presences-table', label: 'Vue Tableau Présences', icon: Table, roles: ['pilote_fi'], department: 'familles-impact' },
     { path: '/familles-impact/dashboard-responsable-secteur', label: 'Dashboard Secteur', icon: Home, roles: ['responsable_secteur'], department: 'familles-impact' },
     { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi'], department: 'familles-impact' },
     { path: '/familles-impact', label: 'Familles d\'Impact', icon: Heart, roles: ['superviseur_fi', 'responsable_secteur'], department: 'familles-impact' },
