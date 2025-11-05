@@ -957,9 +957,12 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     # Total visitors
     total_visitors = await db.visitors.count_documents(base_query)
     
-    # Total referents (only for admin/promotions)
-    if current_user["role"] in ["superviseur_promos", "promotions"]:
-        total_referents = await db.users.count_documents({"city": city, "role": {"$in": ["referent", "accueil", "promotions"]}})
+    # Total referents (only for admin/promotions/pasteur/super_admin)
+    if current_user["role"] in ["superviseur_promos", "promotions", "pasteur", "super_admin"]:
+        ref_query = {"role": {"$in": ["referent", "accueil", "promotions"]}}
+        if current_user["role"] not in ["pasteur", "super_admin"]:
+            ref_query["city"] = city
+        total_referents = await db.users.count_documents(ref_query)
     else:
         total_referents = 0
     
