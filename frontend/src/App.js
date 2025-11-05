@@ -60,6 +60,7 @@ function App() {
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardPasteurPage />} />
           <Route path="/dashboard-superadmin" element={<DashboardSuperAdminPage />} />
+          <Route path="/dashboard-superadmin-complet" element={<DashboardSuperAdminCompletPage />} />
           <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
           <Route path="/select-department" element={<SelectDepartmentPage />} />
           <Route path="/select-ville" element={<SelectVillePage />} />
