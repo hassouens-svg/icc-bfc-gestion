@@ -31,7 +31,8 @@ const DashboardPasteurPage = () => {
       return;
     }
     loadData();
-  }, [user, navigate, selectedCity, selectedDepartment]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCity, selectedDepartment]);
 
   const loadData = async () => {
     setLoading(true);
