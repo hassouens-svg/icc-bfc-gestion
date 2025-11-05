@@ -70,7 +70,8 @@ const Layout = ({ children }) => {
     { path: '/cities', label: 'Villes', icon: MapPin, roles: ['superviseur_promos', 'superviseur_fi', 'super_admin'], department: null },
     
     // SUPER ADMIN / PASTEUR - toujours visibles
-    { path: '/select-department', label: 'Changer Département', icon: Home, roles: ['pasteur', 'super_admin'], department: null },
+    { path: '/dashboard-superadmin', label: 'Dashboard Super Admin', icon: Home, roles: ['super_admin'], department: null },
+    { path: '/dashboard-pasteur', label: 'Dashboard Pasteur', icon: Home, roles: ['pasteur'], department: null },
     { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin'], department: null },
   ];
 
