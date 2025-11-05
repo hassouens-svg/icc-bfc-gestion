@@ -294,8 +294,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Role-based Access Control - POST /visitors endpoint restrictions"
-    - "User Management - assigned_fi_id field support"
+    - "Branding Update - ICC BFC-ITALIE"
+    - "GestionAccesPage - Edit and Password Reset Modals"
+    - "Notifications System - Backend and Frontend"
+    - "Timeline Extension - Promotions 2025-2030"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
