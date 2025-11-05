@@ -217,10 +217,18 @@ const FidelisationPage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Tous</SelectItem>
-                      <SelectItem value="2024-12">Décembre 2024</SelectItem>
-                      <SelectItem value="2025-01">Janvier 2025</SelectItem>
-                      <SelectItem value="2025-02">Février 2025</SelectItem>
-                      <SelectItem value="2025-03">Mars 2025</SelectItem>
+                      {(() => {
+                        const months = [];
+                        const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                        for (let year = 2025; year <= 2030; year++) {
+                          for (let month = 1; month <= 12; month++) {
+                            const value = `${year}-${String(month).padStart(2, '0')}`;
+                            const label = `${monthNames[month - 1]} ${year}`;
+                            months.push(<SelectItem key={value} value={value}>{label}</SelectItem>);
+                          }
+                        }
+                        return months;
+                      })()}
                     </SelectContent>
                   </Select>
                 </div>
