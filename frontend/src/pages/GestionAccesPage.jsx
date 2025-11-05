@@ -148,8 +148,7 @@ const GestionAccesPage = () => {
     }
 
     try {
-      const resetPasswordFn = (await import('../utils/api')).resetPassword;
-      await resetPasswordFn(selectedUser.id, newPassword);
+      await resetUserPassword(selectedUser.id, newPassword);
       toast.success('Mot de passe réinitialisé avec succès!');
       setIsResetPasswordDialogOpen(false);
       setSelectedUser(null);
