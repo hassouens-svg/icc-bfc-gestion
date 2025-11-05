@@ -34,14 +34,8 @@ const AccesSpecifiquesPage = () => {
       const data = await login(username, password, 'Dijon');
       toast.success('Connexion réussie!');
       
-      // Rediriger selon le rôle
-      if (data.user.role === 'super_admin') {
-        navigate('/dashboard-superadmin');
-      } else if (data.user.role === 'pasteur') {
-        navigate('/dashboard-pasteur');
-      } else {
-        navigate('/select-department');
-      }
+      // Rediriger vers la sélection de ville pour tous les rôles
+      navigate('/select-ville');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Identifiants incorrects');
     } finally {
