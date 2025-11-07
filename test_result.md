@@ -338,15 +338,18 @@ backend:
 
   - task: "Data Export/Import System - Backend Endpoints"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "✅ IMPLEMENTED: Complete data export/import system for database migration between environments. (1) GET /api/admin/export-all-data - Exports all collections (cities, users, visitors, secteurs, familles_impact, membres_fi, presences_fi, culte_stats, notifications) with metadata (export date, user, record counts). Super Admin only. (2) POST /api/admin/import-all-data - Imports data from JSON, clears existing data, inserts new data. Returns success message with counts. Super Admin only. Both endpoints include proper permission checks and error handling."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BUG FOUND: Data export/import system has a critical authentication-breaking bug. TESTING RESULTS: (1) ✅ Export Endpoint - GET /api/admin/export-all-data works perfectly, exports all 9 collections (290 records total: 8 cities, 33 users, 64 visitors, 18 secteurs, 24 familles_impact, 26 membres_fi, 68 presences_fi, 1 culte_stats, 48 notifications) with proper metadata (export_date, exported_by, total_records, collection counts). Valid JSON structure (82KB). (2) ✅ Permission Checks - Both endpoints correctly deny access to non-Super Admin users (Pasteur gets 403 with 'Super admin only' message). (3) ✅ Import Mechanics - POST /api/admin/import-all-data successfully clears collections and inserts new data, returns success message with counts. (4) ❌ CRITICAL: Import breaks authentication! After importing data, all user logins fail with 'Invalid credentials'. ROOT CAUSE: Exported user data contains already-hashed passwords, but import doesn't preserve them correctly - passwords may be getting double-hashed or corrupted during import. System had to be restored using /api/init endpoint. (5) ⚠️ Data Validation - Import accepts invalid data structures without validation (e.g., cities with missing required fields), returns 200 success even with malformed data. IMPACT: Export/import system is UNUSABLE for production data migration - importing data will lock out all users. Need to fix password preservation in import logic before this can be used safely."
 
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
