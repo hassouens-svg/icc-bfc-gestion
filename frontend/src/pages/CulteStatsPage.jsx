@@ -63,7 +63,11 @@ const CulteStatsPage = () => {
       navigate('/dashboard');
       return;
     }
-    loadData();
+    // Charger les données seulement si nécessaire
+    const timer = setTimeout(() => {
+      loadData();
+    }, 100);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line
   }, []);
 
