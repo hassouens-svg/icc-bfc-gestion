@@ -73,6 +73,8 @@ function App() {
           <Route path="/select-ville" element={<SelectVillePage />} />
           <Route path="/gestion-acces" element={<GestionAccesPage />} />
           <Route path="/admin-data" element={<AdminDataPage />} />
+          <Route path="/affectation-pilotes-fi" element={<AffectationPilotesFIPage />} />
+          <Route path="/affectation-responsables-secteur" element={<AffectationResponsablesSecteurPage />} />
         </Routes>
       </BrowserRouter>
     </div>
