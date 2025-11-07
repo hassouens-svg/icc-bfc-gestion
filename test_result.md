@@ -415,6 +415,18 @@ frontend:
         agent: "testing"
         comment: "Backend fidelisation endpoints are fully functional and returning proper data. Frontend testing not performed as per testing agent limitations. Backend APIs verified: GET /api/fidelisation/referent returns proper data structure with total_visitors, weekly_rates, and monthly_average. GET /api/fidelisation/admin returns array of referent data with proper role-based access control."
 
+  - task: "Data Export/Import Page - Frontend Implementation"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/AdminDataPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Complete Admin Data Management page at /admin-data for Super Admin only. Features: (1) Export Section - Button to export all database data to JSON file with automatic download, shows success message with record count (290 records exported in preview), loading indicator during export. (2) Import Section - File upload input for JSON files, validation of file format, import button with loading state, warning alert about data replacement. (3) User Guide - Step-by-step instructions for migrating data from preview to production. (4) Access Control - Auto-redirect non-Super Admin users, role validation on mount. (5) UI/UX - Cards with descriptions, status alerts (success/error), disabled states during operations. Navigation link added to Layout for Super Admin. Export functionality verified working with screenshot - successfully exports 290 records with green success message."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
