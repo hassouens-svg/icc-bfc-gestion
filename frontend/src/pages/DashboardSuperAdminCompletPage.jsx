@@ -254,6 +254,7 @@ const DashboardSuperAdminCompletPage = () => {
                     <SelectItem value="promotions">Promotions</SelectItem>
                     <SelectItem value="fi">Familles d'Impact</SelectItem>
                     <SelectItem value="presences">Présences Dimanche</SelectItem>
+                    <SelectItem value="cultes">Statistiques des Cultes</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
