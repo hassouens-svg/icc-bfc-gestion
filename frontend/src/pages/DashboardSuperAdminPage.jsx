@@ -5,7 +5,7 @@ import { getStats, getReferentFidelisation, getAdminFidelisation, getStatsSuperv
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Button } from '../components/ui/button';
-import { Users, MapPin, TrendingUp, Percent, Heart, BarChart3, UserPlus } from 'lucide-react';
+import { Users, MapPin, TrendingUp, Percent, Heart, BarChart3, UserPlus, Download, Upload, Database } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DashboardSuperAdminPage = () => {
