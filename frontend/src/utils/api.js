@@ -461,7 +461,7 @@ export const deleteCulteStats = async (id) => {
   return response.data;
 };
 
-// Data Export/Import (Super Admin)
+// Data Export/Import (Super Admin only)
 export const exportAllData = async () => {
   const response = await apiClient.get('/admin/export-all-data', { timeout: 60000 });
   return response.data;
@@ -469,16 +469,5 @@ export const exportAllData = async () => {
 
 export const importAllData = async (data) => {
   const response = await apiClient.post('/admin/import-all-data', data, { timeout: 120000 });
-  return response.data;
-};
-
-// Data Export/Import APIs (Super Admin only)
-export const exportAllData = async () => {
-  const response = await apiClient.get('/admin/export-all-data');
-  return response.data;
-};
-
-export const importAllData = async (data) => {
-  const response = await apiClient.post('/admin/import-all-data', data);
   return response.data;
 };
