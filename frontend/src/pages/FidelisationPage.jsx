@@ -178,7 +178,7 @@ const FidelisationPage = () => {
   }
 
   // Admin View
-  if ((user.role === 'admin' || user.role === 'promotions') && adminData) {
+  if (['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur'].includes(user.role) && adminData) {
     return (
       <Layout>
         <div className="space-y-6">
