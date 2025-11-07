@@ -98,6 +98,8 @@ const DashboardSuperAdminCompletPage = () => {
         await loadFIData();
       } else if (selectedView === 'presences') {
         await loadPresencesDimancheData();
+      } else if (selectedView === 'cultes') {
+        await loadCulteStatsData();
       }
     } catch (error) {
       console.error('Error loading data:', error);
