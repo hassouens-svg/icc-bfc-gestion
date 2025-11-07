@@ -2357,13 +2357,19 @@ async def create_culte_stats(stats: CulteStatsCreate, current_user: dict = Depen
     if current_user["role"] not in ["accueil", "super_admin"]:
         raise HTTPException(status_code=403, detail="Only accueil and super_admin can create culte stats")
     
-    stats_dict = stats.dict()
-    stats_dict["id"] = str(uuid.uuid4())
-    stats_dict["created_by"] = current_user["username"]
-    stats_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    culte_stat = CulteStats(
+        **stats.model_dump(),
+        created_by=current_user["username"]
+    )
+    doc = culte_stat.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('updated_at'):
+        doc['updated_at'] = doc['updated_at'].isoformat()
     
-    await db.culte_stats.insert_one(stats_dict)
-    return stats_dict
+    await db.culte_stats.insert_one(doc)
+    
+    # Return without _id
+    return {k: v for k, v in doc.items() if k != '_id'}
 
 @api_router.get("/culte-stats")
 async def get_culte_stats(
