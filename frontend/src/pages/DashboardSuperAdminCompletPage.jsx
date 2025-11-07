@@ -7,6 +7,7 @@ import {
   getFIDetailed, 
   getMembresTable,
   getPresencesDimanche,
+  getCulteStatsSummary,
   getCities,
   getUser 
 } from '../utils/api';
