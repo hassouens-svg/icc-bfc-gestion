@@ -51,7 +51,7 @@ const DashboardSuperAdminCompletPage = () => {
   const canEdit = user?.role === 'super_admin';
   const isReadOnly = user?.role === 'pasteur';
   
-  const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi' or 'presences'
+  const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi' or 'presences' or 'cultes'
   const [selectedCity, setSelectedCity] = useState('all');
   const [loading, setLoading] = useState(true);
   
