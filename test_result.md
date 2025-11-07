@@ -306,6 +306,21 @@ backend:
         agent: "main"
         comment: "✅ IMPLEMENTED: Extended fidelisation timeline from 2025 to 2030. Replaced hardcoded months (2025-01 to 2025-03) with dynamic generation loop creating all months from January 2025 to December 2030 (72 months total) with proper French labels (Janvier, Février, etc.). Weeks already dynamically generated (1-52)."
 
+  - task: "Culte Stats System - Complete CRUD Operations"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BUG FOUND: POST /culte-stats endpoint returns 500 Internal Server Error due to ObjectId serialization issue. The endpoint was inserting document with MongoDB _id field and trying to return it directly, causing JSON serialization failure."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Culte Stats system fully functional after fix! Comprehensive testing completed with 6/6 tests passing: (1) POST /culte-stats - Accueil can create stats for their city (date: 2025-01-05, ville: Dijon, type: Culte 1, fidèles: 50, STARS: 10) ✅, (2) GET /culte-stats - Accueil can list their city's stats ✅, (3) GET /culte-stats/summary/all - Summary endpoint working ✅, (4) PUT /culte-stats/{id} - Accueil can update stats (modified fidèles to 55, STARS to 12) ✅, (5) DELETE /culte-stats/{id} - Accueil correctly denied with 403 (read-only for delete) ✅, (6) DELETE /culte-stats/{id} - Super Admin can delete stats successfully ✅. Permission boundaries working correctly: Accueil restricted to their city, Super Admin has full access. Fixed ObjectId serialization by using Pydantic model and excluding _id from response."
+
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
