@@ -437,7 +437,7 @@ export const getCulteStats = async (ville = null, startDate = null, endDate = nu
   if (endDate) params.end_date = endDate;
   if (typeCulte) params.type_culte = typeCulte;
   
-  const response = await apiClient.get('/culte-stats', { params });
+  const response = await apiClient.get('/culte-stats', { params, timeout: 30000 });
   return response.data;
 };
 
