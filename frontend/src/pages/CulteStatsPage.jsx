@@ -57,6 +57,8 @@ const CulteStatsPage = () => {
   
   // Edit mode
   const [editingId, setEditingId] = useState(null);
+  const [editFideles, setEditFideles] = useState(0);
+  const [editStars, setEditStars] = useState(0);
 
   useEffect(() => {
     if (!user || !['accueil', 'super_admin'].includes(user.role)) {
