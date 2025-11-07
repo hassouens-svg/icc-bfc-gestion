@@ -202,8 +202,10 @@ const DashboardSuperAdminCompletPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
+        <div className="flex flex-col justify-center items-center h-64 space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <p className="text-gray-600">Chargement du dashboard...</p>
+          <p className="text-sm text-gray-400">Préparation des données</p>
         </div>
       </Layout>
     );
