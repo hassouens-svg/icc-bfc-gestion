@@ -438,9 +438,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Data Export/Import System Testing"
-    - "Production Data Migration Verification"
-  stuck_tasks: []
+    - "Data Export/Import System - Password Preservation Fix"
+  stuck_tasks:
+    - "Data Export/Import System - Backend Endpoints"
   test_all: false
   test_priority: "high_first"
 
