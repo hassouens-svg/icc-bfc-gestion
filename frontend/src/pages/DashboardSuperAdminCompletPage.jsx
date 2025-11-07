@@ -1022,6 +1022,330 @@ const DashboardSuperAdminCompletPage = () => {
             )}
           </>
         )}
+
+        {/* CULTE STATISTICS VIEW */}
+        {selectedView === 'cultes' && culteStatsData && (
+          <>
+            {/* KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Dimanches</CardTitle>
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{culteStatsData.global_stats.total_dimanches}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Moy. Fidèles/Dimanche</CardTitle>
+                  <Users className="h-4 w-4 text-indigo-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-indigo-600">
+                    {culteStatsData.global_stats.avg_fideles_per_dimanche}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Moy. STARS/Dimanche</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-yellow-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {culteStatsData.global_stats.avg_stars_per_dimanche}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Moyen</CardTitle>
+                  <BarChart3 className="h-4 w-4 text-green-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">
+                    {culteStatsData.global_stats.avg_total_per_dimanche}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Filters for Charts */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Filter className="h-5 w-5 mr-2" />
+                  Filtres pour Graphiques
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Date début</label>
+                    <input
+                      type="date"
+                      className="w-full border rounded px-3 py-2"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Date fin</label>
+                    <input
+                      type="date"
+                      className="w-full border rounded px-3 py-2"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button onClick={loadCulteStatsData} className="w-full">
+                      <Filter className="h-4 w-4 mr-2" />
+                      Appliquer
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Type de Culte</label>
+                    <Select value={culteTypeFilter} onValueChange={setCulteTypeFilter}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tous les cultes</SelectItem>
+                        <SelectItem value="culte_1">Culte 1</SelectItem>
+                        <SelectItem value="culte_2">Culte 2</SelectItem>
+                        <SelectItem value="ejp">EJP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Type de Fidèle</label>
+                    <Select value={fideleTypeFilter} onValueChange={setFideleTypeFilter}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tous (Fidèles + STARS)</SelectItem>
+                        <SelectItem value="fideles">Fidèles uniquement</SelectItem>
+                        <SelectItem value="stars">STARS uniquement</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Evolution Chart with Filters */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Évolution - {fideleTypeFilter === 'all' ? 'Tous' : fideleTypeFilter === 'fideles' ? 'Fidèles' : 'STARS'}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={culteStatsData.summary.slice(0, 20).reverse()}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    
+                    {culteTypeFilter === 'all' && (
+                      <>
+                        {fideleTypeFilter !== 'stars' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="total_fideles" 
+                            stroke="#6366f1" 
+                            strokeWidth={2} 
+                            name="Fidèles" 
+                          />
+                        )}
+                        {fideleTypeFilter !== 'fideles' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="total_stars" 
+                            stroke="#eab308" 
+                            strokeWidth={2} 
+                            name="STARS" 
+                          />
+                        )}
+                        {fideleTypeFilter === 'all' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="total_general" 
+                            stroke="#10b981" 
+                            strokeWidth={2} 
+                            name="Total" 
+                          />
+                        )}
+                      </>
+                    )}
+                    
+                    {culteTypeFilter === 'culte_1' && (
+                      <>
+                        {fideleTypeFilter !== 'stars' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="culte_1.fideles" 
+                            stroke="#6366f1" 
+                            strokeWidth={2} 
+                            name="Culte 1 - Fidèles" 
+                          />
+                        )}
+                        {fideleTypeFilter !== 'fideles' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="culte_1.stars" 
+                            stroke="#eab308" 
+                            strokeWidth={2} 
+                            name="Culte 1 - STARS" 
+                          />
+                        )}
+                      </>
+                    )}
+                    
+                    {culteTypeFilter === 'culte_2' && (
+                      <>
+                        {fideleTypeFilter !== 'stars' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="culte_2.fideles" 
+                            stroke="#a855f7" 
+                            strokeWidth={2} 
+                            name="Culte 2 - Fidèles" 
+                          />
+                        )}
+                        {fideleTypeFilter !== 'fideles' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="culte_2.stars" 
+                            stroke="#eab308" 
+                            strokeWidth={2} 
+                            name="Culte 2 - STARS" 
+                          />
+                        )}
+                      </>
+                    )}
+                    
+                    {culteTypeFilter === 'ejp' && (
+                      <>
+                        {fideleTypeFilter !== 'stars' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="ejp.fideles" 
+                            stroke="#10b981" 
+                            strokeWidth={2} 
+                            name="EJP - Fidèles" 
+                          />
+                        )}
+                        {fideleTypeFilter !== 'fideles' && (
+                          <Line 
+                            type="monotone" 
+                            dataKey="ejp.stars" 
+                            stroke="#eab308" 
+                            strokeWidth={2} 
+                            name="EJP - STARS" 
+                          />
+                        )}
+                      </>
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Tableau Détaillé */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Statistiques Détaillées par Dimanche</CardTitle>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Excel
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto max-h-96 overflow-y-auto">
+                  <table className="w-full">
+                    <thead className="sticky top-0 bg-gray-50">
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4">Date</th>
+                        <th className="text-left py-3 px-4">Ville</th>
+                        <th className="text-center py-3 px-4">Culte 1 (F/S)</th>
+                        <th className="text-center py-3 px-4">Culte 2 (F/S)</th>
+                        <th className="text-center py-3 px-4">EJP (F/S)</th>
+                        <th className="text-center py-3 px-4">Total Fidèles</th>
+                        <th className="text-center py-3 px-4">Total STARS</th>
+                        <th className="text-center py-3 px-4">Total Général</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {culteStatsData.summary.map((row, index) => (
+                        <tr key={index} className="border-b hover:bg-gray-50">
+                          <td className="py-3 px-4 font-medium">{row.date}</td>
+                          <td className="py-3 px-4">{row.ville}</td>
+                          <td className="text-center py-3 px-4">
+                            <div className="text-sm">
+                              <span className="text-indigo-600">{row.culte_1.fideles}</span>
+                              {' / '}
+                              <span className="text-yellow-600">{row.culte_1.stars}</span>
+                            </div>
+                          </td>
+                          <td className="text-center py-3 px-4">
+                            <div className="text-sm">
+                              <span className="text-indigo-600">{row.culte_2.fideles}</span>
+                              {' / '}
+                              <span className="text-yellow-600">{row.culte_2.stars}</span>
+                            </div>
+                          </td>
+                          <td className="text-center py-3 px-4">
+                            <div className="text-sm">
+                              <span className="text-indigo-600">{row.ejp.fideles}</span>
+                              {' / '}
+                              <span className="text-yellow-600">{row.ejp.stars}</span>
+                            </div>
+                          </td>
+                          <td className="text-center py-3 px-4 font-bold text-indigo-600">
+                            {row.total_fideles}
+                          </td>
+                          <td className="text-center py-3 px-4 font-bold text-yellow-600">
+                            {row.total_stars}
+                          </td>
+                          <td className="text-center py-3 px-4 font-bold text-green-600">
+                            {row.total_general}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  {culteStatsData.summary.length} dimanches enregistrés
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Actions Rapides */}
+            {canEdit && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button onClick={() => navigate('/culte-stats')} variant="outline" className="h-20">
+                  <div className="text-center">
+                    <BarChart3 className="h-6 w-6 mx-auto mb-2" />
+                    <p>Gérer Statistiques Cultes</p>
+                  </div>
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </Layout>
   );
