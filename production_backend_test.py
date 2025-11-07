@@ -201,85 +201,85 @@ def test_analytics():
     print("TEST 3: ANALYTICS ENDPOINTS")
     print("="*60)
     
-    # Test 3.1: Promotions Detailed
-    print("\n--- Test 3.1: GET /analytics/promotions-detailed ---")
+    # Test 3.1: Promotions Detailed (Pasteur)
+    print("\n--- Test 3.1: GET /analytics/promotions-detailed (Pasteur) ---")
     try:
         response = requests.get(
             f"{BASE_URL}/analytics/promotions-detailed",
-            headers=get_headers("superviseur"),
+            headers=get_headers("pasteur"),
             timeout=10
         )
         if response.status_code == 200:
             data = response.json()
-            log_test("GET /analytics/promotions-detailed", True)
+            log_test("GET /analytics/promotions-detailed (Pasteur)", True)
         else:
-            log_test("GET /analytics/promotions-detailed", False, f"Status: {response.status_code}")
+            log_test("GET /analytics/promotions-detailed (Pasteur)", False, f"Status: {response.status_code}")
     except Exception as e:
-        log_test("GET /analytics/promotions-detailed", False, str(e))
+        log_test("GET /analytics/promotions-detailed (Pasteur)", False, str(e))
     
-    # Test 3.2: Visitors Table
-    print("\n--- Test 3.2: GET /analytics/visitors-table ---")
+    # Test 3.2: Visitors Table (Pasteur)
+    print("\n--- Test 3.2: GET /analytics/visitors-table (Pasteur) ---")
     try:
         response = requests.get(
             f"{BASE_URL}/analytics/visitors-table",
-            headers=get_headers("superviseur"),
+            headers=get_headers("pasteur"),
             timeout=10
         )
         if response.status_code == 200:
             data = response.json()
-            log_test("GET /analytics/visitors-table", True)
+            log_test("GET /analytics/visitors-table (Pasteur)", True)
         else:
-            log_test("GET /analytics/visitors-table", False, f"Status: {response.status_code}")
+            log_test("GET /analytics/visitors-table (Pasteur)", False, f"Status: {response.status_code}")
     except Exception as e:
-        log_test("GET /analytics/visitors-table", False, str(e))
+        log_test("GET /analytics/visitors-table (Pasteur)", False, str(e))
     
-    # Test 3.3: FI Detailed
-    print("\n--- Test 3.3: GET /analytics/fi-detailed ---")
+    # Test 3.3: FI Detailed (Pasteur)
+    print("\n--- Test 3.3: GET /analytics/fi-detailed (Pasteur) ---")
     try:
         response = requests.get(
             f"{BASE_URL}/analytics/fi-detailed",
-            headers=get_headers("superviseur"),
+            headers=get_headers("pasteur"),
             timeout=10
         )
         if response.status_code == 200:
             data = response.json()
-            log_test("GET /analytics/fi-detailed", True)
+            log_test("GET /analytics/fi-detailed (Pasteur)", True)
         else:
-            log_test("GET /analytics/fi-detailed", False, f"Status: {response.status_code}")
+            log_test("GET /analytics/fi-detailed (Pasteur)", False, f"Status: {response.status_code}")
     except Exception as e:
-        log_test("GET /analytics/fi-detailed", False, str(e))
+        log_test("GET /analytics/fi-detailed (Pasteur)", False, str(e))
     
-    # Test 3.4: Membres Table
-    print("\n--- Test 3.4: GET /analytics/membres-table ---")
+    # Test 3.4: Membres Table (Pasteur)
+    print("\n--- Test 3.4: GET /analytics/membres-table (Pasteur) ---")
     try:
         response = requests.get(
             f"{BASE_URL}/analytics/membres-table",
-            headers=get_headers("superviseur"),
+            headers=get_headers("pasteur"),
             timeout=10
         )
         if response.status_code == 200:
             data = response.json()
-            log_test("GET /analytics/membres-table", True)
+            log_test("GET /analytics/membres-table (Pasteur)", True)
         else:
-            log_test("GET /analytics/membres-table", False, f"Status: {response.status_code}")
+            log_test("GET /analytics/membres-table (Pasteur)", False, f"Status: {response.status_code}")
     except Exception as e:
-        log_test("GET /analytics/membres-table", False, str(e))
+        log_test("GET /analytics/membres-table (Pasteur)", False, str(e))
     
-    # Test 3.5: Presences Dimanche
-    print("\n--- Test 3.5: GET /analytics/presences-dimanche ---")
+    # Test 3.5: Presences Dimanche (Pasteur)
+    print("\n--- Test 3.5: GET /analytics/presences-dimanche (Pasteur) ---")
     try:
         response = requests.get(
             f"{BASE_URL}/analytics/presences-dimanche",
-            headers=get_headers("superviseur"),
+            headers=get_headers("pasteur"),
             timeout=10
         )
         if response.status_code == 200:
             data = response.json()
-            log_test("GET /analytics/presences-dimanche", True)
+            log_test("GET /analytics/presences-dimanche (Pasteur)", True)
         else:
-            log_test("GET /analytics/presences-dimanche", False, f"Status: {response.status_code}")
+            log_test("GET /analytics/presences-dimanche (Pasteur)", False, f"Status: {response.status_code}")
     except Exception as e:
-        log_test("GET /analytics/presences-dimanche", False, str(e))
+        log_test("GET /analytics/presences-dimanche (Pasteur)", False, str(e))
 
 # ==================== TEST 4: PERMISSIONS ====================
 def test_permissions():
