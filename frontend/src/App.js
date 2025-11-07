@@ -32,6 +32,8 @@ import SelectDepartmentPage from './pages/SelectDepartmentPage';
 import GestionAccesPage from './pages/GestionAccesPage';
 import SelectVillePage from './pages/SelectVillePage';
 import AdminDataPage from './pages/AdminDataPage';
+import AffectationPilotesFIPage from './pages/AffectationPilotesFIPage';
+import AffectationResponsablesSecteurPage from './pages/AffectationResponsablesSecteurPage';
 
 function App() {
   return (
