@@ -336,6 +336,18 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: Culte Stats system fully functional after fix! Comprehensive testing completed with 6/6 tests passing: (1) POST /culte-stats - Accueil can create stats for their city (date: 2025-01-05, ville: Dijon, type: Culte 1, fidèles: 50, STARS: 10) ✅, (2) GET /culte-stats - Accueil can list their city's stats ✅, (3) GET /culte-stats/summary/all - Summary endpoint working ✅, (4) PUT /culte-stats/{id} - Accueil can update stats (modified fidèles to 55, STARS to 12) ✅, (5) DELETE /culte-stats/{id} - Accueil correctly denied with 403 (read-only for delete) ✅, (6) DELETE /culte-stats/{id} - Super Admin can delete stats successfully ✅. Permission boundaries working correctly: Accueil restricted to their city, Super Admin has full access. Fixed ObjectId serialization by using Pydantic model and excluding _id from response."
 
+  - task: "Data Export/Import System - Backend Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Complete data export/import system for database migration between environments. (1) GET /api/admin/export-all-data - Exports all collections (cities, users, visitors, secteurs, familles_impact, membres_fi, presences_fi, culte_stats, notifications) with metadata (export date, user, record counts). Super Admin only. (2) POST /api/admin/import-all-data - Imports data from JSON, clears existing data, inserts new data. Returns success message with counts. Super Admin only. Both endpoints include proper permission checks and error handling."
+
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
