@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getStats, getReferentFidelisation, getAdminFidelisation, getStatsSuperviseurFI, getStatsPasteur, getCities, getUser } from '../utils/api';
+import { getStats, getReferentFidelisation, getAdminFidelisation, getStatsSuperviseurFI, getStatsPasteur, getCities, getUser, exportAllData, importAllData } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Button } from '../components/ui/button';
