@@ -2556,16 +2556,46 @@ async def export_all_data(current_user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="Super admin only")
     
     # Export all collections
+    cities = await db.cities.find({}, {"_id": 0}).to_list(10000)
+    users = await db.users.find({}, {"_id": 0}).to_list(10000)
+    visitors = await db.visitors.find({}, {"_id": 0}).to_list(10000)
+    secteurs = await db.secteurs.find({}, {"_id": 0}).to_list(10000)
+    familles_impact = await db.familles_impact.find({}, {"_id": 0}).to_list(10000)
+    membres_fi = await db.membres_fi.find({}, {"_id": 0}).to_list(10000)
+    presences_fi = await db.presences_fi.find({}, {"_id": 0}).to_list(10000)
+    culte_stats = await db.culte_stats.find({}, {"_id": 0}).to_list(10000)
+    notifications = await db.notifications.find({}, {"_id": 0}).to_list(10000)
+    
     data = {
-        "cities": await db.cities.find({}, {"_id": 0}).to_list(10000),
-        "users": await db.users.find({}, {"_id": 0}).to_list(10000),
-        "visitors": await db.visitors.find({}, {"_id": 0}).to_list(10000),
-        "secteurs": await db.secteurs.find({}, {"_id": 0}).to_list(10000),
-        "familles_impact": await db.familles_impact.find({}, {"_id": 0}).to_list(10000),
-        "membres_fi": await db.membres_fi.find({}, {"_id": 0}).to_list(10000),
-        "presences_fi": await db.presences_fi.find({}, {"_id": 0}).to_list(10000),
-        "culte_stats": await db.culte_stats.find({}, {"_id": 0}).to_list(10000),
-        "notifications": await db.notifications.find({}, {"_id": 0}).to_list(10000)
+        "cities": cities,
+        "users": users,
+        "visitors": visitors,
+        "secteurs": secteurs,
+        "familles_impact": familles_impact,
+        "membres_fi": membres_fi,
+        "presences_fi": presences_fi,
+        "culte_stats": culte_stats,
+        "notifications": notifications,
+        "metadata": {
+            "export_date": datetime.now(timezone.utc).isoformat(),
+            "exported_by": current_user["username"],
+            "total_records": (
+                len(cities) + len(users) + len(visitors) + 
+                len(secteurs) + len(familles_impact) + len(membres_fi) + 
+                len(presences_fi) + len(culte_stats) + len(notifications)
+            ),
+            "collections": {
+                "cities": len(cities),
+                "users": len(users),
+                "visitors": len(visitors),
+                "secteurs": len(secteurs),
+                "familles_impact": len(familles_impact),
+                "membres_fi": len(membres_fi),
+                "presences_fi": len(presences_fi),
+                "culte_stats": len(culte_stats),
+                "notifications": len(notifications)
+            }
+        }
     }
     
     return data
