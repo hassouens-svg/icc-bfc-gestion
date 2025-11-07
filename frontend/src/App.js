@@ -60,7 +60,7 @@ function App() {
           <Route path="/familles-impact/presences-table" element={<PresencesFITablePage />} />
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
-          <Route path="/dashboard-pasteur" element={<DashboardPasteurPage />} />
+          <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
           <Route path="/dashboard-superadmin" element={<DashboardSuperAdminPage />} />
           <Route path="/dashboard-superadmin-complet" element={<DashboardSuperAdminCompletPage />} />
           <Route path="/gestion-permissions-dashboard" element={<GestionPermissionsDashboardPage />} />
