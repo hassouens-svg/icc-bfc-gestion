@@ -157,9 +157,10 @@ const DashboardSuperAdminCompletPage = () => {
         startDate || null,
         endDate || null
       );
-      setCulteStatsData(data);
+      setCulteStatsData(data || { summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
     } catch (error) {
       console.error('Error loading culte stats:', error);
+      setCulteStatsData({ summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
     }
   };
 
