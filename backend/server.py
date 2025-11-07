@@ -2547,6 +2547,85 @@ async def get_culte_stats_summary(
         }
     }
 
+# ==================== DATA EXPORT/IMPORT (Super Admin) ====================
+
+@api_router.get("/admin/export-all-data")
+async def export_all_data(current_user: dict = Depends(get_current_user)):
+    """Export all database data - Super Admin only"""
+    if current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Super admin only")
+    
+    # Export all collections
+    data = {
+        "cities": await db.cities.find({}, {"_id": 0}).to_list(10000),
+        "users": await db.users.find({}, {"_id": 0}).to_list(10000),
+        "visitors": await db.visitors.find({}, {"_id": 0}).to_list(10000),
+        "secteurs": await db.secteurs.find({}, {"_id": 0}).to_list(10000),
+        "familles_impact": await db.familles_impact.find({}, {"_id": 0}).to_list(10000),
+        "membres_fi": await db.membres_fi.find({}, {"_id": 0}).to_list(10000),
+        "presences_fi": await db.presences_fi.find({}, {"_id": 0}).to_list(10000),
+        "culte_stats": await db.culte_stats.find({}, {"_id": 0}).to_list(10000),
+        "notifications": await db.notifications.find({}, {"_id": 0}).to_list(10000)
+    }
+    
+    return data
+
+@api_router.post("/admin/import-all-data")
+async def import_all_data(data: dict, current_user: dict = Depends(get_current_user)):
+    """Import all database data - Super Admin only"""
+    if current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Super admin only")
+    
+    try:
+        # Clear existing data
+        await db.cities.delete_many({})
+        await db.users.delete_many({})
+        await db.visitors.delete_many({})
+        await db.secteurs.delete_many({})
+        await db.familles_impact.delete_many({})
+        await db.membres_fi.delete_many({})
+        await db.presences_fi.delete_many({})
+        await db.culte_stats.delete_many({})
+        await db.notifications.delete_many({})
+        
+        # Import new data
+        if data.get("cities"):
+            await db.cities.insert_many(data["cities"])
+        if data.get("users"):
+            await db.users.insert_many(data["users"])
+        if data.get("visitors"):
+            await db.visitors.insert_many(data["visitors"])
+        if data.get("secteurs"):
+            await db.secteurs.insert_many(data["secteurs"])
+        if data.get("familles_impact"):
+            await db.familles_impact.insert_many(data["familles_impact"])
+        if data.get("membres_fi"):
+            await db.membres_fi.insert_many(data["membres_fi"])
+        if data.get("presences_fi"):
+            await db.presences_fi.insert_many(data["presences_fi"])
+        if data.get("culte_stats"):
+            await db.culte_stats.insert_many(data["culte_stats"])
+        if data.get("notifications"):
+            await db.notifications.insert_many(data["notifications"])
+        
+        return {
+            "success": True,
+            "message": "Data imported successfully",
+            "counts": {
+                "cities": len(data.get("cities", [])),
+                "users": len(data.get("users", [])),
+                "visitors": len(data.get("visitors", [])),
+                "secteurs": len(data.get("secteurs", [])),
+                "familles_impact": len(data.get("familles_impact", [])),
+                "membres_fi": len(data.get("membres_fi", [])),
+                "presences_fi": len(data.get("presences_fi", [])),
+                "culte_stats": len(data.get("culte_stats", [])),
+                "notifications": len(data.get("notifications", []))
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
+
 # ==================== ROOT ====================
 
 @api_router.get("/")
