@@ -150,6 +150,19 @@ const DashboardSuperAdminCompletPage = () => {
     }
   };
 
+  const loadCulteStatsData = async () => {
+    try {
+      const data = await getCulteStatsSummary(
+        selectedCity !== 'all' ? selectedCity : null,
+        startDate || null,
+        endDate || null
+      );
+      setCulteStatsData(data);
+    } catch (error) {
+      console.error('Error loading culte stats:', error);
+    }
+  };
+
   // Filter data by city
   const filterByCity = (data, cityField = 'city') => {
     if (selectedCity === 'all') return data;
