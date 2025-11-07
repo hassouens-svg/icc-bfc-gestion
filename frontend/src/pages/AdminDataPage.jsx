@@ -5,9 +5,8 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Download, Upload, AlertCircle, CheckCircle2, Loader2, Database } from 'lucide-react';
-import { exportAllData, importAllData } from '../utils/api';
-import toast from 'react-hot-toast';
-import { getUser } from '../lib/utils';
+import { exportAllData, importAllData, getUser } from '../utils/api';
+import { toast } from 'sonner';
 
 const AdminDataPage = () => {
   const [exportLoading, setExportLoading] = useState(false);
