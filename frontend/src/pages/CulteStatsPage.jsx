@@ -74,11 +74,13 @@ const CulteStatsPage = () => {
         getCulteStats(),
         getCulteStatsSummary()
       ]);
-      setStats(statsData);
-      setSummary(summaryData);
+      setStats(statsData || []);
+      setSummary(summaryData || { summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
     } catch (error) {
       console.error('Error loading data:', error);
-      toast.error('Erreur lors du chargement');
+      // Ne pas afficher d'erreur si c'est juste qu'il n'y a pas encore de données
+      setStats([]);
+      setSummary({ summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
     } finally {
       setLoading(false);
     }
