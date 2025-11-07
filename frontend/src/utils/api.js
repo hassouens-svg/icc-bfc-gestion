@@ -460,3 +460,14 @@ export const deleteCulteStats = async (id) => {
   const response = await apiClient.delete(`/culte-stats/${id}`);
   return response.data;
 };
+
+// Data Export/Import APIs (Super Admin only)
+export const exportAllData = async () => {
+  const response = await apiClient.get('/admin/export-all-data');
+  return response.data;
+};
+
+export const importAllData = async (data) => {
+  const response = await apiClient.post('/admin/import-all-data', data);
+  return response.data;
+};
