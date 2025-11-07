@@ -78,6 +78,7 @@ const Layout = ({ children }) => {
     { path: '/dashboard-superadmin', label: 'Dashboard Super Admin', icon: Home, roles: ['super_admin'], department: null },
     { path: '/dashboard-pasteur', label: 'Dashboard Pasteur', icon: Home, roles: ['pasteur'], department: null },
     { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin'], department: null },
+    { path: '/admin-data', label: 'Gestion des Données', icon: Shield, roles: ['super_admin'], department: null },
   ];
 
   const filteredNavItems = navItems.filter(item => {
