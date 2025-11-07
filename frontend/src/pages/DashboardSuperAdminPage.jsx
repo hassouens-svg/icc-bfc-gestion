@@ -249,6 +249,73 @@ const DashboardSuperAdminPage = () => {
           </CardContent>
         </Card>
 
+        {/* DATA MIGRATION SECTION */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Database className="h-5 w-5 mr-2" />
+              Migration des Données
+            </CardTitle>
+            <p className="text-sm text-gray-500">
+              Exportez toutes les données du preview vers la production
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Button 
+                onClick={handleExportData} 
+                disabled={isExporting}
+                className="h-16 flex flex-col items-center justify-center"
+                variant="outline"
+              >
+                {isExporting ? (
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+                ) : (
+                  <>
+                    <Download className="h-6 w-6 mb-1" />
+                    <span>Exporter toutes les données</span>
+                  </>
+                )}
+              </Button>
+              
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleImportData}
+                  disabled={isImporting}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  id="import-file"
+                />
+                <Button 
+                  asChild
+                  disabled={isImporting}
+                  className="h-16 w-full flex flex-col items-center justify-center"
+                  variant="outline"
+                >
+                  <label htmlFor="import-file" className="cursor-pointer">
+                    {isImporting ? (
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+                    ) : (
+                      <>
+                        <Upload className="h-6 w-6 mb-1" />
+                        <span>Importer les données</span>
+                      </>
+                    )}
+                  </label>
+                </Button>
+              </div>
+            </div>
+            
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                <strong>⚠️ Attention:</strong> L'import remplacera TOUTES les données existantes. 
+                Assurez-vous d'avoir une sauvegarde avant d'importer.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* PROMOTIONS VIEW */}
         {selectedDepartment === 'promotions' && (
           <>
