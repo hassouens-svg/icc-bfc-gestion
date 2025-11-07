@@ -423,3 +423,40 @@ export const getPresencesDimanche = async (startDate = null, endDate = null, vil
   const response = await apiClient.get('/analytics/presences-dimanche', { params });
   return response.data;
 };
+
+// Culte Statistics
+export const createCulteStats = async (data) => {
+  const response = await apiClient.post('/culte-stats', data);
+  return response.data;
+};
+
+export const getCulteStats = async (ville = null, startDate = null, endDate = null, typeCulte = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  if (startDate) params.start_date = startDate;
+  if (endDate) params.end_date = endDate;
+  if (typeCulte) params.type_culte = typeCulte;
+  
+  const response = await apiClient.get('/culte-stats', { params });
+  return response.data;
+};
+
+export const getCulteStatsSummary = async (ville = null, startDate = null, endDate = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  if (startDate) params.start_date = startDate;
+  if (endDate) params.end_date = endDate;
+  
+  const response = await apiClient.get('/culte-stats/summary/all', { params });
+  return response.data;
+};
+
+export const updateCulteStats = async (id, data) => {
+  const response = await apiClient.put(`/culte-stats/${id}`, data);
+  return response.data;
+};
+
+export const deleteCulteStats = async (id) => {
+  const response = await apiClient.delete(`/culte-stats/${id}`);
+  return response.data;
+};
