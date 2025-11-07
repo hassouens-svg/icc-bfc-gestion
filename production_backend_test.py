@@ -16,7 +16,7 @@ BASE_URL = "https://bfc-italie.preview.emergentagent.com/api"
 TEST_ACCOUNTS = {
     "superadmin": {"username": "superadmin", "password": "superadmin123", "city": "Dijon"},
     "pasteur": {"username": "pasteur", "password": "pasteur123", "city": "Dijon"},
-    "superviseur": {"username": "superviseur_promos", "password": "admin123", "city": "Dijon"},
+    "superviseur": {"username": "superviseur_promos", "password": "superviseur123", "city": "Dijon"},
     "accueil": {"username": "accueil_dijon", "password": "test123", "city": "Dijon"},
     "pilote": {"username": "pilote_dijon1", "password": "test123", "city": "Dijon"},
     "referent": {"username": "referent_dijon_oct", "password": "test123", "city": "Dijon"}
