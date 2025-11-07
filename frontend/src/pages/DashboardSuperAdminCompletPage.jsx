@@ -235,9 +235,12 @@ const DashboardSuperAdminCompletPage = () => {
                 <UserPlus className="h-4 w-4 mr-2" />
                 Gérer Accès
               </Button>
-              <Button onClick={() => navigate('/gestion-permissions-dashboard')} variant="outline">
+              <Button 
+                onClick={() => navigate('/gestion-permissions-dashboard')} 
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 shadow-lg"
+              >
                 <Filter className="h-4 w-4 mr-2" />
-                Permissions Dashboard
+                🔐 Gérer les Permissions Dashboard
               </Button>
             </div>
           )}
