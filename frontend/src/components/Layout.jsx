@@ -69,7 +69,7 @@ const Layout = ({ children }) => {
     { path: '/familles-impact/secteurs', label: 'Gérer Secteurs', icon: MapPin, roles: ['superviseur_fi'], department: 'familles-impact' },
     
     // ACCUEIL & INTÉGRATION
-    { path: '/culte-stats', label: 'Statistiques des Cultes', icon: BarChart3, roles: ['accueil', 'super_admin'], department: 'accueil' },
+    { path: '/culte-stats', label: 'Statistiques des Cultes', icon: BarChart3, roles: ['accueil', 'super_admin'], department: 'promotions' },
     
     // COMMUNES - Villes accessible depuis les deux départements
     { path: '/cities', label: 'Villes', icon: MapPin, roles: ['superviseur_promos', 'superviseur_fi', 'super_admin'], department: null },
