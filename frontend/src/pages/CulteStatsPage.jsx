@@ -500,8 +500,6 @@ const CulteStatsPage = () => {
                 <tbody>
                   {filteredStats.map((stat) => {
                     const isEditing = editingId === stat.id;
-                    const [editFideles, setEditFideles] = React.useState(stat.nombre_fideles);
-                    const [editStars, setEditStars] = React.useState(stat.nombre_stars);
                     
                     return (
                       <tr key={stat.id} className="border-b hover:bg-gray-50">
@@ -566,7 +564,11 @@ const CulteStatsPage = () => {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => setEditingId(stat.id)}
+                                onClick={() => {
+                                  setEditingId(stat.id);
+                                  setEditFideles(stat.nombre_fideles);
+                                  setEditStars(stat.nombre_stars);
+                                }}
                               >
                                 <Edit2 className="h-4 w-4" />
                               </Button>
