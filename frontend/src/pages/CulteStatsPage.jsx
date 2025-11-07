@@ -474,6 +474,125 @@ const CulteStatsPage = () => {
           </CardContent>
         </Card>
 
+        {/* Detailed Stats Table with Edit/Delete */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Toutes les Statistiques (Détaillées)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4">Date</th>
+                    <th className="text-left py-3 px-4">Type de Culte</th>
+                    <th className="text-center py-3 px-4">Fidèles</th>
+                    <th className="text-center py-3 px-4">STARS</th>
+                    <th className="text-center py-3 px-4">Total</th>
+                    <th className="text-right py-3 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredStats.map((stat) => {
+                    const isEditing = editingId === stat.id;
+                    const [editFideles, setEditFideles] = React.useState(stat.nombre_fideles);
+                    const [editStars, setEditStars] = React.useState(stat.nombre_stars);
+                    
+                    return (
+                      <tr key={stat.id} className="border-b hover:bg-gray-50">
+                        <td className="py-3 px-4">{stat.date}</td>
+                        <td className="py-3 px-4 font-medium">{stat.type_culte}</td>
+                        <td className="text-center py-3 px-4">
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editFideles}
+                              onChange={(e) => setEditFideles(e.target.value)}
+                              className="w-20 px-2 py-1 border rounded text-center"
+                              min="0"
+                            />
+                          ) : (
+                            stat.nombre_fideles
+                          )}
+                        </td>
+                        <td className="text-center py-3 px-4 text-yellow-600">
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editStars}
+                              onChange={(e) => setEditStars(e.target.value)}
+                              className="w-20 px-2 py-1 border rounded text-center"
+                              min="0"
+                            />
+                          ) : (
+                            stat.nombre_stars
+                          )}
+                        </td>
+                        <td className="text-center py-3 px-4 font-bold text-green-600">
+                          {isEditing ? (
+                            parseInt(editFideles || 0) + parseInt(editStars || 0)
+                          ) : (
+                            stat.nombre_fideles + stat.nombre_stars
+                          )}
+                        </td>
+                        <td className="text-right py-3 px-4">
+                          {isEditing ? (
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  handleUpdate(stat.id, editFideles, editStars);
+                                }}
+                                disabled={loading}
+                              >
+                                Enregistrer
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingId(null)}
+                                disabled={loading}
+                              >
+                                Annuler
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingId(stat.id)}
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDelete(stat.id)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {filteredStats.length === 0 && (
+              <p className="text-center text-gray-500 py-8">
+                Aucune statistique trouvée
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Summary Table by Date */}
         <Card>
           <CardHeader>
