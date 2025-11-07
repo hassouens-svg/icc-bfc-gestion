@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { logout, getUser, getNotifications, markNotificationRead } from '../utils/api';
 import { Button } from './ui/button';
-import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table, Heart, Shield, Bell } from 'lucide-react';
+import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table, Heart, Shield, Bell, Database } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 const Layout = ({ children }) => {
