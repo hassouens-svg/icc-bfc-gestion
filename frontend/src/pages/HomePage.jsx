@@ -134,9 +134,9 @@ const HomePage = () => {
           <CardContent className="pt-6">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-white/90">Sélectionnez votre ville</label>
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
+              <Select value={selectedCity} onValueChange={setSelectedCity} disabled={loading}>
                 <SelectTrigger className="w-full bg-white/10 border-white/30 text-white backdrop-blur" data-testid="home-city-select">
-                  <SelectValue placeholder="Choisir une ville..." />
+                  <SelectValue placeholder={loading ? "Chargement des villes..." : "Choisir une ville..."} />
                 </SelectTrigger>
                 <SelectContent>
                   {cities.map((city) => (
@@ -146,6 +146,9 @@ const HomePage = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {loading && (
+                <p className="text-xs text-white/70 mt-1">Chargement des villes disponibles...</p>
+              )}
             </div>
           </CardContent>
         </Card>
