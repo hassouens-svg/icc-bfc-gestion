@@ -381,13 +381,21 @@ async def register_visitor(visitor_data: VisitorCreate):
 
 # ==================== USER ROUTES ====================
 
-@api_router.post("/users/referent")
-async def create_referent(user_data: UserCreate, current_user: dict = Depends(get_current_user)):
-    # Only admin and promotions can create referents
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
-        raise HTTPException(status_code=403, detail="Only admin can create referents")
+@api_router.post("/users")
+async def create_user(user_data: UserCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new user - Super Admin can create any role, others can create referents only"""
+    # Permission checks
+    if current_user["role"] == "super_admin":
+        # Super admin can create any user
+        pass
+    elif current_user["role"] in ["superviseur_promos", "promotions"]:
+        # Superviseurs can only create referents
+        if user_data.role not in ["referent", "accueil", "promotions"]:
+            raise HTTPException(status_code=403, detail="You can only create referent, accueil, or promotions users")
+    else:
+        raise HTTPException(status_code=403, detail="Not authorized to create users")
     
-    # Check if username already exists in this city
+    # Check if username already exists
     existing = await db.users.find_one({
         "username": user_data.username,
         "city": user_data.city
@@ -419,7 +427,12 @@ async def create_referent(user_data: UserCreate, current_user: dict = Depends(ge
     doc['created_at'] = doc['created_at'].isoformat()
     
     await db.users.insert_one(doc)
-    return {"message": "Referent created successfully", "id": user.id}
+    return {"message": "User created successfully", "id": user.id}
+
+@api_router.post("/users/referent")
+async def create_referent(user_data: UserCreate, current_user: dict = Depends(get_current_user)):
+    """Legacy endpoint for creating referents - redirects to /users"""
+    return await create_user(user_data, current_user)
 
 @api_router.get("/users/referents")
 async def get_referents(current_user: dict = Depends(get_current_user)):
