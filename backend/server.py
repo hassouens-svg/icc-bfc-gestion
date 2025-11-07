@@ -101,6 +101,29 @@ class UserLogin(BaseModel):
     city: str
     department: Optional[str] = None  # "accueil" or "promotion"
 
+class CulteStats(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date: str  # Date du dimanche YYYY-MM-DD
+    ville: str
+    type_culte: str  # "Culte 1", "Culte 2", "EJP"
+    nombre_fideles: int
+    nombre_stars: int
+    created_by: str  # Username de celui qui a créé
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
+
+class CulteStatsCreate(BaseModel):
+    date: str
+    ville: str
+    type_culte: str
+    nombre_fideles: int
+    nombre_stars: int
+
+class CulteStatsUpdate(BaseModel):
+    nombre_fideles: Optional[int] = None
+    nombre_stars: Optional[int] = None
+
 class PresenceEntry(BaseModel):
     date: str
     present: bool
