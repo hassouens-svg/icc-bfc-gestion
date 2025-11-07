@@ -31,6 +31,7 @@ import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
 import SelectDepartmentPage from './pages/SelectDepartmentPage';
 import GestionAccesPage from './pages/GestionAccesPage';
 import SelectVillePage from './pages/SelectVillePage';
+import AdminDataPage from './pages/AdminDataPage';
 
 function App() {
   return (
