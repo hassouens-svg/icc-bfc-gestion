@@ -226,8 +226,10 @@ const CulteStatsPage = () => {
   if (loading && !stats.length) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
+        <div className="flex flex-col justify-center items-center h-64 space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <p className="text-gray-600">Chargement des statistiques...</p>
+          <p className="text-sm text-gray-400">Cela peut prendre quelques secondes</p>
         </div>
       </Layout>
     );
