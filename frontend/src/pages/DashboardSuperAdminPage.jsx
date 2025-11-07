@@ -116,6 +116,53 @@ const DashboardSuperAdminPage = () => {
     setSearchParams({ city: selectedCity, department: value });
   };
 
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      const data = await exportAllData();
+      
+      // Create and download JSON file
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `icc-data-export-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Données exportées avec succès!');
+    } catch (error) {
+      toast.error('Erreur lors de l\'export: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleImportData = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      
+      const result = await importAllData(data);
+      toast.success(`Import réussi! ${JSON.stringify(result.counts)}`);
+      
+      // Reload data after import
+      await loadData();
+    } catch (error) {
+      toast.error('Erreur lors de l\'import: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setIsImporting(false);
+      // Reset file input
+      event.target.value = '';
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
