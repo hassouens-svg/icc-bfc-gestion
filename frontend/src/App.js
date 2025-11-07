@@ -70,6 +70,7 @@ function App() {
           <Route path="/select-department" element={<SelectDepartmentPage />} />
           <Route path="/select-ville" element={<SelectVillePage />} />
           <Route path="/gestion-acces" element={<GestionAccesPage />} />
+          <Route path="/admin-data" element={<AdminDataPage />} />
         </Routes>
       </BrowserRouter>
     </div>
