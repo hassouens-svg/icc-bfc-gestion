@@ -11,14 +11,18 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadCities = async () => {
       try {
+        setLoading(true);
         const citiesData = await getCities();
         setCities(citiesData);
       } catch (error) {
         // Silent fail - cities will be empty
+      } finally {
+        setLoading(false);
       }
     };
     loadCities();
