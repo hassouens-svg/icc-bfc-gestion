@@ -10,32 +10,32 @@ Votre application de gestion des visiteurs ICC est maintenant complète et opér
 
 ### 📱 Interface Principale (Connexion)
 ```
-https://bfc-italie.preview.emergentagent.com/login
+https://impact-family.preview.emergentagent.com/login
 ```
 
 ### 📝 Formulaire Public d'Inscription
 ```
-https://bfc-italie.preview.emergentagent.com/register
+https://impact-family.preview.emergentagent.com/register
 ```
 
 ### 🏠 Dashboard
 ```
-https://bfc-italie.preview.emergentagent.com/dashboard
+https://impact-family.preview.emergentagent.com/dashboard
 ```
 
 ### 👥 Gestion des Visiteurs
 ```
-https://bfc-italie.preview.emergentagent.com/visitors
+https://impact-family.preview.emergentagent.com/visitors
 ```
 
 ### 📊 Analytics
 ```
-https://bfc-italie.preview.emergentagent.com/analytics
+https://impact-family.preview.emergentagent.com/analytics
 ```
 
 ### 🚫 Visiteurs avec Suivi Arrêté (Admin)
 ```
-https://bfc-italie.preview.emergentagent.com/stopped-visitors
+https://impact-family.preview.emergentagent.com/stopped-visitors
 ```
 
 ---
@@ -43,7 +43,7 @@ https://bfc-italie.preview.emergentagent.com/stopped-visitors
 ## 🔑 IDENTIFIANTS PAR DÉFAUT
 
 ### Admin Principal (Dijon)
-- **URL**: https://bfc-italie.preview.emergentagent.com/login
+- **URL**: https://impact-family.preview.emergentagent.com/login
 - **Ville**: Dijon
 - **Nom d'utilisateur**: `admin`
 - **Mot de passe**: `admin123`

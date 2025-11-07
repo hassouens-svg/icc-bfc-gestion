@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://bfc-italie.preview.emergentagent.com/login
-- **Inscription Publique**: https://bfc-italie.preview.emergentagent.com/register
+- **Connexion**: https://impact-family.preview.emergentagent.com/login
+- **Inscription Publique**: https://impact-family.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**

@@ -51,7 +51,7 @@ def fix_urls_after_deployment():
         # Remplacer l'ancienne URL par la nouvelle
         # Chercher toutes les variantes possibles
         old_urls = [
-            'https://bfc-italie.preview.emergentagent.com',
+            'https://impact-family.preview.emergentagent.com',
             'http://localhost:8001',
             'http://localhost:3000',
         ]
