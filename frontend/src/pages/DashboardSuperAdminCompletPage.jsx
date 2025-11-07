@@ -63,6 +63,7 @@ const DashboardSuperAdminCompletPage = () => {
   const [fiData, setFiData] = useState(null);
   const [membresTable, setMembresTable] = useState([]);
   const [presencesDimancheData, setPresencesDimancheData] = useState(null);
+  const [culteStatsData, setCulteStatsData] = useState(null);
   
   // Filters for tables
   const [visitorsFilter, setVisitorsFilter] = useState('');
@@ -71,6 +72,10 @@ const DashboardSuperAdminCompletPage = () => {
   // Filters for presences dimanche
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  
+  // Filters for culte stats
+  const [culteTypeFilter, setCulteTypeFilter] = useState('all');
+  const [fideleTypeFilter, setFideleTypeFilter] = useState('all');
 
   useEffect(() => {
     if (!user || !['super_admin', 'pasteur'].includes(user.role)) {
