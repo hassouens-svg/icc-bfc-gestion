@@ -24,6 +24,10 @@ const DashboardSuperAdminPage = () => {
   
   // FI stats
   const [fiStats, setFiStats] = useState(null);
+  
+  // Data migration
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
     if (!user || user.role !== 'super_admin') {
