@@ -2344,6 +2344,203 @@ async def get_presences_dimanche(
             "avg_per_dimanche": round(avg_per_dimanche, 1)
         }
     }
+# ==================== CULTE STATISTICS ====================
+
+@api_router.post("/culte-stats")
+async def create_culte_stats(stats: CulteStatsCreate, current_user: dict = Depends(get_current_user)):
+    """Create culte statistics - Accueil can create for their city"""
+    # Accueil can only create for their city
+    if current_user["role"] == "accueil" and stats.ville != current_user["city"]:
+        raise HTTPException(status_code=403, detail="Can only create stats for your city")
+    
+    # Super admin can create for any city
+    if current_user["role"] not in ["accueil", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Only accueil and super_admin can create culte stats")
+    
+    stats_dict = stats.dict()
+    stats_dict["id"] = str(uuid.uuid4())
+    stats_dict["created_by"] = current_user["username"]
+    stats_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.culte_stats.insert_one(stats_dict)
+    return stats_dict
+
+@api_router.get("/culte-stats")
+async def get_culte_stats(
+    ville: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    type_culte: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get culte statistics with filters"""
+    # Build query based on role
+    query = {}
+    
+    # Accueil can only see their city
+    if current_user["role"] == "accueil":
+        query["ville"] = current_user["city"]
+    # Pasteur and Super Admin can see all cities
+    elif current_user["role"] in ["pasteur", "super_admin"]:
+        if ville:
+            query["ville"] = ville
+    else:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Apply filters
+    if start_date:
+        query["date"] = {"$gte": start_date}
+    if end_date:
+        if "date" in query:
+            query["date"]["$lte"] = end_date
+        else:
+            query["date"] = {"$lte": end_date}
+    if type_culte:
+        query["type_culte"] = type_culte
+    
+    stats = await db.culte_stats.find(query, {"_id": 0}).to_list(10000)
+    
+    # Sort by date descending
+    stats.sort(key=lambda x: x["date"], reverse=True)
+    
+    return stats
+
+@api_router.get("/culte-stats/{stat_id}")
+async def get_culte_stat(stat_id: str, current_user: dict = Depends(get_current_user)):
+    """Get a single culte stat"""
+    stat = await db.culte_stats.find_one({"id": stat_id}, {"_id": 0})
+    
+    if not stat:
+        raise HTTPException(status_code=404, detail="Stat not found")
+    
+    # Check permissions
+    if current_user["role"] == "accueil" and stat["ville"] != current_user["city"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    return stat
+
+@api_router.put("/culte-stats/{stat_id}")
+async def update_culte_stats(
+    stat_id: str, 
+    updates: CulteStatsUpdate, 
+    current_user: dict = Depends(get_current_user)
+):
+    """Update culte statistics - Accueil and Super Admin"""
+    stat = await db.culte_stats.find_one({"id": stat_id})
+    
+    if not stat:
+        raise HTTPException(status_code=404, detail="Stat not found")
+    
+    # Accueil can only update their city
+    if current_user["role"] == "accueil" and stat["ville"] != current_user["city"]:
+        raise HTTPException(status_code=403, detail="Can only update stats for your city")
+    
+    # Only accueil and super_admin can update
+    if current_user["role"] not in ["accueil", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    update_dict = {k: v for k, v in updates.dict(exclude_unset=True).items() if v is not None}
+    update_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.culte_stats.update_one({"id": stat_id}, {"$set": update_dict})
+    
+    updated_stat = await db.culte_stats.find_one({"id": stat_id}, {"_id": 0})
+    return updated_stat
+
+@api_router.delete("/culte-stats/{stat_id}")
+async def delete_culte_stats(stat_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete culte statistics - Super Admin only"""
+    if current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Only super_admin can delete stats")
+    
+    result = await db.culte_stats.delete_one({"id": stat_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Stat not found")
+    
+    return {"message": "Stat deleted successfully"}
+
+@api_router.get("/culte-stats/summary/all")
+async def get_culte_stats_summary(
+    ville: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get aggregated summary of culte stats for dashboards"""
+    # Only pasteur and super_admin can access summary
+    if current_user["role"] not in ["pasteur", "super_admin", "accueil"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Build query
+    query = {}
+    if current_user["role"] == "accueil":
+        query["ville"] = current_user["city"]
+    elif ville:
+        query["ville"] = ville
+    
+    if start_date:
+        query["date"] = {"$gte": start_date}
+    if end_date:
+        if "date" in query:
+            query["date"]["$lte"] = end_date
+        else:
+            query["date"] = {"$lte": end_date}
+    
+    stats = await db.culte_stats.find(query, {"_id": 0}).to_list(10000)
+    
+    # Aggregate by date (dimanche)
+    by_date = {}
+    for stat in stats:
+        date = stat["date"]
+        if date not in by_date:
+            by_date[date] = {
+                "date": date,
+                "ville": stat["ville"],
+                "culte_1": {"fideles": 0, "stars": 0},
+                "culte_2": {"fideles": 0, "stars": 0},
+                "ejp": {"fideles": 0, "stars": 0},
+                "total_fideles": 0,
+                "total_stars": 0,
+                "total_general": 0
+            }
+        
+        culte_type = stat["type_culte"].lower().replace(" ", "_")
+        if "ejp" in culte_type.lower():
+            culte_type = "ejp"
+        elif "1" in culte_type:
+            culte_type = "culte_1"
+        elif "2" in culte_type:
+            culte_type = "culte_2"
+        
+        by_date[date][culte_type]["fideles"] = stat["nombre_fideles"]
+        by_date[date][culte_type]["stars"] = stat["nombre_stars"]
+        by_date[date]["total_fideles"] += stat["nombre_fideles"]
+        by_date[date]["total_stars"] += stat["nombre_stars"]
+        by_date[date]["total_general"] = by_date[date]["total_fideles"] + by_date[date]["total_stars"]
+    
+    # Convert to list and sort
+    summary_list = sorted(by_date.values(), key=lambda x: x["date"], reverse=True)
+    
+    # Calculate global stats
+    total_dimanches = len(summary_list)
+    total_fideles = sum(s["total_fideles"] for s in summary_list)
+    total_stars = sum(s["total_stars"] for s in summary_list)
+    avg_fideles = total_fideles / total_dimanches if total_dimanches > 0 else 0
+    avg_stars = total_stars / total_dimanches if total_dimanches > 0 else 0
+    
+    return {
+        "summary": summary_list,
+        "global_stats": {
+            "total_dimanches": total_dimanches,
+            "total_fideles": total_fideles,
+            "total_stars": total_stars,
+            "avg_fideles_per_dimanche": round(avg_fideles, 1),
+            "avg_stars_per_dimanche": round(avg_stars, 1),
+            "avg_total_per_dimanche": round(avg_fideles + avg_stars, 1)
+        }
+    }
+
 # ==================== ROOT ====================
 
 @api_router.get("/")
