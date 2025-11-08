@@ -44,11 +44,14 @@ const CulteStatsPage = () => {
   
   // Form state
   const [selectedDate, setSelectedDate] = useState('');
-  const [culte1Fideles, setCulte1Fideles] = useState(0);
+  const [culte1Adultes, setCulte1Adultes] = useState(0);
+  const [culte1Enfants, setCulte1Enfants] = useState(0);
   const [culte1Stars, setCulte1Stars] = useState(0);
-  const [culte2Fideles, setCulte2Fideles] = useState(0);
+  const [culte2Adultes, setCulte2Adultes] = useState(0);
+  const [culte2Enfants, setCulte2Enfants] = useState(0);
   const [culte2Stars, setCulte2Stars] = useState(0);
-  const [ejpFideles, setEjpFideles] = useState(0);
+  const [ejpAdultes, setEjpAdultes] = useState(0);
+  const [ejpEnfants, setEjpEnfants] = useState(0);
   const [ejpStars, setEjpStars] = useState(0);
   
   // Filters
@@ -57,7 +60,8 @@ const CulteStatsPage = () => {
   
   // Edit mode
   const [editingId, setEditingId] = useState(null);
-  const [editFideles, setEditFideles] = useState(0);
+  const [editAdultes, setEditAdultes] = useState(0);
+  const [editEnfants, setEditEnfants] = useState(0);
   const [editStars, setEditStars] = useState(0);
 
   useEffect(() => {
