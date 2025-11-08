@@ -108,6 +108,8 @@ class CulteStats(BaseModel):
     ville: str
     type_culte: str  # "Culte 1", "Culte 2", "EJP"
     nombre_fideles: int
+    nombre_adultes: int = 0  # Nombre d'adultes
+    nombre_enfants: int = 0  # Nombre d'enfants
     nombre_stars: int
     created_by: str  # Username de celui qui a créé
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -118,10 +120,14 @@ class CulteStatsCreate(BaseModel):
     ville: str
     type_culte: str
     nombre_fideles: int
+    nombre_adultes: int = 0
+    nombre_enfants: int = 0
     nombre_stars: int
 
 class CulteStatsUpdate(BaseModel):
     nombre_fideles: Optional[int] = None
+    nombre_adultes: Optional[int] = None
+    nombre_enfants: Optional[int] = None
     nombre_stars: Optional[int] = None
 
 class PresenceEntry(BaseModel):
