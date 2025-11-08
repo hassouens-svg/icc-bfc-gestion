@@ -109,32 +109,41 @@ const CulteStatsPage = () => {
       // Create stats for each culte
       const promises = [];
       
-      if (culte1Fideles > 0 || culte1Stars > 0) {
+      const culte1Total = parseInt(culte1Adultes) + parseInt(culte1Enfants);
+      if (culte1Total > 0 || culte1Stars > 0) {
         promises.push(createCulteStats({
           date: selectedDate,
           ville: user.city,
           type_culte: 'Culte 1',
-          nombre_fideles: parseInt(culte1Fideles),
+          nombre_fideles: culte1Total,
+          nombre_adultes: parseInt(culte1Adultes),
+          nombre_enfants: parseInt(culte1Enfants),
           nombre_stars: parseInt(culte1Stars)
         }));
       }
       
-      if (culte2Fideles > 0 || culte2Stars > 0) {
+      const culte2Total = parseInt(culte2Adultes) + parseInt(culte2Enfants);
+      if (culte2Total > 0 || culte2Stars > 0) {
         promises.push(createCulteStats({
           date: selectedDate,
           ville: user.city,
           type_culte: 'Culte 2',
-          nombre_fideles: parseInt(culte2Fideles),
+          nombre_fideles: culte2Total,
+          nombre_adultes: parseInt(culte2Adultes),
+          nombre_enfants: parseInt(culte2Enfants),
           nombre_stars: parseInt(culte2Stars)
         }));
       }
       
-      if (ejpFideles > 0 || ejpStars > 0) {
+      const ejpTotal = parseInt(ejpAdultes) + parseInt(ejpEnfants);
+      if (ejpTotal > 0 || ejpStars > 0) {
         promises.push(createCulteStats({
           date: selectedDate,
           ville: user.city,
           type_culte: 'EJP',
-          nombre_fideles: parseInt(ejpFideles),
+          nombre_fideles: ejpTotal,
+          nombre_adultes: parseInt(ejpAdultes),
+          nombre_enfants: parseInt(ejpEnfants),
           nombre_stars: parseInt(ejpStars)
         }));
       }
@@ -145,11 +154,14 @@ const CulteStatsPage = () => {
       
       // Reset form
       setSelectedDate('');
-      setCulte1Fideles(0);
+      setCulte1Adultes(0);
+      setCulte1Enfants(0);
       setCulte1Stars(0);
-      setCulte2Fideles(0);
+      setCulte2Adultes(0);
+      setCulte2Enfants(0);
       setCulte2Stars(0);
-      setEjpFideles(0);
+      setEjpAdultes(0);
+      setEjpEnfants(0);
       setEjpStars(0);
       
       // Reload data
