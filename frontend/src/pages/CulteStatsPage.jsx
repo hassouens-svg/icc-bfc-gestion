@@ -456,8 +456,9 @@ const CulteStatsPage = () => {
                       onChange={(e) => setEjpStars(e.target.value)}
                     />
                   </div>
-                  <p className="text-sm text-gray-500">
-                    Total: {parseInt(ejpFideles) + parseInt(ejpStars)}
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-gray-600">Fidèles: {parseInt(ejpAdultes || 0) + parseInt(ejpEnfants || 0)}</p>
+                    <p className="text-sm font-medium text-green-600">Total: {parseInt(ejpAdultes || 0) + parseInt(ejpEnfants || 0) + parseInt(ejpStars || 0)}
                   </p>
                 </div>
               </div>
