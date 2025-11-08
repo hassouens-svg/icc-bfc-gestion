@@ -349,17 +349,27 @@ const CulteStatsPage = () => {
                 <div className="border rounded-lg p-4 space-y-3">
                   <h4 className="font-semibold text-indigo-600">Culte 1</h4>
                   <div className="space-y-2">
-                    <label className="text-sm">Nombre de Fidèles</label>
+                    <label className="text-sm font-medium">Adultes</label>
                     <input
                       type="number"
                       min="0"
                       className="w-full border rounded px-3 py-2"
-                      value={culte1Fideles}
-                      onChange={(e) => setCulte1Fideles(e.target.value)}
+                      value={culte1Adultes}
+                      onChange={(e) => setCulte1Adultes(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm">Nombre de STARS</label>
+                    <label className="text-sm font-medium">Enfants</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full border rounded px-3 py-2"
+                      value={culte1Enfants}
+                      onChange={(e) => setCulte1Enfants(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">STARS</label>
                     <input
                       type="number"
                       min="0"
@@ -368,26 +378,37 @@ const CulteStatsPage = () => {
                       onChange={(e) => setCulte1Stars(e.target.value)}
                     />
                   </div>
-                  <p className="text-sm text-gray-500">
-                    Total: {parseInt(culte1Fideles) + parseInt(culte1Stars)}
-                  </p>
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-gray-600">Fidèles: {parseInt(culte1Adultes || 0) + parseInt(culte1Enfants || 0)}</p>
+                    <p className="text-sm font-medium text-indigo-600">Total: {parseInt(culte1Adultes || 0) + parseInt(culte1Enfants || 0) + parseInt(culte1Stars || 0)}</p>
+                  </div>
                 </div>
 
                 {/* Culte 2 */}
                 <div className="border rounded-lg p-4 space-y-3">
                   <h4 className="font-semibold text-purple-600">Culte 2</h4>
                   <div className="space-y-2">
-                    <label className="text-sm">Nombre de Fidèles</label>
+                    <label className="text-sm font-medium">Adultes</label>
                     <input
                       type="number"
                       min="0"
                       className="w-full border rounded px-3 py-2"
-                      value={culte2Fideles}
-                      onChange={(e) => setCulte2Fideles(e.target.value)}
+                      value={culte2Adultes}
+                      onChange={(e) => setCulte2Adultes(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm">Nombre de STARS</label>
+                    <label className="text-sm font-medium">Enfants</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full border rounded px-3 py-2"
+                      value={culte2Enfants}
+                      onChange={(e) => setCulte2Enfants(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">STARS</label>
                     <input
                       type="number"
                       min="0"
