@@ -417,26 +417,37 @@ const CulteStatsPage = () => {
                       onChange={(e) => setCulte2Stars(e.target.value)}
                     />
                   </div>
-                  <p className="text-sm text-gray-500">
-                    Total: {parseInt(culte2Fideles) + parseInt(culte2Stars)}
-                  </p>
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-gray-600">Fidèles: {parseInt(culte2Adultes || 0) + parseInt(culte2Enfants || 0)}</p>
+                    <p className="text-sm font-medium text-purple-600">Total: {parseInt(culte2Adultes || 0) + parseInt(culte2Enfants || 0) + parseInt(culte2Stars || 0)}</p>
+                  </div>
                 </div>
 
                 {/* EJP */}
                 <div className="border rounded-lg p-4 space-y-3">
                   <h4 className="font-semibold text-green-600">Culte EJP</h4>
                   <div className="space-y-2">
-                    <label className="text-sm">Nombre de Fidèles</label>
+                    <label className="text-sm font-medium">Adultes</label>
                     <input
                       type="number"
                       min="0"
                       className="w-full border rounded px-3 py-2"
-                      value={ejpFideles}
-                      onChange={(e) => setEjpFideles(e.target.value)}
+                      value={ejpAdultes}
+                      onChange={(e) => setEjpAdultes(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm">Nombre de STARS</label>
+                    <label className="text-sm font-medium">Enfants</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full border rounded px-3 py-2"
+                      value={ejpEnfants}
+                      onChange={(e) => setEjpEnfants(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">STARS</label>
                     <input
                       type="number"
                       min="0"
