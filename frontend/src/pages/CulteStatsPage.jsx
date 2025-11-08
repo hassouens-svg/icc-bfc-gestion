@@ -174,11 +174,14 @@ const CulteStatsPage = () => {
     }
   };
 
-  const handleUpdate = async (statId, fideles, stars) => {
+  const handleUpdate = async (statId, adultes, enfants, stars) => {
     setLoading(true);
     try {
+      const totalFideles = parseInt(adultes) + parseInt(enfants);
       await updateCulteStats(statId, {
-        nombre_fideles: parseInt(fideles),
+        nombre_fideles: totalFideles,
+        nombre_adultes: parseInt(adultes),
+        nombre_enfants: parseInt(enfants),
         nombre_stars: parseInt(stars)
       });
       
