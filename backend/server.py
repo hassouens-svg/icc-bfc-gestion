@@ -2167,7 +2167,7 @@ async def get_visitors_table(ville: str = None, current_user: dict = Depends(get
     return enriched_visitors
 
 @api_router.get("/analytics/fi-detailed")
-async def get_fi_detailed(current_user: dict = Depends(get_current_user)):
+async def get_fi_detailed(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get detailed FI analytics with:
     - Nombre de secteurs, FI, membres
     - Évolution par secteur
@@ -2177,11 +2177,16 @@ async def get_fi_detailed(current_user: dict = Depends(get_current_user)):
     if current_user["role"] not in ["super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
+    # Filtrer par ville si spécifié
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
     # Get all secteurs
-    secteurs = await db.secteurs.find({}, {"_id": 0}).to_list(1000)
+    secteurs = await db.secteurs.find(query, {"_id": 0}).to_list(1000)
     
     # Get all FI
-    familles = await db.familles_impact.find({}, {"_id": 0}).to_list(1000)
+    familles = await db.familles_impact.find(query, {"_id": 0}).to_list(1000)
     
     # Get all membres
     membres = await db.membres_fi.find({}, {"_id": 0}).to_list(10000)
