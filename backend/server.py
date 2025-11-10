@@ -2031,7 +2031,7 @@ async def generate_notifications(current_user: dict = Depends(get_current_user))
 # ==================== ADVANCED ANALYTICS FOR SUPER ADMIN/PASTEUR ====================
 
 @api_router.get("/analytics/promotions-detailed")
-async def get_promotions_detailed(current_user: dict = Depends(get_current_user)):
+async def get_promotions_detailed(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get detailed promotions analytics for Super Admin/Pasteur with:
     - Fidélisation par promo (12 mois)
     - Total NA vs NC
@@ -2043,6 +2043,10 @@ async def get_promotions_detailed(current_user: dict = Depends(get_current_user)
     
     # Get all visitors (multi-ville pour super admin/pasteur)
     base_query = {"tracking_stopped": False}
+    
+    # Filtrer par ville si spécifié
+    if ville:
+        base_query["city"] = ville
     
     visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
     
