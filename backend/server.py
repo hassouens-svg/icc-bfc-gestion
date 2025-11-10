@@ -2254,13 +2254,27 @@ async def get_fi_detailed(ville: str = None, current_user: dict = Depends(get_cu
     }
 
 @api_router.get("/analytics/membres-table")
-async def get_membres_table(current_user: dict = Depends(get_current_user)):
+async def get_membres_table(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get complete membres table with presences for Super Admin/Pasteur"""
     # Only super_admin and pasteur can access
     if current_user["role"] not in ["super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    membres = await db.membres_fi.find({}, {"_id": 0}).to_list(10000)
+    # Filtrer par ville si spécifié
+    membre_query = {}
+    if ville:
+        # Besoin de filtrer les membres par FI qui appartiennent à la ville
+        # On récupère d'abord les FI de la ville
+        fi_query = {"ville": ville}
+        fis = await db.familles_impact.find(fi_query, {"id": 1, "_id": 0}).to_list(1000)
+        fi_ids = [fi["id"] for fi in fis]
+        if fi_ids:
+            membre_query["famille_impact_id"] = {"$in": fi_ids}
+        else:
+            # Aucune FI dans cette ville, retour vide
+            return []
+    
+    membres = await db.membres_fi.find(membre_query, {"_id": 0}).to_list(10000)
     presences = await db.presences_fi.find({}, {"_id": 0}).to_list(100000)
     
     enriched_membres = []
