@@ -115,9 +115,12 @@ const DashboardSuperAdminCompletPage = () => {
 
   const loadPromotionsData = async () => {
     try {
+      // Filtrer par ville si une ville spécifique est sélectionnée
+      const cityFilter = selectedCity !== 'all' ? selectedCity : null;
+      
       const [promos, visitors] = await Promise.all([
-        getPromotionsDetailed(),
-        getVisitorsTable()
+        getPromotionsDetailed(cityFilter),
+        getVisitorsTable(cityFilter)
       ]);
       
       setPromosData(promos);
@@ -129,9 +132,12 @@ const DashboardSuperAdminCompletPage = () => {
 
   const loadFIData = async () => {
     try {
+      // Filtrer par ville si une ville spécifique est sélectionnée
+      const cityFilter = selectedCity !== 'all' ? selectedCity : null;
+      
       const [fi, membres] = await Promise.all([
-        getFIDetailed(),
-        getMembresTable()
+        getFIDetailed(cityFilter),
+        getMembresTable(cityFilter)
       ]);
       
       setFiData(fi);
@@ -143,6 +149,8 @@ const DashboardSuperAdminCompletPage = () => {
 
   const loadPresencesDimancheData = async () => {
     try {
+      // Filtrer par ville si une ville spécifique est sélectionnée
+      const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       const data = await getPresencesDimanche(
         startDate || null, 
         endDate || null, 
