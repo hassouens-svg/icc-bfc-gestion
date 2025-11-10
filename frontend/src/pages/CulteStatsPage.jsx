@@ -563,13 +563,33 @@ const CulteStatsPage = () => {
                           {isEditing ? (
                             <input
                               type="number"
-                              value={editFideles}
-                              onChange={(e) => setEditFideles(e.target.value)}
+                              value={editAdultes}
+                              onChange={(e) => setEditAdultes(e.target.value)}
                               className="w-20 px-2 py-1 border rounded text-center"
                               min="0"
                             />
                           ) : (
-                            stat.nombre_fideles
+                            stat.nombre_adultes || 0
+                          )}
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editEnfants}
+                              onChange={(e) => setEditEnfants(e.target.value)}
+                              className="w-20 px-2 py-1 border rounded text-center"
+                              min="0"
+                            />
+                          ) : (
+                            stat.nombre_enfants || 0
+                          )}
+                        </td>
+                        <td className="text-center py-3 px-4 font-medium text-blue-600">
+                          {isEditing ? (
+                            parseInt(editAdultes || 0) + parseInt(editEnfants || 0)
+                          ) : (
+                            (stat.nombre_adultes || 0) + (stat.nombre_enfants || 0)
                           )}
                         </td>
                         <td className="text-center py-3 px-4 text-yellow-600">
@@ -587,9 +607,9 @@ const CulteStatsPage = () => {
                         </td>
                         <td className="text-center py-3 px-4 font-bold text-green-600">
                           {isEditing ? (
-                            parseInt(editFideles || 0) + parseInt(editStars || 0)
+                            parseInt(editAdultes || 0) + parseInt(editEnfants || 0) + parseInt(editStars || 0)
                           ) : (
-                            stat.nombre_fideles + stat.nombre_stars
+                            (stat.nombre_adultes || 0) + (stat.nombre_enfants || 0) + stat.nombre_stars
                           )}
                         </td>
                         <td className="text-right py-3 px-4">
@@ -598,7 +618,7 @@ const CulteStatsPage = () => {
                               <Button
                                 size="sm"
                                 onClick={() => {
-                                  handleUpdate(stat.id, editFideles, editStars);
+                                  handleUpdate(stat.id, editAdultes, editEnfants, editStars);
                                 }}
                                 disabled={loading}
                               >
