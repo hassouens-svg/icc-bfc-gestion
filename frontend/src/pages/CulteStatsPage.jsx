@@ -543,9 +543,11 @@ const CulteStatsPage = () => {
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Date</th>
                     <th className="text-left py-3 px-4">Type de Culte</th>
-                    <th className="text-center py-3 px-4">Fidèles</th>
+                    <th className="text-center py-3 px-4">Adultes</th>
+                    <th className="text-center py-3 px-4">Enfants</th>
+                    <th className="text-center py-3 px-4">Total Fidèles</th>
                     <th className="text-center py-3 px-4">STARS</th>
-                    <th className="text-center py-3 px-4">Total</th>
+                    <th className="text-center py-3 px-4">Total Général</th>
                     <th className="text-right py-3 px-4">Actions</th>
                   </tr>
                 </thead>
