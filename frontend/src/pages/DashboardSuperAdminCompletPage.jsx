@@ -52,6 +52,38 @@ const DashboardSuperAdminCompletPage = () => {
   const canEdit = user?.role === 'super_admin';
   const isReadOnly = user?.role === 'pasteur';
   
+  // Fonction Export CSV
+  const exportToCSV = (data, filename) => {
+    if (!data || data.length === 0) {
+      toast.error('Aucune donnée à exporter');
+      return;
+    }
+    
+    const headers = Object.keys(data[0]);
+    const csvContent = [
+      headers.join(','),
+      ...data.map(row => headers.map(key => {
+        const value = row[key];
+        // Échapper les virgules et guillemets
+        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value || '';
+      }).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${filename}_${new Date().toISOString().slice(0,10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Export réussi !');
+  };
+  
   const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi' or 'presences' or 'cultes'
   const [selectedCity, setSelectedCity] = useState(() => {
     // Récupérer la ville sélectionnée depuis localStorage
