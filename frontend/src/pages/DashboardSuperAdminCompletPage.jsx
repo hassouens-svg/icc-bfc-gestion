@@ -495,10 +495,16 @@ const DashboardSuperAdminCompletPage = () => {
                     value={visitorsFilter}
                     onChange={(e) => setVisitorsFilter(e.target.value)}
                   />
-                  <Button variant="outline" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Excel
-                  </Button>
+                  {canEdit && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => exportToCSV(filteredVisitors, 'visiteurs')}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export CSV
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
