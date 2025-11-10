@@ -2124,13 +2124,18 @@ async def get_promotions_detailed(ville: str = None, current_user: dict = Depend
     }
 
 @api_router.get("/analytics/visitors-table")
-async def get_visitors_table(current_user: dict = Depends(get_current_user)):
+async def get_visitors_table(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get complete visitors table with all details for Super Admin/Pasteur"""
     # Only super_admin and pasteur can access
     if current_user["role"] not in ["super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    visitors = await db.visitors.find({}, {"_id": 0}).to_list(10000)
+    # Filtrer par ville si spécifié
+    query = {}
+    if ville:
+        query["city"] = ville
+    
+    visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     
     # Enrich with assigned FI info
     enriched_visitors = []
