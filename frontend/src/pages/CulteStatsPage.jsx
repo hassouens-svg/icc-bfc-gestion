@@ -640,7 +640,8 @@ const CulteStatsPage = () => {
                                 variant="outline"
                                 onClick={() => {
                                   setEditingId(stat.id);
-                                  setEditFideles(stat.nombre_fideles);
+                                  setEditAdultes(stat.nombre_adultes || 0);
+                                  setEditEnfants(stat.nombre_enfants || 0);
                                   setEditStars(stat.nombre_stars);
                                 }}
                               >
