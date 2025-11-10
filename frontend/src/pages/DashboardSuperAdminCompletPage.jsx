@@ -53,7 +53,11 @@ const DashboardSuperAdminCompletPage = () => {
   const isReadOnly = user?.role === 'pasteur';
   
   const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi' or 'presences' or 'cultes'
-  const [selectedCity, setSelectedCity] = useState('all');
+  const [selectedCity, setSelectedCity] = useState(() => {
+    // Récupérer la ville sélectionnée depuis localStorage
+    const savedCity = localStorage.getItem('selected_city_view');
+    return savedCity || 'all';
+  });
   const [loading, setLoading] = useState(true);
   
   // Data states
