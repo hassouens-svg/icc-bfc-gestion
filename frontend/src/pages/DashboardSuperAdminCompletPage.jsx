@@ -819,25 +819,25 @@ const DashboardSuperAdminCompletPage = () => {
             {/* Actions Rapides FI */}
             {canEdit && (
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Button onClick={() => navigate('/secteurs')} variant="outline" className="h-20">
+                <Button onClick={() => navigate('/familles-impact/secteurs')} variant="outline" className="h-20">
                   <div className="text-center">
                     <Building2 className="h-6 w-6 mx-auto mb-2" />
                     <p>Gérer Secteurs</p>
                   </div>
                 </Button>
-                <Button onClick={() => navigate('/fi/admin')} variant="outline" className="h-20">
+                <Button onClick={() => navigate('/familles-impact')} variant="outline" className="h-20">
                   <div className="text-center">
                     <Users className="h-6 w-6 mx-auto mb-2" />
                     <p>Gérer FI</p>
                   </div>
                 </Button>
-                <Button onClick={() => navigate('/fi/affectation')} variant="outline" className="h-20">
+                <Button onClick={() => navigate('/familles-impact/affectation')} variant="outline" className="h-20">
                   <div className="text-center">
                     <UserPlus className="h-6 w-6 mx-auto mb-2" />
                     <p>Affecter Membres</p>
                   </div>
                 </Button>
-                <Button onClick={() => navigate('/fi/stats/superviseur')} variant="outline" className="h-20">
+                <Button onClick={() => navigate('/familles-impact/dashboard-superviseur')} variant="outline" className="h-20">
                   <div className="text-center">
                     <BarChart3 className="h-6 w-6 mx-auto mb-2" />
                     <p>Stats FI</p>
