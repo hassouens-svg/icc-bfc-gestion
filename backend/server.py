@@ -818,7 +818,7 @@ async def stop_tracking(visitor_id: str, stop_data: StopTracking, current_user: 
 
 @api_router.post("/cities")
 async def create_city(city_data: CityCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
+    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin"]:
         raise HTTPException(status_code=403, detail="Only admin can create cities")
     
     # Check if city already exists
