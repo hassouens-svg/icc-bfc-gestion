@@ -752,7 +752,11 @@ const DashboardSuperAdminCompletPage = () => {
                           <td className="py-2 px-2 text-xs">{membre.date_joined}</td>
                           {canEdit && (
                             <td className="text-center py-2 px-2">
-                              <Button variant="outline" size="sm">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => navigate(`/fi/membres/${membre.id}`)}
+                              >
                                 Voir
                               </Button>
                             </td>
