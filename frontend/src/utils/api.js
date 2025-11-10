@@ -394,23 +394,31 @@ export const getStatsPasteur = async () => {
 };
 
 // Advanced Analytics for Super Admin/Pasteur
-export const getPromotionsDetailed = async () => {
-  const response = await apiClient.get('/analytics/promotions-detailed');
+export const getPromotionsDetailed = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/analytics/promotions-detailed', { params });
   return response.data;
 };
 
-export const getVisitorsTable = async () => {
-  const response = await apiClient.get('/analytics/visitors-table');
+export const getVisitorsTable = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/analytics/visitors-table', { params });
   return response.data;
 };
 
-export const getFIDetailed = async () => {
-  const response = await apiClient.get('/analytics/fi-detailed');
+export const getFIDetailed = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/analytics/fi-detailed', { params });
   return response.data;
 };
 
-export const getMembresTable = async () => {
-  const response = await apiClient.get('/analytics/membres-table');
+export const getMembresTable = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/analytics/membres-table', { params });
   return response.data;
 };
 
