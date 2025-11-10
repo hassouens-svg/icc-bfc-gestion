@@ -64,7 +64,8 @@ function App() {
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
-          <Route path="/dashboard-superadmin" element={<DashboardSuperAdminPage />} />
+          {/* Redirection : Ancienne page -> Nouvelle page complète */}
+          <Route path="/dashboard-superadmin" element={<DashboardSuperAdminCompletPage />} />
           <Route path="/dashboard-superadmin-complet" element={<DashboardSuperAdminCompletPage />} />
           <Route path="/gestion-permissions-dashboard" element={<GestionPermissionsDashboardPage />} />
           <Route path="/culte-stats" element={<CulteStatsPage />} />
