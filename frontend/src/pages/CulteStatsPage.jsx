@@ -466,9 +466,9 @@ const CulteStatsPage = () => {
               <div className="bg-blue-50 p-3 rounded-lg">
                 <p className="text-sm font-medium text-blue-800">
                   Total Général du Dimanche: {
-                    parseInt(culte1Fideles) + parseInt(culte1Stars) +
-                    parseInt(culte2Fideles) + parseInt(culte2Stars) +
-                    parseInt(ejpFideles) + parseInt(ejpStars)
+                    parseInt(culte1Adultes || 0) + parseInt(culte1Enfants || 0) + parseInt(culte1Stars || 0) +
+                    parseInt(culte2Adultes || 0) + parseInt(culte2Enfants || 0) + parseInt(culte2Stars || 0) +
+                    parseInt(ejpAdultes || 0) + parseInt(ejpEnfants || 0) + parseInt(ejpStars || 0)
                   }
                 </p>
               </div>
