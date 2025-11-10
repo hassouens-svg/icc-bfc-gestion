@@ -570,7 +570,7 @@ const DashboardSuperAdminCompletPage = () => {
             {/* Actions Rapides Promotions */}
             {canEdit && (
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Button onClick={() => navigate('/visiteurs')} variant="outline" className="h-20">
+                <Button onClick={() => navigate('/visitors')} variant="outline" className="h-20">
                   <div className="text-center">
                     <Users className="h-6 w-6 mx-auto mb-2" />
                     <p>Gérer Visiteurs</p>
@@ -588,7 +588,7 @@ const DashboardSuperAdminCompletPage = () => {
                     <p>Analytics Détaillés</p>
                   </div>
                 </Button>
-                <Button onClick={() => navigate('/fidelisation/admin')} variant="outline" className="h-20">
+                <Button onClick={() => navigate('/fidelisation')} variant="outline" className="h-20">
                   <div className="text-center">
                     <TrendingUp className="h-6 w-6 mx-auto mb-2" />
                     <p>Fidélisation</p>
