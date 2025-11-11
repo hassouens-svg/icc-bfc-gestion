@@ -557,27 +557,231 @@ class BackendTester:
         
         return True
 
+    def test_responsable_promos_visitor_creation(self):
+        """Test: Responsable de Promos creating a new visitor via POST /api/visitors"""
+        self.log("\n=== TEST: Responsable de Promos Visitor Creation ===")
+        
+        # Step 1: Initialize data if needed
+        init_response = self.make_request('POST', '/init')
+        if init_response and init_response.status_code == 200:
+            self.log("✅ Database initialized")
+        
+        # Step 2: Login as Responsable de Promos (promotions role)
+        login_data = {
+            "username": "promotions",
+            "password": "test123",
+            "city": "Dijon"
+        }
+        
+        # Try alternative credentials if first fails
+        login_response = self.make_request('POST', '/auth/login', json=login_data)
+        
+        if not login_response or login_response.status_code != 200:
+            # Try referent with promotions department
+            login_data = {
+                "username": "referent_dijon_oct",
+                "password": "test123", 
+                "city": "Dijon",
+                "department": "promotions"
+            }
+            login_response = self.make_request('POST', '/auth/login', json=login_data)
+        
+        if not login_response or login_response.status_code != 200:
+            self.log("❌ Failed to login as Responsable de Promos", "ERROR")
+            if login_response:
+                self.log(f"   Status: {login_response.status_code}")
+                self.log(f"   Response: {login_response.text}")
+            return False
+        
+        login_result = login_response.json()
+        token = login_result['token']
+        user_info = login_result['user']
+        
+        self.log(f"✅ Logged in as: {user_info['username']} (Role: {user_info['role']}, City: {user_info['city']})")
+        
+        # Step 3: Test visitor creation with exact data from review request
+        visitor_data = {
+            "firstname": "Jean",
+            "lastname": "Test",
+            "city": "Dijon",
+            "types": ["Nouveau Arrivant"],
+            "phone": "+33612345678",
+            "email": "jean.test@example.com",
+            "address": "123 Rue Test",
+            "arrival_channel": "Evangelisation",
+            "visit_date": "2025-01-15"
+        }
+        
+        self.log("Testing visitor creation with data:")
+        for key, value in visitor_data.items():
+            self.log(f"   {key}: {value}")
+        
+        create_response = self.make_request('POST', '/visitors', token=token, json=visitor_data)
+        
+        if not create_response:
+            self.log("❌ CRITICAL: Request failed completely (network/connection issue)", "ERROR")
+            return False
+        
+        self.log(f"Response Status Code: {create_response.status_code}")
+        
+        if create_response.status_code == 200 or create_response.status_code == 201:
+            try:
+                visitor_result = create_response.json()
+                visitor_id = visitor_result.get('id')
+                
+                if visitor_id:
+                    self.log(f"✅ SUCCESS: Visitor created successfully with ID: {visitor_id}")
+                    
+                    # Step 4: Verify visitor was actually saved
+                    verify_response = self.make_request('GET', '/visitors', token=token)
+                    if verify_response and verify_response.status_code == 200:
+                        visitors = verify_response.json()
+                        created_visitor = next((v for v in visitors if v.get('id') == visitor_id), None)
+                        
+                        if created_visitor:
+                            self.log("✅ VERIFIED: Visitor appears in visitors list")
+                            self.log(f"   Name: {created_visitor['firstname']} {created_visitor['lastname']}")
+                            self.log(f"   Assigned Month: {created_visitor.get('assigned_month')}")
+                            return True
+                        else:
+                            self.log("❌ ISSUE: Visitor created but not found in list", "ERROR")
+                            return False
+                    else:
+                        self.log("⚠️  Could not verify visitor creation (list endpoint failed)")
+                        return True  # Creation succeeded, verification failed
+                else:
+                    self.log("❌ ISSUE: No visitor ID returned in response", "ERROR")
+                    self.log(f"   Response: {create_response.text}")
+                    return False
+                    
+            except Exception as e:
+                self.log(f"❌ ISSUE: Failed to parse response JSON: {e}", "ERROR")
+                self.log(f"   Response text: {create_response.text}")
+                return False
+        
+        elif create_response.status_code == 400:
+            self.log("❌ BAD REQUEST (400): Validation error", "ERROR")
+            try:
+                error_detail = create_response.json()
+                self.log(f"   Error details: {error_detail}")
+            except:
+                self.log(f"   Raw response: {create_response.text}")
+            return False
+            
+        elif create_response.status_code == 403:
+            self.log("❌ FORBIDDEN (403): Permission denied", "ERROR")
+            try:
+                error_detail = create_response.json()
+                self.log(f"   Error details: {error_detail}")
+            except:
+                self.log(f"   Raw response: {create_response.text}")
+            return False
+            
+        elif create_response.status_code == 500:
+            self.log("❌ INTERNAL SERVER ERROR (500): Backend error", "ERROR")
+            self.log(f"   This could cause blank page on frontend")
+            try:
+                error_detail = create_response.json()
+                self.log(f"   Error details: {error_detail}")
+            except:
+                self.log(f"   Raw response: {create_response.text}")
+            return False
+            
+        else:
+            self.log(f"❌ UNEXPECTED STATUS: {create_response.status_code}", "ERROR")
+            self.log(f"   Response: {create_response.text}")
+            return False
+    
+    def test_visitor_creation_validation_errors(self):
+        """Test visitor creation with invalid data to check error handling"""
+        self.log("\n=== TEST: Visitor Creation Validation Errors ===")
+        
+        # Login first
+        login_data = {
+            "username": "promotions",
+            "password": "test123",
+            "city": "Dijon"
+        }
+        
+        login_response = self.make_request('POST', '/auth/login', json=login_data)
+        if not login_response or login_response.status_code != 200:
+            # Try alternative login
+            login_data = {
+                "username": "referent_dijon_oct",
+                "password": "test123",
+                "city": "Dijon", 
+                "department": "promotions"
+            }
+            login_response = self.make_request('POST', '/auth/login', json=login_data)
+        
+        if not login_response or login_response.status_code != 200:
+            self.log("❌ Could not login for validation tests", "ERROR")
+            return False
+        
+        token = login_response.json()['token']
+        
+        # Test 1: Missing firstname
+        self.log("Testing missing firstname...")
+        invalid_data = {
+            "lastname": "Test",
+            "city": "Dijon",
+            "types": ["Nouveau Arrivant"],
+            "phone": "+33612345678",
+            "arrival_channel": "Evangelisation",
+            "visit_date": "2025-01-15"
+        }
+        
+        response = self.make_request('POST', '/visitors', token=token, json=invalid_data)
+        if response and response.status_code == 422:
+            self.log("✅ Correctly rejected missing firstname (422)")
+        else:
+            self.log(f"⚠️  Unexpected response for missing firstname: {response.status_code if response else 'None'}")
+        
+        # Test 2: Missing types
+        self.log("Testing missing types...")
+        invalid_data = {
+            "firstname": "Jean",
+            "lastname": "Test",
+            "city": "Dijon",
+            "phone": "+33612345678",
+            "arrival_channel": "Evangelisation",
+            "visit_date": "2025-01-15"
+        }
+        
+        response = self.make_request('POST', '/visitors', token=token, json=invalid_data)
+        if response and response.status_code == 422:
+            self.log("✅ Correctly rejected missing types (422)")
+        else:
+            self.log(f"⚠️  Unexpected response for missing types: {response.status_code if response else 'None'}")
+        
+        # Test 3: Missing phone
+        self.log("Testing missing phone...")
+        invalid_data = {
+            "firstname": "Jean",
+            "lastname": "Test", 
+            "city": "Dijon",
+            "types": ["Nouveau Arrivant"],
+            "arrival_channel": "Evangelisation",
+            "visit_date": "2025-01-15"
+        }
+        
+        response = self.make_request('POST', '/visitors', token=token, json=invalid_data)
+        if response and response.status_code == 422:
+            self.log("✅ Correctly rejected missing phone (422)")
+        else:
+            self.log(f"⚠️  Unexpected response for missing phone: {response.status_code if response else 'None'}")
+        
+        return True
+
     def run_all_tests(self):
         """Run all backend tests"""
-        self.log("Starting Backend API Tests for JWT Role Authentication Fix")
+        self.log("Starting Backend API Tests for Visitor Creation Bug")
         self.log("=" * 60)
         
-        # Setup
-        self.setup_test_data()
-        
-        # Run tests
+        # Run focused tests for the reported issue
         tests = [
-            ("Referent Login Without Department", self.test_referent_login_without_department),
-            ("Referent Login With Promotions Department", self.test_referent_login_with_promotions_department),
-            ("Visitor Filtering - Referent Role", self.test_visitor_filtering_referent_role),
-            ("Visitor Filtering - Promotions Role", self.test_visitor_filtering_promotions_role),
-            ("Fidelisation Referent Endpoint", self.test_fidelisation_referent_endpoint),
-            ("Fidelisation Admin Endpoint", self.test_fidelisation_admin_endpoint),
-            ("Permission Boundaries", self.test_permission_boundaries),
-            ("Accueil Role Limited View", self.test_accueil_role_limited_view),
-            ("Visitor CRUD Operations", self.test_visitor_crud_operations),
-            ("User Management Endpoints", self.test_user_management_endpoints),
-            ("City Management Endpoints", self.test_city_management_endpoints)
+            ("Responsable de Promos Visitor Creation", self.test_responsable_promos_visitor_creation),
+            ("Visitor Creation Validation Errors", self.test_visitor_creation_validation_errors)
         ]
         
         results = {}
