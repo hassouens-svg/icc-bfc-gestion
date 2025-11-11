@@ -596,7 +596,7 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
     doc['created_at'] = doc['created_at'].isoformat()
     
     await db.visitors.insert_one(doc)
-    return visitor
+    return {"message": "Visitor created successfully", "id": visitor.id}
 
 @api_router.get("/visitors")
 async def get_visitors(
