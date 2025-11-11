@@ -45,6 +45,8 @@ const SelectVillePage = () => {
       navigate('/dashboard-superadmin-complet');
     } else if (user.role === 'pasteur') {
       navigate('/dashboard-superadmin-complet'); // Même dashboard, mais en lecture seule
+    } else if (user.role === 'responsable_eglise') {
+      navigate('/dashboard-superadmin-complet'); // Même dashboard, mais filtré par sa ville
     } else if (department === 'familles-impact') {
       navigate('/familles-impact/dashboard-superviseur');
     } else {
