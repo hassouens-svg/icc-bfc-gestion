@@ -253,6 +253,7 @@ const GestionAccesPage = () => {
                       <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
                       <SelectItem value="accueil">Accueil et Intégration</SelectItem>
                       <SelectItem value="promotions">Promotions</SelectItem>
+                      <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
