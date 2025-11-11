@@ -90,8 +90,8 @@ const Layout = ({ children }) => {
     // Vérifier le rôle
     if (!item.roles.includes(user?.role)) return false;
     
-    // Pour super_admin et pasteur, filtrer selon le département actif
-    if (['super_admin', 'pasteur'].includes(user?.role)) {
+    // Pour super_admin, pasteur et responsable_eglise, filtrer selon le département actif
+    if (['super_admin', 'pasteur', 'responsable_eglise'].includes(user?.role)) {
       if (item.department === null) return true; // Items communs toujours visibles
       return item.department === activeDepartment;
     }
