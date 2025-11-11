@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Backend API Testing for Church Visitor Management System
-Tests JWT role authentication fixes and fidelisation endpoints
+Tests visitor creation by Responsable de Promos (POST /api/visitors)
 """
 
 import requests
