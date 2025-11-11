@@ -74,10 +74,11 @@ const Layout = ({ children }) => {
     // COMMUNES - Villes accessible depuis les deux départements
     { path: '/cities', label: 'Villes', icon: MapPin, roles: ['superviseur_promos', 'superviseur_fi', 'super_admin'], department: null },
     
-    // SUPER ADMIN / PASTEUR - toujours visibles
+    // SUPER ADMIN / PASTEUR / RESPONSABLE D'ÉGLISE - toujours visibles
     { path: '/dashboard-superadmin-complet', label: 'Dashboard Super Admin', icon: Home, roles: ['super_admin'], department: null },
     { path: '/dashboard-pasteur', label: 'Dashboard Pasteur', icon: Home, roles: ['pasteur'], department: null },
-    { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin'], department: null },
+    { path: '/dashboard-pasteur', label: 'Dashboard', icon: Home, roles: ['responsable_eglise'], department: null },
+    { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin', 'responsable_eglise'], department: null },
     { path: '/admin-data', label: 'Gestion des Données', icon: Database, roles: ['super_admin'], department: null },
     
     // AFFECTATIONS SUPERVISEUR FI
