@@ -2268,6 +2268,10 @@ async def get_membres_table(ville: str = None, current_user: dict = Depends(get_
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
+    # For responsable_eglise, force filter by their city
+    if current_user["role"] == "responsable_eglise":
+        ville = current_user["city"]
+    
     # Filtrer par ville si spécifié
     membre_query = {}
     if ville:
