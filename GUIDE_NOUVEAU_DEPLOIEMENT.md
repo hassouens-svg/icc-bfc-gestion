@@ -13,7 +13,7 @@ Votre application **ICC BFC-ITALIE Connect** est prête pour le déploiement!
 
 ### URL actuelle (Preview):
 ```
-https://impact-family.preview.emergentagent.com
+https://multi-city-faith.preview.emergentagent.com
 ```
 
 ---
@@ -107,8 +107,8 @@ Tous les comptes seront disponibles dans `/app/IDENTIFIANTS_COMPLETS.md`
 
 ### Avant (actuellement):
 ```
-Frontend → https://impact-family.preview.emergentagent.com
-Backend  → https://impact-family.preview.emergentagent.com/api
+Frontend → https://multi-city-faith.preview.emergentagent.com
+Backend  → https://multi-city-faith.preview.emergentagent.com/api
 ```
 
 ### Après (nouveau déploiement):

@@ -10,32 +10,32 @@ Votre application de gestion des visiteurs ICC est maintenant complète et opér
 
 ### 📱 Interface Principale (Connexion)
 ```
-https://impact-family.preview.emergentagent.com/login
+https://multi-city-faith.preview.emergentagent.com/login
 ```
 
 ### 📝 Formulaire Public d'Inscription
 ```
-https://impact-family.preview.emergentagent.com/register
+https://multi-city-faith.preview.emergentagent.com/register
 ```
 
 ### 🏠 Dashboard
 ```
-https://impact-family.preview.emergentagent.com/dashboard
+https://multi-city-faith.preview.emergentagent.com/dashboard
 ```
 
 ### 👥 Gestion des Visiteurs
 ```
-https://impact-family.preview.emergentagent.com/visitors
+https://multi-city-faith.preview.emergentagent.com/visitors
 ```
 
 ### 📊 Analytics
 ```
-https://impact-family.preview.emergentagent.com/analytics
+https://multi-city-faith.preview.emergentagent.com/analytics
 ```
 
 ### 🚫 Visiteurs avec Suivi Arrêté (Admin)
 ```
-https://impact-family.preview.emergentagent.com/stopped-visitors
+https://multi-city-faith.preview.emergentagent.com/stopped-visitors
 ```
 
 ---
@@ -43,7 +43,7 @@ https://impact-family.preview.emergentagent.com/stopped-visitors
 ## 🔑 IDENTIFIANTS PAR DÉFAUT
 
 ### Admin Principal (Dijon)
-- **URL**: https://impact-family.preview.emergentagent.com/login
+- **URL**: https://multi-city-faith.preview.emergentagent.com/login
 - **Ville**: Dijon
 - **Nom d'utilisateur**: `admin`
 - **Mot de passe**: `admin123`

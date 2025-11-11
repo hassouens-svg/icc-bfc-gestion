@@ -5,7 +5,7 @@ Restore original data by removing test city
 
 import requests
 
-BASE_URL = "https://impact-family.preview.emergentagent.com/api"
+BASE_URL = "https://multi-city-faith.preview.emergentagent.com/api"
 SUPER_ADMIN = {"username": "superadmin", "password": "superadmin123", "city": "Dijon"}
 
 def login():

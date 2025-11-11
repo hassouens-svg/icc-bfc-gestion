@@ -12,7 +12,7 @@
 
 ### Test 1: Login Super Admin
 ```bash
-curl -X POST https://impact-family.preview.emergentagent.com/api/auth/login \
+curl -X POST https://multi-city-faith.preview.emergentagent.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"superadmin","password":"superadmin123","city":"Dijon"}'
 ```
@@ -20,7 +20,7 @@ curl -X POST https://impact-family.preview.emergentagent.com/api/auth/login \
 
 ### Test 2: Analytics Fidélisation
 ```bash
-curl -X GET https://impact-family.preview.emergentagent.com/api/fidelisation/admin \
+curl -X GET https://multi-city-faith.preview.emergentagent.com/api/fidelisation/admin \
   -H "Authorization: Bearer {TOKEN}"
 ```
 **Résultat**: ✅ HTTP 200 (retourne `[]` car pas de données)
