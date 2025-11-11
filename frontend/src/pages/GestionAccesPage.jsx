@@ -168,7 +168,8 @@ const GestionAccesPage = () => {
       'accueil': 'Accueil et Intégration',
       'promotions': 'Promotions',
       'pasteur': 'Pasteur',
-      'super_admin': 'Super Administrateur'
+      'super_admin': 'Super Administrateur',
+      'responsable_eglise': 'Responsable d\'Église'
     };
     return labels[role] || role;
   };
