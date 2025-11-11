@@ -2043,11 +2043,14 @@ async def get_promotions_detailed(ville: str = None, current_user: dict = Depend
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    # Get all visitors (multi-ville pour super admin/pasteur)
+    # Get all visitors (multi-ville pour super admin/pasteur, single ville for responsable_eglise)
     base_query = {"tracking_stopped": False}
     
+    # For responsable_eglise, force filter by their city
+    if current_user["role"] == "responsable_eglise":
+        base_query["city"] = current_user["city"]
     # Filtrer par ville si spécifié
-    if ville:
+    elif ville:
         base_query["city"] = ville
     
     visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
