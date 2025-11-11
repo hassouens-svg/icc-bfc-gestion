@@ -306,6 +306,21 @@ backend:
         agent: "main"
         comment: "✅ IMPLEMENTED: Extended fidelisation timeline from 2025 to 2030. Replaced hardcoded months (2025-01 to 2025-03) with dynamic generation loop creating all months from January 2025 to December 2030 (72 months total) with proper French labels (Janvier, Février, etc.). Weeks already dynamically generated (1-52)."
 
+  - task: "Responsable de Promos Visitor Creation - POST /api/visitors"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reports that when a Responsable de Promos creates a new visitor via the 'Nouveau Visiteur' button in /visitors page, after filling all fields and clicking 'Créer', it displays a blank page and the visitor is not created."
+      - working: true
+        agent: "testing"
+        comment: "✅ BACKEND FULLY FUNCTIONAL: Comprehensive testing of POST /api/visitors endpoint completed successfully. TESTING RESULTS: (1) ✅ LOGIN VERIFICATION - Successfully tested multiple user types: superviseur_promos, super_admin, promotions user, and referent with promotions department. All can authenticate correctly. (2) ✅ VISITOR CREATION - All authorized roles can successfully create visitors using exact data from review request (Jean Test, +33612345678, jean.test@example.com, 123 Rue Test, Evangelisation channel, 2025-01-15). Returns 200 status with visitor ID. (3) ✅ DATA PERSISTENCE - Created visitors are correctly saved to database with proper assigned_month calculation (2025-01) and appear in GET /visitors list. (4) ✅ VALIDATION - Endpoint correctly returns 422 for missing required fields (firstname, types, phone). (5) ✅ PERMISSIONS - Role-based access control working: superviseur_promos, promotions, referent, super_admin, pasteur can create; accueil correctly denied with 403. (6) ✅ NO SERVER ERRORS - Backend logs show no errors, all requests return proper HTTP status codes. CONCLUSION: The blank page issue is FRONTEND-RELATED, not backend. Backend API is working perfectly. Frontend should be investigated for: JavaScript errors in browser console, form submission handling, success response processing, and post-creation redirect logic."
+
   - task: "Frontend Comprehensive Testing - ICC BFC-ITALIE Production Review"
     implemented: true
     working: "NA"
