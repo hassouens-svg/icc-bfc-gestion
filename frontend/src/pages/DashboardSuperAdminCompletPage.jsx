@@ -49,8 +49,9 @@ const DashboardSuperAdminCompletPage = () => {
   const user = getUser();
   
   // Check permissions
-  const canEdit = user?.role === 'super_admin';
+  const canEdit = user?.role === 'super_admin' || user?.role === 'responsable_eglise';
   const isReadOnly = user?.role === 'pasteur';
+  const isResponsableEglise = user?.role === 'responsable_eglise';
   
   // Fonction Export CSV
   const exportToCSV = (data, filename) => {
@@ -86,6 +87,10 @@ const DashboardSuperAdminCompletPage = () => {
   
   const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi' or 'presences' or 'cultes'
   const [selectedCity, setSelectedCity] = useState(() => {
+    // Pour responsable_eglise, forcer sa ville
+    if (user?.role === 'responsable_eglise') {
+      return user.city;
+    }
     // Récupérer la ville sélectionnée depuis localStorage
     const savedCity = localStorage.getItem('selected_city_view');
     return savedCity || 'all';
