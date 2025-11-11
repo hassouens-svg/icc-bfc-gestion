@@ -70,7 +70,7 @@ class User(BaseModel):
     username: str
     password: str  # hashed
     city: str
-    role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin
+    role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin, responsable_eglise
     assigned_month: Optional[str] = None  # For referents: "2025-01"
     assigned_secteur_id: Optional[str] = None  # For responsable_secteur
     assigned_fi_id: Optional[str] = None  # For pilote_fi
