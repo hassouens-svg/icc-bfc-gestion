@@ -2533,13 +2533,13 @@ async def get_culte_stats_summary(
     current_user: dict = Depends(get_current_user)
 ):
     """Get aggregated summary of culte stats for dashboards"""
-    # Only pasteur and super_admin can access summary
-    if current_user["role"] not in ["pasteur", "super_admin", "accueil"]:
+    # Only pasteur, super_admin, responsable_eglise and accueil can access summary
+    if current_user["role"] not in ["pasteur", "super_admin", "accueil", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Build query
     query = {}
-    if current_user["role"] == "accueil":
+    if current_user["role"] in ["accueil", "responsable_eglise"]:
         query["ville"] = current_user["city"]
     elif ville:
         query["ville"] = ville
