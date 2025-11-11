@@ -430,6 +430,21 @@ frontend:
         agent: "main"
         comment: "✅ IMPLEMENTED: Complete Admin Data Management page at /admin-data for Super Admin only. Features: (1) Export Section - Button to export all database data to JSON file with automatic download, shows success message with record count (290 records exported in preview), loading indicator during export. (2) Import Section - File upload input for JSON files, validation of file format, import button with loading state, warning alert about data replacement. (3) User Guide - Step-by-step instructions for migrating data from preview to production. (4) Access Control - Auto-redirect non-Super Admin users, role validation on mount. (5) UI/UX - Cards with descriptions, status alerts (success/error), disabled states during operations. Navigation link added to Layout for Super Admin. Export functionality verified working with screenshot - successfully exports 290 records with green success message."
 
+  - task: "Dashboard Pasteur - City Filtering Bug Fix"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/DashboardPasteurPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Dashboard Pasteur displays incorrect data when city is selected. When selecting Milan, dashboard shows Dijon data (309 fidèles). KPIs at top should reflect selected city data. Bottom table should show all cities with city column when 'Toutes les villes' is selected, and only selected city data otherwise."
+      - working: "NA"
+        agent: "main"
+        comment: "✅ FIXED: Root cause - DashboardPasteurPage was using old endpoints (getStats, getAdminFidelisation, getStatsPasteur) which don't support ville parameter. Solution: (1) Replaced getStats() with getPromotionsDetailed(ville) for Promotions data, (2) Replaced getStatsPasteur() with getFIDetailed(ville) for FI data, (3) Updated data processing logic to match new endpoint response format, (4) Now uses same endpoints as DashboardSuperAdminCompletPage ensuring consistent city filtering. Backend endpoints /analytics/promotions-detailed and /analytics/fi-detailed properly filter by ville parameter. Ready for backend testing."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
