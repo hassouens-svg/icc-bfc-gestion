@@ -2039,8 +2039,8 @@ async def get_promotions_detailed(ville: str = None, current_user: dict = Depend
     - Total NA vs NC
     - Évolution par mois
     """
-    # Only super_admin and pasteur can access
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    # Only super_admin, pasteur, and responsable_eglise can access
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Get all visitors (multi-ville pour super admin/pasteur)
@@ -2128,8 +2128,8 @@ async def get_promotions_detailed(ville: str = None, current_user: dict = Depend
 @api_router.get("/analytics/visitors-table")
 async def get_visitors_table(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get complete visitors table with all details for Super Admin/Pasteur"""
-    # Only super_admin and pasteur can access
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    # Only super_admin, pasteur, and responsable_eglise can access
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Filtrer par ville si spécifié
@@ -2175,8 +2175,8 @@ async def get_fi_detailed(ville: str = None, current_user: dict = Depends(get_cu
     - Évolution par secteur
     - Fidélisation par FI
     """
-    # Only super_admin and pasteur can access
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    # Only super_admin, pasteur, and responsable_eglise can access
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Filtrer par ville si spécifié
@@ -2258,8 +2258,8 @@ async def get_fi_detailed(ville: str = None, current_user: dict = Depends(get_cu
 @api_router.get("/analytics/membres-table")
 async def get_membres_table(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get complete membres table with presences for Super Admin/Pasteur"""
-    # Only super_admin and pasteur can access
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    # Only super_admin, pasteur, and responsable_eglise can access
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Filtrer par ville si spécifié
@@ -2311,8 +2311,8 @@ async def get_presences_dimanche(
     current_user: dict = Depends(get_current_user)
 ):
     """Get presences dimanche aggregated by date with NA/NC breakdown"""
-    # Only super_admin and pasteur can access
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    # Only super_admin, pasteur, and responsable_eglise can access
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Get all visitors with presences_dimanche
