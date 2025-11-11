@@ -696,23 +696,18 @@ class BackendTester:
         """Test visitor creation with invalid data to check error handling"""
         self.log("\n=== TEST: Visitor Creation Validation Errors ===")
         
-        # Login first
-        login_data = {
-            "username": "promotions",
-            "password": "test123",
-            "city": "Dijon"
-        }
+        # Try multiple login credentials
+        login_attempts = [
+            {"username": "superviseur_promos", "password": "superviseur123", "city": "Dijon"},
+            {"username": "superadmin", "password": "superadmin123", "city": "Dijon"},
+            {"username": "promotions", "password": "test123", "city": "Dijon"}
+        ]
         
-        login_response = self.make_request('POST', '/auth/login', json=login_data)
-        if not login_response or login_response.status_code != 200:
-            # Try alternative login
-            login_data = {
-                "username": "referent_dijon_oct",
-                "password": "test123",
-                "city": "Dijon", 
-                "department": "promotions"
-            }
-            login_response = self.make_request('POST', '/auth/login', json=login_data)
+        login_response = None
+        for attempt in login_attempts:
+            login_response = self.make_request('POST', '/auth/login', json=attempt)
+            if login_response and login_response.status_code == 200:
+                break
         
         if not login_response or login_response.status_code != 200:
             self.log("❌ Could not login for validation tests", "ERROR")
