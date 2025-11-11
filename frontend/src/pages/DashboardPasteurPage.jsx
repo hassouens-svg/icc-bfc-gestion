@@ -366,7 +366,14 @@ const DashboardPasteurPage = () => {
                   <div className="space-y-4">
                     {cities.map((city) => {
                       const cityReferents = promosFidelisation?.filter(r => r.city === city.name) || [];
-                      const cityVisitors = promosStats?.visitors?.filter(v => v.city === city.name).length || 0;
+                      const cityPromos = promosStats?.promos || [];
+                      
+                      // Calculate total visitors for this city by summing promos that have referents in this city
+                      const cityMonths = cityReferents.map(r => r.assigned_month);
+                      const cityVisitors = cityPromos
+                        .filter(p => cityMonths.includes(p.month))
+                        .reduce((sum, p) => sum + (p.total_visitors || 0), 0);
+                      
                       const avgFid = cityReferents.length > 0 ? 
                         cityReferents.reduce((sum, r) => sum + (r.monthly_average || 0), 0) / cityReferents.length : 0;
                       
