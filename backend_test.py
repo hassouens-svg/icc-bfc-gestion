@@ -592,18 +592,12 @@ class BackendTester:
             self.log("❌ Failed to login with any credentials", "ERROR")
             return False
         
-        if not login_response or login_response.status_code != 200:
-            self.log("❌ Failed to login as Responsable de Promos", "ERROR")
-            if login_response:
-                self.log(f"   Status: {login_response.status_code}")
-                self.log(f"   Response: {login_response.text}")
-            return False
         
         login_result = login_response.json()
         token = login_result['token']
         user_info = login_result['user']
         
-        self.log(f"✅ Logged in as: {user_info['username']} (Role: {user_info['role']}, City: {user_info['city']})")
+        self.log(f"✅ Logged in as: {user_info['username']} (Role: {user_info['role']}, City: {user_info['city']}) using credentials: {successful_login['username']}")
         
         # Step 3: Test visitor creation with exact data from review request
         visitor_data = {
