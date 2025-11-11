@@ -2184,7 +2184,10 @@ async def get_fi_detailed(ville: str = None, current_user: dict = Depends(get_cu
     
     # Filtrer par ville si spécifié
     query = {}
-    if ville:
+    # For responsable_eglise, force filter by their city
+    if current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    elif ville:
         query["ville"] = ville
     
     # Get all secteurs
