@@ -98,14 +98,55 @@ const DashboardPasteurPage = () => {
 
   const loadFIData = async () => {
     try {
-      const pasteurStats = await getStatsPasteur();
+      // Filtrer par ville si une ville spécifique est sélectionnée
+      const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       
-      if (selectedCity !== 'all') {
-        const cityStats = pasteurStats.stats_by_city?.find(c => c.ville === selectedCity);
-        setFiStats(cityStats ? [cityStats] : []);
-      } else {
-        setFiStats(pasteurStats.stats_by_city || []);
-      }
+      const fiData = await getFIDetailed(cityFilter);
+      
+      // Group data by ville
+      const statsByCity = {};
+      
+      // Group secteurs by ville
+      fiData.secteurs?.forEach(secteur => {
+        const ville = secteur.ville;
+        if (!statsByCity[ville]) {
+          statsByCity[ville] = {
+            ville: ville,
+            nombre_secteurs: 0,
+            nombre_fi: 0,
+            nombre_membres: 0,
+            fidelisation: 0,
+            details_secteurs: []
+          };
+        }
+        
+        statsByCity[ville].nombre_secteurs += 1;
+        statsByCity[ville].nombre_fi += secteur.nombre_fi;
+        statsByCity[ville].nombre_membres += secteur.nombre_membres;
+        
+        // Add secteur details
+        const secteurFiList = fiData.fi_fidelisation?.filter(fi => fi.secteur_id === secteur.secteur_id) || [];
+        const secteurFidelisation = secteurFiList.length > 0
+          ? secteurFiList.reduce((sum, fi) => sum + fi.fidelisation, 0) / secteurFiList.length
+          : 0;
+        
+        statsByCity[ville].details_secteurs.push({
+          nom: secteur.secteur_nom,
+          nombre_fi: secteur.nombre_fi,
+          nombre_membres: secteur.nombre_membres,
+          fidelisation: secteurFidelisation
+        });
+      });
+      
+      // Calculate average fidelisation for each ville
+      Object.keys(statsByCity).forEach(ville => {
+        const villeFI = fiData.fi_fidelisation?.filter(fi => fi.ville === ville) || [];
+        if (villeFI.length > 0) {
+          statsByCity[ville].fidelisation = villeFI.reduce((sum, fi) => sum + fi.fidelisation, 0) / villeFI.length;
+        }
+      });
+      
+      setFiStats(Object.values(statsByCity));
     } catch (error) {
       console.error('Error loading FI data:', error);
     }
