@@ -54,34 +54,43 @@ const DashboardPasteurPage = () => {
 
   const loadPromosData = async () => {
     try {
-      const [statsData, fidelisationData] = await Promise.all([
-        getStats(),
-        getAdminFidelisation()
+      // Filtrer par ville si une ville spécifique est sélectionnée
+      const cityFilter = selectedCity !== 'all' ? selectedCity : null;
+      
+      const [promosData, referentsData] = await Promise.all([
+        getPromotionsDetailed(cityFilter),
+        getReferents()
       ]);
       
-      // Filter by city if needed
+      // Filter referents by city if needed
+      let filteredReferents = referentsData;
       if (selectedCity !== 'all') {
-        const cityVisitors = statsData.visitors?.filter(v => v.city === selectedCity) || [];
-        const cityReferents = fidelisationData?.filter(r => r.city === selectedCity) || [];
-        
-        setPromosStats({
-          total_visitors: cityVisitors.length,
-          active_referents: cityReferents.length,
-          monthly_arrivals: statsData.monthly_arrivals?.filter(m => 
-            cityVisitors.some(v => v.assigned_month === m.month)
-          ) || [],
-          visitors: cityVisitors
-        });
-        setPromosFidelisation(cityReferents);
-      } else {
-        setPromosStats({
-          total_visitors: statsData.total_visitors || 0,
-          active_referents: fidelisationData?.length || 0,
-          monthly_arrivals: statsData.monthly_arrivals || [],
-          visitors: statsData.visitors || []
-        });
-        setPromosFidelisation(fidelisationData);
+        filteredReferents = referentsData.filter(r => r.city === selectedCity);
       }
+      
+      // Structure des données pour les KPIs
+      setPromosStats({
+        total_visitors: promosData.summary?.total_visitors || 0,
+        active_referents: filteredReferents.length || 0,
+        avg_fidelisation: promosData.summary?.avg_fidelisation || 0,
+        promos: promosData.promos || []
+      });
+      
+      // Construire les données de fidélisation pour chaque référent
+      const fidelisationByReferent = filteredReferents.map(referent => {
+        const referentMonth = referent.assigned_month;
+        const promoData = promosData.promos?.find(p => p.month === referentMonth);
+        
+        return {
+          referent_name: referent.username,
+          city: referent.city,
+          assigned_month: referentMonth,
+          total_visitors: promoData?.total_visitors || 0,
+          monthly_average: promoData?.fidelisation || 0
+        };
+      });
+      
+      setPromosFidelisation(fidelisationByReferent);
     } catch (error) {
       console.error('Error loading promos data:', error);
     }
