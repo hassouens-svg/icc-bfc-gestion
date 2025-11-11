@@ -566,25 +566,31 @@ class BackendTester:
         if init_response and init_response.status_code == 200:
             self.log("✅ Database initialized")
         
-        # Step 2: Login as Responsable de Promos (promotions role)
-        login_data = {
-            "username": "promotions",
-            "password": "test123",
-            "city": "Dijon"
-        }
+        # Step 2: Try multiple login credentials as suggested in review request
+        login_attempts = [
+            {"username": "promotions", "password": "test123", "city": "Dijon"},
+            {"username": "referent_dijon_oct", "password": "test123", "city": "Dijon"},
+            {"username": "superviseur_promos", "password": "superviseur123", "city": "Dijon"},
+            {"username": "superadmin", "password": "superadmin123", "city": "Dijon"},
+            # Try with department selection
+            {"username": "referent_dijon_oct", "password": "test123", "city": "Dijon", "department": "promotions"}
+        ]
         
-        # Try alternative credentials if first fails
-        login_response = self.make_request('POST', '/auth/login', json=login_data)
+        login_response = None
+        successful_login = None
+        
+        for attempt in login_attempts:
+            self.log(f"Trying login: {attempt['username']} in {attempt['city']}")
+            login_response = self.make_request('POST', '/auth/login', json=attempt)
+            if login_response and login_response.status_code == 200:
+                successful_login = attempt
+                break
+            elif login_response:
+                self.log(f"   Failed: {login_response.status_code} - {login_response.text[:100]}")
         
         if not login_response or login_response.status_code != 200:
-            # Try referent with promotions department
-            login_data = {
-                "username": "referent_dijon_oct",
-                "password": "test123", 
-                "city": "Dijon",
-                "department": "promotions"
-            }
-            login_response = self.make_request('POST', '/auth/login', json=login_data)
+            self.log("❌ Failed to login with any credentials", "ERROR")
+            return False
         
         if not login_response or login_response.status_code != 200:
             self.log("❌ Failed to login as Responsable de Promos", "ERROR")
