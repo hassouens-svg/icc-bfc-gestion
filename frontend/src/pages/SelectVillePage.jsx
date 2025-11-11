@@ -17,7 +17,7 @@ const SelectVillePage = () => {
   const department = location.state?.department || 'promotions';
 
   useEffect(() => {
-    if (!user || !['super_admin', 'pasteur'].includes(user.role)) {
+    if (!user || !['super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
