@@ -990,8 +990,10 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     # Base query filter
     base_query = {"tracking_stopped": False}
     
-    # For pasteur and super_admin, don't filter by city (see all)
-    if current_user["role"] not in ["pasteur", "super_admin"]:
+    # For pasteur, super_admin, and responsable_eglise: responsable_eglise sees only their city
+    if current_user["role"] == "responsable_eglise":
+        base_query["city"] = current_user["city"]
+    elif current_user["role"] not in ["pasteur", "super_admin"]:
         base_query["city"] = current_user["city"]
     
     city = current_user["city"]
