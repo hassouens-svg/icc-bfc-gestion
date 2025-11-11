@@ -394,6 +394,12 @@ async def create_user(user_data: UserCreate, current_user: dict = Depends(get_cu
     if current_user["role"] == "super_admin":
         # Super admin can create any user
         pass
+    elif current_user["role"] == "responsable_eglise":
+        # Responsable d'église can create all user types EXCEPT super_admin, pasteur, and other responsable_eglise
+        if user_data.role in ["super_admin", "pasteur", "responsable_eglise"]:
+            raise HTTPException(status_code=403, detail="You cannot create super_admin, pasteur, or responsable_eglise users")
+        # Force city to be the same as responsable_eglise's city
+        user_data.city = current_user["city"]
     elif current_user["role"] in ["superviseur_promos", "promotions"]:
         # Superviseurs can only create referents
         if user_data.role not in ["referent", "accueil", "promotions"]:
