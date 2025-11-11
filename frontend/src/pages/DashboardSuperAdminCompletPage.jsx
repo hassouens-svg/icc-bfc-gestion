@@ -316,12 +316,16 @@ const DashboardSuperAdminCompletPage = () => {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Ville</label>
-                <Select value={selectedCity} onValueChange={setSelectedCity}>
+                <Select 
+                  value={selectedCity} 
+                  onValueChange={setSelectedCity}
+                  disabled={isResponsableEglise}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les villes</SelectItem>
+                    {!isResponsableEglise && <SelectItem value="all">Toutes les villes</SelectItem>}
                     {cities.map((city) => (
                       <SelectItem key={city.id} value={city.name}>
                         {city.name}
