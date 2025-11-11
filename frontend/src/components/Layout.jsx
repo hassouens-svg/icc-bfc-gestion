@@ -124,6 +124,7 @@ const Layout = ({ children }) => {
                 user?.role === 'superviseur_fi' ? 'Superviseur FI' :
                 user?.role === 'super_admin' ? 'Super Administrateur' :
                 user?.role === 'pasteur' ? 'Pasteur' :
+                user?.role === 'responsable_eglise' ? 'Responsable d\'Église' :
                 user?.role === 'accueil' ? 'Accueil et Intégration' :
                 user?.role === 'promotions' ? 'Promotions' : 
                 user?.role === 'pilote_fi' ? 'Pilote FI' :
