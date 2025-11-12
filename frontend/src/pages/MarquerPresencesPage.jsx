@@ -93,9 +93,10 @@ const MarquerPresencesPage = () => {
       });
 
       await Promise.all(promises);
-      toast.success(`${Object.keys(presences).length} présences enregistrées pour le ${selectedDate}`);
-      setPresences({});
-      setComments({});
+      toast.success(`${Object.keys(presences).length} présences enregistrées/mises à jour pour le ${selectedDate}`);
+      
+      // Recharger les visiteurs pour rafraîchir les données
+      await loadVisitors();
     } catch (error) {
       toast.error('Erreur lors de l\'enregistrement');
     }
