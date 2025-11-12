@@ -31,7 +31,7 @@ const ReferentsPage = () => {
   });
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'promotions')) {
+    if (!user || !['admin', 'promotions', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
