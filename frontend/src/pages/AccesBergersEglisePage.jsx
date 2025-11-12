@@ -53,8 +53,11 @@ const AccesBergersEglisePage = () => {
       
       toast.success('Connexion réussie!');
       
-      // Rediriger vers la sélection de département
-      navigate('/select-department');
+      // Définir un département par défaut (promotions) pour la navigation
+      localStorage.setItem('selected_department', 'promotions');
+      
+      // Rediriger directement vers le dashboard complet
+      navigate('/dashboard-superadmin-complet');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Identifiants incorrects');
     } finally {
