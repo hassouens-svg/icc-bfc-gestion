@@ -81,17 +81,18 @@ const VisitorsTablePage = () => {
     // Filter by date and presence
     if (filters.date) {
       filtered = filtered.map(v => {
-        const presences = [
-          ...(filters.serviceType === 'all' || filters.serviceType === 'dimanche' ? v.presences_dimanche || [] : []),
-          ...(filters.serviceType === 'all' || filters.serviceType === 'jeudi' ? v.presences_jeudi || [] : [])
+        // Combiner toutes les présences
+        const allPresences = [
+          ...(v.presences_dimanche || []),
+          ...(v.presences_jeudi || [])
         ];
 
-        const presenceOnDate = presences.find(p => p.date === filters.date);
+        const presenceOnDate = allPresences.find(p => p.date === filters.date);
         
         if (filters.presence === 'present') {
           return presenceOnDate && presenceOnDate.present ? v : null;
         } else if (filters.presence === 'absent') {
-          return !presenceOnDate || !presenceOnDate.present ? v : null;
+          return presenceOnDate && presenceOnDate.present === false ? v : null;
         }
         return v;
       }).filter(v => v !== null);
