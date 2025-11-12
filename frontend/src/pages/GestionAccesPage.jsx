@@ -232,7 +232,11 @@ const GestionAccesPage = () => {
 
                 <div className="space-y-2">
                   <Label>Ville *</Label>
-                  <Select value={newUser.city} onValueChange={(value) => setNewUser({...newUser, city: value})}>
+                  <Select 
+                    value={newUser.city} 
+                    onValueChange={(value) => setNewUser({...newUser, city: value})}
+                    disabled={user?.role === 'responsable_eglise'}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionnez une ville" />
                     </SelectTrigger>
