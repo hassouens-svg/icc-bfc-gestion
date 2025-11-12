@@ -13,7 +13,7 @@ const SelectDepartmentPage = () => {
     logout();
   };
 
-  if (!user || (user.role !== 'pasteur' && user.role !== 'super_admin')) {
+  if (!user || !['pasteur', 'super_admin', 'responsable_eglise'].includes(user.role)) {
     navigate('/dashboard');
     return null;
   }
@@ -22,8 +22,14 @@ const SelectDepartmentPage = () => {
     // Store the selected department
     localStorage.setItem('selected_department', deptId);
     
-    // Pour super_admin et pasteur, rediriger vers sélection de ville
-    navigate('/select-ville', { state: { department: deptId } });
+    // Pour super_admin, pasteur et responsable_eglise, rediriger vers dashboard complet ou sélection de ville
+    if (user.role === 'responsable_eglise') {
+      // Responsable d'église : sa ville est fixée, rediriger directement vers dashboard
+      navigate('/dashboard-superadmin-complet');
+    } else {
+      // Super admin et pasteur : choisir la ville d'abord
+      navigate('/select-ville', { state: { department: deptId } });
+    }
   };
 
   const departments = [
