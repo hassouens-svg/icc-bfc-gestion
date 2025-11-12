@@ -23,7 +23,7 @@ L'application est **100% fonctionnelle** en preview et prête pour un nouveau d�
 ### 2. **Configuration actuelle**
 ```
 Frontend .env:
-- REACT_APP_BACKEND_URL=https://multi-city-faith.preview.emergentagent.com ✅
+- REACT_APP_BACKEND_URL=https://pastoral-dash.preview.emergentagent.com ✅
 - WDS_SOCKET_PORT=443 ✅
 
 Backend .env:
@@ -35,7 +35,7 @@ Backend .env:
 ### 3. **Tests Backend** ✅
 ```bash
 # Test API cities
-$ curl https://multi-city-faith.preview.emergentagent.com/api/cities
+$ curl https://pastoral-dash.preview.emergentagent.com/api/cities
 → ✅ 8 villes retournées (Dijon, Chalon, Besançon, Dole, Sens, Milan, Perugia, Rome)
 ```
 

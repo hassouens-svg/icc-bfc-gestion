@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://multi-city-faith.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://pastoral-dash.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 def log(message, level="INFO"):
@@ -142,7 +142,7 @@ def test_cors_configuration():
     
     headers = {
         'Content-Type': 'application/json',
-        'Origin': 'https://multi-city-faith.preview.emergentagent.com'
+        'Origin': 'https://pastoral-dash.preview.emergentagent.com'
     }
     
     response = requests.post(f"{API_URL}/auth/register", json=visitor_data, headers=headers)
