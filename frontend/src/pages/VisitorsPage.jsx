@@ -223,6 +223,20 @@ const VisitorsPage = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Sort Order Filter */}
+                <div className="space-y-2">
+                  <Label>Tri</Label>
+                  <Select value={sortOrder} onValueChange={setSortOrder}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="date_arrivee">Date d'arrivée (récent)</SelectItem>
+                      <SelectItem value="date_creation">Ordre d'enregistrement (récent)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardContent>
           </Card>
