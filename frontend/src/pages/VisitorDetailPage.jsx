@@ -247,61 +247,6 @@ const VisitorDetailPage = () => {
           <CardContent>
             <div className="space-y-4">
               {/* Add presence form */}
-              <div className="border p-4 rounded-lg bg-gray-50">
-                <h4 className="font-medium mb-3">Ajouter une présence</h4>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="presence-date">Date</Label>
-                    <Input
-                      id="presence-date"
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      data-testid="presence-date-input"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="presence-type">Type</Label>
-                    <Select value={selectedType} onValueChange={setSelectedType}>
-                      <SelectTrigger data-testid="presence-type-select">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="dimanche">Dimanche</SelectItem>
-                        <SelectItem value="jeudi">Jeudi</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="presence-status">Présence</Label>
-                    <Select value={selectedPresence} onValueChange={setSelectedPresence}>
-                      <SelectTrigger data-testid="presence-status-select">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="oui">
-                          <span className="flex items-center">
-                            <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                            Oui
-                          </span>
-                        </SelectItem>
-                        <SelectItem value="non">
-                          <span className="flex items-center">
-                            <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                            Non
-                          </span>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-end">
-                    <Button onClick={handleAddPresence} className="w-full" data-testid="add-presence-button">
-                      Enregistrer
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
               {/* Historique des Présences - Vue Tableau */}
               <div>
                 <h4 className="font-medium mb-3">Historique des Présences</h4>
