@@ -29,9 +29,14 @@ const HomePage = () => {
   }, []);
 
   const handleDepartmentChoice = (deptId) => {
-    // Handle special access page
+    // Handle special access pages
     if (deptId === 'acces-specifiques') {
       navigate('/acces-specifiques');
+      return;
+    }
+    
+    if (deptId === 'acces-bergers-eglise') {
+      navigate('/acces-bergers-eglise');
       return;
     }
 
