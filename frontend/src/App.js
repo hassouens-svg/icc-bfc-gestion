@@ -71,6 +71,7 @@ function App() {
           <Route path="/gestion-permissions-dashboard" element={<GestionPermissionsDashboardPage />} />
           <Route path="/culte-stats" element={<CulteStatsPage />} />
           <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
+          <Route path="/acces-bergers-eglise" element={<AccesBergersEglisePage />} />
           <Route path="/select-department" element={<SelectDepartmentPage />} />
           <Route path="/select-ville" element={<SelectVillePage />} />
           <Route path="/gestion-acces" element={<GestionAccesPage />} />
