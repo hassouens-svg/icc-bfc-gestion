@@ -189,7 +189,8 @@ const MarquerPresencesPage = () => {
                           <input
                             type="checkbox"
                             checked={presences[visitor.id] === true}
-                            onChange={() => handlePresenceToggle(visitor.id, true)}
+                            onClick={() => handlePresenceToggle(visitor.id, true)}
+                            onChange={() => {}} // Prevent React warning
                             className="w-5 h-5 cursor-pointer accent-green-600"
                           />
                         </div>
@@ -199,7 +200,8 @@ const MarquerPresencesPage = () => {
                           <input
                             type="checkbox"
                             checked={presences[visitor.id] === false}
-                            onChange={() => handlePresenceToggle(visitor.id, false)}
+                            onClick={() => handlePresenceToggle(visitor.id, false)}
+                            onChange={() => {}} // Prevent React warning
                             className="w-5 h-5 cursor-pointer accent-red-600"
                           />
                         </div>
