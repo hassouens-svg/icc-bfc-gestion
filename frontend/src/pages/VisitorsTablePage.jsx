@@ -23,7 +23,6 @@ const VisitorsTablePage = () => {
   // Filters
   const [filters, setFilters] = useState({
     date: '',
-    serviceType: 'all', // dimanche, jeudi, all
     presence: 'all', // present, absent, all
     category: 'all', // Nouveau Arrivant, Nouveau Converti, De Passage, all
     status: 'actif', // actif, arrete, all
