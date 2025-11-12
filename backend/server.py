@@ -746,7 +746,11 @@ async def add_presence(visitor_id: str, presence: PresenceAdd, current_user: dic
         if not permissions.get("can_mark_presence", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot mark presence")
     
-    presence_entry = PresenceEntry(date=presence.date, present=presence.present)
+    presence_entry = PresenceEntry(
+        date=presence.date, 
+        present=presence.present,
+        commentaire=presence.commentaire
+    )
     
     field = "presences_dimanche" if presence.type == "dimanche" else "presences_jeudi"
     
