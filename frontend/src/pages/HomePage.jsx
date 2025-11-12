@@ -210,6 +210,28 @@ const HomePage = () => {
             S'inscrire ici
           </Button>
         </div>
+
+        {/* Footer Copyright */}
+        <footer className="mt-20 pb-8 text-center animate-fade-in border-t border-white/10 pt-8" style={{animationDelay: '0.6s'}}>
+          <div className="max-w-3xl mx-auto space-y-4">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                <Church className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-white">ICC BFC-ITALIE</span>
+            </div>
+            
+            <p className="text-white/80 text-base leading-relaxed px-4">
+              Cette application web a été développée par <strong className="text-white">Impact Centre Chrétien - Campus de Dijon</strong> dans le but de gérer efficacement les différents départements qui s'y trouvent ainsi que toutes les églises sous la supervision du <strong className="text-white">Pasteur Narcisse HAMY</strong>.
+            </p>
+            
+            <div className="flex items-center justify-center space-x-6 text-white/60 text-sm mt-6">
+              <span>© {new Date().getFullYear()} ICC Dijon</span>
+              <span>•</span>
+              <span>Tous droits réservés</span>
+            </div>
+          </div>
+        </footer>
       </div>
 
       <style jsx>{`
