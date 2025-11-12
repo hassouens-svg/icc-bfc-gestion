@@ -192,6 +192,7 @@ class PresenceAdd(BaseModel):
     date: str
     present: bool
     type: str  # "dimanche" or "jeudi"
+    commentaire: Optional[str] = None
 
 class FormationUpdate(BaseModel):
     formation_type: str  # "pcnc", "au_coeur_bible", "star"
