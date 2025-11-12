@@ -267,10 +267,18 @@ const DashboardSuperAdminCompletPage = () => {
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">
-              {canEdit ? 'Tableau de Bord - Super Administrateur' : 'Tableau de Bord - Pasteur'}
+              {user?.role === 'super_admin' 
+                ? 'Tableau de Bord - Super Administrateur' 
+                : user?.role === 'responsable_eglise'
+                ? 'Tableau de bord Responsable d\'église'
+                : 'Tableau de Bord - Pasteur'}
             </h2>
             <p className="text-gray-500 mt-1">
-              {canEdit ? 'Gestion complète multi-villes' : 'Vue complète multi-villes (lecture seule)'}
+              {user?.role === 'super_admin' 
+                ? 'Gestion complète multi-villes' 
+                : user?.role === 'responsable_eglise'
+                ? `Gestion complète de ${selectedCity}`
+                : 'Vue complète multi-villes (lecture seule)'}
             </p>
           </div>
           
