@@ -14,7 +14,7 @@ const DashboardSuperviseurFIPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || !['superviseur_fi', 'admin', 'super_admin'].includes(user.role)) {
+    if (!user || !['superviseur_fi', 'admin', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
