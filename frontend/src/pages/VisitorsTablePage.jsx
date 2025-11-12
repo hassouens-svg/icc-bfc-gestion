@@ -21,6 +21,12 @@ const VisitorsTablePage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   
+  // Edit presence modal state
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingVisitor, setEditingVisitor] = useState(null);
+  const [editPresence, setEditPresence] = useState(null); // true, false, or null
+  const [editComment, setEditComment] = useState('');
+  
   // Filters
   const [filters, setFilters] = useState({
     date: '',
