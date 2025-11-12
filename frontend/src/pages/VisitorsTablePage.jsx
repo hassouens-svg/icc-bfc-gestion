@@ -262,22 +262,14 @@ const VisitorsTablePage = () => {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prénom</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Canal d'arrivée</th>
                     {filters.date && (
                       <>
-                        {(filters.serviceType === 'all' || filters.serviceType === 'dimanche') && (
-                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-                            Dim {filters.date}
-                          </th>
-                        )}
-                        {(filters.serviceType === 'all' || filters.serviceType === 'jeudi') && (
-                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-                            Jeu {filters.date}
-                          </th>
-                        )}
+                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Présent</th>
+                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Absent</th>
                       </>
                     )}
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commentaires</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commentaire</th>
                     <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -289,74 +281,55 @@ const VisitorsTablePage = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredVisitors.map((visitor) => (
-                      <tr key={visitor.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm">{visitor.lastname}</td>
-                        <td className="px-4 py-3 text-sm">{visitor.firstname}</td>
-                        <td className="px-4 py-3 text-sm">
-                          <div className="flex flex-wrap gap-1">
-                            {visitor.types.map((type, idx) => (
-                              <span key={idx} className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                {type}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-sm">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            visitor.tracking_stopped 
-                              ? 'bg-red-100 text-red-800' 
-                              : 'bg-green-100 text-green-800'
-                          }`}>
-                            {visitor.tracking_stopped ? 'Arrêté' : 'Actif'}
-                          </span>
-                        </td>
-                        {filters.date && (
-                          <>
-                            {(filters.serviceType === 'all' || filters.serviceType === 'dimanche') && (
-                              <td className="px-4 py-3 text-center text-sm">
-                                {getPresenceForDate(visitor, filters.date, 'dimanche')}
+                    filteredVisitors.map((visitor) => {
+                      const presenceInfo = getPresenceInfoForDate(visitor, filters.date);
+                      return (
+                        <tr key={visitor.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm font-medium">{visitor.lastname}</td>
+                          <td className="px-4 py-3 text-sm">{visitor.firstname}</td>
+                          <td className="px-4 py-3 text-sm">
+                            {visitor.types.join(', ')}
+                          </td>
+                          <td className="px-4 py-3 text-sm">{visitor.arrival_channel}</td>
+                          {filters.date && (
+                            <>
+                              <td className="px-4 py-3 text-center text-lg">
+                                {presenceInfo.present || '-'}
                               </td>
-                            )}
-                            {(filters.serviceType === 'all' || filters.serviceType === 'jeudi') && (
-                              <td className="px-4 py-3 text-center text-sm">
-                                {getPresenceForDate(visitor, filters.date, 'jeudi')}
+                              <td className="px-4 py-3 text-center text-lg">
+                                {presenceInfo.absent || '-'}
                               </td>
-                            )}
-                          </>
-                        )}
-                        <td className="px-4 py-3 text-sm">
-                          <div className="max-w-xs truncate">
-                            {visitor.comments && visitor.comments.length > 0 
-                              ? visitor.comments[visitor.comments.length - 1].text 
-                              : '-'}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex justify-center space-x-2">
-                            <Button
-                              onClick={() => navigate(`/visitors/${visitor.id}`)}
-                              variant="outline"
-                              size="sm"
-                            >
-                              Voir
-                            </Button>
-                            {(user.role === 'admin' || user.role === 'referent') && (
+                            </>
+                          )}
+                          <td className="px-4 py-3 text-sm">
+                            {presenceInfo.commentaire}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <div className="flex justify-center space-x-2">
                               <Button
-                                onClick={() => {
-                                  setSelectedVisitor(visitor);
-                                  setDeleteDialogOpen(true);
-                                }}
-                                variant="destructive"
+                                onClick={() => navigate(`/visitors/${visitor.id}`)}
+                                variant="outline"
                                 size="sm"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                Voir
                               </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                              {(user.role === 'admin' || user.role === 'referent') && (
+                                <Button
+                                  onClick={() => {
+                                    setSelectedVisitor(visitor);
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                  variant="destructive"
+                                  size="sm"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
