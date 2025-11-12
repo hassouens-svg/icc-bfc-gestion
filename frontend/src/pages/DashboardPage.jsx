@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 import { getStats, getUser, exportExcel } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Users, UserPlus, TrendingUp, Download, BarChart3 } from 'lucide-react';
+import { Users, UserPlus, TrendingUp, Download, BarChart3, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DashboardPage = () => {
