@@ -366,6 +366,16 @@ const VisitorsTablePage = () => {
                               >
                                 Voir
                               </Button>
+                              {filters.date && (
+                                <Button
+                                  onClick={() => handleEditPresence(visitor)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-blue-600 hover:text-blue-700"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                              )}
                               {(user.role === 'admin' || user.role === 'referent') && (
                                 <Button
                                   onClick={() => {
