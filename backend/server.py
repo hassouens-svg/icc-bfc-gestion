@@ -777,6 +777,31 @@ async def add_presence(visitor_id: str, presence: PresenceAdd, current_user: dic
     
     return {"message": "Presence updated successfully"}
 
+@api_router.get("/presences/by-date")
+async def get_presences_by_date(date: str, current_user: dict = Depends(get_current_user)):
+    """Get all presences for a specific date"""
+    # Filter visitors by city if not admin/super_admin
+    city_filter = {} if current_user["role"] in ["admin", "super_admin", "pasteur"] else {"city": current_user["city"]}
+    
+    visitors = await db.visitors.find(city_filter).to_list(length=None)
+    
+    result = []
+    for visitor in visitors:
+        # Check both dimanche and jeudi presences
+        all_presences = visitor.get("presences_dimanche", []) + visitor.get("presences_jeudi", [])
+        presence_for_date = next((p for p in all_presences if p.get("date") == date), None)
+        
+        if presence_for_date:
+            result.append({
+                "visitor_id": visitor["id"],
+                "firstname": visitor["firstname"],
+                "lastname": visitor["lastname"],
+                "present": presence_for_date.get("present"),
+                "commentaire": presence_for_date.get("commentaire")
+            })
+    
+    return result
+
 @api_router.post("/visitors/{visitor_id}/formation")
 async def update_formation(visitor_id: str, formation: FormationUpdate, current_user: dict = Depends(get_current_user)):
     visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
