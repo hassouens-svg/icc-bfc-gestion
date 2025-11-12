@@ -72,12 +72,9 @@ const LoginPage = () => {
       sessionStorage.removeItem('selectedCity');
       sessionStorage.removeItem('selectedDepartment');
       
-      // Redirect special access users (pasteur, superadmin) to department selection
-      // Responsable d'église to city selection
-      if (isSpecialAccess) {
+      // Redirect special access users (pasteur, superadmin, responsable_eglise) to department selection
+      if (isSpecialAccess || result.user.role === 'responsable_eglise') {
         navigate('/select-department');
-      } else if (result.user.role === 'responsable_eglise') {
-        navigate('/select-ville');
       } else {
         navigate('/dashboard');
       }
