@@ -50,7 +50,8 @@ const GestionAccesPage = () => {
     }
     
     loadData();
-  }, [currentUser, navigate]);
+    // eslint-disable-next-line
+  }, []);
 
   const loadData = async () => {
     try {
