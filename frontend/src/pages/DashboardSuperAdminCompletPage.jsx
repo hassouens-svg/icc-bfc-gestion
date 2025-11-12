@@ -284,21 +284,27 @@ const DashboardSuperAdminCompletPage = () => {
           
           {canEdit && (
             <div className="flex space-x-2">
-              <Button onClick={() => navigate('/cities')} variant="outline">
-                <MapPin className="h-4 w-4 mr-2" />
-                Gérer Villes
-              </Button>
+              {/* Gérer Villes - uniquement pour Super Admin */}
+              {user?.role === 'super_admin' && (
+                <Button onClick={() => navigate('/cities')} variant="outline">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  Gérer Villes
+                </Button>
+              )}
               <Button onClick={() => navigate('/gestion-acces')} variant="outline">
                 <UserPlus className="h-4 w-4 mr-2" />
                 Gérer Accès
               </Button>
-              <Button 
-                onClick={() => navigate('/gestion-permissions-dashboard')} 
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 shadow-lg"
-              >
-                <Filter className="h-4 w-4 mr-2" />
-                🔐 Gérer les Permissions Dashboard
-              </Button>
+              {/* Gérer Permissions Dashboard - uniquement pour Super Admin */}
+              {user?.role === 'super_admin' && (
+                <Button 
+                  onClick={() => navigate('/gestion-permissions-dashboard')} 
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 shadow-lg"
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  🔐 Gérer les Permissions Dashboard
+                </Button>
+              )}
             </div>
           )}
         </div>
