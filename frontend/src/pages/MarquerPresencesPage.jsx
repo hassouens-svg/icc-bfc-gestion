@@ -94,13 +94,13 @@ const MarquerPresencesPage = () => {
   const handleSaveAll = async () => {
     try {
       const promises = Object.entries(presences).map(([visitorId, isPresent]) => {
-        return addPresence({
-          visitor_id: visitorId,
-          date: selectedDate,
-          present: isPresent,
-          type: 'dimanche',
-          commentaire: comments[visitorId] || null
-        });
+        return addPresence(
+          visitorId,
+          selectedDate,
+          isPresent,
+          'dimanche',
+          comments[visitorId] || null
+        );
       });
 
       await Promise.all(promises);
