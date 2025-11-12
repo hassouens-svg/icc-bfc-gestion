@@ -400,6 +400,71 @@ const VisitorsTablePage = () => {
           </CardContent>
         </Card>
 
+        {/* Edit Presence Dialog */}
+        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Modifier la présence</DialogTitle>
+            </DialogHeader>
+            {editingVisitor && (
+              <div className="space-y-4">
+                <div>
+                  <p className="font-medium">{editingVisitor.firstname} {editingVisitor.lastname}</p>
+                  <p className="text-sm text-gray-500">Date: {filters.date}</p>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Présence</Label>
+                  <div className="flex space-x-4">
+                    <button
+                      type="button"
+                      onClick={() => setEditPresence(true)}
+                      className={`px-4 py-2 rounded border-2 flex items-center space-x-2 transition-colors ${
+                        editPresence === true
+                          ? 'bg-green-500 border-green-600 text-white'
+                          : 'bg-white border-gray-300 text-gray-700 hover:border-green-400'
+                      }`}
+                    >
+                      <span className="text-lg">✓</span>
+                      <span>Présent</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditPresence(false)}
+                      className={`px-4 py-2 rounded border-2 flex items-center space-x-2 transition-colors ${
+                        editPresence === false
+                          ? 'bg-red-500 border-red-600 text-white'
+                          : 'bg-white border-gray-300 text-gray-700 hover:border-red-400'
+                      }`}
+                    >
+                      <span className="text-lg">✗</span>
+                      <span>Absent</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Commentaire</Label>
+                  <Textarea
+                    value={editComment}
+                    onChange={(e) => setEditComment(e.target.value)}
+                    placeholder="Ajouter un commentaire..."
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                Annuler
+              </Button>
+              <Button onClick={handleSavePresenceEdit} className="bg-indigo-600 hover:bg-indigo-700">
+                Enregistrer
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Delete Confirmation */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
