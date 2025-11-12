@@ -16,7 +16,7 @@ const AnalyticsPage = () => {
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#ef4444'];
 
   useEffect(() => {
-    if (!user || !['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur'].includes(user.role)) {
+    if (!user || !['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
