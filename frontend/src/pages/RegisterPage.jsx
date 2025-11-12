@@ -64,7 +64,7 @@ const RegisterPage = () => {
     
     if (!formData.firstname || !formData.lastname || !formData.city || 
         formData.types.length === 0 || !formData.arrival_channel || !formData.phone) {
-      toast.error('Veuillez remplir tous les champs obligatoires');
+      toast.error('Veuillez remplir tous les champs obligatoires (email optionnel)');
       return;
     }
 
