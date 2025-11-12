@@ -29,6 +29,7 @@ const VisitorDetailPage = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedType, setSelectedType] = useState('dimanche');
   const [selectedPresence, setSelectedPresence] = useState('oui');
+  const [filterDate, setFilterDate] = useState(''); // Filtre pour le tableau d'historique
 
   useEffect(() => {
     if (!user) {
