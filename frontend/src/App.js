@@ -27,6 +27,7 @@ import GestionPermissionsDashboardPage from './pages/GestionPermissionsDashboard
 import CulteStatsPage from './pages/CulteStatsPage';
 import AffectationFIPage from './pages/AffectationFIPage';
 import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
+import AccesBergersEglisePage from './pages/AccesBergersEglisePage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
 import SelectDepartmentPage from './pages/SelectDepartmentPage';
 import GestionAccesPage from './pages/GestionAccesPage';
