@@ -580,13 +580,13 @@ const DashboardSuperAdminCompletPage = () => {
             {/* Évolution Fidélisation */}
             <Card>
               <CardHeader>
-                <CardTitle>Évolution de la Fidélisation par Mois</CardTitle>
+                <CardTitle>Évolution de la Fidélisation par Promos</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={promosData.promos}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
+                    <XAxis dataKey="month" label={{ value: 'Promos', position: 'insideBottom', offset: -5 }} />
                     <YAxis />
                     <Tooltip />
                     <Legend />
