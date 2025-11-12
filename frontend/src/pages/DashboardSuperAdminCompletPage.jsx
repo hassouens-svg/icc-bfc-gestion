@@ -599,16 +599,9 @@ const DashboardSuperAdminCompletPage = () => {
 
             {/* Tableau Visiteurs Complet */}
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Tous les Visiteurs - Vue Tableau Complète</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    placeholder="Rechercher..."
-                    className="border rounded px-3 py-1 text-sm"
-                    value={visitorsFilter}
-                    onChange={(e) => setVisitorsFilter(e.target.value)}
-                  />
+              <CardHeader>
+                <div className="flex flex-row items-center justify-between mb-4">
+                  <CardTitle>Tous les Visiteurs - Vue Tableau Complète</CardTitle>
                   {canEdit && (
                     <Button 
                       variant="outline" 
@@ -619,6 +612,28 @@ const DashboardSuperAdminCompletPage = () => {
                       Export CSV
                     </Button>
                   )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    placeholder="Rechercher..."
+                    className="border rounded px-3 py-1 text-sm"
+                    value={visitorsFilter}
+                    onChange={(e) => setVisitorsFilter(e.target.value)}
+                  />
+                  <Select value={selectedPromo} onValueChange={setSelectedPromo}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Filtrer par Promo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes les Promos</SelectItem>
+                      {promosData?.promos?.map((promo) => (
+                        <SelectItem key={promo.month} value={promo.month}>
+                          {promo.month}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardHeader>
               <CardContent>
