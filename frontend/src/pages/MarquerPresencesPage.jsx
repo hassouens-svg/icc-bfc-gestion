@@ -51,10 +51,11 @@ const MarquerPresencesPage = () => {
   const handleSaveAll = async () => {
     try {
       const promises = Object.entries(presences).map(([visitorId, isPresent]) => {
-        return createPresenceDimanche({
+        return addPresence({
           visitor_id: visitorId,
           date: selectedDate,
           present: isPresent,
+          type: 'dimanche',
           commentaire: comments[visitorId] || null
         });
       });
