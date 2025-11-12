@@ -223,12 +223,25 @@ const DashboardPiloteFIPage = () => {
                       )}
                     </div>
                     <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          checked={presence?.present || false}
-                          onCheckedChange={(checked) => handlePresenceChange(membre.id, checked)}
-                        />
-                        <label className="cursor-pointer">Présent</label>
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            checked={presence?.present === true}
+                            onCheckedChange={(checked) => {
+                              if (checked) handlePresenceChange(membre.id, true);
+                            }}
+                          />
+                          <label className="cursor-pointer text-green-600 font-medium">Présent</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            checked={presence?.present === false}
+                            onCheckedChange={(checked) => {
+                              if (checked) handlePresenceChange(membre.id, false);
+                            }}
+                          />
+                          <label className="cursor-pointer text-red-600 font-medium">Absent</label>
+                        </div>
                       </div>
                       <Input
                         placeholder="Commentaire..."
