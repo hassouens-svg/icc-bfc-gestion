@@ -128,7 +128,7 @@ const DashboardSuperAdminCompletPage = () => {
     }
     loadData();
     // eslint-disable-next-line
-  }, [selectedView, selectedCity]);
+  }, [selectedView, selectedCity, selectedMonth, selectedYear]);
 
   const loadData = async () => {
     setLoading(true);
