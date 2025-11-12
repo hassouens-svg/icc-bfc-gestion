@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getVisitors, createPresenceDimanche, getUser } from '../utils/api';
+import { getVisitors, addPresence, getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
