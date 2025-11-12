@@ -357,6 +357,49 @@ const DashboardSuperAdminCompletPage = () => {
                   </Select>
                 )}
               </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Mois</label>
+                <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les mois</SelectItem>
+                    <SelectItem value="01">Janvier</SelectItem>
+                    <SelectItem value="02">Février</SelectItem>
+                    <SelectItem value="03">Mars</SelectItem>
+                    <SelectItem value="04">Avril</SelectItem>
+                    <SelectItem value="05">Mai</SelectItem>
+                    <SelectItem value="06">Juin</SelectItem>
+                    <SelectItem value="07">Juillet</SelectItem>
+                    <SelectItem value="08">Août</SelectItem>
+                    <SelectItem value="09">Septembre</SelectItem>
+                    <SelectItem value="10">Octobre</SelectItem>
+                    <SelectItem value="11">Novembre</SelectItem>
+                    <SelectItem value="12">Décembre</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Année</label>
+                <Select value={selectedYear} onValueChange={setSelectedYear}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les années</SelectItem>
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
+                    <SelectItem value="2026">2026</SelectItem>
+                    <SelectItem value="2027">2027</SelectItem>
+                    <SelectItem value="2028">2028</SelectItem>
+                    <SelectItem value="2029">2029</SelectItem>
+                    <SelectItem value="2030">2030</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>
