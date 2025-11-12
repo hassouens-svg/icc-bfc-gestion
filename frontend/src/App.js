@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import VisitorsPage from './pages/VisitorsPage';
 import VisitorsTablePage from './pages/VisitorsTablePage';
 import VisitorDetailPage from './pages/VisitorDetailPage';
+import MarquerPresencesPage from './pages/MarquerPresencesPage';
 import ReferentsPage from './pages/ReferentsPage';
 import CitiesPage from './pages/CitiesPage';
 import AnalyticsPage from './pages/AnalyticsPage';
