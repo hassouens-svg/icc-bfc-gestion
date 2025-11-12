@@ -184,17 +184,21 @@ const MarquerPresencesPage = () => {
                       <td className="py-3 px-4">{visitor.arrival_channel}</td>
                       <td className="py-3 px-4 text-center">
                         <div className="flex justify-center">
-                          <Checkbox
+                          <input
+                            type="checkbox"
                             checked={presences[visitor.id] === true}
-                            onCheckedChange={() => handlePresenceToggle(visitor.id, true)}
+                            onChange={() => handlePresenceToggle(visitor.id, true)}
+                            className="w-5 h-5 cursor-pointer accent-green-600"
                           />
                         </div>
                       </td>
                       <td className="py-3 px-4 text-center">
                         <div className="flex justify-center">
-                          <Checkbox
+                          <input
+                            type="checkbox"
                             checked={presences[visitor.id] === false}
-                            onCheckedChange={() => handlePresenceToggle(visitor.id, false)}
+                            onChange={() => handlePresenceToggle(visitor.id, false)}
+                            className="w-5 h-5 cursor-pointer accent-red-600"
                           />
                         </div>
                       </td>
