@@ -122,14 +122,26 @@ const VisitorsTablePage = () => {
     });
   };
 
-  const getPresenceForDate = (visitor, date, serviceType) => {
-    if (!date) return '-';
+  const getPresenceInfoForDate = (visitor, date) => {
+    if (!date) return { present: null, absent: null, commentaire: '-' };
     
-    const presences = serviceType === 'dimanche' ? visitor.presences_dimanche : visitor.presences_jeudi;
-    const presence = presences?.find(p => p.date === date);
+    // Combiner toutes les présences
+    const allPresences = [
+      ...(visitor.presences_dimanche || []),
+      ...(visitor.presences_jeudi || [])
+    ];
     
-    if (!presence) return '❌';
-    return presence.present ? '✅' : '❌';
+    const presence = allPresences.find(p => p.date === date);
+    
+    if (!presence) {
+      return { present: null, absent: null, commentaire: '-' };
+    }
+    
+    return {
+      present: presence.present === true ? '✅' : null,
+      absent: presence.present === false ? '❌' : null,
+      commentaire: presence.commentaire || '-'
+    };
   };
 
   if (loading) {
