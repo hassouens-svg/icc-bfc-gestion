@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 const GestionAccesPage = () => {
   const navigate = useNavigate();
   const currentUser = getUser();
+  const [user, setUser] = useState(currentUser);
   const [users, setUsers] = useState([]);
   const [cities, setCities] = useState([]);
   const [secteurs, setSecteurs] = useState([]);
