@@ -48,6 +48,31 @@ const MarquerPresencesPage = () => {
     }
   };
 
+  const loadExistingPresences = () => {
+    // Charger les présences déjà enregistrées pour cette date
+    const newPresences = {};
+    const newComments = {};
+    
+    visitors.forEach(visitor => {
+      // Chercher dans les présences dimanche et jeudi
+      const allPresences = [
+        ...(visitor.presences_dimanche || []),
+        ...(visitor.presences_jeudi || [])
+      ];
+      
+      const existingPresence = allPresences.find(p => p.date === selectedDate);
+      if (existingPresence) {
+        newPresences[visitor.id] = existingPresence.present;
+        if (existingPresence.commentaire) {
+          newComments[visitor.id] = existingPresence.commentaire;
+        }
+      }
+    });
+    
+    setPresences(newPresences);
+    setComments(newComments);
+  };
+
   const handlePresenceChange = (visitorId, isPresent) => {
     setPresences(prev => ({
       ...prev,
