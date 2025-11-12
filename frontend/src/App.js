@@ -50,6 +50,7 @@ function App() {
           <Route path="/visitors" element={<VisitorsPage />} />
           <Route path="/visitors-table" element={<VisitorsTablePage />} />
           <Route path="/visitor/:id" element={<VisitorDetailPage />} />
+          <Route path="/marquer-presences" element={<MarquerPresencesPage />} />
           <Route path="/referents" element={<ReferentsPage />} />
           <Route path="/cities" element={<CitiesPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
