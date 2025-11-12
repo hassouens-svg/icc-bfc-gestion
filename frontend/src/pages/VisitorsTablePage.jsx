@@ -182,7 +182,7 @@ const VisitorsTablePage = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {/* Search */}
               <div className="space-y-2">
                 <Label>Recherche</Label>
@@ -232,21 +232,6 @@ const VisitorsTablePage = () => {
                   value={filters.date}
                   onChange={(e) => setFilters({...filters, date: e.target.value})}
                 />
-              </div>
-
-              {/* Service Type */}
-              <div className="space-y-2">
-                <Label>Service</Label>
-                <Select value={filters.serviceType} onValueChange={(value) => setFilters({...filters, serviceType: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tous</SelectItem>
-                    <SelectItem value="dimanche">Dimanche</SelectItem>
-                    <SelectItem value="jeudi">Jeudi</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               {/* Presence */}
