@@ -28,7 +28,7 @@ const SecteursPage = () => {
   });
 
   useEffect(() => {
-    if (!user || !['admin', 'super_admin', 'superviseur_fi'].includes(user.role)) {
+    if (!user || !['admin', 'super_admin', 'superviseur_fi', 'pasteur', 'responsable_eglise'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
