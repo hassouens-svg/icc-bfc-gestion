@@ -232,20 +232,25 @@ const GestionAccesPage = () => {
 
                 <div className="space-y-2">
                   <Label>Ville *</Label>
-                  <Select 
-                    value={newUser.city} 
-                    onValueChange={(value) => setNewUser({...newUser, city: value})}
-                    disabled={user?.role === 'responsable_eglise'}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionnez une ville" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city.id} value={city.name}>
-                          {city.name}
-                        </SelectItem>
-                      ))}
+                  {user?.role === 'responsable_eglise' ? (
+                    <div className="px-3 py-2 border rounded-md bg-gray-50">
+                      <p className="text-sm font-medium text-gray-700">{newUser.city}</p>
+                      <p className="text-xs text-gray-500">Votre ville assignée (fixe)</p>
+                    </div>
+                  ) : (
+                    <Select 
+                      value={newUser.city} 
+                      onValueChange={(value) => setNewUser({...newUser, city: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez une ville" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cities.map((city) => (
+                          <SelectItem key={city.id} value={city.name}>
+                            {city.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
