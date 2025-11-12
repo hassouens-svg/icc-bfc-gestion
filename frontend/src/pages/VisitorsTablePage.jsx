@@ -151,6 +151,52 @@ const VisitorsTablePage = () => {
     };
   };
 
+  const handleEditPresence = (visitor) => {
+    const presenceInfo = getPresenceInfoForDate(visitor, filters.date);
+    setEditingVisitor(visitor);
+    
+    // Déterminer la présence actuelle (true, false, ou null)
+    if (presenceInfo.present === '✅') {
+      setEditPresence(true);
+    } else if (presenceInfo.absent === '❌') {
+      setEditPresence(false);
+    } else {
+      setEditPresence(null);
+    }
+    
+    setEditComment(presenceInfo.commentaire === '-' ? '' : presenceInfo.commentaire);
+    setEditDialogOpen(true);
+  };
+
+  const handleSavePresenceEdit = async () => {
+    if (!editingVisitor || !filters.date) {
+      toast.error('Erreur: Aucune date sélectionnée');
+      return;
+    }
+
+    if (editPresence === null) {
+      toast.error('Veuillez sélectionner Présent ou Absent');
+      return;
+    }
+
+    try {
+      await addPresence(
+        editingVisitor.id,
+        filters.date,
+        editPresence,
+        'dimanche',
+        editComment || null
+      );
+      
+      toast.success('Présence mise à jour avec succès');
+      setEditDialogOpen(false);
+      loadVisitors();
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+      console.error(error);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
