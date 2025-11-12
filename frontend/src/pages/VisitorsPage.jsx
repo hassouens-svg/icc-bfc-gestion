@@ -77,8 +77,25 @@ const VisitorsPage = () => {
       }
     }
     
+    // Sort based on sortOrder
+    if (sortOrder === 'date_arrivee') {
+      // Tri par date d'arrivée (visit_date) - plus récent en premier
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.visit_date || 0);
+        const dateB = new Date(b.visit_date || 0);
+        return dateB - dateA;
+      });
+    } else if (sortOrder === 'date_creation') {
+      // Tri par ordre de création (created_at) - plus récent en premier
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        return dateB - dateA;
+      });
+    }
+    
     setFilteredVisitors(filtered);
-  }, [searchTerm, filterDate, filterStatus, visitors]); // Removed 'user' from dependencies
+  }, [searchTerm, filterDate, filterStatus, visitors, sortOrder]);
 
   const loadVisitors = async () => {
     try {
