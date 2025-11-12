@@ -31,7 +31,7 @@ const FidelisationPage = () => {
       if (user.role === 'referent') {
         const result = await getReferentFidelisation();
         setData(result);
-      } else if (['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur'].includes(user.role)) {
+      } else if (['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
         const result = await getAdminFidelisation();
         setAdminData(result);
       }
