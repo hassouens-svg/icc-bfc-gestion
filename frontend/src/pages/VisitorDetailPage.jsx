@@ -302,49 +302,52 @@ const VisitorDetailPage = () => {
                 </div>
               </div>
 
-              {/* Presence history - Dimanche */}
+              {/* Historique des Présences - Vue Tableau */}
               <div>
-                <h4 className="font-medium mb-2">Présences Dimanche</h4>
-                <div className="space-y-2">
-                  {visitor.presences_dimanche && visitor.presences_dimanche.length > 0 ? (
-                    visitor.presences_dimanche.sort((a, b) => new Date(b.date) - new Date(a.date)).map((p, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 border rounded">
-                        <span className="font-medium">{p.date}</span>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          p.present 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {p.present ? 'Oui' : 'Non'}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-sm">Aucune présence enregistrée</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Presence history - Jeudi */}
-              <div>
-                <h4 className="font-medium mb-2">Présences Jeudi</h4>
-                <div className="space-y-2">
-                  {visitor.presences_jeudi && visitor.presences_jeudi.length > 0 ? (
-                    visitor.presences_jeudi.sort((a, b) => new Date(b.date) - new Date(a.date)).map((p, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 border rounded">
-                        <span className="font-medium">{p.date}</span>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          p.present 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {p.present ? 'Oui' : 'Non'}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-sm">Aucune présence enregistrée</p>
-                  )}
+                <h4 className="font-medium mb-3">Historique des Présences</h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border-collapse">
+                    <thead className="bg-gray-50">
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3">Date</th>
+                        <th className="text-center py-2 px-3">Statut</th>
+                        <th className="text-left py-2 px-3">Commentaire</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        // Combiner toutes les présences (dimanche et jeudi)
+                        const allPresences = [
+                          ...(visitor.presences_dimanche || []),
+                          ...(visitor.presences_jeudi || [])
+                        ].sort((a, b) => new Date(b.date) - new Date(a.date));
+                        
+                        return allPresences.length > 0 ? (
+                          allPresences.map((p, idx) => (
+                            <tr key={idx} className="border-b hover:bg-gray-50">
+                              <td className="py-2 px-3 font-medium">{p.date}</td>
+                              <td className="py-2 px-3 text-center">
+                                {p.present ? (
+                                  <span className="text-green-600 text-xl">✅</span>
+                                ) : (
+                                  <span className="text-red-600 text-xl">❌</span>
+                                )}
+                              </td>
+                              <td className="py-2 px-3 text-gray-600">
+                                {p.commentaire || '-'}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="3" className="py-4 text-center text-gray-500">
+                              Aucune présence enregistrée
+                            </td>
+                          </tr>
+                        );
+                      })()}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
