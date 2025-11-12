@@ -133,6 +133,7 @@ class CulteStatsUpdate(BaseModel):
 class PresenceEntry(BaseModel):
     date: str
     present: bool
+    commentaire: Optional[str] = None
 
 class CommentEntry(BaseModel):
     date: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
