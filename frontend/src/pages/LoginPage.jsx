@@ -44,7 +44,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     
-    // Check if special access (pasteur or superadmin) - they don't need city
+    // Check if special access (pasteur or superadmin) - they don't need city at login
     const isSpecialAccess = username === 'pasteur' || username === 'superadmin';
     
     if (!isSpecialAccess && !city) {
@@ -65,16 +65,19 @@ const LoginPage = () => {
     try {
       // Use "Dijon" as default for special access users
       const cityToUse = isSpecialAccess ? 'Dijon' : city;
-      await login(username, password, cityToUse, departmentToUse);
+      const result = await login(username, password, cityToUse, departmentToUse);
       toast.success('Connexion réussie!');
       
       // Clear session storage
       sessionStorage.removeItem('selectedCity');
       sessionStorage.removeItem('selectedDepartment');
       
-      // Redirect special access users to department selection page
+      // Redirect special access users (pasteur, superadmin) to department selection
+      // Responsable d'église to city selection
       if (isSpecialAccess) {
         navigate('/select-department');
+      } else if (result.user.role === 'responsable_eglise') {
+        navigate('/select-ville');
       } else {
         navigate('/dashboard');
       }
