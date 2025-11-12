@@ -264,6 +264,7 @@ const DashboardSuperAdminCompletPage = () => {
   // Filter visitors table
   const filteredVisitors = visitorsTable.filter(v => {
     if (selectedCity !== 'all' && v.city !== selectedCity) return false;
+    if (selectedPromo !== 'all' && v.assigned_month !== selectedPromo) return false;
     if (!visitorsFilter) return true;
     
     const searchLower = visitorsFilter.toLowerCase();
