@@ -186,13 +186,7 @@ const MarquerPresencesPage = () => {
                         <div className="flex justify-center">
                           <Checkbox
                             checked={presences[visitor.id] === true}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                handlePresenceChange(visitor.id, true);
-                              } else if (presences[visitor.id] === true) {
-                                handlePresenceChange(visitor.id, true); // Décoche
-                              }
-                            }}
+                            onCheckedChange={() => handlePresenceToggle(visitor.id, true)}
                           />
                         </div>
                       </td>
@@ -200,13 +194,7 @@ const MarquerPresencesPage = () => {
                         <div className="flex justify-center">
                           <Checkbox
                             checked={presences[visitor.id] === false}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                handlePresenceChange(visitor.id, false);
-                              } else if (presences[visitor.id] === false) {
-                                handlePresenceChange(visitor.id, false); // Décoche
-                              }
-                            }}
+                            onCheckedChange={() => handlePresenceToggle(visitor.id, false)}
                           />
                         </div>
                       </td>
