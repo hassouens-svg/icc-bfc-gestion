@@ -115,7 +115,6 @@ const VisitorsTablePage = () => {
   const resetFilters = () => {
     setFilters({
       date: '',
-      serviceType: 'all',
       presence: 'all',
       category: 'all',
       status: 'actif',
