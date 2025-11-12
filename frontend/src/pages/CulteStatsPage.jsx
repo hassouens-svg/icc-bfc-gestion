@@ -65,7 +65,7 @@ const CulteStatsPage = () => {
   const [editStars, setEditStars] = useState(0);
 
   useEffect(() => {
-    if (!user || !['accueil', 'super_admin'].includes(user.role)) {
+    if (!user || !['accueil', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
