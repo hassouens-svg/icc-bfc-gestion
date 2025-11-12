@@ -74,6 +74,7 @@ const MarquerPresencesPage = () => {
   };
 
   const handlePresenceToggle = (visitorId, isPresent) => {
+    console.log('handlePresenceToggle called:', visitorId, isPresent);
     setPresences(prev => {
       const newPresences = {...prev};
       
@@ -85,6 +86,7 @@ const MarquerPresencesPage = () => {
         newPresences[visitorId] = isPresent;
       }
       
+      console.log('New presences state:', newPresences);
       return newPresences;
     });
   };
