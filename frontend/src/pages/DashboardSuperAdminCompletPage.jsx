@@ -95,6 +95,9 @@ const DashboardSuperAdminCompletPage = () => {
     const savedCity = localStorage.getItem('selected_city_view');
     return savedCity || 'all';
   });
+  const [selectedMonth, setSelectedMonth] = useState('all'); // Filtre Mois (1-12)
+  const [selectedYear, setSelectedYear] = useState('all'); // Filtre Année (2024-2030)
+  const [selectedPromo, setSelectedPromo] = useState('all'); // Filtre Promo pour tableau visiteurs
   const [loading, setLoading] = useState(true);
   
   // Data states
