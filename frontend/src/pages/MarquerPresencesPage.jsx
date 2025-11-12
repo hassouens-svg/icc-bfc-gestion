@@ -26,6 +26,13 @@ const MarquerPresencesPage = () => {
     loadVisitors();
   }, [user, navigate]);
 
+  useEffect(() => {
+    // Charger les présences existantes quand la date change
+    if (selectedDate && visitors.length > 0) {
+      loadExistingPresences();
+    }
+  }, [selectedDate, visitors]);
+
   const loadVisitors = async () => {
     try {
       const visitorsData = await getVisitors();
