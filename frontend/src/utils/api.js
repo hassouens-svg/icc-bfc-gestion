@@ -163,11 +163,12 @@ export const addComment = async (id, text) => {
   return response.data;
 };
 
-export const addPresence = async (id, date, present, type) => {
+export const addPresence = async (id, date, present, type, commentaire = null) => {
   const response = await apiClient.post(`/visitors/${id}/presence`, {
     date,
     present,
     type,
+    commentaire,
   });
   return response.data;
 };
