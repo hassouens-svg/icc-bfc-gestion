@@ -316,23 +316,29 @@ const DashboardSuperAdminCompletPage = () => {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Ville</label>
-                <Select 
-                  value={selectedCity} 
-                  onValueChange={setSelectedCity}
-                  disabled={isResponsableEglise}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {!isResponsableEglise && <SelectItem value="all">Toutes les villes</SelectItem>}
-                    {cities.map((city) => (
-                      <SelectItem key={city.id} value={city.name}>
-                        {city.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {isResponsableEglise ? (
+                  <div className="px-3 py-2 border rounded-md bg-gray-50">
+                    <p className="text-sm font-medium text-gray-700">{selectedCity}</p>
+                    <p className="text-xs text-gray-500">Votre ville assignée</p>
+                  </div>
+                ) : (
+                  <Select 
+                    value={selectedCity} 
+                    onValueChange={setSelectedCity}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes les villes</SelectItem>
+                      {cities.map((city) => (
+                        <SelectItem key={city.id} value={city.name}>
+                          {city.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
           </CardContent>
