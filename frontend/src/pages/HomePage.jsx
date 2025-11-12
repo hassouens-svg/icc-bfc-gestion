@@ -88,6 +88,13 @@ const HomePage = () => {
       description: 'Tableau de bord Pasteur et Super Admin',
       icon: Shield,
       color: 'from-red-400 to-red-600'
+    },
+    {
+      id: 'acces-bergers-eglise',
+      title: 'Accès Bergers d\'Église',
+      description: 'Responsables d\'Église - Gestion complète de votre ville',
+      icon: Shield,
+      color: 'from-purple-400 to-pink-600'
     }
   ];
 
