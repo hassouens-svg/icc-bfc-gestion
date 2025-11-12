@@ -41,6 +41,13 @@ const GestionAccesPage = () => {
       navigate('/dashboard');
       return;
     }
+    setUser(currentUser);
+    
+    // Pour responsable_eglise, fixer automatiquement la ville
+    if (currentUser.role === 'responsable_eglise') {
+      setNewUser(prev => ({ ...prev, city: currentUser.city }));
+    }
+    
     loadData();
   }, [currentUser, navigate]);
 
