@@ -487,6 +487,7 @@ metadata:
 test_plan:
   current_focus:
     - "Data Export/Import System - Backend Endpoints"
+    - "Responsable d'Église Login - berger_dijon Authentication"
   stuck_tasks:
     - "Data Export/Import System - Backend Endpoints"
   test_all: false
