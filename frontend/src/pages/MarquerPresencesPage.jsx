@@ -162,44 +162,46 @@ const MarquerPresencesPage = () => {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50">
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4">Nom Complet</th>
-                    <th className="text-left py-3 px-4">Ville</th>
-                    <th className="text-center py-3 px-4">Promo</th>
-                    <th className="text-center py-3 px-4 w-32">Présent</th>
-                    <th className="text-center py-3 px-4 w-32">Absent</th>
-                    <th className="text-left py-3 px-4 w-64">Commentaire</th>
+                    <th className="text-left py-3 px-4">Nom</th>
+                    <th className="text-left py-3 px-4">Prénom</th>
+                    <th className="text-left py-3 px-4">Catégorie</th>
+                    <th className="text-left py-3 px-4">Canal d'arrivée</th>
+                    <th className="text-center py-3 px-4 w-24">Présent ✅</th>
+                    <th className="text-center py-3 px-4 w-24">Absent ❌</th>
+                    <th className="text-left py-3 px-4 w-72">Commentaire</th>
                   </tr>
                 </thead>
                 <tbody>
                   {visitors.map((visitor) => (
                     <tr key={visitor.id} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium">
-                        {visitor.firstname} {visitor.lastname}
+                      <td className="py-3 px-4 font-medium">{visitor.lastname}</td>
+                      <td className="py-3 px-4">{visitor.firstname}</td>
+                      <td className="py-3 px-4">
+                        {visitor.types?.join(', ') || 'N/A'}
                       </td>
-                      <td className="py-3 px-4">{visitor.city}</td>
-                      <td className="py-3 px-4 text-center">{visitor.assigned_month}</td>
+                      <td className="py-3 px-4">{visitor.arrival_channel}</td>
                       <td className="py-3 px-4 text-center">
-                        <Checkbox
-                          checked={presences[visitor.id] === true}
-                          onCheckedChange={(checked) => {
-                            if (checked) handlePresenceChange(visitor.id, true);
-                          }}
-                        />
+                        <div className="flex justify-center">
+                          <Checkbox
+                            checked={presences[visitor.id] === true}
+                            onCheckedChange={() => handlePresenceChange(visitor.id, true)}
+                          />
+                        </div>
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <Checkbox
-                          checked={presences[visitor.id] === false}
-                          onCheckedChange={(checked) => {
-                            if (checked) handlePresenceChange(visitor.id, false);
-                          }}
-                        />
+                        <div className="flex justify-center">
+                          <Checkbox
+                            checked={presences[visitor.id] === false}
+                            onCheckedChange={() => handlePresenceChange(visitor.id, false)}
+                          />
+                        </div>
                       </td>
                       <td className="py-3 px-4">
                         <Input
                           placeholder="Commentaire..."
                           value={comments[visitor.id] || ''}
                           onChange={(e) => setComments({...comments, [visitor.id]: e.target.value})}
-                          className="w-full"
+                          className="w-full text-xs"
                         />
                       </td>
                     </tr>
