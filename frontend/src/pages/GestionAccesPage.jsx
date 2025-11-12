@@ -37,7 +37,7 @@ const GestionAccesPage = () => {
   });
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'super_admin') {
+    if (!currentUser || !['super_admin', 'responsable_eglise'].includes(currentUser.role)) {
       navigate('/dashboard');
       return;
     }
