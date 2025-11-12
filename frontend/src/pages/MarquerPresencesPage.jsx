@@ -31,7 +31,7 @@ const MarquerPresencesPage = () => {
     if (selectedDate && visitors.length > 0) {
       loadExistingPresences();
     }
-  }, [selectedDate, visitors]);
+  }, [selectedDate]); // Retirer 'visitors' de la dépendance pour éviter les re-renders constants
 
   const loadVisitors = async () => {
     try {
