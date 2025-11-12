@@ -74,10 +74,17 @@ const MarquerPresencesPage = () => {
   };
 
   const handlePresenceChange = (visitorId, isPresent) => {
-    setPresences(prev => ({
-      ...prev,
-      [visitorId]: isPresent
-    }));
+    setPresences(prev => {
+      const newPresences = {...prev};
+      // Si on coche la même valeur qui est déjà cochée, on la décoche
+      if (newPresences[visitorId] === isPresent) {
+        delete newPresences[visitorId];
+      } else {
+        // Sinon on met la nouvelle valeur
+        newPresences[visitorId] = isPresent;
+      }
+      return newPresences;
+    });
   };
 
   const handleSaveAll = async () => {
