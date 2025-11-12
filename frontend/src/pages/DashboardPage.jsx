@@ -27,7 +27,8 @@ const DashboardPage = () => {
       const data = await getStats();
       setStats(data);
     } catch (error) {
-      toast.error('Erreur lors du chargement des statistiques');
+      // Pas de message d'erreur affiché
+      console.error('Erreur lors du chargement des statistiques:', error);
     } finally {
       setLoading(false);
     }
