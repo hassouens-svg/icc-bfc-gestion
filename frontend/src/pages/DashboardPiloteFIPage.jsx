@@ -96,7 +96,7 @@ const DashboardPiloteFIPage = () => {
         present: present,
         commentaire: comments[membreId] || null
       });
-      toast.success('Présence enregistrée');
+      toast.success(present ? 'Présence enregistrée' : 'Absence enregistrée');
       loadPresences();
     } catch (error) {
       toast.error('Erreur lors de l\'enregistrement');
