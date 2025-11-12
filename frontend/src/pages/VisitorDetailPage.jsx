@@ -250,7 +250,27 @@ const VisitorDetailPage = () => {
               {/* Add presence form */}
               {/* Historique des Présences - Vue Tableau */}
               <div>
-                <h4 className="font-medium mb-3">Historique des Présences</h4>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium">Historique des Présences</h4>
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm text-gray-600">Filtrer par date:</label>
+                    <Input
+                      type="date"
+                      value={filterDate}
+                      onChange={(e) => setFilterDate(e.target.value)}
+                      className="w-48"
+                    />
+                    {filterDate && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setFilterDate('')}
+                      >
+                        Réinitialiser
+                      </Button>
+                    )}
+                  </div>
+                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse">
                     <thead className="bg-gray-50">
@@ -263,10 +283,18 @@ const VisitorDetailPage = () => {
                     <tbody>
                       {(() => {
                         // Combiner toutes les présences (dimanche et jeudi)
-                        const allPresences = [
+                        let allPresences = [
                           ...(visitor.presences_dimanche || []),
                           ...(visitor.presences_jeudi || [])
-                        ].sort((a, b) => new Date(b.date) - new Date(a.date));
+                        ];
+                        
+                        // Filtrer par date si sélectionnée
+                        if (filterDate) {
+                          allPresences = allPresences.filter(p => p.date === filterDate);
+                        }
+                        
+                        // Trier par date décroissante
+                        allPresences = allPresences.sort((a, b) => new Date(b.date) - new Date(a.date));
                         
                         return allPresences.length > 0 ? (
                           allPresences.map((p, idx) => (
@@ -287,7 +315,9 @@ const VisitorDetailPage = () => {
                         ) : (
                           <tr>
                             <td colSpan="3" className="py-4 text-center text-gray-500">
-                              Aucune présence enregistrée
+                              {filterDate 
+                                ? `Aucune présence enregistrée pour le ${filterDate}`
+                                : 'Aucune présence enregistrée'}
                             </td>
                           </tr>
                         );
