@@ -299,50 +299,7 @@ const VisitorDetailPage = () => {
           </CardContent>
         </Card>
 
-        {/* Comments */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <MessageSquare className="h-5 w-5 mr-2" />
-              Commentaires
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {/* Add comment */}
-              <div className="space-y-2">
-                <Textarea
-                  placeholder="Ajouter un commentaire..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  data-testid="comment-textarea"
-                />
-                <Button onClick={handleAddComment} data-testid="add-comment-button">
-                  Ajouter un commentaire
-                </Button>
-              </div>
-
-              {/* Comments list */}
-              <div className="space-y-3">
-                {visitor.comments && visitor.comments.length > 0 ? (
-                  visitor.comments.sort((a, b) => new Date(b.date) - new Date(a.date)).map((comment, idx) => (
-                    <div key={idx} className="border p-3 rounded-lg bg-gray-50">
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="font-medium text-sm">{comment.author}</span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(comment.date).toLocaleDateString('fr-FR')}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700">{comment.text}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-sm">Aucun commentaire</p>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Section commentaires supprimée - Tout se fait dans "Marquer présence" */}
       </div>
 
       {/* Stop Tracking Dialog */}
