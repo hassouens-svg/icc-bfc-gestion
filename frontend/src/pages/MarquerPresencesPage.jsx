@@ -186,24 +186,32 @@ const MarquerPresencesPage = () => {
                       <td className="py-3 px-4">{visitor.arrival_channel}</td>
                       <td className="py-3 px-4 text-center">
                         <div className="flex justify-center">
-                          <input
-                            type="checkbox"
-                            checked={presences[visitor.id] === true}
+                          <button
+                            type="button"
                             onClick={() => handlePresenceToggle(visitor.id, true)}
-                            onChange={() => {}} // Prevent React warning
-                            className="w-5 h-5 cursor-pointer accent-green-600"
-                          />
+                            className={`w-8 h-8 rounded border-2 flex items-center justify-center font-bold text-lg transition-colors ${
+                              presences[visitor.id] === true
+                                ? 'bg-green-500 border-green-600 text-white'
+                                : 'bg-white border-gray-300 text-gray-400 hover:border-green-400'
+                            }`}
+                          >
+                            {presences[visitor.id] === true && '✓'}
+                          </button>
                         </div>
                       </td>
                       <td className="py-3 px-4 text-center">
                         <div className="flex justify-center">
-                          <input
-                            type="checkbox"
-                            checked={presences[visitor.id] === false}
+                          <button
+                            type="button"
                             onClick={() => handlePresenceToggle(visitor.id, false)}
-                            onChange={() => {}} // Prevent React warning
-                            className="w-5 h-5 cursor-pointer accent-red-600"
-                          />
+                            className={`w-8 h-8 rounded border-2 flex items-center justify-center font-bold text-lg transition-colors ${
+                              presences[visitor.id] === false
+                                ? 'bg-red-500 border-red-600 text-white'
+                                : 'bg-white border-gray-300 text-gray-400 hover:border-red-400'
+                            }`}
+                          >
+                            {presences[visitor.id] === false && '✗'}
+                          </button>
                         </div>
                       </td>
                       <td className="py-3 px-4">
