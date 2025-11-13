@@ -109,6 +109,64 @@ const DashboardResponsableSecteurPage = () => {
     }
   };
 
+  const loadKPIsByDate = async () => {
+    if (!selectedDate || famillesImpact.length === 0) return;
+
+    try {
+      // Filtrer les FIs selon la sélection
+      const fisToAnalyze = selectedFI === 'all' 
+        ? famillesImpact 
+        : famillesImpact.filter(fi => fi.id === selectedFI);
+
+      let allMembresForDate = [];
+      let allPresencesForDate = [];
+
+      for (const fi of fisToAnalyze) {
+        try {
+          const membres = await getMembresFI(fi.id);
+          const presences = await getPresencesFI(fi.id, selectedDate);
+          
+          allMembresForDate = [...allMembresForDate, ...membres];
+          allPresencesForDate = [...allPresencesForDate, ...presences];
+        } catch (error) {
+          console.error(`Erreur chargement KPIs FI ${fi.name}:`, error);
+        }
+      }
+
+      const totalMembres = allMembresForDate.length;
+      const presents = allPresencesForDate.filter(p => p.present === true).length;
+      const absents = allPresencesForDate.filter(p => p.present === false).length;
+
+      // Nouveaux membres (7 derniers jours)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const nouveaux = allMembresForDate.filter(m => {
+        const dateAjout = new Date(m.date_ajout);
+        return dateAjout >= sevenDaysAgo;
+      }).length;
+
+      const tauxFidelisation = totalMembres > 0 ? (presents / totalMembres) * 100 : 0;
+
+      setKpisFI({
+        totalMembres,
+        presents,
+        absents,
+        nouveaux,
+        tauxFidelisation: tauxFidelisation.toFixed(1)
+      });
+
+    } catch (error) {
+      console.error('Erreur calcul KPIs:', error);
+    }
+  };
+
+  // Charger les KPIs quand la date ou la FI change
+  useEffect(() => {
+    if (selectedDate && famillesImpact.length > 0) {
+      loadKPIsByDate();
+    }
+  }, [selectedDate, selectedFI, famillesImpact]);
+
   if (loading) {
     return (
       <Layout>
