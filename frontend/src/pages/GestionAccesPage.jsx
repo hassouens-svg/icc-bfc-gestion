@@ -464,34 +464,82 @@ const GestionAccesPage = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Rôle</Label>
-                  <Input
-                    value={getRoleLabel(selectedUser.role)}
-                    disabled
-                    className="bg-gray-100"
-                  />
-                  <p className="text-xs text-gray-500">Le rôle ne peut pas être modifié. Créez un nouvel utilisateur si nécessaire.</p>
-                </div>
+                {user?.role === 'super_admin' ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Rôle</Label>
+                      <Select 
+                        value={selectedUser.role} 
+                        onValueChange={(value) => setSelectedUser({...selectedUser, role: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
+                          <SelectItem value="superviseur_fi">Superviseur Familles d'Impact</SelectItem>
+                          <SelectItem value="referent">Responsable de Promos</SelectItem>
+                          <SelectItem value="pilote_fi">Pilote FI</SelectItem>
+                          <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
+                          <SelectItem value="accueil">Accueil et Intégration</SelectItem>
+                          <SelectItem value="promotions">Promotions</SelectItem>
+                          <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="space-y-2">
-                  <Label>Ville</Label>
-                  <Input
-                    value={selectedUser.city}
-                    disabled
-                    className="bg-gray-100"
-                  />
-                  <p className="text-xs text-gray-500">La ville ne peut pas être modifiée. Créez un nouvel utilisateur si nécessaire.</p>
-                </div>
+                    <div className="space-y-2">
+                      <Label>Ville</Label>
+                      <Select 
+                        value={selectedUser.city} 
+                        onValueChange={(value) => setSelectedUser({...selectedUser, city: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {cities.map((city) => (
+                            <SelectItem key={city.id} value={city.name}>
+                              {city.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Rôle</Label>
+                      <Input
+                        value={getRoleLabel(selectedUser.role)}
+                        disabled
+                        className="bg-gray-100"
+                      />
+                      <p className="text-xs text-gray-500">Le rôle ne peut pas être modifié.</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Ville</Label>
+                      <Input
+                        value={selectedUser.city}
+                        disabled
+                        className="bg-gray-100"
+                      />
+                      <p className="text-xs text-gray-500">La ville ne peut pas être modifiée.</p>
+                    </div>
+                  </>
+                )}
 
                 {selectedUser.role === 'referent' && (
                   <div className="space-y-2">
-                    <Label>Mois assigné (YYYY-MM)</Label>
+                    <Label>Mois assignés</Label>
                     <Input
-                      type="month"
                       value={selectedUser.assigned_month || ''}
                       onChange={(e) => setSelectedUser({...selectedUser, assigned_month: e.target.value})}
+                      placeholder="2024-01,2024-02,2024-03"
                     />
+                    <p className="text-xs text-gray-500">Format: YYYY-MM, séparés par des virgules</p>
                   </div>
                 )}
 
