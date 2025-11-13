@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getFamilleImpact, getMembresFI, createMembreFI, deleteMembreFI, getPresencesFI, createPresenceFI, getUser } from '../utils/api';
+import { getFamilleImpact, getMembresFI, createMembreFI, deleteMembreFI, getPresencesFI, createPresenceFI, getUser, updateFamilleImpact } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Checkbox } from '../components/ui/checkbox';
 import { Plus, UserPlus, Calendar, Trash2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
-import { updateFamilleImpact } from '../utils/api';
 
 const FamilleImpactDetailPage = () => {
   const navigate = useNavigate();
