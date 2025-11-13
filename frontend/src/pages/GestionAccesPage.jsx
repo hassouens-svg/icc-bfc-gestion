@@ -138,6 +138,12 @@ const GestionAccesPage = () => {
         assigned_secteur_id: selectedUser.assigned_secteur_id
       };
       
+      // Si super_admin, permettre de modifier ville et rôle
+      if (user?.role === 'super_admin') {
+        updateData.city = selectedUser.city;
+        updateData.role = selectedUser.role;
+      }
+      
       await updateUser(selectedUser.id, updateData);
       toast.success('Utilisateur modifié avec succès!');
       setIsEditDialogOpen(false);
