@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getMembresFI, getPresencesFI, getUser } from '../utils/api';
+import { getMembresFI, getPresencesFI, getUser, createPresenceFI } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Calendar, Search, Download, TrendingUp } from 'lucide-react';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+import { Users, UserCheck, UserX, UserPlus, TrendingUp, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PresencesFITablePage = () => {
