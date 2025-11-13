@@ -197,6 +197,122 @@ const DashboardSuperviseurFIPage = () => {
           </Card>
         </div>
 
+        {/* Section KPIs FI par date */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Calendar className="h-5 w-5" />
+              <span>Analyse des Présences FI par Date</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="space-y-2">
+                <Label>Date</Label>
+                <Input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Secteur</Label>
+                <Select value={selectedSecteur} onValueChange={setSelectedSecteur}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les secteurs</SelectItem>
+                    {secteurs.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Famille d'Impact</Label>
+                <Select value={selectedFI} onValueChange={setSelectedFI}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les FI</SelectItem>
+                    {famillesImpact
+                      .filter(fi => selectedSecteur === 'all' || fi.secteur_id === selectedSecteur)
+                      .map((fi) => (
+                        <SelectItem key={fi.id} value={fi.id}>{fi.name}</SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {selectedDate && (
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-6 w-6 text-blue-600" />
+                      <div>
+                        <p className="text-xs text-gray-600">Total</p>
+                        <p className="text-xl font-bold text-blue-600">{kpisFI.totalMembres}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-2">
+                      <UserCheck className="h-6 w-6 text-green-600" />
+                      <div>
+                        <p className="text-xs text-gray-600">Présents</p>
+                        <p className="text-xl font-bold text-green-600">{kpisFI.presents}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-2">
+                      <UserX className="h-6 w-6 text-red-600" />
+                      <div>
+                        <p className="text-xs text-gray-600">Absents</p>
+                        <p className="text-xl font-bold text-red-600">{kpisFI.absents}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-2">
+                      <UserPlus className="h-6 w-6 text-purple-600" />
+                      <div>
+                        <p className="text-xs text-gray-600">Nouveaux</p>
+                        <p className="text-xl font-bold text-purple-600">{kpisFI.nouveaux}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-2">
+                      <TrendingUp className="h-6 w-6 text-indigo-600" />
+                      <div>
+                        <p className="text-xs text-gray-600">Fidélisation</p>
+                        <p className="text-xl font-bold text-indigo-600">{kpisFI.tauxFidelisation}%</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Evolution Chart */}
         <Card>
           <CardHeader>
