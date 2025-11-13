@@ -23,6 +23,7 @@ const FamillesImpactPage = () => {
     nom: '',
     secteur_id: '',
     ville: user?.city || '',
+    adresse: '',
   });
 
   useEffect(() => {
