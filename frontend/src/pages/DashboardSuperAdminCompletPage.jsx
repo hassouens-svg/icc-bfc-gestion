@@ -266,6 +266,54 @@ const DashboardSuperAdminCompletPage = () => {
     }
   };
 
+  const loadFIKPIsByDate = async (date) => {
+    try {
+      const ville = selectedCity !== 'all' ? selectedCity : null;
+      
+      // Charger toutes les FIs de la ville
+      const fisData = await getFamillesImpact(ville);
+      
+      let allMembres = [];
+      let allPresences = [];
+
+      for (const fi of fisData) {
+        try {
+          const membres = await getMembresFI(fi.id);
+          const presences = await getPresencesFI(fi.id, date);
+          
+          allMembres = [...allMembres, ...membres];
+          allPresences = [...allPresences, ...presences];
+        } catch (error) {
+          console.error(`Erreur chargement FI ${fi.name}:`, error);
+        }
+      }
+
+      const totalMembres = allMembres.length;
+      const presents = allPresences.filter(p => p.present === true).length;
+      const absents = allPresences.filter(p => p.present === false).length;
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const nouveaux = allMembres.filter(m => {
+        const dateAjout = new Date(m.date_ajout);
+        return dateAjout >= sevenDaysAgo;
+      }).length;
+
+      const tauxFidelisation = totalMembres > 0 ? (presents / totalMembres) * 100 : 0;
+
+      setKpisFI({
+        totalMembres,
+        presents,
+        absents,
+        nouveaux,
+        tauxFidelisation: tauxFidelisation.toFixed(1)
+      });
+
+    } catch (error) {
+      console.error('Erreur calcul KPIs FI:', error);
+    }
+  };
+
   // Filter data by city
   const filterByCity = (data, cityField = 'city') => {
     if (selectedCity === 'all') return data;
