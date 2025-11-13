@@ -39,12 +39,14 @@ const PresencesFITablePage = () => {
       navigate('/dashboard');
       return;
     }
-    loadData();
+    loadMembres();
   }, [user, navigate]);
 
   useEffect(() => {
-    filterData();
-  }, [searchTerm, selectedMonth, membres, presences]);
+    if (selectedDate && membres.length > 0) {
+      loadPresencesForDate();
+    }
+  }, [selectedDate, membres]);
 
   const loadData = async () => {
     try {
