@@ -204,6 +204,27 @@ const DashboardPiloteFIPage = () => {
                 />
               </div>
 
+              <div className="space-y-3">
+                <Label>Type de membre *</Label>
+                <RadioGroup
+                  value={newMember.is_nouveau ? "nouveau" : "ancien"}
+                  onValueChange={(value) => setNewMember({...newMember, is_nouveau: value === "nouveau"})}
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="nouveau" id="nouveau" />
+                    <Label htmlFor="nouveau" className="cursor-pointer font-normal">
+                      Nouveau membre (ajouté récemment)
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="ancien" id="ancien" />
+                    <Label htmlFor="ancien" className="cursor-pointer font-normal">
+                      Ancien membre
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
               <div className="flex space-x-2">
                 <Button type="submit" className="flex-1">
                   Ajouter
