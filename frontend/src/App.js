@@ -49,6 +49,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/register-membre-fi" element={<RegisterMembreFIPage />} />
+          <Route path="/introduction-fi" element={<IntroductionFIPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/visitors" element={<VisitorsPage />} />
           <Route path="/visitors-table" element={<VisitorsTablePage />} />
