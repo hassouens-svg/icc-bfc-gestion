@@ -9,8 +9,9 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Checkbox } from '../components/ui/checkbox';
-import { Plus, UserPlus, Calendar, Trash2 } from 'lucide-react';
+import { Plus, UserPlus, Calendar, Trash2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
+import { updateFamilleImpact } from '../utils/api';
 
 const FamilleImpactDetailPage = () => {
   const navigate = useNavigate();
@@ -22,8 +23,10 @@ const FamilleImpactDetailPage = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newMembre, setNewMembre] = useState({ prenom: '', nom: '', fi_id: fiId });
   const [presenceComments, setPresenceComments] = useState({});
+  const [editFIData, setEditFIData] = useState({ nom: '', adresse: '' });
 
   useEffect(() => {
     if (!user) {
