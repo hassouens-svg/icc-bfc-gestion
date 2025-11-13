@@ -85,6 +85,7 @@ class UserCreate(BaseModel):
     password: str
     city: str
     role: str
+    telephone: Optional[str] = None
     assigned_month: Optional[str] = None
     permissions: Optional[Dict[str, bool]] = None
 
