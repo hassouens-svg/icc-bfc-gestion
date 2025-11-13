@@ -24,6 +24,7 @@ const RegisterPage = () => {
     visit_date: new Date().toISOString().split('T')[0],
   });
   const [loading, setLoading] = useState(false);
+  const [gdprConsent, setGdprConsent] = useState(null); // null, true, ou false
 
   const visitorTypes = [
     'Nouveau Arrivant',
