@@ -158,15 +158,25 @@ const FamilleImpactDetailPage = () => {
           <div>
             <h2 className="text-3xl font-bold text-gray-900">{fi?.nom}</h2>
             <p className="text-gray-500 mt-1">{fi?.ville} - Cellule de prière (Jeudis)</p>
+            {fi?.adresse && (
+              <p className="text-sm text-gray-600 mt-1">📍 {fi.adresse}</p>
+            )}
           </div>
-          {['admin', 'super_admin', 'superviseur_fi', 'responsable_secteur', 'pilote_fi'].includes(user?.role) && (
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter Membre
-                </Button>
-              </DialogTrigger>
+          <div className="flex space-x-2">
+            {['admin', 'super_admin', 'superviseur_fi', 'responsable_secteur'].includes(user?.role) && (
+              <Button onClick={handleEditFI} variant="outline">
+                <Edit className="h-4 w-4 mr-2" />
+                Modifier les informations
+              </Button>
+            )}
+            {['admin', 'super_admin', 'superviseur_fi', 'responsable_secteur', 'pilote_fi'].includes(user?.role) && (
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajouter Membre
+                  </Button>
+                </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Ajouter un nouveau membre</DialogTitle>
