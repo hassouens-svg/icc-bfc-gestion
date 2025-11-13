@@ -143,6 +143,14 @@ const FamillesImpactPage = () => {
                         placeholder="ex: FI République, FI Fontaine d'Ouche..."
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label>Adresse (optionnel)</Label>
+                      <Input
+                        value={newFI.adresse}
+                        onChange={(e) => setNewFI({...newFI, adresse: e.target.value})}
+                        placeholder="Adresse complète de la FI"
+                      />
+                    </div>
                     <Button type="submit" className="w-full">
                       Créer la Famille d'Impact
                     </Button>
