@@ -32,7 +32,7 @@ const GestionAccesPage = () => {
     password: '',
     city: '',
     role: 'referent',
-    assigned_month: null,
+    assigned_month: [], // Changé en tableau pour sélection multiple
     assigned_fi_id: null,
     assigned_secteur_id: null
   });
