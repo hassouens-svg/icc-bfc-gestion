@@ -279,6 +279,46 @@ const FamilleImpactDetailPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Edit FI Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Modifier la Famille d'Impact</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleUpdateFI} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Nom de la FI *</Label>
+                <Input
+                  value={editFIData.nom}
+                  onChange={(e) => setEditFIData({...editFIData, nom: e.target.value})}
+                  placeholder="Nom de la FI"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Adresse (optionnel)</Label>
+                <Textarea
+                  value={editFIData.adresse}
+                  onChange={(e) => setEditFIData({...editFIData, adresse: e.target.value})}
+                  placeholder="Adresse complète de la FI"
+                  rows={3}
+                />
+                <p className="text-xs text-gray-500">
+                  Cette adresse sera utilisée sur la carte "Trouver ma FI"
+                </p>
+              </div>
+              <div className="flex space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1">
+                  Annuler
+                </Button>
+                <Button type="submit" className="flex-1">
+                  Enregistrer
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
