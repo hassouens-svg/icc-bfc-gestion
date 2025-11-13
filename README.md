@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://pastoral-dash.preview.emergentagent.com/login
-- **Inscription Publique**: https://pastoral-dash.preview.emergentagent.com/register
+- **Connexion**: https://church-tracker-2.preview.emergentagent.com/login
+- **Inscription Publique**: https://church-tracker-2.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**

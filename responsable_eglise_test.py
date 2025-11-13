@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv('/app/frontend/.env')
 
 # Get backend URL from frontend env
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://pastoral-dash.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://church-tracker-2.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 def test_responsable_eglise_login():
