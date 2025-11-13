@@ -270,18 +270,40 @@ const TrouverMaFIPage = () => {
                         position={[fi.lat, fi.lon]}
                         icon={L.divIcon({
                           className: 'custom-marker',
-                          html: '<div style="background-color: #4f46e5; width: 25px; height: 25px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
-                          iconSize: [25, 25]
+                          html: '<div style="font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🏠</div>',
+                          iconSize: [32, 32],
+                          iconAnchor: [16, 32]
                         })}
                       >
-                        <Popup>
-                          <strong>{fi.nom}</strong>
-                          <br />
-                          {fi.adresse}
-                          <br />
-                          <span className="text-indigo-600 font-semibold">
-                            À {fi.distance.toFixed(1)} km
-                          </span>
+                        <Popup maxWidth={250}>
+                          <div style="padding: 8px;">
+                            <h3 style="font-weight: bold; font-size: 16px; margin-bottom: 8px; color: #4f46e5;">
+                              {fi.nom}
+                            </h3>
+                            <div style="margin-bottom: 6px;">
+                              <strong>📍 Adresse :</strong><br />
+                              {fi.adresse}, {fi.ville}
+                            </div>
+                            {fi.pilote_nom && (
+                              <div style="margin-bottom: 6px;">
+                                <strong>👤 Pilote :</strong><br />
+                                {fi.pilote_nom}
+                              </div>
+                            )}
+                            {fi.pilote_telephone && (
+                              <div style="margin-bottom: 6px;">
+                                <strong>📞 Téléphone :</strong><br />
+                                <a href={`tel:${fi.pilote_telephone}`} style="color: #4f46e5; text-decoration: underline;">
+                                  {fi.pilote_telephone}
+                                </a>
+                              </div>
+                            )}
+                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                              <span style="color: #4f46e5; font-weight: 600;">
+                                📏 À {fi.distance.toFixed(1)} km
+                              </span>
+                            </div>
+                          </div>
                         </Popup>
                       </Marker>
                     ))}
