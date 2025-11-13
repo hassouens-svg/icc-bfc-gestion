@@ -65,13 +65,25 @@ const RegisterPage = () => {
     
     if (!formData.firstname || !formData.lastname || !formData.city || 
         formData.types.length === 0 || !formData.arrival_channel || !formData.phone) {
-      toast.error('Veuillez remplir tous les champs obligatoires (email optionnel)');
+      toast.error('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    if (gdprConsent !== true) {
+      toast.error('Veuillez accepter le consentement pour l\'utilisation de vos données');
       return;
     }
 
     setLoading(true);
     try {
-      const result = await registerVisitor(formData);
+      // Nettoyer les données : si email est vide, envoyer null
+      const dataToSend = {
+        ...formData,
+        email: formData.email.trim() || null,
+        address: formData.address.trim() || null
+      };
+      
+      const result = await registerVisitor(dataToSend);
       console.log('Registration successful:', result);
       toast.success('Inscription réussie! Merci de votre visite.', {
         duration: 3000,
