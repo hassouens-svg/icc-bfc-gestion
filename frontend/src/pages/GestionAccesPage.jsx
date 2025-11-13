@@ -284,6 +284,21 @@ const GestionAccesPage = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>Téléphone {newUser.role === 'pilote_fi' && '*'}</Label>
+                  <Input
+                    type="tel"
+                    value={newUser.telephone}
+                    onChange={(e) => setNewUser({...newUser, telephone: e.target.value})}
+                    placeholder="+33 6 12 34 56 78"
+                  />
+                  {newUser.role === 'pilote_fi' && (
+                    <p className="text-xs text-gray-500">
+                      Requis pour les pilotes FI (affiché sur la carte de localisation)
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
                   <Label>Ville *</Label>
                   {user?.role === 'responsable_eglise' ? (
                     <div className="px-3 py-2 border rounded-md bg-gray-50">
