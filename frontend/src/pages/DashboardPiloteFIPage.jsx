@@ -17,9 +17,6 @@ const DashboardPiloteFIPage = () => {
   const user = getUser();
   const [stats, setStats] = useState(null);
   const [membres, setMembres] = useState([]);
-  const [presences, setPresences] = useState({});
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [comments, setComments] = useState({});
   const [loading, setLoading] = useState(true);
   const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
   const [newMember, setNewMember] = useState({ prenom: '', nom: '', telephone: '' });
