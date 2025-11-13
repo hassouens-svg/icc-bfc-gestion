@@ -309,20 +309,39 @@ const GestionAccesPage = () => {
                       <SelectItem value="pilote_fi">Pilote FI</SelectItem>
                       <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
                       <SelectItem value="accueil">Accueil et Intégration</SelectItem>
-                      <SelectItem value="promotions">Promotions</SelectItem>
-                      <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
+                      {user?.role === 'super_admin' && (
+                        <>
+                          <SelectItem value="promotions">Promotions</SelectItem>
+                          <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
 
                 {newUser.role === 'referent' && (
                   <div className="space-y-2">
-                    <Label>Mois assigné (YYYY-MM)</Label>
-                    <Input
-                      type="month"
-                      value={newUser.assigned_month || ''}
-                      onChange={(e) => setNewUser({...newUser, assigned_month: e.target.value})}
-                    />
+                    <Label>Mois assignés (sélection multiple) *</Label>
+                    <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                      <div className="grid grid-cols-2 gap-2">
+                        {generateMonths().map((month) => (
+                          <label key={month.value} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                            <input
+                              type="checkbox"
+                              checked={Array.isArray(newUser.assigned_month) && newUser.assigned_month.includes(month.value)}
+                              onChange={() => toggleMonth(month.value)}
+                              className="rounded"
+                            />
+                            <span className="text-sm">{month.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      {Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 0
+                        ? `${newUser.assigned_month.length} mois sélectionné(s)`
+                        : 'Aucun mois sélectionné'}
+                    </p>
                   </div>
                 )}
 
