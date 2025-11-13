@@ -43,16 +43,88 @@ const DashboardSuperviseurFIPage = () => {
     try {
       // Pour super_admin et pasteur, utiliser la ville sélectionnée
       const selectedCity = localStorage.getItem('selected_city_view');
-      const ville = ['super_admin', 'pasteur'].includes(user.role) && selectedCity ? selectedCity : user.city;
+      const ville = ['super_admin', 'pasteur', 'responsable_eglise'].includes(user.role) && selectedCity ? selectedCity : user.city;
       
       const data = await getStatsSuperviseurFI(ville);
       setStats(data);
+      
+      // Charger les secteurs et FIs
+      const secteursData = await getSecteurs(ville);
+      setSecteurs(secteursData);
+      
+      const fisData = await getFamillesImpact(ville);
+      setFamillesImpact(fisData);
     } catch (error) {
       toast.error('Erreur lors du chargement des statistiques');
     } finally {
       setLoading(false);
     }
   };
+
+  const loadKPIsByDate = async () => {
+    if (!selectedDate) return;
+
+    try {
+      const selectedCity = localStorage.getItem('selected_city_view');
+      const ville = ['super_admin', 'pasteur', 'responsable_eglise'].includes(user.role) && selectedCity ? selectedCity : user.city;
+
+      // Filtrer les FIs selon les sélections
+      let fisToAnalyze = famillesImpact;
+      
+      if (selectedSecteur !== 'all') {
+        fisToAnalyze = fisToAnalyze.filter(fi => fi.secteur_id === selectedSecteur);
+      }
+      
+      if (selectedFI !== 'all') {
+        fisToAnalyze = fisToAnalyze.filter(fi => fi.id === selectedFI);
+      }
+
+      let allMembres = [];
+      let allPresences = [];
+
+      for (const fi of fisToAnalyze) {
+        try {
+          const membres = await getMembresFI(fi.id);
+          const presences = await getPresencesFI(fi.id, selectedDate);
+          
+          allMembres = [...allMembres, ...membres];
+          allPresences = [...allPresences, ...presences];
+        } catch (error) {
+          console.error(`Erreur chargement FI ${fi.name}:`, error);
+        }
+      }
+
+      const totalMembres = allMembres.length;
+      const presents = allPresences.filter(p => p.present === true).length;
+      const absents = allPresences.filter(p => p.present === false).length;
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const nouveaux = allMembres.filter(m => {
+        const dateAjout = new Date(m.date_ajout);
+        return dateAjout >= sevenDaysAgo;
+      }).length;
+
+      const tauxFidelisation = totalMembres > 0 ? (presents / totalMembres) * 100 : 0;
+
+      setKpisFI({
+        totalMembres,
+        presents,
+        absents,
+        nouveaux,
+        tauxFidelisation: tauxFidelisation.toFixed(1)
+      });
+
+    } catch (error) {
+      console.error('Erreur calcul KPIs:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedDate && famillesImpact.length > 0) {
+      loadKPIsByDate();
+    }
+  }, [selectedDate, selectedSecteur, selectedFI, famillesImpact]);
 
   if (loading) {
     return (
