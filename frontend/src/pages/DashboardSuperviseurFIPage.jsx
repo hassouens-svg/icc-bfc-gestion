@@ -52,7 +52,7 @@ const DashboardSuperviseurFIPage = () => {
       const secteursData = await getSecteurs(ville);
       setSecteurs(secteursData);
       
-      const fisData = await getFamillesImpact(ville);
+      const fisData = await getFamillesImpact(null, ville);
       setFamillesImpact(fisData);
     } catch (error) {
       toast.error('Erreur lors du chargement des statistiques');
