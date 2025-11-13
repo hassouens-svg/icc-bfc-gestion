@@ -168,34 +168,98 @@ const PresencesFITablePage = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="p-6 space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Présences des Membres</h2>
-            <p className="text-gray-500 mt-1">Vue tableau des présences aux jeudis</p>
+            <h2 className="text-3xl font-bold text-gray-900">Vue Tableau - Famille d'Impact</h2>
+            <p className="text-gray-500 mt-1">Présences et statistiques des membres</p>
           </div>
-          <Button onClick={() => navigate('/familles-impact/dashboard-pilote')} variant="outline">
+          <Button onClick={() => navigate('/dashboard-pilote-fi')} variant="outline">
             Retour au Dashboard
           </Button>
         </div>
 
-        {/* KPI Fidélisation */}
-        <Card className="bg-gradient-to-br from-indigo-50 to-purple-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center">
-                  <TrendingUp className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Taux de Fidélisation Global</p>
-                  <p className="text-4xl font-bold text-indigo-600">{fidelisation.toFixed(1)}%</p>
-                  <p className="text-xs text-gray-500 mt-1">{membres.length} membres · Période actuelle</p>
-                </div>
-              </div>
+        {/* Filtre de date */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Sélectionner une date</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-xs">
+              <Label>Date de réunion</Label>
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
             </div>
           </CardContent>
         </Card>
+
+        {selectedDate && (
+          <>
+            {/* KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-8 w-8 text-blue-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Total Membres</p>
+                      <p className="text-2xl font-bold text-blue-600">{kpis.totalMembres}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2">
+                    <UserCheck className="h-8 w-8 text-green-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Présents</p>
+                      <p className="text-2xl font-bold text-green-600">{kpis.presents}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2">
+                    <UserX className="h-8 w-8 text-red-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Absents</p>
+                      <p className="text-2xl font-bold text-red-600">{kpis.absents}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2">
+                    <UserPlus className="h-8 w-8 text-purple-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Nouveaux</p>
+                      <p className="text-2xl font-bold text-purple-600">{kpis.nouveaux}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="h-8 w-8 text-indigo-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Fidélisation</p>
+                      <p className="text-2xl font-bold text-indigo-600">{kpis.tauxFidelisation}%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
         {/* Filtres */}
         <Card>
