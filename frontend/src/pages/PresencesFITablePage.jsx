@@ -15,12 +15,24 @@ const PresencesFITablePage = () => {
   const navigate = useNavigate();
   const user = getUser();
   const [membres, setMembres] = useState([]);
-  const [presences, setPresences] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('all');
+  const [filteredMembres, setFilteredMembres] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
   const [loading, setLoading] = useState(true);
-  const [fidelisation, setFidelisation] = useState(0);
+  
+  // KPIs
+  const [kpis, setKpis] = useState({
+    totalMembres: 0,
+    presents: 0,
+    absents: 0,
+    nouveaux: 0,
+    tauxFidelisation: 0
+  });
+  
+  // Edit modal
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingMembre, setEditingMembre] = useState(null);
+  const [editPresence, setEditPresence] = useState(null); // true, false, or null
+  const [editComment, setEditComment] = useState('');
 
   useEffect(() => {
     if (!user || user.role !== 'pilote_fi') {
