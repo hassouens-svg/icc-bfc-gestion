@@ -232,6 +232,7 @@ class FamilleImpactCreate(BaseModel):
     nom: str
     secteur_id: str
     ville: str
+    adresse: Optional[str] = None
     pilote_id: Optional[str] = None
 
 class MembreFI(BaseModel):
