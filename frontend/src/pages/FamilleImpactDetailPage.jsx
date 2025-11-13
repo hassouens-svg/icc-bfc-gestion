@@ -114,6 +114,33 @@ const FamilleImpactDetailPage = () => {
     }
   };
 
+  const handleEditFI = () => {
+    setEditFIData({
+      nom: fi.nom,
+      adresse: fi.adresse || '',
+      secteur_id: fi.secteur_id,
+      ville: fi.ville
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateFI = async (e) => {
+    e.preventDefault();
+    if (!editFIData.nom) {
+      toast.error('Le nom est obligatoire');
+      return;
+    }
+
+    try {
+      await updateFamilleImpact(fiId, editFIData);
+      toast.success('Famille d\'Impact modifiée avec succès!');
+      setIsEditDialogOpen(false);
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la modification');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
