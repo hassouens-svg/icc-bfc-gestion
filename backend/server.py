@@ -1448,6 +1448,23 @@ async def get_famille_impact(fi_id: str, current_user: dict = Depends(get_curren
     fi = await db.familles_impact.find_one({"id": fi_id}, {"_id": 0})
     if not fi:
         raise HTTPException(status_code=404, detail="Famille d'Impact not found")
+    return fi
+
+# Endpoint PUBLIC pour trouver les FI (sans authentification)
+@api_router.get("/public/fi/all")
+async def get_all_fi_public(ville: Optional[str] = None):
+    """Get all FI with addresses (public access for finding nearest FI)"""
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    fis = await db.familles_impact.find(
+        query, 
+        {"_id": 0, "id": 1, "nom": 1, "ville": 1, "adresse": 1, "secteur_id": 1}
+    ).to_list(length=None)
+    
+    # Only return FIs with addresses
+    return [fi for fi in fis if fi.get("adresse")]
     
     # Check permissions
     if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id") != fi_id:
