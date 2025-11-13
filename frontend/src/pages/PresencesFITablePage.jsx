@@ -114,40 +114,46 @@ const PresencesFITablePage = () => {
     }
   };
 
-  const filterData = () => {
-    let filtered = membres.map(membre => {
-      // Calculer les stats de présence pour ce membre
-      const membrePresences = presences.filter(p => p.membre_fi_id === membre.id);
-      
-      let filteredPresences = membrePresences;
-      if (selectedMonth !== 'all') {
-        filteredPresences = membrePresences.filter(p => p.date.startsWith(selectedMonth));
-      }
+  const handleEditPresence = (membre) => {
+    setEditingMembre(membre);
+    
+    if (membre.presence) {
+      setEditPresence(membre.presence.present);
+      setEditComment(membre.presence.commentaire || '');
+    } else {
+      setEditPresence(null);
+      setEditComment('');
+    }
+    
+    setEditDialogOpen(true);
+  };
 
-      const totalJeudis = [...new Set(filteredPresences.map(p => p.date))].length;
-      const presencesMarquees = filteredPresences.filter(p => p.present).length;
-      const tauxPresence = totalJeudis > 0 ? (presencesMarquees / totalJeudis) * 100 : 0;
-
-      return {
-        ...membre,
-        totalJeudis,
-        presencesMarquees,
-        absences: totalJeudis - presencesMarquees,
-        tauxPresence
-      };
-    });
-
-    // Filtrer par recherche
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(m => 
-        m.prenom.toLowerCase().includes(term) ||
-        m.nom.toLowerCase().includes(term) ||
-        m.telephone?.includes(term)
-      );
+  const handleSavePresenceEdit = async () => {
+    if (!editingMembre || !selectedDate) {
+      toast.error('Erreur: Aucune date sélectionnée');
+      return;
     }
 
-    setFilteredData(filtered);
+    if (editPresence === null) {
+      toast.error('Veuillez sélectionner Présent ou Absent');
+      return;
+    }
+
+    try {
+      await createPresenceFI({
+        membre_fi_id: editingMembre.id,
+        date: selectedDate,
+        present: editPresence,
+        commentaire: editComment || null
+      });
+      
+      toast.success('Présence mise à jour avec succès');
+      setEditDialogOpen(false);
+      loadPresencesForDate();
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+      console.error(error);
+    }
   };
 
   const exportToCSV = () => {
