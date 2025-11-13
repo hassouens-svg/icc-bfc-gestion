@@ -88,9 +88,9 @@ const RegisterPage = () => {
       toast.success('Inscription réussie! Merci de votre visite.', {
         duration: 3000,
       });
-      // Navigate after showing toast
+      // Navigate to introduction page after showing toast
       setTimeout(() => {
-        navigate('/');
+        navigate('/introduction-fi');
       }, 2000);
     } catch (error) {
       console.error('Registration error:', error);
