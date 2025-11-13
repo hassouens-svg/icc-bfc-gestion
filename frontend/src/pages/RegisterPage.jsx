@@ -332,6 +332,21 @@ const RegisterPage = () => {
                   S'inscrire en tant que membre FI →
                 </a>
               </div>
+
+              {/* Bouton Trouver ma FI */}
+              <div className="border-t pt-4 mt-4">
+                <button
+                  type="button"
+                  onClick={() => navigate('/trouver-ma-fi')}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all font-medium text-sm flex items-center justify-center space-x-2 shadow-md"
+                >
+                  <span className="text-xl">🏠</span>
+                  <span>Trouver la Famille d'Impact la plus proche</span>
+                </button>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  Localisez la FI la plus proche de chez vous sur une carte interactive
+                </p>
+              </div>
             </div>
           </form>
         </CardContent>
