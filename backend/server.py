@@ -89,6 +89,8 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
+    city: Optional[str] = None
+    role: Optional[str] = None
     assigned_month: Optional[str] = None
     assigned_fi_id: Optional[str] = None
     assigned_secteur_id: Optional[str] = None
