@@ -64,7 +64,6 @@ function App() {
           <Route path="/familles-impact/fi/:fiId" element={<FamilleImpactDetailPage />} />
           <Route path="/familles-impact/affectation" element={<AffectationFIPage />} />
           <Route path="/familles-impact/dashboard-pilote" element={<DashboardPiloteFIPage />} />
-          <Route path="/familles-impact/presences-table" element={<PresencesFITablePage />} />
           <Route path="/marquer-presences-fi" element={<MarquerPresencesFIPage />} />
           <Route path="/vue-tableau-fi" element={<VueTableauFIPage />} />
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
