@@ -16,6 +16,20 @@ const DashboardSuperviseurFIPage = () => {
   const user = getUser();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // Filtres pour KPIs FI
+  const [selectedDate, setSelectedDate] = useState('');
+  const [secteurs, setSecteurs] = useState([]);
+  const [selectedSecteur, setSelectedSecteur] = useState('all');
+  const [famillesImpact, setFamillesImpact] = useState([]);
+  const [selectedFI, setSelectedFI] = useState('all');
+  const [kpisFI, setKpisFI] = useState({
+    totalMembres: 0,
+    presents: 0,
+    absents: 0,
+    nouveaux: 0,
+    tauxFidelisation: 0
+  });
 
   useEffect(() => {
     if (!user || !['superviseur_fi', 'admin', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
