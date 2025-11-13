@@ -1462,11 +1462,24 @@ async def get_all_fi_public(ville: Optional[str] = None):
     
     fis = await db.familles_impact.find(
         query, 
-        {"_id": 0, "id": 1, "nom": 1, "ville": 1, "adresse": 1, "secteur_id": 1}
+        {"_id": 0, "id": 1, "nom": 1, "ville": 1, "adresse": 1, "secteur_id": 1, "pilote_id": 1}
     ).to_list(length=None)
     
     # Only return FIs with addresses
-    return [fi for fi in fis if fi.get("adresse")]
+    fis_with_address = [fi for fi in fis if fi.get("adresse")]
+    
+    # Enrichir avec les infos du pilote
+    for fi in fis_with_address:
+        if fi.get("pilote_id"):
+            pilote = await db.users.find_one(
+                {"id": fi["pilote_id"]}, 
+                {"_id": 0, "username": 1, "telephone": 1}
+            )
+            if pilote:
+                fi["pilote_nom"] = pilote.get("username")
+                fi["pilote_telephone"] = pilote.get("telephone")
+    
+    return fis_with_address
     
     # Check permissions
     if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id") != fi_id:
