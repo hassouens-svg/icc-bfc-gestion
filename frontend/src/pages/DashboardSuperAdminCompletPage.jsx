@@ -777,6 +777,101 @@ const DashboardSuperAdminCompletPage = () => {
               </Card>
             </div>
 
+            {/* Section KPIs FI par date */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Calendar className="h-5 w-5" />
+                  <span>Analyse des Présences FI par Date</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="space-y-2">
+                    <Label>Sélectionner une date</Label>
+                    <Input
+                      type="date"
+                      value={selectedDateFI || ''}
+                      onChange={(e) => {
+                        setSelectedDateFI(e.target.value);
+                        if (e.target.value) loadFIKPIsByDate(e.target.value);
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Note</Label>
+                    <p className="text-sm text-gray-600">
+                      Sélectionnez une date pour voir les KPIs de présences de toutes les FI de la ville
+                    </p>
+                  </div>
+                </div>
+
+                {selectedDateFI && kpisFI && (
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center space-x-2">
+                          <Users className="h-6 w-6 text-blue-600" />
+                          <div>
+                            <p className="text-xs text-gray-600">Total Membres</p>
+                            <p className="text-xl font-bold text-blue-600">{kpisFI.totalMembres}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center space-x-2">
+                          <UserCheck className="h-6 w-6 text-green-600" />
+                          <div>
+                            <p className="text-xs text-gray-600">Présents</p>
+                            <p className="text-xl font-bold text-green-600">{kpisFI.presents}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center space-x-2">
+                          <UserX className="h-6 w-6 text-red-600" />
+                          <div>
+                            <p className="text-xs text-gray-600">Absents</p>
+                            <p className="text-xl font-bold text-red-600">{kpisFI.absents}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center space-x-2">
+                          <UserPlus className="h-6 w-6 text-purple-600" />
+                          <div>
+                            <p className="text-xs text-gray-600">Nouveaux (7j)</p>
+                            <p className="text-xl font-bold text-purple-600">{kpisFI.nouveaux}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center space-x-2">
+                          <TrendingUp className="h-6 w-6 text-indigo-600" />
+                          <div>
+                            <p className="text-xs text-gray-600">Fidélisation</p>
+                            <p className="text-xl font-bold text-indigo-600">{kpisFI.tauxFidelisation}%</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             {/* FI par Secteur */}
             <Card>
               <CardHeader>
