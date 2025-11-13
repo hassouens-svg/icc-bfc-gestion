@@ -234,7 +234,7 @@ const DashboardPiloteFIPage = () => {
                   variant="outline" 
                   onClick={() => {
                     setIsAddMemberDialogOpen(false);
-                    setNewMember({ prenom: '', nom: '', telephone: '' });
+                    setNewMember({ prenom: '', nom: '', telephone: '', is_nouveau: true });
                   }}
                   className="flex-1"
                 >
