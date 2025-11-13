@@ -223,6 +223,7 @@ class FamilleImpact(BaseModel):
     nom: str
     secteur_id: str
     ville: str
+    adresse: Optional[str] = None
     pilote_id: Optional[str] = None
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
