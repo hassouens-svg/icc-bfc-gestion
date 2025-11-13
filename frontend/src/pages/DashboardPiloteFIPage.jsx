@@ -59,7 +59,7 @@ const DashboardPiloteFIPage = () => {
       });
       toast.success('Membre ajouté avec succès!');
       setIsAddMemberDialogOpen(false);
-      setNewMember({ prenom: '', nom: '', telephone: '' });
+      setNewMember({ prenom: '', nom: '', telephone: '', is_nouveau: true });
       loadData();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de l\'ajout');
