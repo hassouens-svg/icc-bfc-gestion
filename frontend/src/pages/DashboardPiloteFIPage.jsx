@@ -66,34 +66,6 @@ const DashboardPiloteFIPage = () => {
     }
   };
 
-  const loadPresences = async () => {
-    try {
-      const presencesData = await getPresencesFI(stats?.fi?.id, selectedDate);
-      const presencesMap = {};
-      presencesData.forEach(p => {
-        presencesMap[p.membre_fi_id] = p;
-      });
-      setPresences(presencesMap);
-    } catch (error) {
-      console.error('Error loading presences:', error);
-    }
-  };
-
-  const handlePresenceChange = async (membreId, present) => {
-    try {
-      await createPresenceFI({
-        membre_fi_id: membreId,
-        date: selectedDate,
-        present: present,
-        commentaire: comments[membreId] || null
-      });
-      toast.success(present ? 'Présence enregistrée' : 'Absence enregistrée');
-      loadPresences();
-    } catch (error) {
-      toast.error('Erreur lors de l\'enregistrement');
-    }
-  };
-
   if (loading) {
     return (
       <Layout>
