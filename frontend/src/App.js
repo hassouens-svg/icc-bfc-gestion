@@ -20,7 +20,6 @@ import FamilleImpactDetailPage from './pages/FamilleImpactDetailPage';
 import DashboardPiloteFIPage from './pages/DashboardPiloteFIPage';
 import DashboardSuperviseurFIPage from './pages/DashboardSuperviseurFIPage';
 import DashboardResponsableSecteurPage from './pages/DashboardResponsableSecteurPage';
-import PresencesFITablePage from './pages/PresencesFITablePage';
 import MarquerPresencesFIPage from './pages/MarquerPresencesFIPage';
 import VueTableauFIPage from './pages/VueTableauFIPage';
 import DashboardPasteurPage from './pages/DashboardPasteurPage';
