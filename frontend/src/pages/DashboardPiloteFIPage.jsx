@@ -29,12 +29,6 @@ const DashboardPiloteFIPage = () => {
     loadData();
   }, [user, navigate]);
 
-  useEffect(() => {
-    if (membres.length > 0) {
-      loadPresences();
-    }
-  }, [selectedDate, membres]);
-
   const loadData = async () => {
     try {
       const [statsData, membresData] = await Promise.all([
