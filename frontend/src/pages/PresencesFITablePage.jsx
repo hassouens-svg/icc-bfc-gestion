@@ -48,7 +48,7 @@ const PresencesFITablePage = () => {
     }
   }, [selectedDate, membres]);
 
-  const loadData = async () => {
+  const loadMembres = async () => {
     try {
       if (!user.assigned_fi_id) {
         toast.error('Aucune FI assignée');
@@ -56,26 +56,61 @@ const PresencesFITablePage = () => {
         return;
       }
 
-      const [membresData, presencesData] = await Promise.all([
-        getMembresFI(user.assigned_fi_id),
-        getPresencesFI(user.assigned_fi_id)
-      ]);
-
+      const membresData = await getMembresFI(user.assigned_fi_id);
       setMembres(membresData);
-      setPresences(presencesData);
-
-      // Calculer fidélisation
-      const uniqueJeudis = [...new Set(presencesData.map(p => p.date))];
-      const totalPresences = presencesData.filter(p => p.present).length;
-      const maxPossible = membresData.length * uniqueJeudis.length;
-      const taux = maxPossible > 0 ? (totalPresences / maxPossible) * 100 : 0;
-      setFidelisation(taux);
 
     } catch (error) {
       toast.error('Erreur lors du chargement');
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPresencesForDate = async () => {
+    try {
+      const presencesData = await getPresencesFI(user.assigned_fi_id, selectedDate);
+      
+      // Créer un map des présences
+      const presencesMap = {};
+      presencesData.forEach(p => {
+        presencesMap[p.membre_fi_id] = p;
+      });
+      
+      // Enrichir les membres avec les infos de présence
+      const enrichedMembres = membres.map(membre => ({
+        ...membre,
+        presence: presencesMap[membre.id] || null
+      }));
+      
+      setFilteredMembres(enrichedMembres);
+      
+      // Calculer les KPIs
+      const totalMembres = membres.length;
+      const presents = presencesData.filter(p => p.present === true).length;
+      const absents = presencesData.filter(p => p.present === false).length;
+      
+      // Nouveaux membres = membres ajoutés dans les 7 derniers jours
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const nouveaux = membres.filter(m => {
+        const dateAjout = new Date(m.date_ajout);
+        return dateAjout >= sevenDaysAgo;
+      }).length;
+      
+      const tauxFidelisation = totalMembres > 0 ? (presents / totalMembres) * 100 : 0;
+      
+      setKpis({
+        totalMembres,
+        presents,
+        absents,
+        nouveaux,
+        tauxFidelisation: tauxFidelisation.toFixed(1)
+      });
+      
+    } catch (error) {
+      toast.error('Erreur lors du chargement des présences');
+      console.error(error);
     }
   };
 
