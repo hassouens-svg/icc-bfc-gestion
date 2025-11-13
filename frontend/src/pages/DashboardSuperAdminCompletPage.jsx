@@ -9,7 +9,10 @@ import {
   getPresencesDimanche,
   getCulteStatsSummary,
   getCities,
-  getUser 
+  getUser,
+  getFamillesImpact,
+  getMembresFI,
+  getPresencesFI
 } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
