@@ -80,11 +80,23 @@ const GestionAccesPage = () => {
       return;
     }
 
+    // Vérifier que pour referent, au moins un mois est sélectionné
+    if (newUser.role === 'referent' && (!Array.isArray(newUser.assigned_month) || newUser.assigned_month.length === 0)) {
+      toast.error('Veuillez sélectionner au moins un mois pour le Responsable de Promos');
+      return;
+    }
+
     try {
-      await createUser(newUser);
+      // Convertir le tableau de mois en string séparé par des virgules
+      const userData = {...newUser};
+      if (Array.isArray(userData.assigned_month)) {
+        userData.assigned_month = userData.assigned_month.join(',');
+      }
+      
+      await createUser(userData);
       toast.success('Utilisateur créé avec succès!');
       setIsDialogOpen(false);
-      setNewUser({ username: '', password: '', city: '', role: 'referent', assigned_month: null });
+      setNewUser({ username: '', password: '', city: '', role: 'referent', assigned_month: [] });
       loadData();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la création');
