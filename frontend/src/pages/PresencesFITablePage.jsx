@@ -156,46 +156,6 @@ const PresencesFITablePage = () => {
     }
   };
 
-  const exportToCSV = () => {
-    if (filteredData.length === 0) {
-      toast.error('Aucune donnée à exporter');
-      return;
-    }
-
-    const headers = ['Prénom', 'Nom', 'Téléphone', 'Jeudis Total', 'Présences', 'Absences', 'Taux %'];
-    const rows = filteredData.map(m => [
-      m.prenom,
-      m.nom,
-      m.telephone || '',
-      m.totalJeudis,
-      m.presencesMarquees,
-      m.absences,
-      m.tauxPresence.toFixed(1)
-    ]);
-
-    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `presences_fi_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    toast.success('Export CSV réussi');
-  };
-
-  const getMonthOptions = () => {
-    const months = [];
-    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-    for (let year = 2025; year <= 2030; year++) {
-      for (let month = 1; month <= 12; month++) {
-        const value = `${year}-${String(month).padStart(2, '0')}`;
-        const label = `${monthNames[month - 1]} ${year}`;
-        months.push({ value, label });
-      }
-    }
-    return months;
-  };
-
   if (loading) {
     return (
       <Layout>
