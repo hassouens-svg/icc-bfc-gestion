@@ -117,6 +117,10 @@ const DashboardSuperAdminCompletPage = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   
+  // KPIs FI par date
+  const [selectedDateFI, setSelectedDateFI] = useState('');
+  const [kpisFI, setKpisFI] = useState(null);
+  
   // Filters for culte stats
   const [culteTypeFilter, setCulteTypeFilter] = useState('all');
   const [fideleTypeFilter, setFideleTypeFilter] = useState('all');
