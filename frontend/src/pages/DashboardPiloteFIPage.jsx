@@ -18,7 +18,7 @@ const DashboardPiloteFIPage = () => {
   const [membres, setMembres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
-  const [newMember, setNewMember] = useState({ prenom: '', nom: '', telephone: '' });
+  const [newMember, setNewMember] = useState({ prenom: '', nom: '', telephone: '', is_nouveau: true });
 
   useEffect(() => {
     if (!user || user.role !== 'pilote_fi') {
