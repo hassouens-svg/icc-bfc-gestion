@@ -311,12 +311,12 @@ const TrouverMaFIPage = () => {
                 </div>
                 <div className="mt-4 flex items-center justify-center space-x-6 text-sm">
                   <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white"></div>
+                    <div className="w-5 h-5 rounded-full bg-red-500 border-2 border-white"></div>
                     <span>Votre position</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 rounded-full bg-indigo-600 border-2 border-white"></div>
-                    <span>Familles d'Impact</span>
+                    <span className="text-2xl">🏠</span>
+                    <span>Familles d'Impact (cliquez pour voir les détails)</span>
                   </div>
                 </div>
               </CardContent>
