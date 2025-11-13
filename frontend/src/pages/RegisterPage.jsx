@@ -251,13 +251,55 @@ const RegisterPage = () => {
               />
             </div>
 
+            {/* Section RGPD */}
+            <div className="border-t pt-6 mt-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
+                <h3 className="font-semibold text-lg text-blue-900">Protection de vos données</h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Nous collectons vos données personnelles (nom, prénom, numéro de téléphone, adresse, etc.) afin de vous offrir un service adapté à vos besoins, de vous accompagner spirituellement et de faciliter votre intégration au sein de notre communauté. Conformément à la réglementation générale sur la protection des données (RGPD), vos informations seront utilisées uniquement dans le cadre de nos activités et ne seront en aucun cas partagées avec des tiers sans votre consentement explicite.
+                </p>
+                <div className="space-y-3 pt-2">
+                  <p className="font-medium text-gray-900">Acceptez-vous que vos données soient utilisées à ces fins ?</p>
+                  <div className="space-y-3">
+                    <label className={`flex items-start space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                      gdprConsent === true ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-green-300'
+                    }`}>
+                      <input
+                        type="checkbox"
+                        checked={gdprConsent === true}
+                        onChange={() => setGdprConsent(true)}
+                        className="mt-1 h-5 w-5 text-green-600 rounded focus:ring-green-500"
+                      />
+                      <span className="text-sm font-medium text-gray-900">
+                        Oui, je consens à l'utilisation de mes données personnelles.
+                      </span>
+                    </label>
+                    
+                    <label className={`flex items-start space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                      gdprConsent === false ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-300'
+                    }`}>
+                      <input
+                        type="checkbox"
+                        checked={gdprConsent === false}
+                        onChange={() => setGdprConsent(false)}
+                        className="mt-1 h-5 w-5 text-red-600 rounded focus:ring-red-500"
+                      />
+                      <span className="text-sm font-medium text-gray-900">
+                        Non, je ne consens pas.
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={loading}
+              disabled={loading || gdprConsent !== true}
               data-testid="register-submit-button"
             >
-              {loading ? 'Inscription en cours...' : 'S\'inscrire'}
+              {loading ? 'Inscription en cours...' : gdprConsent !== true ? 'Veuillez accepter le consentement' : 'S\'inscrire'}
             </Button>
 
             <div className="text-center pt-4 space-y-2">
