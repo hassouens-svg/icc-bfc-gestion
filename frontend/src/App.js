@@ -22,6 +22,7 @@ import DashboardSuperviseurFIPage from './pages/DashboardSuperviseurFIPage';
 import DashboardResponsableSecteurPage from './pages/DashboardResponsableSecteurPage';
 import MarquerPresencesFIPage from './pages/MarquerPresencesFIPage';
 import VueTableauFIPage from './pages/VueTableauFIPage';
+import TrouverMaFIPage from './pages/TrouverMaFIPage';
 import DashboardPasteurPage from './pages/DashboardPasteurPage';
 import DashboardSuperAdminPage from './pages/DashboardSuperAdminPage';
 import DashboardSuperAdminCompletPage from './pages/DashboardSuperAdminCompletPage';
