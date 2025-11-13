@@ -15,6 +15,17 @@ const DashboardResponsableSecteurPage = () => {
   const [allMembres, setAllMembres] = useState([]);
   const [fidelisation, setFidelisation] = useState(0);
   const [loading, setLoading] = useState(true);
+  
+  // Nouveaux states pour les KPIs FI
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedFI, setSelectedFI] = useState('all'); // 'all' ou un fi_id spécifique
+  const [kpisFI, setKpisFI] = useState({
+    totalMembres: 0,
+    presents: 0,
+    absents: 0,
+    nouveaux: 0,
+    tauxFidelisation: 0
+  });
 
   useEffect(() => {
     if (!user || user.role !== 'responsable_secteur') {
