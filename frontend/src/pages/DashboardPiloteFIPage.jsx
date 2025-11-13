@@ -127,10 +127,20 @@ const DashboardPiloteFIPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">Tableau de Bord - Pilote FI</h2>
             <p className="text-gray-500 mt-1">{stats?.fi?.nom}</p>
           </div>
-          <Button onClick={() => setIsAddMemberDialogOpen(true)} className="bg-green-600 hover:bg-green-700">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Ajouter un Membre
-          </Button>
+          <div className="flex space-x-2">
+            <Button onClick={() => navigate('/marquer-presences-fi')} variant="outline" className="bg-blue-50">
+              <Calendar className="h-4 w-4 mr-2" />
+              Marquer Présences
+            </Button>
+            <Button onClick={() => navigate('/vue-tableau-fi')} variant="outline" className="bg-purple-50">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Vue Tableau
+            </Button>
+            <Button onClick={() => setIsAddMemberDialogOpen(true)} className="bg-green-600 hover:bg-green-700">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Ajouter un Membre
+            </Button>
+          </div>
         </div>
 
         {/* KPIs */}
