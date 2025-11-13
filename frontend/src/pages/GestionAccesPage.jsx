@@ -189,6 +189,38 @@ const GestionAccesPage = () => {
     return labels[role] || role;
   };
 
+  // Générer les mois de Janvier 2024 à Décembre 2030
+  const generateMonths = () => {
+    const months = [];
+    for (let year = 2024; year <= 2030; year++) {
+      for (let month = 1; month <= 12; month++) {
+        const monthStr = month.toString().padStart(2, '0');
+        months.push({
+          value: `${year}-${monthStr}`,
+          label: `${getMonthName(month)} ${year}`
+        });
+      }
+    }
+    return months;
+  };
+
+  const getMonthName = (month) => {
+    const names = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+                   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    return names[month - 1];
+  };
+
+  const toggleMonth = (month) => {
+    setNewUser(prev => {
+      const months = Array.isArray(prev.assigned_month) ? prev.assigned_month : [];
+      if (months.includes(month)) {
+        return {...prev, assigned_month: months.filter(m => m !== month)};
+      } else {
+        return {...prev, assigned_month: [...months, month]};
+      }
+    });
+  };
+
   if (loading) {
     return (
       <Layout>
