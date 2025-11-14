@@ -170,6 +170,35 @@ const DashboardPage = () => {
           </Card>
         </div>
 
+        {/* KPIs Formations */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <BarChart3 className="h-5 w-5 mr-2" />
+              KPIs Formations
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 border rounded-lg bg-blue-50">
+                <p className="text-sm text-gray-600">Formation PCNC</p>
+                <p className="text-3xl font-bold text-blue-600">{stats?.formation_pcnc || 0}</p>
+                <p className="text-xs text-gray-500 mt-1">personnes formées</p>
+              </div>
+              <div className="p-4 border rounded-lg bg-green-50">
+                <p className="text-sm text-gray-600">Au Cœur de la Bible</p>
+                <p className="text-3xl font-bold text-green-600">{stats?.formation_au_coeur_bible || 0}</p>
+                <p className="text-xs text-gray-500 mt-1">personnes formées</p>
+              </div>
+              <div className="p-4 border rounded-lg bg-purple-50">
+                <p className="text-sm text-gray-600">Formation STAR</p>
+                <p className="text-3xl font-bold text-purple-600">{stats?.formation_star || 0}</p>
+                <p className="text-xs text-gray-500 mt-1">personnes devenues stars</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Quick Actions */}
         <Card>
           <CardHeader>
