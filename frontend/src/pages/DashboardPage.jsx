@@ -249,6 +249,36 @@ const DashboardPage = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Rename Promo Dialog */}
+        <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Renommer la promo</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Nom de la promo</Label>
+                <Input
+                  value={newPromoName}
+                  onChange={(e) => setNewPromoName(e.target.value)}
+                  placeholder="Ex: Promo Excellence, Novembre 2024..."
+                />
+                <p className="text-xs text-gray-500">
+                  Ce nom remplacera "{user?.assigned_month}" partout dans l'application
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsRenameDialogOpen(false)}>
+                Annuler
+              </Button>
+              <Button onClick={handleRenamePromo}>
+                Enregistrer
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
