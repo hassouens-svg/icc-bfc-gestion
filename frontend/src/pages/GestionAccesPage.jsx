@@ -100,7 +100,7 @@ const GestionAccesPage = () => {
       await createUser(userData);
       toast.success('Utilisateur créé avec succès!');
       setIsDialogOpen(false);
-      setNewUser({ username: '', password: '', city: '', role: 'referent', assigned_month: [], assigned_fi_id: null, assigned_fi_ids: [], assigned_secteur_id: null });
+      setNewUser({ username: '', password: '', city: '', role: 'referent', promo_name: '', assigned_month: [], assigned_fi_id: null, assigned_fi_ids: [], assigned_secteur_id: null });
       loadData();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la création');
