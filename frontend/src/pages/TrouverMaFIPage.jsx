@@ -82,7 +82,7 @@ const TrouverMaFIPage = () => {
       setUserCoords(userGeo);
       
       // 2. Récupérer toutes les FI avec adresses
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const backendUrl = process.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backendUrl}/api/public/fi/all`);
       const fis = await response.json();
       
