@@ -768,15 +768,334 @@ class BackendTester:
         
         return True
 
-    def run_all_tests(self):
-        """Run all backend tests"""
-        self.log("Starting Backend API Tests for Visitor Creation Bug")
-        self.log("=" * 60)
+    def test_fi_creation_with_address(self):
+        """Test 1: Création de FI avec adresse"""
+        self.log("\n=== TEST 1: Création de FI avec adresse ===")
         
-        # Run focused tests for the reported issue
+        # Login as super_admin
+        login_data = {
+            "username": "superadmin",
+            "password": "superadmin123",
+            "city": "Dijon"
+        }
+        
+        login_response = self.make_request('POST', '/auth/login', json=login_data)
+        if not login_response or login_response.status_code != 200:
+            self.log("❌ Failed to login as super_admin", "ERROR")
+            return False
+        
+        token = login_response.json()['token']
+        self.log("✅ Logged in as super_admin")
+        
+        # First, get or create a secteur for Dijon
+        secteurs_response = self.make_request('GET', '/fi/secteurs?ville=Dijon', token=token)
+        if not secteurs_response or secteurs_response.status_code != 200:
+            self.log("❌ Failed to get secteurs", "ERROR")
+            return False
+        
+        secteurs = secteurs_response.json()
+        
+        if not secteurs:
+            # Create a secteur first
+            secteur_data = {
+                "nom": "Centre-Ville Test",
+                "ville": "Dijon"
+            }
+            create_secteur_response = self.make_request('POST', '/fi/secteurs', token=token, json=secteur_data)
+            if not create_secteur_response or create_secteur_response.status_code != 200:
+                self.log("❌ Failed to create secteur", "ERROR")
+                return False
+            
+            secteur = create_secteur_response.json()
+            secteur_id = secteur['id']
+            self.log(f"✅ Created secteur: {secteur['nom']}")
+        else:
+            secteur_id = secteurs[0]['id']
+            self.log(f"✅ Using existing secteur: {secteurs[0]['nom']}")
+        
+        # Create FI with address
+        fi_data = {
+            "nom": "FI Test République",
+            "ville": "Dijon",
+            "secteur_id": secteur_id,
+            "adresse": "10 Place de la République, 21000 Dijon"
+        }
+        
+        self.log("Creating FI with data:")
+        for key, value in fi_data.items():
+            self.log(f"   {key}: {value}")
+        
+        create_fi_response = self.make_request('POST', '/fi/familles-impact', token=token, json=fi_data)
+        
+        if not create_fi_response or create_fi_response.status_code != 200:
+            self.log(f"❌ Failed to create FI - Status: {create_fi_response.status_code if create_fi_response else 'None'}", "ERROR")
+            if create_fi_response:
+                self.log(f"   Error: {create_fi_response.text}")
+            return False
+        
+        fi = create_fi_response.json()
+        fi_id = fi['id']
+        self.log(f"✅ FI created successfully with ID: {fi_id}")
+        self.log(f"   Nom: {fi['nom']}")
+        self.log(f"   Adresse: {fi.get('adresse', 'NOT FOUND')}")
+        
+        # Verify address is stored
+        if fi.get('adresse') == fi_data['adresse']:
+            self.log("✅ Address correctly stored in FI")
+            self.fi_test_id = fi_id  # Store for other tests
+            return True
+        else:
+            self.log("❌ Address not correctly stored", "ERROR")
+            return False
+    
+    def test_fi_modification(self):
+        """Test 2: Modification d'une FI existante"""
+        self.log("\n=== TEST 2: Modification d'une FI existante ===")
+        
+        # Use the FI created in test 1
+        if not hasattr(self, 'fi_test_id'):
+            self.log("❌ No FI ID from previous test", "ERROR")
+            return False
+        
+        # Login as super_admin
+        login_data = {
+            "username": "superadmin",
+            "password": "superadmin123",
+            "city": "Dijon"
+        }
+        
+        login_response = self.make_request('POST', '/auth/login', json=login_data)
+        if not login_response or login_response.status_code != 200:
+            self.log("❌ Failed to login as super_admin", "ERROR")
+            return False
+        
+        token = login_response.json()['token']
+        
+        # Get secteur for update
+        secteurs_response = self.make_request('GET', '/fi/secteurs?ville=Dijon', token=token)
+        if not secteurs_response or secteurs_response.status_code != 200:
+            self.log("❌ Failed to get secteurs", "ERROR")
+            return False
+        
+        secteurs = secteurs_response.json()
+        secteur_id = secteurs[0]['id']
+        
+        # Update FI
+        update_data = {
+            "nom": "FI Test République Modifiée",
+            "adresse": "15 Place de la République, 21000 Dijon",
+            "ville": "Dijon",
+            "secteur_id": secteur_id
+        }
+        
+        self.log("Updating FI with data:")
+        for key, value in update_data.items():
+            self.log(f"   {key}: {value}")
+        
+        update_response = self.make_request('PUT', f'/fi/familles-impact/{self.fi_test_id}', token=token, json=update_data)
+        
+        if not update_response or update_response.status_code != 200:
+            self.log(f"❌ Failed to update FI - Status: {update_response.status_code if update_response else 'None'}", "ERROR")
+            if update_response:
+                self.log(f"   Error: {update_response.text}")
+            return False
+        
+        self.log("✅ FI updated successfully")
+        
+        # Verify update by getting the FI
+        get_response = self.make_request('GET', f'/fi/familles-impact/{self.fi_test_id}', token=token)
+        if not get_response or get_response.status_code != 200:
+            self.log("❌ Failed to retrieve updated FI", "ERROR")
+            return False
+        
+        updated_fi = get_response.json()
+        
+        if (updated_fi.get('nom') == update_data['nom'] and 
+            updated_fi.get('adresse') == update_data['adresse']):
+            self.log("✅ FI modification verified successfully")
+            self.log(f"   New nom: {updated_fi['nom']}")
+            self.log(f"   New adresse: {updated_fi['adresse']}")
+            return True
+        else:
+            self.log("❌ FI modification not properly saved", "ERROR")
+            return False
+    
+    def test_public_fi_endpoint(self):
+        """Test 3: Endpoint public /api/public/fi/all"""
+        self.log("\n=== TEST 3: Endpoint public /api/public/fi/all ===")
+        
+        # Test without authentication (public endpoint)
+        public_response = self.make_request('GET', '/public/fi/all')
+        
+        if not public_response or public_response.status_code != 200:
+            self.log(f"❌ Public FI endpoint failed - Status: {public_response.status_code if public_response else 'None'}", "ERROR")
+            if public_response:
+                self.log(f"   Error: {public_response.text}")
+            return False
+        
+        fis = public_response.json()
+        self.log(f"✅ Public endpoint accessible - Found {len(fis)} FIs")
+        
+        # Verify only FIs with addresses are returned
+        fis_with_address = [fi for fi in fis if fi.get('adresse')]
+        fis_without_address = [fi for fi in fis if not fi.get('adresse')]
+        
+        if len(fis_without_address) == 0:
+            self.log(f"✅ Only FIs with addresses returned: {len(fis_with_address)}")
+        else:
+            self.log(f"❌ Found {len(fis_without_address)} FIs without addresses", "ERROR")
+            return False
+        
+        # Check if pilote information is included when available
+        for fi in fis:
+            self.log(f"   FI: {fi['nom']} - Adresse: {fi.get('adresse', 'N/A')}")
+            if fi.get('pilote_id'):
+                pilote_info = f"Pilote: {fi.get('pilote_nom', 'N/A')}"
+                if fi.get('pilote_telephone'):
+                    pilote_info += f" (Tel: {fi['pilote_telephone']})"
+                self.log(f"      {pilote_info}")
+        
+        return True
+    
+    def test_dashboard_superviseur_fi(self):
+        """Test 4: Dashboard Superviseur FI"""
+        self.log("\n=== TEST 4: Dashboard Superviseur FI ===")
+        
+        # Login as super_admin (has superviseur permissions)
+        login_data = {
+            "username": "superadmin",
+            "password": "superadmin123",
+            "city": "Dijon"
+        }
+        
+        login_response = self.make_request('POST', '/auth/login', json=login_data)
+        if not login_response or login_response.status_code != 200:
+            self.log("❌ Failed to login as super_admin", "ERROR")
+            return False
+        
+        token = login_response.json()['token']
+        
+        # Create additional FIs in Dijon for testing
+        secteurs_response = self.make_request('GET', '/fi/secteurs?ville=Dijon', token=token)
+        if not secteurs_response or secteurs_response.status_code != 200:
+            self.log("❌ Failed to get secteurs", "ERROR")
+            return False
+        
+        secteurs = secteurs_response.json()
+        secteur_id = secteurs[0]['id']
+        
+        # Create 2 more FIs
+        additional_fis = [
+            {
+                "nom": "FI Test Liberté",
+                "ville": "Dijon",
+                "secteur_id": secteur_id,
+                "adresse": "5 Rue de la Liberté, 21000 Dijon"
+            },
+            {
+                "nom": "FI Test Foch",
+                "ville": "Dijon", 
+                "secteur_id": secteur_id,
+                "adresse": "20 Avenue Foch, 21000 Dijon"
+            }
+        ]
+        
+        created_fis = []
+        for fi_data in additional_fis:
+            create_response = self.make_request('POST', '/fi/familles-impact', token=token, json=fi_data)
+            if create_response and create_response.status_code == 200:
+                fi = create_response.json()
+                created_fis.append(fi)
+                self.log(f"✅ Created additional FI: {fi['nom']}")
+        
+        # Test dashboard endpoint - get all FIs for Dijon
+        dashboard_response = self.make_request('GET', '/fi/familles-impact?ville=Dijon', token=token)
+        
+        if not dashboard_response or dashboard_response.status_code != 200:
+            self.log(f"❌ Dashboard FI endpoint failed - Status: {dashboard_response.status_code if dashboard_response else 'None'}", "ERROR")
+            if dashboard_response:
+                self.log(f"   Error: {dashboard_response.text}")
+            return False
+        
+        dijon_fis = dashboard_response.json()
+        self.log(f"✅ Dashboard endpoint accessible - Found {len(dijon_fis)} FIs in Dijon")
+        
+        # Verify all FIs are from Dijon
+        non_dijon_fis = [fi for fi in dijon_fis if fi.get('ville') != 'Dijon']
+        if len(non_dijon_fis) == 0:
+            self.log("✅ All returned FIs are from Dijon")
+            for fi in dijon_fis:
+                self.log(f"   - {fi['nom']} (Adresse: {fi.get('adresse', 'N/A')})")
+            return True
+        else:
+            self.log(f"❌ Found {len(non_dijon_fis)} FIs not from Dijon", "ERROR")
+            return False
+    
+    def test_get_specific_fi(self):
+        """Test 5: GET une FI spécifique"""
+        self.log("\n=== TEST 5: GET une FI spécifique ===")
+        
+        if not hasattr(self, 'fi_test_id'):
+            self.log("❌ No FI ID from previous test", "ERROR")
+            return False
+        
+        # Login as super_admin
+        login_data = {
+            "username": "superadmin",
+            "password": "superadmin123",
+            "city": "Dijon"
+        }
+        
+        login_response = self.make_request('POST', '/auth/login', json=login_data)
+        if not login_response or login_response.status_code != 200:
+            self.log("❌ Failed to login as super_admin", "ERROR")
+            return False
+        
+        token = login_response.json()['token']
+        
+        # Get specific FI
+        get_response = self.make_request('GET', f'/fi/familles-impact/{self.fi_test_id}', token=token)
+        
+        if not get_response or get_response.status_code != 200:
+            self.log(f"❌ Failed to get specific FI - Status: {get_response.status_code if get_response else 'None'}", "ERROR")
+            if get_response:
+                self.log(f"   Error: {get_response.text}")
+            return False
+        
+        fi = get_response.json()
+        self.log(f"✅ Successfully retrieved FI: {fi['nom']}")
+        
+        # Verify address is included in response
+        if fi.get('adresse'):
+            self.log(f"✅ Address included in response: {fi['adresse']}")
+            
+            # Log all FI details
+            self.log("FI Details:")
+            for key, value in fi.items():
+                self.log(f"   {key}: {value}")
+            
+            return True
+        else:
+            self.log("❌ Address not included in FI response", "ERROR")
+            return False
+
+    def run_all_tests(self):
+        """Run all Familles d'Impact tests"""
+        self.log("Starting Backend API Tests for Familles d'Impact with Addresses")
+        self.log("=" * 70)
+        
+        # Initialize database
+        init_response = self.make_request('POST', '/init')
+        if init_response and init_response.status_code == 200:
+            self.log("✅ Database initialized")
+        
+        # Run FI tests in order
         tests = [
-            ("Responsable de Promos Visitor Creation", self.test_responsable_promos_visitor_creation),
-            ("Visitor Creation Validation Errors", self.test_visitor_creation_validation_errors)
+            ("Test 1: Création de FI avec adresse", self.test_fi_creation_with_address),
+            ("Test 2: Modification d'une FI existante", self.test_fi_modification),
+            ("Test 3: Endpoint public /api/public/fi/all", self.test_public_fi_endpoint),
+            ("Test 4: Dashboard Superviseur FI", self.test_dashboard_superviseur_fi),
+            ("Test 5: GET une FI spécifique", self.test_get_specific_fi)
         ]
         
         results = {}
@@ -794,9 +1113,9 @@ class BackendTester:
                 results[test_name] = False
         
         # Summary
-        self.log("\n" + "=" * 60)
-        self.log("TEST SUMMARY")
-        self.log("=" * 60)
+        self.log("\n" + "=" * 70)
+        self.log("TEST SUMMARY - FAMILLES D'IMPACT AVEC ADRESSES")
+        self.log("=" * 70)
         
         for test_name, result in results.items():
             status = "✅ PASS" if result else "❌ FAIL"
@@ -805,7 +1124,7 @@ class BackendTester:
         self.log(f"\nOverall: {passed}/{total} tests passed")
         
         if passed == total:
-            self.log("🎉 All tests passed! JWT role authentication fix is working correctly.")
+            self.log("🎉 All FI tests passed! Familles d'Impact system with addresses is working correctly.")
         else:
             self.log(f"⚠️  {total - passed} test(s) failed. Issues need to be addressed.")
         
