@@ -411,6 +411,18 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: Dashboard Superviseur FI data endpoints fully functional. Comprehensive testing completed: (1) ✅ SECTEURS ENDPOINT - GET /api/fi/secteurs?ville=Dijon returns multiple secteurs (5 found) with proper city filtering, each secteur includes id and nom fields, (2) ✅ FAMILLES D'IMPACT ENDPOINT - GET /api/fi/familles-impact?ville=Dijon returns multiple FI (15 found) with complete data including id, nom, ville, secteur_id, and adresse fields, (3) ✅ CITY FILTERING - Both endpoints properly filter by ville parameter, only returning data for specified city (Dijon), (4) ✅ AUTHENTICATION - Endpoints accessible with superadmin credentials, proper permission checks in place. Dashboard superviseur will have all necessary FI data for management interface. Backend ready for production dashboard integration."
 
+  - task: "Nouvelles Fonctionnalités - Formation KPIs, Visitor Updates, Promo Renaming"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 NOUVELLES FONCTIONNALITÉS TESTING COMPLETE - ALL 4/4 TESTS PASSED! Executed comprehensive testing of nouvelles fonctionnalités as requested in French review. RESULTS: (1) ✅ TEST 1: KPIs Formations - Successfully logged in as superadmin/superadmin123, GET /api/analytics/stats returns all required formation KPIs: formation_pcnc: 0, formation_au_coeur_bible: 0, formation_star: 0 (all numbers as required), (2) ✅ TEST 2: Update Visitor avec formations - Successfully logged in as promotions/test123, updated existing visitor with formation fields (formation_pcnc: true, formation_au_coeur_bible: true, formation_star: false), PUT /api/visitors/{visitor_id} returned 200 status, GET verification confirmed all formation fields correctly persisted, (3) ✅ TEST 3: Renommer une promo - Successfully updated promotions user with promo_name: 'Promo Excellence', PUT /api/users/{user_id} returned 200 status, verification confirmed promo_name correctly updated and persisted, (4) ✅ TEST 4: Super admin peut renommer n'importe quelle promo - Successfully logged in as superadmin/superadmin123, updated another user's promo_name to 'Novembre Stars', PUT /api/users/{autre_user_id} returned 200 status, verification confirmed super admin can rename any promo. CONCLUSION: All nouvelles fonctionnalités are working perfectly! Backend APIs support formation KPIs in analytics, visitor formation updates, and promo renaming with proper permission controls. System ready for production use with all requested features functional."
+
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
