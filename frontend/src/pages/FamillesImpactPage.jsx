@@ -47,10 +47,21 @@ const FamillesImpactPage = () => {
     try {
       const data = await getSecteurs(user.city);
       setSecteurs(data);
+      await loadPilotes();
     } catch (error) {
       toast.error('Erreur lors du chargement des secteurs');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPilotes = async () => {
+    try {
+      const data = await getReferents();
+      const pilotesFI = data.filter(u => u.role === 'pilote_fi' && u.city === user.city);
+      setPilotes(pilotesFI);
+    } catch (error) {
+      console.error('Erreur lors du chargement des pilotes');
     }
   };
 
