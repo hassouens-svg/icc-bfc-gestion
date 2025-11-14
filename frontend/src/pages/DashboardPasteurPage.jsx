@@ -57,9 +57,10 @@ const DashboardPasteurPage = () => {
       // Filtrer par ville si une ville spécifique est sélectionnée
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       
-      const [promosData, referentsData] = await Promise.all([
+      const [promosData, referentsData, statsData] = await Promise.all([
         getPromotionsDetailed(cityFilter),
-        getReferents()
+        getReferents(),
+        getStats() // Pour récupérer les KPIs formations
       ]);
       
       // Filter referents by city if needed
@@ -73,7 +74,10 @@ const DashboardPasteurPage = () => {
         total_visitors: promosData.summary?.total_visitors || 0,
         active_referents: filteredReferents.length || 0,
         avg_fidelisation: promosData.summary?.avg_fidelisation || 0,
-        promos: promosData.promos || []
+        promos: promosData.promos || [],
+        formation_pcnc: statsData.formation_pcnc || 0,
+        formation_au_coeur_bible: statsData.formation_au_coeur_bible || 0,
+        formation_star: statsData.formation_star || 0
       });
       
       // Construire les données de fidélisation pour chaque référent
