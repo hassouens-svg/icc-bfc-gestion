@@ -543,6 +543,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Multiple Pilotes per FI - pilote_ids field support"
     - "Data Export/Import System - Backend Endpoints"
   stuck_tasks:
     - "Data Export/Import System - Backend Endpoints"
