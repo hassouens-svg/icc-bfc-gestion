@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Backend API Testing for Church Visitor Management System
-Tests visitor creation by Responsable de Promos (POST /api/visitors)
+Tests Familles d'Impact functionality with addresses
 """
 
 import requests
