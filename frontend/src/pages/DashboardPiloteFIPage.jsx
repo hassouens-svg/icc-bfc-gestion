@@ -53,9 +53,10 @@ const DashboardPiloteFIPage = () => {
     }
 
     try {
+      const fiId = user.assigned_fi_id || (user.assigned_fi_ids && user.assigned_fi_ids[0]);
       await createMembreFI({
         ...newMember,
-        fi_id: user.assigned_fi_id
+        fi_id: fiId
       });
       toast.success('Membre ajouté avec succès!');
       setIsAddMemberDialogOpen(false);
