@@ -18,6 +18,7 @@ const FamillesImpactPage = () => {
   const [secteurs, setSecteurs] = useState([]);
   const [famillesImpact, setFamillesImpact] = useState([]);
   const [selectedSecteur, setSelectedSecteur] = useState('');
+  const [pilotes, setPilotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newFI, setNewFI] = useState({
@@ -25,6 +26,7 @@ const FamillesImpactPage = () => {
     secteur_id: '',
     ville: user?.city || '',
     adresse: '',
+    pilote_ids: [],
   });
 
   useEffect(() => {
