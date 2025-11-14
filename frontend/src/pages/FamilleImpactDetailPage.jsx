@@ -204,7 +204,6 @@ const FamilleImpactDetailPage = () => {
               </DialogContent>
             </Dialog>
           )}
-          </div>
         </div>
 
         {/* Date Selector */}
