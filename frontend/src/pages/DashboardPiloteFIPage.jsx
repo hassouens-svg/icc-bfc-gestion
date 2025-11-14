@@ -96,6 +96,10 @@ const DashboardPiloteFIPage = () => {
               <Calendar className="h-4 w-4 mr-2" />
               Marquer Présences
             </Button>
+            <Button onClick={() => navigate('/vue-tableau-fi')} variant="outline" className="bg-purple-50">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Vue Tableau
+            </Button>
             <Button onClick={() => setIsAddMemberDialogOpen(true)} className="bg-green-600 hover:bg-green-700">
               <UserPlus className="h-4 w-4 mr-2" />
               Ajouter un Membre
