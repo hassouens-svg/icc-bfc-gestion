@@ -149,6 +149,7 @@ const GestionAccesPage = () => {
         username: selectedUser.username,
         assigned_month: selectedUser.assigned_month,
         assigned_fi_id: selectedUser.assigned_fi_id,
+        assigned_fi_ids: selectedUser.assigned_fi_ids || [],
         assigned_secteur_id: selectedUser.assigned_secteur_id
       };
       
