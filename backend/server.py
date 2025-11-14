@@ -681,6 +681,11 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
 
 @api_router.put("/visitors/{visitor_id}")
 async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_user: dict = Depends(get_current_user)):
+    # Allow promotions, accueil, admin, super_admin, and referent to update visitors
+    allowed_roles = ["promotions", "accueil", "admin", "super_admin", "referent"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
     visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
     
     if not visitor:
