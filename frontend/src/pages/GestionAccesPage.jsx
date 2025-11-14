@@ -351,6 +351,20 @@ const GestionAccesPage = () => {
                   </Select>
                 </div>
 
+                {(newUser.role === 'referent' || newUser.role === 'promotions') && (
+                  <div className="space-y-2">
+                    <Label>Nom de la promo (optionnel)</Label>
+                    <Input
+                      value={newUser.promo_name || ''}
+                      onChange={(e) => setNewUser({...newUser, promo_name: e.target.value})}
+                      placeholder="Ex: Promo Excellence, Novembre 2024..."
+                    />
+                    <p className="text-xs text-gray-500">
+                      Remplace l'affichage du mois assigné dans les dashboards
+                    </p>
+                  </div>
+                )}
+
                 {newUser.role === 'referent' && (
                   <div className="space-y-2">
                     <Label>Mois assignés (sélection multiple) *</Label>
