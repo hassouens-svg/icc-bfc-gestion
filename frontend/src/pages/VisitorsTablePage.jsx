@@ -28,6 +28,10 @@ const VisitorsTablePage = () => {
   const [editPresence, setEditPresence] = useState(null); // true, false, or null
   const [editComment, setEditComment] = useState('');
   
+  // Edit visitor info modal state
+  const [editVisitorDialogOpen, setEditVisitorDialogOpen] = useState(false);
+  const [visitorToEdit, setVisitorToEdit] = useState(null);
+  
   // Filters
   const [filters, setFilters] = useState({
     date: '',
