@@ -1094,12 +1094,20 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     ]
     by_type = await db.visitors.aggregate(pipeline).to_list(1000)
     
+    # Formations stats
+    formation_pcnc_count = await db.visitors.count_documents({**base_query, "formation_pcnc": True})
+    formation_au_coeur_bible_count = await db.visitors.count_documents({**base_query, "formation_au_coeur_bible": True})
+    formation_star_count = await db.visitors.count_documents({**base_query, "formation_star": True})
+    
     return {
         "total_visitors": total_visitors,
         "total_referents": total_referents,
         "by_channel": by_channel,
         "by_month": by_month,
-        "by_type": by_type
+        "by_type": by_type,
+        "formation_pcnc": formation_pcnc_count,
+        "formation_au_coeur_bible": formation_au_coeur_bible_count,
+        "formation_star": formation_star_count
     }
 
 @api_router.get("/analytics/export")
