@@ -86,7 +86,7 @@ const FamillesImpactPage = () => {
       await createFamilleImpact(newFI);
       toast.success('Famille d\'Impact créée avec succès!');
       setIsDialogOpen(false);
-      setNewFI({ nom: '', secteur_id: '', ville: user?.city || '', adresse: '' });
+      setNewFI({ nom: '', secteur_id: '', ville: user?.city || '', adresse: '', pilote_ids: [] });
       loadFamillesImpact();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la création');
