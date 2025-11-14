@@ -145,6 +145,55 @@ const DashboardPiloteFIPage = () => {
           </Card>
         </div>
 
+        {/* Liste des Membres */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Users className="h-5 w-5 mr-2" />
+              Liste des Membres de la FI ({membres.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {membres.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>Aucun membre dans cette FI</p>
+                <p className="text-sm mt-1">Ajoutez des membres pour commencer</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {membres.map((membre) => (
+                  <div key={membre.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                    <div className="flex items-center space-x-4">
+                      <div className="bg-indigo-100 rounded-full p-2">
+                        <Users className="h-5 w-5 text-indigo-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{membre.prenom} {membre.nom}</p>
+                        {membre.telephone && (
+                          <p className="text-sm text-gray-500">{membre.telephone}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {membre.is_nouveau && (
+                        <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
+                          Nouveau
+                        </span>
+                      )}
+                      {membre.source === 'nouveau_arrivant' && (
+                        <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
+                          Nouveau Arrivant
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Evolution Chart */}
         <Card>
           <CardHeader>
