@@ -88,7 +88,21 @@ const DashboardPage = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">Tableau de bord - Promotions</h2>
+            <div className="flex items-center space-x-3">
+              <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">
+                Tableau de bord - {user?.promo_name || user?.assigned_month || 'Promotions'}
+              </h2>
+              {user?.role === 'promotions' && (
+                <Button 
+                  onClick={openRenameDialog} 
+                  variant="outline" 
+                  size="sm"
+                  title="Renommer la promo"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
             <p className="text-gray-500 mt-1">
               {['super_admin', 'pasteur'].includes(user?.role) && localStorage.getItem('selected_city_view') 
                 ? localStorage.getItem('selected_city_view') 
