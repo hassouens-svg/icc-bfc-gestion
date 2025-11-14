@@ -1718,9 +1718,15 @@ async def get_stats_pilote(current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "pilote_fi":
         raise HTTPException(status_code=403, detail="Only for pilote_fi")
     
+    # Support both old (assigned_fi_id) and new (assigned_fi_ids) format
     fi_id = current_user.get("assigned_fi_id")
     if not fi_id:
-        raise HTTPException(status_code=400, detail="No FI assigned")
+        assigned_fi_ids = current_user.get("assigned_fi_ids", [])
+        if assigned_fi_ids:
+            fi_id = assigned_fi_ids[0]  # Use first FI if multiple assigned
+    
+    if not fi_id:
+        raise HTTPException(status_code=400, detail="No FI assigned to your account")
     
     # Get FI info
     fi = await db.familles_impact.find_one({"id": fi_id}, {"_id": 0})
