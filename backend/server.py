@@ -190,6 +190,11 @@ class VisitorUpdate(BaseModel):
     email: Optional[EmailStr] = None
     arrival_channel: Optional[str] = None
     types: Optional[List[str]] = None
+    type: Optional[str] = None
+    city: Optional[str] = None
+    formation_pcnc: Optional[bool] = None
+    formation_au_coeur_bible: Optional[bool] = None
+    formation_star: Optional[bool] = None
 
 class CommentAdd(BaseModel):
     text: str
