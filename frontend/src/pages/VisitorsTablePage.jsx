@@ -527,6 +527,86 @@ const VisitorsTablePage = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Edit Visitor Info Dialog */}
+        <Dialog open={editVisitorDialogOpen} onOpenChange={setEditVisitorDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Modifier les informations du visiteur</DialogTitle>
+            </DialogHeader>
+            {visitorToEdit && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Nom *</Label>
+                    <Input
+                      value={visitorToEdit.lastname}
+                      onChange={(e) => setVisitorToEdit({...visitorToEdit, lastname: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Prénom *</Label>
+                    <Input
+                      value={visitorToEdit.firstname}
+                      onChange={(e) => setVisitorToEdit({...visitorToEdit, firstname: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Téléphone *</Label>
+                  <Input
+                    value={visitorToEdit.phone}
+                    onChange={(e) => setVisitorToEdit({...visitorToEdit, phone: e.target.value})}
+                    placeholder="+33..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Email (optionnel)</Label>
+                  <Input
+                    type="email"
+                    value={visitorToEdit.email || ''}
+                    onChange={(e) => setVisitorToEdit({...visitorToEdit, email: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Ville *</Label>
+                  <Input
+                    value={visitorToEdit.city}
+                    onChange={(e) => setVisitorToEdit({...visitorToEdit, city: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Type de visiteur *</Label>
+                  <Select 
+                    value={visitorToEdit.type} 
+                    onValueChange={(value) => setVisitorToEdit({...visitorToEdit, type: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Nouveau Arrivant">Nouveau Arrivant</SelectItem>
+                      <SelectItem value="Nouveau Converti">Nouveau Converti</SelectItem>
+                      <SelectItem value="De Passage">De Passage</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditVisitorDialogOpen(false)}>
+                Annuler
+              </Button>
+              <Button onClick={handleSaveVisitorEdit}>
+                Enregistrer
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
