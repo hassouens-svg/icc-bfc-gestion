@@ -584,24 +584,32 @@ const GestionAccesPage = () => {
 
                 {selectedUser.role === 'pilote_fi' && (
                   <div className="space-y-2">
-                    <Label>Famille d'Impact assignée</Label>
-                    <Select 
-                      value={selectedUser.assigned_fi_id || ''} 
-                      onValueChange={(value) => setSelectedUser({...selectedUser, assigned_fi_id: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez une FI" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {famillesImpact
-                          .filter(fi => fi.city === selectedUser.city)
-                          .map((fi) => (
-                            <SelectItem key={fi.id} value={fi.id}>
-                              {fi.name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
+                    <Label>Familles d'Impact assignées (plusieurs possibles)</Label>
+                    <div className="border rounded-md p-4 space-y-2 max-h-48 overflow-y-auto">
+                      {famillesImpact
+                        .filter(fi => fi.ville === selectedUser.city)
+                        .map((fi) => (
+                          <div key={fi.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`fi-${fi.id}`}
+                              checked={(selectedUser.assigned_fi_ids || []).includes(fi.id)}
+                              onCheckedChange={(checked) => {
+                                const currentFIs = selectedUser.assigned_fi_ids || [];
+                                const newFIs = checked 
+                                  ? [...currentFIs, fi.id]
+                                  : currentFIs.filter(id => id !== fi.id);
+                                setSelectedUser({...selectedUser, assigned_fi_ids: newFIs});
+                              }}
+                            />
+                            <label htmlFor={`fi-${fi.id}`} className="text-sm cursor-pointer">
+                              {fi.nom} ({fi.ville})
+                            </label>
+                          </div>
+                        ))}
+                      {famillesImpact.filter(fi => fi.ville === selectedUser.city).length === 0 && (
+                        <p className="text-sm text-gray-500">Aucune FI disponible pour cette ville</p>
+                      )}
+                    </div>
                   </div>
                 )}
 
