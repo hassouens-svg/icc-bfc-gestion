@@ -72,7 +72,8 @@ const VueTableauFIPage = () => {
 
   const loadPresencesForDate = async () => {
     try {
-      const presencesData = await getPresencesFI(user.assigned_fi_id, selectedDate);
+      const fiId = user.assigned_fi_id || (user.assigned_fi_ids && user.assigned_fi_ids[0]);
+      const presencesData = await getPresencesFI(fiId, selectedDate);
       
       const presencesMap = {};
       presencesData.forEach(p => {
