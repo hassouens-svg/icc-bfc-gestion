@@ -523,6 +523,18 @@ frontend:
         agent: "testing"
         comment: "✅ VERIFIED: Responsable d'Église login working perfectly after account creation! Comprehensive testing completed: (1) ❌ ROOT CAUSE IDENTIFIED - Account 'berger_dijon' with role 'responsable_eglise' did not exist in database, causing 'Invalid credentials' error, (2) ✅ ACCOUNT CREATED - Successfully created berger_dijon account with exact specifications (username='berger_dijon', password='test123', city='Dijon', role='responsable_eglise'), (3) ✅ LOGIN VERIFICATION - POST /api/auth/login with exact credentials returns 200 status with valid JWT token, (4) ✅ RESPONSE VALIDATION - All criteria satisfied: token present ✅, user.role === 'responsable_eglise' ✅, user.city === 'Dijon' ✅, (5) ✅ BACKEND FUNCTIONALITY - Authentication system working correctly for responsable_eglise role with proper JWT token generation. The 'Invalid credentials' error was resolved by creating the missing account. Login now works perfectly and returns proper authentication response."
 
+  - task: "Multiple Pilotes per FI - pilote_ids field support"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🎯 MULTIPLE PILOTES TESTING COMPLETE - 5/6 TESTS PASSED! Executed comprehensive testing of nouvelles fonctionnalités as requested in French review. RESULTS: (1) ✅ TEST 1: Multiple Pilotes par FI - Successfully created FI with multiple pilotes using pilote_ids array ['d867bbda-7bf7-4227-af51-270d71c256ff', '8d0be8e3-2542-4e9e-a92a-1436444ee928'], pilote_ids correctly stored and retrieved via GET /api/fi/familles-impact/{fi_id}, backward compatibility maintained with pilote_id field, (2) ✅ TEST 2: Support assigned_fi_ids pour pilotes - Successfully assigned multiple FI IDs to pilote user using assigned_fi_ids field, data properly persisted and retrieved, pilote can access their assigned FI (17 FIs accessible including both assigned ones), (3) ❌ CRITICAL ISSUE: GET /api/fi/stats-pilote endpoint fails with 400 'No FI assigned' error. ROOT CAUSE: Endpoint at line 1721 checks for assigned_fi_id (singular) but new implementation uses assigned_fi_ids (plural). The endpoint needs to be updated to support multiple FI assignments. (4) ✅ BACKWARD COMPATIBILITY: Old pilote_id field still works for FI creation, maintains compatibility with existing code. CONCLUSION: Multiple pilotes functionality is 83% working, only stats endpoint needs update to support assigned_fi_ids array."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
