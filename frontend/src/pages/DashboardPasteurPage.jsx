@@ -438,6 +438,29 @@ const DashboardPasteurPage = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Actions rapides - Promotions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Actions rapides - Promotions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button onClick={() => navigate('/visitors')} className="h-20" variant="outline">
+                    <Users className="h-6 w-6 mr-2" />
+                    Voir les visiteurs
+                  </Button>
+                  <Button onClick={() => navigate('/gestion-acces')} className="h-20" variant="outline">
+                    <UserPlus className="h-6 w-6 mr-2" />
+                    Gestion des accès
+                  </Button>
+                  <Button onClick={() => navigate('/fidelisation')} className="h-20" variant="outline">
+                    <TrendingUp className="h-6 w-6 mr-2" />
+                    Fidélisation
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </>
         )}
 
