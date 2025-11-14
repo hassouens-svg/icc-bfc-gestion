@@ -228,7 +228,8 @@ class FamilleImpact(BaseModel):
     secteur_id: str
     ville: str
     adresse: Optional[str] = None
-    pilote_id: Optional[str] = None
+    pilote_id: Optional[str] = None  # DEPRECATED: Use pilote_ids
+    pilote_ids: Optional[List[str]] = []  # Multiple pilotes per FI
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -237,7 +238,8 @@ class FamilleImpactCreate(BaseModel):
     secteur_id: str
     ville: str
     adresse: Optional[str] = None
-    pilote_id: Optional[str] = None
+    pilote_id: Optional[str] = None  # DEPRECATED
+    pilote_ids: Optional[List[str]] = []  # Multiple pilotes
 
 class MembreFI(BaseModel):
     model_config = ConfigDict(extra="ignore")
