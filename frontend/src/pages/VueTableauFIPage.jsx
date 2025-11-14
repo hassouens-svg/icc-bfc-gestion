@@ -50,13 +50,16 @@ const VueTableauFIPage = () => {
 
   const loadMembres = async () => {
     try {
-      if (!user.assigned_fi_id) {
-        toast.error('Aucune FI assignée');
+      // Support both old (assigned_fi_id) and new (assigned_fi_ids) format
+      const fiId = user.assigned_fi_id || (user.assigned_fi_ids && user.assigned_fi_ids[0]);
+      
+      if (!fiId) {
+        toast.error('Aucune FI assignée à votre compte');
         setLoading(false);
         return;
       }
 
-      const membresData = await getMembresFI(user.assigned_fi_id);
+      const membresData = await getMembresFI(fiId);
       setMembres(membresData);
 
     } catch (error) {
