@@ -48,6 +48,30 @@ const DashboardPage = () => {
     }
   };
 
+  const handleRenamePromo = async () => {
+    if (!newPromoName.trim()) {
+      toast.error('Veuillez entrer un nom');
+      return;
+    }
+
+    try {
+      await updateUser(user.id, { promo_name: newPromoName });
+      toast.success('Nom de la promo modifié avec succès!');
+      setIsRenameDialogOpen(false);
+      // Update local user data
+      const updatedUser = { ...user, promo_name: newPromoName };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      window.location.reload(); // Reload to update all displays
+    } catch (error) {
+      toast.error('Erreur lors de la modification');
+    }
+  };
+
+  const openRenameDialog = () => {
+    setNewPromoName(user.promo_name || user.assigned_month || '');
+    setIsRenameDialogOpen(true);
+  };
+
   if (loading) {
     return (
       <Layout>
