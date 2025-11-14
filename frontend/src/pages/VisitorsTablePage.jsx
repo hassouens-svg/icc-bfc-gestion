@@ -188,7 +188,10 @@ const VisitorsTablePage = () => {
         phone: visitorToEdit.phone,
         email: visitorToEdit.email || null,
         city: visitorToEdit.city,
-        type: visitorToEdit.type
+        type: visitorToEdit.type,
+        formation_pcnc: visitorToEdit.formation_pcnc || false,
+        formation_au_coeur_bible: visitorToEdit.formation_au_coeur_bible || false,
+        formation_star: visitorToEdit.formation_star || false
       };
 
       await updateVisitor(visitorToEdit.id, updateData);
