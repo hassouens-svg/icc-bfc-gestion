@@ -551,14 +551,37 @@ const GestionAccesPage = () => {
                 )}
 
                 {selectedUser.role === 'referent' && (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Mois assignés</Label>
+                      <Input
+                        value={selectedUser.assigned_month || ''}
+                        onChange={(e) => setSelectedUser({...selectedUser, assigned_month: e.target.value})}
+                        placeholder="2024-01,2024-02,2024-03"
+                      />
+                      <p className="text-xs text-gray-500">Format: YYYY-MM, séparés par des virgules</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Nom personnalisé de la promo (optionnel)</Label>
+                      <Input
+                        value={selectedUser.promo_name || ''}
+                        onChange={(e) => setSelectedUser({...selectedUser, promo_name: e.target.value})}
+                        placeholder="Ex: Promo Excellence, Novembre 2024..."
+                      />
+                      <p className="text-xs text-gray-500">Remplace l'affichage du mois (ex: "2024-11")</p>
+                    </div>
+                  </>
+                )}
+
+                {selectedUser.role === 'promotions' && (
                   <div className="space-y-2">
-                    <Label>Mois assignés</Label>
+                    <Label>Nom personnalisé de la promo (optionnel)</Label>
                     <Input
-                      value={selectedUser.assigned_month || ''}
-                      onChange={(e) => setSelectedUser({...selectedUser, assigned_month: e.target.value})}
-                      placeholder="2024-01,2024-02,2024-03"
+                      value={selectedUser.promo_name || ''}
+                      onChange={(e) => setSelectedUser({...selectedUser, promo_name: e.target.value})}
+                      placeholder="Ex: Promo Excellence, Novembre 2024..."
                     />
-                    <p className="text-xs text-gray-500">Format: YYYY-MM, séparés par des virgules</p>
+                    <p className="text-xs text-gray-500">Remplace l'affichage du mois assigné</p>
                   </div>
                 )}
 
