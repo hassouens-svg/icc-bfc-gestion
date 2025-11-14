@@ -461,8 +461,10 @@ class FrenchReviewTester:
                                           json=update_data)
         
         if not update_response:
-            self.log("❌ Request failed", "ERROR")
+            self.log("❌ Request failed completely", "ERROR")
             return False
+        
+        self.log(f"Response status: {update_response.status_code}")
         
         if update_response.status_code == 403:
             self.log("✅ Unauthorized access correctly denied (403)")
@@ -474,7 +476,11 @@ class FrenchReviewTester:
             return True
         else:
             self.log(f"❌ Expected 403, got {update_response.status_code}", "ERROR")
-            self.log(f"   Response: {update_response.text}")
+            try:
+                response_data = update_response.json()
+                self.log(f"   Response data: {response_data}")
+            except:
+                self.log(f"   Raw response: {update_response.text}")
             return False
 
     def run_all_tests(self):
