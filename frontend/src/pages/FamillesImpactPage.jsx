@@ -165,6 +165,33 @@ const FamillesImpactPage = () => {
                         placeholder="Adresse complète de la FI"
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label>Pilotes assignés (plusieurs possibles)</Label>
+                      <div className="border rounded-md p-4 space-y-2 max-h-48 overflow-y-auto">
+                        {pilotes.length > 0 ? (
+                          pilotes.map((pilote) => (
+                            <div key={pilote.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`pilote-${pilote.id}`}
+                                checked={(newFI.pilote_ids || []).includes(pilote.id)}
+                                onCheckedChange={(checked) => {
+                                  const currentPilotes = newFI.pilote_ids || [];
+                                  const newPilotes = checked 
+                                    ? [...currentPilotes, pilote.id]
+                                    : currentPilotes.filter(id => id !== pilote.id);
+                                  setNewFI({...newFI, pilote_ids: newPilotes});
+                                }}
+                              />
+                              <label htmlFor={`pilote-${pilote.id}`} className="text-sm cursor-pointer">
+                                {pilote.username}
+                              </label>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-gray-500">Aucun pilote disponible</p>
+                        )}
+                      </div>
+                    </div>
                     <Button type="submit" className="w-full">
                       Créer la Famille d'Impact
                     </Button>
