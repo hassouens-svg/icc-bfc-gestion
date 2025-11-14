@@ -398,12 +398,24 @@ const VisitorsTablePage = () => {
                               >
                                 Voir
                               </Button>
+                              {['promotions', 'accueil', 'admin', 'super_admin'].includes(user.role) && (
+                                <Button
+                                  onClick={() => handleEditVisitorInfo(visitor)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-green-600 hover:text-green-700"
+                                  title="Modifier les informations"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                              )}
                               {filters.date && (
                                 <Button
                                   onClick={() => handleEditPresence(visitor)}
                                   variant="outline"
                                   size="sm"
                                   className="text-blue-600 hover:text-blue-700"
+                                  title="Modifier la présence"
                                 >
                                   <Pencil className="h-4 w-4" />
                                 </Button>
