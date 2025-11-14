@@ -173,6 +173,33 @@ const VisitorsTablePage = () => {
     setEditDialogOpen(true);
   };
 
+  const handleEditVisitorInfo = (visitor) => {
+    setVisitorToEdit({...visitor});
+    setEditVisitorDialogOpen(true);
+  };
+
+  const handleSaveVisitorEdit = async () => {
+    if (!visitorToEdit) return;
+
+    try {
+      const updateData = {
+        firstname: visitorToEdit.firstname,
+        lastname: visitorToEdit.lastname,
+        phone: visitorToEdit.phone,
+        email: visitorToEdit.email || null,
+        city: visitorToEdit.city,
+        type: visitorToEdit.type
+      };
+
+      await updateVisitor(visitorToEdit.id, updateData);
+      toast.success('Informations mises à jour avec succès');
+      setEditVisitorDialogOpen(false);
+      loadVisitors();
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
   const handleSavePresenceEdit = async () => {
     if (!editingVisitor || !filters.date) {
       toast.error('Erreur: Aucune date sélectionnée');
