@@ -595,6 +595,40 @@ const VisitorsTablePage = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="space-y-3 pt-4 border-t">
+                  <Label>Formations complétées</Label>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="formation_pcnc"
+                      checked={visitorToEdit.formation_pcnc || false}
+                      onCheckedChange={(checked) => setVisitorToEdit({...visitorToEdit, formation_pcnc: checked})}
+                    />
+                    <label htmlFor="formation_pcnc" className="text-sm cursor-pointer">
+                      Formation PCNC
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="formation_au_coeur_bible"
+                      checked={visitorToEdit.formation_au_coeur_bible || false}
+                      onCheckedChange={(checked) => setVisitorToEdit({...visitorToEdit, formation_au_coeur_bible: checked})}
+                    />
+                    <label htmlFor="formation_au_coeur_bible" className="text-sm cursor-pointer">
+                      Formation Au Cœur de la Bible
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="formation_star"
+                      checked={visitorToEdit.formation_star || false}
+                      onCheckedChange={(checked) => setVisitorToEdit({...visitorToEdit, formation_star: checked})}
+                    />
+                    <label htmlFor="formation_star" className="text-sm cursor-pointer">
+                      Formation STAR
+                    </label>
+                  </div>
+                </div>
               </div>
             )}
             <DialogFooter>
