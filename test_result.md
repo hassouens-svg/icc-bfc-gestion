@@ -132,7 +132,7 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: JWT role authentication fix working correctly. Tested login scenarios: (1) Referent without department returns role='referent', (2) Referent with department='promotions' returns role='promotions', (3) Referent with department='accueil' returns role='accueil'. All JWT tokens contain correct role and get_current_user properly uses JWT role instead of database role."
 
-  - task: "Familles d'Impact System - Complete CRUD Operations"
+  - task: "Familles d'Impact System - Complete CRUD Operations with Addresses"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -143,6 +143,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "🎉 FAMILLES D'IMPACT SYSTEM FULLY FUNCTIONAL! Comprehensive testing completed with 7/7 test suites passing. All endpoints working correctly: (1) SECTEURS CRUD - Create/Read/Update/Delete secteurs for Dijon ✅, (2) FAMILLES D'IMPACT CRUD - Create FI République, list by secteur, get details, modify, delete ✅, (3) MEMBRES CRUD - Add/list/delete membres in FI ✅, (4) PRESENCES CRUD - Mark presence for jeudi, list by FI and date ✅, (5) AFFECTATION SYSTEM - Affect nouveaux arrivants to FI, get indicators ✅, (6) STATISTICS ENDPOINTS - Superviseur and pasteur stats working ✅, (7) PERMISSIONS - Role-based access control enforced ✅. Authentication with admin/admin123 for Dijon working perfectly. All review request requirements satisfied."
+      - working: true
+        agent: "testing"
+        comment: "🎯 FAMILLES D'IMPACT ADDRESSES TESTING COMPLETE - ALL 5/5 TESTS PASSED! Executed comprehensive testing of FI functionality with address support as requested in French review. RESULTS: (1) ✅ TEST 1: Création de FI avec adresse - Successfully created 'FI Test République' with address '10 Place de la République, 21000 Dijon' using superadmin/superadmin123 credentials. Address field properly stored and retrieved. (2) ✅ TEST 2: Modification d'une FI existante - Successfully updated FI name to 'FI Test République Modifiée' and address to '15 Place de la République, 21000 Dijon'. PUT /api/fi/familles-impact/{fi_id} working correctly. (3) ✅ TEST 3: Endpoint public /api/public/fi/all - Public endpoint accessible without authentication, returns only FIs with addresses (1 FI found), includes pilote information when available. Filtering logic working correctly. (4) ✅ TEST 4: Dashboard Superviseur FI - Created 3 FIs in Dijon with addresses ('République Modifiée', 'Liberté', 'Foch'), GET /api/fi/familles-impact?ville=Dijon returns all Dijon FIs correctly. City filtering working perfectly. (5) ✅ TEST 5: GET une FI spécifique - GET /api/fi/familles-impact/{fi_id} returns complete FI details including address field. All CRUD operations on FI with addresses working correctly. Backend URL https://church-tracker-2.preview.emergentagent.com/api confirmed fully operational for FI address functionality."
 
   - task: "Visitor filtering by referent role"
     implemented: true
