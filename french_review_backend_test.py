@@ -461,7 +461,7 @@ class FrenchReviewTester:
                                           json=update_data)
         
         if not update_response:
-            self.log("❌ Request failed completely", "ERROR")
+            self.log("❌ Request failed completely (network error)", "ERROR")
             return False
         
         self.log(f"Response status: {update_response.status_code}")
@@ -474,8 +474,11 @@ class FrenchReviewTester:
             except:
                 self.log(f"   Raw response: {update_response.text}")
             return True
+        elif update_response.status_code == 200:
+            self.log("❌ Pilote_fi was allowed to update visitor (should be denied)", "ERROR")
+            return False
         else:
-            self.log(f"❌ Expected 403, got {update_response.status_code}", "ERROR")
+            self.log(f"❌ Unexpected status code: {update_response.status_code}", "ERROR")
             try:
                 response_data = update_response.json()
                 self.log(f"   Response data: {response_data}")
