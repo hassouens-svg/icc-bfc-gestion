@@ -131,9 +131,14 @@ const MarquerPresencesPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">Marquer les Présences</h2>
             <p className="text-gray-500 mt-1">Enregistrez les présences pour une date spécifique</p>
           </div>
-          <Button onClick={() => navigate('/dashboard')} variant="outline">
-            Retour au Dashboard
-          </Button>
+          <div className="flex space-x-2">
+            <Button onClick={() => navigate('/visitors-table')} variant="outline" className="bg-purple-50">
+              Vue Tableau
+            </Button>
+            <Button onClick={() => navigate('/dashboard')} variant="outline">
+              Retour au Dashboard
+            </Button>
+          </div>
         </div>
 
         <Card>
