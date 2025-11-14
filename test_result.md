@@ -375,6 +375,42 @@ backend:
         agent: "testing"
         comment: "❌ CRITICAL BUG FOUND: Data export/import system has a critical authentication-breaking bug. TESTING RESULTS: (1) ✅ Export Endpoint - GET /api/admin/export-all-data works perfectly, exports all 9 collections (290 records total: 8 cities, 33 users, 64 visitors, 18 secteurs, 24 familles_impact, 26 membres_fi, 68 presences_fi, 1 culte_stats, 48 notifications) with proper metadata (export_date, exported_by, total_records, collection counts). Valid JSON structure (82KB). (2) ✅ Permission Checks - Both endpoints correctly deny access to non-Super Admin users (Pasteur gets 403 with 'Super admin only' message). (3) ✅ Import Mechanics - POST /api/admin/import-all-data successfully clears collections and inserts new data, returns success message with counts. (4) ❌ CRITICAL: Import breaks authentication! After importing data, all user logins fail with 'Invalid credentials'. ROOT CAUSE: Exported user data contains already-hashed passwords, but import doesn't preserve them correctly - passwords may be getting double-hashed or corrupted during import. System had to be restored using /api/init endpoint. (5) ⚠️ Data Validation - Import accepts invalid data structures without validation (e.g., cities with missing required fields), returns 200 success even with malformed data. IMPACT: Export/import system is UNUSABLE for production data migration - importing data will lock out all users. Need to fix password preservation in import logic before this can be used safely."
 
+  - task: "Multiple FI Assignment for Pilote - assigned_fi_ids field"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Multiple FI assignment for pilote users working perfectly. Comprehensive testing completed: (1) ✅ USER MODEL - assigned_fi_ids field properly implemented in User model (line 78) as List[str] with default empty array, (2) ✅ UPDATE ENDPOINT - PUT /api/users/{user_id} correctly accepts assigned_fi_ids field (lines 506-507) and updates user with multiple FI assignments, (3) ✅ DATA PERSISTENCE - Multiple FI IDs correctly stored and retrieved from database, verified by GET /api/users/referents endpoint, (4) ✅ SUPERADMIN PERMISSIONS - Only superadmin can assign multiple FIs to pilote users, permission checks working correctly. Test successfully assigned 3 FI IDs to pilote user and verified persistence. Backend ready for production use with multiple FI assignment functionality."
+
+  - task: "Visitor Update Permissions - Promotions and Accueil Roles"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Visitor update permissions working correctly for both Promotions and Accueil roles. Comprehensive testing completed: (1) ✅ PROMOTIONS ROLE - Can successfully update visitors using PUT /api/visitors/{visitor_id}, tested with firstname and phone updates, changes properly persisted to database, (2) ✅ ACCUEIL ROLE - Can successfully update visitors using PUT /api/visitors/{visitor_id}, tested with lastname and email updates, changes properly persisted to database, (3) ✅ PERMISSION VALIDATION - Both roles included in allowed_roles array (line 685): ['promotions', 'accueil', 'admin', 'super_admin', 'referent'], (4) ✅ UNAUTHORIZED ACCESS - pilote_fi role correctly denied with 403 status and 'Permission denied' message when attempting visitor updates. All visitor update permissions working as expected for French review requirements."
+
+  - task: "Dashboard Superviseur FI Data Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Dashboard Superviseur FI data endpoints fully functional. Comprehensive testing completed: (1) ✅ SECTEURS ENDPOINT - GET /api/fi/secteurs?ville=Dijon returns multiple secteurs (5 found) with proper city filtering, each secteur includes id and nom fields, (2) ✅ FAMILLES D'IMPACT ENDPOINT - GET /api/fi/familles-impact?ville=Dijon returns multiple FI (15 found) with complete data including id, nom, ville, secteur_id, and adresse fields, (3) ✅ CITY FILTERING - Both endpoints properly filter by ville parameter, only returning data for specified city (Dijon), (4) ✅ AUTHENTICATION - Endpoints accessible with superadmin credentials, proper permission checks in place. Dashboard superviseur will have all necessary FI data for management interface. Backend ready for production dashboard integration."
+
 frontend:
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
