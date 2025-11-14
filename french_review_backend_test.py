@@ -460,7 +460,7 @@ class FrenchReviewTester:
                                           token=pilote_token,
                                           json=update_data)
         
-        if not update_response:
+        if update_response is None:
             self.log("❌ Request failed completely (network error)", "ERROR")
             return False
         
