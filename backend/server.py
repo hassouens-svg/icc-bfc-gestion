@@ -95,7 +95,8 @@ class UserUpdate(BaseModel):
     city: Optional[str] = None
     role: Optional[str] = None
     assigned_month: Optional[str] = None
-    assigned_fi_id: Optional[str] = None
+    assigned_fi_id: Optional[str] = None  # DEPRECATED
+    assigned_fi_ids: Optional[List[str]] = None  # Multiple FIs for pilote_fi
     assigned_secteur_id: Optional[str] = None
     permissions: Optional[Dict[str, bool]] = None
     dashboard_permissions: Optional[Dict[str, bool]] = None
