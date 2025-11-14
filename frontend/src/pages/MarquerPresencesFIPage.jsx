@@ -24,13 +24,16 @@ const MarquerPresencesFIPage = () => {
       return;
     }
     
-    if (!user.assigned_fi_id) {
-      toast.error('Aucune FI assignée');
-      navigate('/dashboard');
+    // Support both old (assigned_fi_id) and new (assigned_fi_ids) format
+    const fiId = user.assigned_fi_id || (user.assigned_fi_ids && user.assigned_fi_ids[0]);
+    
+    if (!fiId) {
+      toast.error('Aucune FI assignée à votre compte');
+      navigate('/dashboard-pilote-fi');
       return;
     }
 
-    loadMembres();
+    loadMembres(fiId);
   }, [user, navigate]);
 
   useEffect(() => {
@@ -39,9 +42,9 @@ const MarquerPresencesFIPage = () => {
     }
   }, [selectedDate]);
 
-  const loadMembres = async () => {
+  const loadMembres = async (fiId) => {
     try {
-      const data = await getMembresFI(user.assigned_fi_id);
+      const data = await getMembresFI(fiId);
       setMembres(data);
     } catch (error) {
       toast.error('Erreur lors du chargement des membres');
@@ -53,7 +56,8 @@ const MarquerPresencesFIPage = () => {
 
   const loadExistingPresences = async () => {
     try {
-      const presencesData = await getPresencesFI(user.assigned_fi_id, selectedDate);
+      const fiId = user.assigned_fi_id || (user.assigned_fi_ids && user.assigned_fi_ids[0]);
+      const presencesData = await getPresencesFI(fiId, selectedDate);
       
       const presencesMap = {};
       const commentsMap = {};
