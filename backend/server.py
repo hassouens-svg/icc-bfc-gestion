@@ -503,6 +503,9 @@ async def update_user(user_id: str, update_data: UserUpdate, current_user: dict 
     if update_data.assigned_fi_id is not None:
         update_dict["assigned_fi_id"] = update_data.assigned_fi_id
     
+    if update_data.assigned_fi_ids is not None:
+        update_dict["assigned_fi_ids"] = update_data.assigned_fi_ids
+    
     if update_data.assigned_secteur_id is not None:
         update_dict["assigned_secteur_id"] = update_data.assigned_secteur_id
     
