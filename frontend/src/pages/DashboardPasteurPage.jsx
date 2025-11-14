@@ -644,6 +644,29 @@ const DashboardPasteurPage = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Actions rapides - Familles d'Impact */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Actions rapides - Familles d'Impact</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button onClick={() => navigate('/familles-impact/secteurs')} className="h-20" variant="outline">
+                    <MapPin className="h-6 w-6 mr-2" />
+                    Gérer les secteurs
+                  </Button>
+                  <Button onClick={() => navigate('/familles-impact')} className="h-20" variant="outline">
+                    <Users className="h-6 w-6 mr-2" />
+                    Voir les FI
+                  </Button>
+                  <Button onClick={() => navigate('/familles-impact/affectation')} className="h-20" variant="outline">
+                    <UserPlus className="h-6 w-6 mr-2" />
+                    Affectations
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </>
         )}
       </div>
