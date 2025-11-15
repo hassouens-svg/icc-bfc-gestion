@@ -385,6 +385,16 @@ const CulteStatsPage = () => {
                       onChange={(e) => setCulte1Stars(e.target.value)}
                     />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Commentaire (optionnel)</label>
+                    <textarea
+                      rows="2"
+                      className="w-full border rounded px-3 py-2"
+                      value={culte1Commentaire}
+                      onChange={(e) => setCulte1Commentaire(e.target.value)}
+                      placeholder="Observations, événements particuliers..."
+                    />
+                  </div>
                   <div className="pt-2 border-t">
                     <p className="text-sm text-gray-600">Fidèles: {parseInt(culte1Adultes || 0) + parseInt(culte1Enfants || 0)}</p>
                     <p className="text-sm font-medium text-indigo-600">Total: {parseInt(culte1Adultes || 0) + parseInt(culte1Enfants || 0) + parseInt(culte1Stars || 0)}</p>
