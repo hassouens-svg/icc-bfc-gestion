@@ -114,11 +114,12 @@ class CulteStats(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     date: str  # Date du dimanche YYYY-MM-DD
     ville: str
-    type_culte: str  # "Culte 1", "Culte 2", "EJP"
+    type_culte: str  # "Culte 1", "Culte 2", "EJP", "Événements spéciaux"
     nombre_fideles: int
     nombre_adultes: int = 0  # Nombre d'adultes
     nombre_enfants: int = 0  # Nombre d'enfants
     nombre_stars: int
+    commentaire: Optional[str] = None  # Commentaire pour chaque type de culte
     created_by: str  # Username de celui qui a créé
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
@@ -131,12 +132,14 @@ class CulteStatsCreate(BaseModel):
     nombre_adultes: int = 0
     nombre_enfants: int = 0
     nombre_stars: int
+    commentaire: Optional[str] = None
 
 class CulteStatsUpdate(BaseModel):
     nombre_fideles: Optional[int] = None
     nombre_adultes: Optional[int] = None
     nombre_enfants: Optional[int] = None
     nombre_stars: Optional[int] = None
+    commentaire: Optional[str] = None
 
 class PresenceEntry(BaseModel):
     date: str
