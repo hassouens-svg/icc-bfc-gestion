@@ -125,7 +125,8 @@ const CulteStatsPage = () => {
           nombre_fideles: culte1Total,
           nombre_adultes: parseInt(culte1Adultes),
           nombre_enfants: parseInt(culte1Enfants),
-          nombre_stars: parseInt(culte1Stars)
+          nombre_stars: parseInt(culte1Stars),
+          commentaire: culte1Commentaire || null
         }));
       }
       
@@ -138,7 +139,8 @@ const CulteStatsPage = () => {
           nombre_fideles: culte2Total,
           nombre_adultes: parseInt(culte2Adultes),
           nombre_enfants: parseInt(culte2Enfants),
-          nombre_stars: parseInt(culte2Stars)
+          nombre_stars: parseInt(culte2Stars),
+          commentaire: culte2Commentaire || null
         }));
       }
       
@@ -151,7 +153,22 @@ const CulteStatsPage = () => {
           nombre_fideles: ejpTotal,
           nombre_adultes: parseInt(ejpAdultes),
           nombre_enfants: parseInt(ejpEnfants),
-          nombre_stars: parseInt(ejpStars)
+          nombre_stars: parseInt(ejpStars),
+          commentaire: ejpCommentaire || null
+        }));
+      }
+      
+      const evenementTotal = parseInt(evenementAdultes) + parseInt(evenementEnfants);
+      if (evenementTotal > 0 || evenementStars > 0) {
+        promises.push(createCulteStats({
+          date: selectedDate,
+          ville: user.city,
+          type_culte: 'Événements spéciaux',
+          nombre_fideles: evenementTotal,
+          nombre_adultes: parseInt(evenementAdultes),
+          nombre_enfants: parseInt(evenementEnfants),
+          nombre_stars: parseInt(evenementStars),
+          commentaire: evenementCommentaire || null
         }));
       }
       
