@@ -189,6 +189,11 @@ const CulteStatsPage = () => {
       setEjpAdultes(0);
       setEjpEnfants(0);
       setEjpStars(0);
+      setEjpCommentaire('');
+      setEvenementAdultes(0);
+      setEvenementEnfants(0);
+      setEvenementStars(0);
+      setEvenementCommentaire('');
       
       // Reload data
       await loadData();
