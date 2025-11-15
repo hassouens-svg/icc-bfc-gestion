@@ -181,9 +181,11 @@ const CulteStatsPage = () => {
       setCulte1Adultes(0);
       setCulte1Enfants(0);
       setCulte1Stars(0);
+      setCulte1Commentaire('');
       setCulte2Adultes(0);
       setCulte2Enfants(0);
       setCulte2Stars(0);
+      setCulte2Commentaire('');
       setEjpAdultes(0);
       setEjpEnfants(0);
       setEjpStars(0);
