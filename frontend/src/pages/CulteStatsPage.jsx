@@ -483,19 +483,79 @@ const CulteStatsPage = () => {
                       onChange={(e) => setEjpStars(e.target.value)}
                     />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Commentaire (optionnel)</label>
+                    <textarea
+                      rows="2"
+                      className="w-full border rounded px-3 py-2"
+                      value={ejpCommentaire}
+                      onChange={(e) => setEjpCommentaire(e.target.value)}
+                      placeholder="Observations, événements particuliers..."
+                    />
+                  </div>
                   <div className="pt-2 border-t">
                     <p className="text-sm text-gray-600">Fidèles: {parseInt(ejpAdultes || 0) + parseInt(ejpEnfants || 0)}</p>
                     <p className="text-sm font-medium text-green-600">Total: {parseInt(ejpAdultes || 0) + parseInt(ejpEnfants || 0) + parseInt(ejpStars || 0)}</p>
+                  </div>
+                </div>
+
+                {/* Événements spéciaux */}
+                <div className="border rounded-lg p-4 space-y-3">
+                  <h4 className="font-semibold text-orange-600">Événements spéciaux</h4>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Adultes</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full border rounded px-3 py-2"
+                      value={evenementAdultes}
+                      onChange={(e) => setEvenementAdultes(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Enfants</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full border rounded px-3 py-2"
+                      value={evenementEnfants}
+                      onChange={(e) => setEvenementEnfants(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">STARS</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full border rounded px-3 py-2"
+                      value={evenementStars}
+                      onChange={(e) => setEvenementStars(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Commentaire (optionnel)</label>
+                    <textarea
+                      rows="2"
+                      className="w-full border rounded px-3 py-2"
+                      value={evenementCommentaire}
+                      onChange={(e) => setEvenementCommentaire(e.target.value)}
+                      placeholder="Type d'événement, observations..."
+                    />
+                  </div>
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-gray-600">Fidèles: {parseInt(evenementAdultes || 0) + parseInt(evenementEnfants || 0)}</p>
+                    <p className="text-sm font-medium text-orange-600">Total: {parseInt(evenementAdultes || 0) + parseInt(evenementEnfants || 0) + parseInt(evenementStars || 0)}</p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-blue-50 p-3 rounded-lg">
                 <p className="text-sm font-medium text-blue-800">
-                  Total Général du Dimanche: {
+                  Total Général: {
                     parseInt(culte1Adultes || 0) + parseInt(culte1Enfants || 0) + parseInt(culte1Stars || 0) +
                     parseInt(culte2Adultes || 0) + parseInt(culte2Enfants || 0) + parseInt(culte2Stars || 0) +
-                    parseInt(ejpAdultes || 0) + parseInt(ejpEnfants || 0) + parseInt(ejpStars || 0)
+                    parseInt(ejpAdultes || 0) + parseInt(ejpEnfants || 0) + parseInt(ejpStars || 0) +
+                    parseInt(evenementAdultes || 0) + parseInt(evenementEnfants || 0) + parseInt(evenementStars || 0)
                   }
                 </p>
               </div>
