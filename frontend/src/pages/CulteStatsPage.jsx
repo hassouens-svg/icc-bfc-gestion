@@ -47,12 +47,19 @@ const CulteStatsPage = () => {
   const [culte1Adultes, setCulte1Adultes] = useState(0);
   const [culte1Enfants, setCulte1Enfants] = useState(0);
   const [culte1Stars, setCulte1Stars] = useState(0);
+  const [culte1Commentaire, setCulte1Commentaire] = useState('');
   const [culte2Adultes, setCulte2Adultes] = useState(0);
   const [culte2Enfants, setCulte2Enfants] = useState(0);
   const [culte2Stars, setCulte2Stars] = useState(0);
+  const [culte2Commentaire, setCulte2Commentaire] = useState('');
   const [ejpAdultes, setEjpAdultes] = useState(0);
   const [ejpEnfants, setEjpEnfants] = useState(0);
   const [ejpStars, setEjpStars] = useState(0);
+  const [ejpCommentaire, setEjpCommentaire] = useState('');
+  const [evenementAdultes, setEvenementAdultes] = useState(0);
+  const [evenementEnfants, setEvenementEnfants] = useState(0);
+  const [evenementStars, setEvenementStars] = useState(0);
+  const [evenementCommentaire, setEvenementCommentaire] = useState('');
   
   // Filters
   const [filterDate, setFilterDate] = useState('');
