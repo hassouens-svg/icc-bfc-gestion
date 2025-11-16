@@ -728,6 +728,7 @@ const CulteStatsPage = () => {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Date</th>
+                    <th className="text-left py-3 px-4">Ville</th>
                     <th className="text-left py-3 px-4">Type de Culte</th>
                     <th className="text-center py-3 px-4">Adultes</th>
                     <th className="text-center py-3 px-4">Enfants</th>
