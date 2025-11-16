@@ -87,9 +87,11 @@ const CulteStatsPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Load stats for user's city
+      const userCity = user.city || null;
       const [statsData, summaryData] = await Promise.all([
-        getCulteStats(),
-        getCulteStatsSummary()
+        getCulteStats(userCity),
+        getCulteStatsSummary(userCity)
       ]);
       setStats(statsData || []);
       setSummary(summaryData || { summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
