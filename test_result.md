@@ -579,7 +579,7 @@ frontend:
 
   - task: "CulteStatsPage - Statistics display after save"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/CulteStatsPage.jsx"
     stuck_count: 1
     priority: "high"
@@ -594,6 +594,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "Backend testing confirmed: POST /api/culte-stats followed by immediate GET /api/culte-stats returns correct data with all fields (fideles=100, adultes=70, enfants=30, stars=15, commentaire). Data persistence working perfectly."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE FOUND: Frontend testing revealed authentication problems preventing proper testing. Login process has issues - username/password fields not properly accessible, city selection not working correctly. When navigating to /culte-stats page, form submission appears to work but no statistics appear in the table afterward. The 'Toutes les Statistiques (Détaillées)' table shows 0 rows after form submission. This indicates the immediate display fix is NOT working properly. Backend may be saving data but frontend is not refreshing/displaying it immediately as required."
 
   - task: "Super Admin Visitors Filter - Multi-city access"
     implemented: true
