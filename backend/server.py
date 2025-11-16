@@ -2683,6 +2683,7 @@ async def get_culte_stats_summary(
                 "culte_1": {"fideles": 0, "stars": 0},
                 "culte_2": {"fideles": 0, "stars": 0},
                 "ejp": {"fideles": 0, "stars": 0},
+                "evenements_speciaux": {"fideles": 0, "stars": 0},
                 "total_fideles": 0,
                 "total_stars": 0,
                 "total_general": 0
