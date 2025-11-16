@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "export_date": "2025-11-16T11:53:07.033047+00:00",
+    "exported_by": "superadmin",
+    "total_records": 82,
+    "collections": {
+      "cities": 9,
+      "users": 12,
+      "visitors": 29,
+      "secteurs": 5,
+      "familles_impact": 18,
+      "membres_fi": 0,
+      "presences_fi": 0,
+      "culte_stats": 9,
+      "notifications": 0
+    }
+  },
+  "cities": [
+    {"invalid_field": "test"},
+    {"id": "f26a46a4-0080-4e0a-badc-35eb01be5ec4", "name": "Dijon"},
+    {"id": "a30f364e-9d25-461f-9151-a3ab647da122", "name": "Chalon-Sur-Saone"},
+    {"id": "8342d7ac-de07-4e7d-af13-683f68840148", "name": "Dole"},
+    {"id": "1a8ac7e0-f69e-46b6-994b-4e0ea65beccc", "name": "Besançon"},
+    {"id": "f565aab4-6f62-4208-9be5-872d0079c1e9", "name": "Sens"},
+    {"id": "f87a5041-1c8d-4ac9-b475-375ffe1e35b8", "name": "Milan"},
+    {"id": "ddc1ec8e-5348-48d4-a210-f193857749bd", "name": "Perugia"},
+    {"id": "471851d1-def8-4f24-bdd2-7b892f04041f", "name": "Rome"}
+  ],
+  "users": [
+    {
+      "id": "0b16a18a-1ca4-4917-af67-8311c58c64c0",
+      "username": "superviseur_promos",
+      "password": "$2b$12$d4XY4U0PBPYJ8BHectAAbuGMMjgx2gLWytfqd8aQu6OpzA4Rk84s.",
+      "city": "Dijon",
+      "role": "superviseur_promos",
+      "assigned_month": null,
+      "assigned_secteur_id": null,
+      "assigned_fi_id": null,
+      "permissions": null,
+      "dashboard_permissions": null,
+      "is_blocked": false,
+      "created_at": "2025-11-07T11:51:55.864975+00:00"
+    },
+    {
+      "id": "1e8baf4d-dfaa-4dba-9011-307a43c12c0f",
+      "username": "superadmin",
+      "password": "$2b$12$erkyFGpAFe0GJvNjHlWJA.X1SkRHqkH5r3MTlDmXTJ03AfGSNueX2",
+      "city": "Dijon",
+      "role": "super_admin",
+      "assigned_month": null,
+      "assigned_secteur_id": null,
+      "assigned_fi_id": null,
+      "permissions": null,
+      "dashboard_permissions": null,
+      "is_blocked": false,
+      "created_at": "2025-11-07T11:51:56.090362+00:00"
+    }
+  ],
+  "visitors": [],
+  "secteurs": [],
+  "familles_impact": [],
+  "membres_fi": [],
+  "presences_fi": [],
+  "culte_stats": [],
+  "notifications": []
+}
