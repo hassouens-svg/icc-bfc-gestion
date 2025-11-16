@@ -30,7 +30,7 @@ const DashboardSuperAdminPage = () => {
   const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
-    if (!user || user.role !== 'super_admin') {
+    if (!user || !['super_admin', 'pasteur'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
