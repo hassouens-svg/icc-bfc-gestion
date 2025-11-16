@@ -134,7 +134,7 @@ const AdminDataPage = () => {
     }
   };
 
-  if (!user || user.role !== 'super_admin') {
+  if (!user || !['super_admin', 'pasteur'].includes(user.role)) {
     return null;
   }
 
