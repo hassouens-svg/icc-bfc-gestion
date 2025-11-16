@@ -238,9 +238,7 @@ const CulteStatsPage = () => {
     try {
       await deleteCulteStats(statId);
       toast.success('Statistique supprimée!');
-      setTimeout(() => {
-        loadData();
-      }, 1000);
+      await loadData();
     } catch (error) {
       console.error('Error deleting stat:', error);
       toast.error('Erreur lors de la suppression');
