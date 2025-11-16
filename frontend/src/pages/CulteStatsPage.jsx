@@ -683,6 +683,22 @@ const CulteStatsPage = () => {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Ville</label>
+                <Select value={filterVille} onValueChange={setFilterVille}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les villes</SelectItem>
+                    {cities.map((city) => (
+                      <SelectItem key={city.id} value={city.name}>
+                        {city.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <Button 
               variant="outline" 
@@ -690,6 +706,7 @@ const CulteStatsPage = () => {
               onClick={() => {
                 setFilterDate('');
                 setFilterType('all');
+                setFilterVille('all');
               }}
             >
               Réinitialiser les filtres
