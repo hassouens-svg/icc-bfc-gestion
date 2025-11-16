@@ -80,8 +80,19 @@ const CulteStatsPage = () => {
       return;
     }
     loadData();
+    loadCities();
     // eslint-disable-next-line
   }, []);
+  
+  const loadCities = async () => {
+    try {
+      const citiesData = await getCities();
+      setCities(citiesData || []);
+    } catch (error) {
+      console.error('Error loading cities:', error);
+      setCities([]);
+    }
+  };
 
   const loadData = async () => {
     setLoading(true);
