@@ -170,9 +170,8 @@ const CulteStatsPage = () => {
         }));
       }
       
+      // Wait for all stats to be created
       await Promise.all(promises);
-      
-      toast.success('Statistiques enregistrées avec succès!');
       
       // Reset form
       setSelectedDate('');
@@ -193,8 +192,17 @@ const CulteStatsPage = () => {
       setEvenementStars(0);
       setEvenementCommentaire('');
       
-      // Reload data immediately
-      await loadData();
+      // Reload data - loadData has its own loading state management
+      const userCity = user.city || null;
+      const [statsData, summaryData] = await Promise.all([
+        getCulteStats(userCity),
+        getCulteStatsSummary(userCity)
+      ]);
+      
+      setStats(statsData || []);
+      setSummary(summaryData || { summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
+      
+      toast.success('Statistiques enregistrées avec succès!');
     } catch (error) {
       console.error('Error saving stats:', error);
       toast.error('Erreur lors de l\'enregistrement');
