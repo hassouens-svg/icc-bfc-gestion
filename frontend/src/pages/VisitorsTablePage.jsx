@@ -424,7 +424,7 @@ const VisitorsTablePage = () => {
                                   <Pencil className="h-4 w-4" />
                                 </Button>
                               )}
-                              {(user.role === 'admin' || user.role === 'referent') && (
+                              {['super_admin', 'responsable_eglise', 'admin', 'referent'].includes(user.role) && (
                                 <Button
                                   onClick={() => {
                                     setSelectedVisitor(visitor);
