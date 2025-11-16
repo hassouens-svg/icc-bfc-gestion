@@ -42,6 +42,7 @@ const CulteStatsPage = () => {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [cities, setCities] = useState([]);
   
   // Form state
   const [selectedDate, setSelectedDate] = useState('');
@@ -65,6 +66,7 @@ const CulteStatsPage = () => {
   // Filters
   const [filterDate, setFilterDate] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [filterVille, setFilterVille] = useState('all');
   
   // Edit mode
   const [editingId, setEditingId] = useState(null);
