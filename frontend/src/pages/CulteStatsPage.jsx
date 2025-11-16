@@ -206,8 +206,9 @@ const CulteStatsPage = () => {
       setEvenementStars(0);
       setEvenementCommentaire('');
       
-      // Reload data - loadData has its own loading state management
-      const userCity = user.city || null;
+      // Reload data immediately - get fresh user data
+      const currentUser = getUser();
+      const userCity = currentUser?.city || null;
       const [statsData, summaryData] = await Promise.all([
         getCulteStats(userCity),
         getCulteStatsSummary(userCity)
