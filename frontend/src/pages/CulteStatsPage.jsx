@@ -83,12 +83,26 @@ const CulteStatsPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Get fresh user data from localStorage
+      const currentUser = getUser();
+      if (!currentUser) {
+        console.error('No user found in localStorage');
+        setStats([]);
+        setSummary({ summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
+        setLoading(false);
+        return;
+      }
+      
       // Load stats for user's city
-      const userCity = user.city || null;
+      const userCity = currentUser.city || null;
+      console.log('Loading culte stats for city:', userCity);
+      
       const [statsData, summaryData] = await Promise.all([
         getCulteStats(userCity),
         getCulteStatsSummary(userCity)
       ]);
+      
+      console.log('Stats loaded:', statsData?.length || 0, 'records');
       setStats(statsData || []);
       setSummary(summaryData || { summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
     } catch (error) {
