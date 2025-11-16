@@ -103,10 +103,10 @@
 #====================================================================================================
 
 user_problem_statement: |
-  User reported critical bugs after deployment:
-  1. Fidélisation page does not display any data (RESOLVED)
-  2. Referent accounts are seeing all admin data instead of only their assigned month's visitors (RESOLVED)
-  3. Visitor registration form shows blank page after submission instead of success confirmation (NEW ISSUE)
+  User reported 3 critical bugs requiring immediate fix:
+  1. CulteStatsPage - Statistics entered are not displaying after save (despite success message)
+  2. Super Admin filter - Visitors page shows only Dijon visitors instead of all cities
+  3. VisitorsPage UI - Remove "Voir" button and keep only trash icon for delete action
   
   The application is a full-stack church visitor management system with role-based access control.
 
