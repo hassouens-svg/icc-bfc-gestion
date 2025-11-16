@@ -464,7 +464,7 @@ const VisitorsPage = () => {
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      {(user.role === 'admin' || user.role === 'promotions' || user.role === 'referent') && (
+                      {['super_admin', 'responsable_eglise', 'admin', 'promotions', 'referent'].includes(user.role) && (
                         <Button 
                           variant="ghost" 
                           size="sm"
