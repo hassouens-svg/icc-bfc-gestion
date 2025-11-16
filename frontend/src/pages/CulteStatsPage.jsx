@@ -107,9 +107,13 @@ const CulteStatsPage = () => {
         return;
       }
       
-      // Load stats for user's city
-      const userCity = currentUser.city || null;
-      console.log('Loading culte stats for city:', userCity);
+      // Pasteur, Super Admin et Responsable d'église voient TOUTES les villes
+      // Accueil voit seulement sa ville
+      const userCity = ['super_admin', 'pasteur', 'responsable_eglise'].includes(currentUser.role) 
+        ? null  // null = toutes les villes
+        : currentUser.city;
+      
+      console.log('Loading culte stats for:', userCity ? `ville ${userCity}` : 'TOUTES les villes');
       
       const [statsData, summaryData] = await Promise.all([
         getCulteStats(userCity),
