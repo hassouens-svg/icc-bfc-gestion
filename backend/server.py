@@ -2688,16 +2688,22 @@ async def get_culte_stats_summary(
                 "total_general": 0
             }
         
-        culte_type = stat["type_culte"].lower().replace(" ", "_")
+        culte_type = stat["type_culte"].lower().replace(" ", "_").replace("é", "e")
         if "ejp" in culte_type.lower():
             culte_type = "ejp"
         elif "1" in culte_type:
             culte_type = "culte_1"
         elif "2" in culte_type:
             culte_type = "culte_2"
+        elif "evenement" in culte_type or "spéciaux" in stat["type_culte"].lower():
+            culte_type = "evenements_speciaux"
         
-        by_date[date][culte_type]["fideles"] = stat["nombre_fideles"]
-        by_date[date][culte_type]["stars"] = stat["nombre_stars"]
+        # Only add to known types to avoid KeyError
+        if culte_type in by_date[date]:
+            by_date[date][culte_type]["fideles"] = stat["nombre_fideles"]
+            by_date[date][culte_type]["stars"] = stat["nombre_stars"]
+        
+        # Always add to totals
         by_date[date]["total_fideles"] += stat["nombre_fideles"]
         by_date[date]["total_stars"] += stat["nombre_stars"]
         by_date[date]["total_general"] = by_date[date]["total_fideles"] + by_date[date]["total_stars"]
