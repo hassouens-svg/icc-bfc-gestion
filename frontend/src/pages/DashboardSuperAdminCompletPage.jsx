@@ -380,7 +380,7 @@ const DashboardSuperAdminCompletPage = () => {
                 ? 'Gestion complète multi-villes' 
                 : user?.role === 'responsable_eglise'
                 ? `Gestion complète de ${selectedCity}`
-                : 'Vue complète multi-villes (lecture seule)'}
+                : 'Gestion complète multi-villes'}
             </p>
           </div>
           
