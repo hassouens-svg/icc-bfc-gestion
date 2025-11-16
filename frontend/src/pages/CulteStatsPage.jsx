@@ -197,10 +197,8 @@ const CulteStatsPage = () => {
       setEvenementStars(0);
       setEvenementCommentaire('');
       
-      // Reload data with delay to allow database indexing
-      setTimeout(() => {
-        loadData();
-      }, 1000);
+      // Reload data immediately
+      await loadData();
     } catch (error) {
       console.error('Error saving stats:', error);
       toast.error('Erreur lors de l\'enregistrement');
