@@ -55,9 +55,9 @@ const DashboardSuperAdminCompletPage = () => {
   const navigate = useNavigate();
   const user = getUser();
   
-  // Check permissions
-  const canEdit = user?.role === 'super_admin' || user?.role === 'responsable_eglise';
-  const isReadOnly = user?.role === 'pasteur';
+  // Check permissions - Pasteur a les mêmes droits que Super Admin
+  const canEdit = ['super_admin', 'pasteur', 'responsable_eglise'].includes(user?.role);
+  const isReadOnly = false; // Pasteur n'est plus en lecture seule
   const isResponsableEglise = user?.role === 'responsable_eglise';
   
   // Fonction Export CSV
