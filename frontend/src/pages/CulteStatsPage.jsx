@@ -314,33 +314,6 @@ const CulteStatsPage = () => {
     return true;
   });
 
-  // Group stats by date for summary table
-  const statsByDate = {};
-  filteredStats.forEach(stat => {
-    if (!statsByDate[stat.date]) {
-      statsByDate[stat.date] = {
-        date: stat.date,
-        culte_1: { fideles: 0, stars: 0 },
-        culte_2: { fideles: 0, stars: 0 },
-        ejp: { fideles: 0, stars: 0 },
-        total_fideles: 0,
-        total_stars: 0,
-        total: 0
-      };
-    }
-    
-    const culteKey = stat.type_culte === 'Culte 1' ? 'culte_1' : 
-                     stat.type_culte === 'Culte 2' ? 'culte_2' : 'ejp';
-    
-    statsByDate[stat.date][culteKey].fideles = stat.nombre_fideles;
-    statsByDate[stat.date][culteKey].stars = stat.nombre_stars;
-    statsByDate[stat.date].total_fideles += stat.nombre_fideles;
-    statsByDate[stat.date].total_stars += stat.nombre_stars;
-    statsByDate[stat.date].total = statsByDate[stat.date].total_fideles + statsByDate[stat.date].total_stars;
-  });
-
-  const summaryTableData = Object.values(statsByDate).sort((a, b) => b.date.localeCompare(a.date));
-
   if (loading && !stats.length) {
     return (
       <Layout>
