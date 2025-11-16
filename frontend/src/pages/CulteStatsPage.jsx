@@ -268,8 +268,9 @@ const CulteStatsPage = () => {
     try {
       await deleteCulteStats(statId);
       
-      // Reload data immediately
-      const userCity = user.city || null;
+      // Reload data immediately - get fresh user data
+      const currentUser = getUser();
+      const userCity = currentUser?.city || null;
       const [statsData, summaryData] = await Promise.all([
         getCulteStats(userCity),
         getCulteStatsSummary(userCity)
