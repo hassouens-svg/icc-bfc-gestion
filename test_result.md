@@ -565,6 +565,18 @@ frontend:
         agent: "testing"
         comment: "🎯 MULTIPLE PILOTES TESTING COMPLETE - 5/6 TESTS PASSED! Executed comprehensive testing of nouvelles fonctionnalités as requested in French review. RESULTS: (1) ✅ TEST 1: Multiple Pilotes par FI - Successfully created FI with multiple pilotes using pilote_ids array ['d867bbda-7bf7-4227-af51-270d71c256ff', '8d0be8e3-2542-4e9e-a92a-1436444ee928'], pilote_ids correctly stored and retrieved via GET /api/fi/familles-impact/{fi_id}, backward compatibility maintained with pilote_id field, (2) ✅ TEST 2: Support assigned_fi_ids pour pilotes - Successfully assigned multiple FI IDs to pilote user using assigned_fi_ids field, data properly persisted and retrieved, pilote can access their assigned FI (17 FIs accessible including both assigned ones), (3) ❌ CRITICAL ISSUE: GET /api/fi/stats-pilote endpoint fails with 400 'No FI assigned' error. ROOT CAUSE: Endpoint at line 1721 checks for assigned_fi_id (singular) but new implementation uses assigned_fi_ids (plural). The endpoint needs to be updated to support multiple FI assignments. (4) ✅ BACKWARD COMPATIBILITY: Old pilote_id field still works for FI creation, maintains compatibility with existing code. CONCLUSION: Multiple pilotes functionality is 83% working, only stats endpoint needs update to support assigned_fi_ids array."
 
+  - task: "Corrections Critiques - Super Admin Multi-City Access & Culte Stats Reload"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎯 CORRECTIONS CRITIQUES TESTING COMPLETE - ALL 3/3 TESTS PASSED! Executed comprehensive testing of 3 critical corrections as requested in French review. RESULTS: (1) ✅ TEST 1: Filtre Super Admin - GET /visitors - Super Admin successfully sees ALL visitors from ALL cities (29 visitors from Dijon + Milan), multi-city access confirmed working correctly, (2) ✅ TEST 2: Rechargement des statistiques de culte - POST /api/culte-stats followed by immediate GET /api/culte-stats?ville=Dijon works perfectly, data persistence verified with all values correct (fideles: 100, adultes: 70, enfants: 30, stars: 15, commentaire preserved), (3) ✅ TEST 3: Préservation ancien comportement - superviseur_promos correctly restricted to Dijon only (25 visitors), city filtering preserved for non-admin roles. CONCLUSION: All 3 critical corrections are working perfectly. Super Admin multi-city access implemented correctly while preserving role-based city restrictions for other users. Backend ready for production use with all critical fixes verified."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
