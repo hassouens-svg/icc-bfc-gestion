@@ -107,9 +107,9 @@ const CulteStatsPage = () => {
         return;
       }
       
-      // Pasteur, Super Admin et Responsable d'église voient TOUTES les villes
-      // Accueil voit seulement sa ville
-      const userCity = ['super_admin', 'pasteur', 'responsable_eglise'].includes(currentUser.role) 
+      // Pasteur et Super Admin voient TOUTES les villes
+      // Responsable d'église et Accueil voient UNIQUEMENT leur ville
+      const userCity = ['super_admin', 'pasteur'].includes(currentUser.role) 
         ? null  // null = toutes les villes
         : currentUser.city;
       
