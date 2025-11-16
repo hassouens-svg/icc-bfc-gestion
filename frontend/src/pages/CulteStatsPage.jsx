@@ -717,6 +717,7 @@ const CulteStatsPage = () => {
                     <th className="text-center py-3 px-4">Total Fidèles</th>
                     <th className="text-center py-3 px-4">STARS</th>
                     <th className="text-center py-3 px-4">Total Général</th>
+                    <th className="text-left py-3 px-4">Commentaire</th>
                     <th className="text-right py-3 px-4">Actions</th>
                   </tr>
                 </thead>
