@@ -306,6 +306,7 @@ const CulteStatsPage = () => {
   const filteredStats = stats.filter(stat => {
     if (filterDate && stat.date !== filterDate) return false;
     if (filterType !== 'all' && stat.type_culte !== filterType) return false;
+    if (filterVille !== 'all' && stat.ville !== filterVille) return false;
     return true;
   });
 
