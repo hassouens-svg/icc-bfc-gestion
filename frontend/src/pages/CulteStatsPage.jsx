@@ -783,6 +783,13 @@ const CulteStatsPage = () => {
                             (stat.nombre_adultes || 0) + (stat.nombre_enfants || 0) + stat.nombre_stars
                           )}
                         </td>
+                        <td className="py-3 px-4 text-sm text-gray-600 max-w-xs">
+                          {stat.commentaire ? (
+                            <span className="italic">{stat.commentaire}</span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
                         <td className="text-right py-3 px-4">
                           {isEditing ? (
                             <div className="flex gap-2 justify-end">
