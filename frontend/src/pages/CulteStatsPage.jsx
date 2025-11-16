@@ -222,9 +222,19 @@ const CulteStatsPage = () => {
         nombre_stars: parseInt(stars)
       });
       
-      toast.success('Statistique mise à jour!');
       setEditingId(null);
-      await loadData();
+      
+      // Reload data immediately
+      const userCity = user.city || null;
+      const [statsData, summaryData] = await Promise.all([
+        getCulteStats(userCity),
+        getCulteStatsSummary(userCity)
+      ]);
+      
+      setStats(statsData || []);
+      setSummary(summaryData || { summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
+      
+      toast.success('Statistique mise à jour!');
     } catch (error) {
       console.error('Error updating stat:', error);
       toast.error('Erreur lors de la mise à jour');
