@@ -251,8 +251,18 @@ const CulteStatsPage = () => {
     setLoading(true);
     try {
       await deleteCulteStats(statId);
+      
+      // Reload data immediately
+      const userCity = user.city || null;
+      const [statsData, summaryData] = await Promise.all([
+        getCulteStats(userCity),
+        getCulteStatsSummary(userCity)
+      ]);
+      
+      setStats(statsData || []);
+      setSummary(summaryData || { summary: [], global_stats: { total_dimanches: 0, avg_fideles_per_dimanche: 0, avg_stars_per_dimanche: 0, avg_total_per_dimanche: 0 } });
+      
       toast.success('Statistique supprimée!');
-      await loadData();
     } catch (error) {
       console.error('Error deleting stat:', error);
       toast.error('Erreur lors de la suppression');
