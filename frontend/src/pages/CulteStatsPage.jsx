@@ -222,7 +222,9 @@ const CulteStatsPage = () => {
       
       toast.success('Statistique mise à jour!');
       setEditingId(null);
-      await loadData();
+      setTimeout(() => {
+        loadData();
+      }, 1000);
     } catch (error) {
       console.error('Error updating stat:', error);
       toast.error('Erreur lors de la mise à jour');
