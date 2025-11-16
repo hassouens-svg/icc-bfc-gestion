@@ -745,6 +745,7 @@ const CulteStatsPage = () => {
                     return (
                       <tr key={stat.id} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4">{stat.date}</td>
+                        <td className="py-3 px-4 text-gray-600">{stat.ville}</td>
                         <td className="py-3 px-4 font-medium">{stat.type_culte}</td>
                         <td className="text-center py-3 px-4">
                           {isEditing ? (
