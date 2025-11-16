@@ -631,9 +631,13 @@ async def get_visitors(
     include_stopped: bool = False,
     current_user: dict = Depends(get_current_user)
 ):
-    query = {
-        "city": current_user["city"]
-    }
+    # Super Admin and Pasteur can see all cities
+    if current_user["role"] in ["super_admin", "pasteur"]:
+        query = {}
+    else:
+        query = {
+            "city": current_user["city"]
+        }
     
     # Include or exclude stopped visitors
     if not include_stopped:
