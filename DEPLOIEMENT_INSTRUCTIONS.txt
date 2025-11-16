@@ -1,0 +1,79 @@
+═══════════════════════════════════════════════════════════════════
+  INSTRUCTIONS DE DÉPLOIEMENT - ICC DIJON CONNECT
+═══════════════════════════════════════════════════════════════════
+
+🎯 OBJECTIF : Déployer les corrections sur icc-dijon-connect.emergent.host
+
+📋 PROBLÈMES RÉSOLUS :
+1. ✅ Stats de culte s'enregistrent et s'affichent immédiatement
+2. ✅ Super Admin voit tous les visiteurs (toutes les villes)
+3. ✅ Bouton "Voir" supprimé, seule icône poubelle reste
+
+───────────────────────────────────────────────────────────────────
+🚀 MÉTHODE DE DÉPLOIEMENT
+───────────────────────────────────────────────────────────────────
+
+OPTION 1 : Via l'interface Emergent (RECOMMANDÉ)
+─────────────────────────────────────────────────
+1. Ouvrez votre navigateur
+2. Allez sur : https://app.emergent.sh
+3. Connectez-vous à votre compte
+4. Sur la page d'accueil (onglet "Home"), faites défiler vers le bas
+5. Trouvez la section "Deployed Apps" ou "View all deployed apps"
+6. Cherchez votre app : "icc-dijon-connect" ou "icc-dijon-connect.emergent.host"
+7. Cliquez sur "Redeploy" ou "Update" ou les 3 points (...)
+8. Confirmez le déploiement
+9. Attendez ~10 minutes
+
+OPTION 2 : Via le bouton "Deploy" dans le chat Emergent
+────────────────────────────────────────────────────────
+1. Dans l'interface de chat où vous développez
+2. Cherchez un bouton "Deploy" (en haut à droite ou dans le menu)
+3. Sélectionnez votre déploiement existant "icc-dijon-connect"
+4. Cliquez sur "Deploy Now" ou "Redeploy"
+5. Attendez la fin du déploiement
+
+───────────────────────────────────────────────────────────────────
+✅ VÉRIFICATION APRÈS DÉPLOIEMENT
+───────────────────────────────────────────────────────────────────
+
+1. Ouvrez : https://icc-dijon-connect.emergent.host/
+
+2. Connectez-vous avec un compte ACCUEIL ou SUPER ADMIN
+
+3. TESTEZ l'enregistrement des stats :
+   - Allez dans "Accueil/Intégration" ou "Stats Culte"
+   - Remplissez le formulaire avec une date et des chiffres
+   - Cliquez sur "Enregistrer"
+   - ✅ Vérifiez que les stats apparaissent IMMÉDIATEMENT dans le tableau
+
+4. TESTEZ le filtre Super Admin (si compte super_admin) :
+   - Allez dans "Nouveaux Arrivants" ou "Visiteurs"
+   - ✅ Vérifiez que vous voyez les visiteurs de TOUTES les villes
+
+5. TESTEZ l'interface Visiteurs :
+   - Allez dans "Nouveaux Arrivants"
+   - ✅ Vérifiez qu'il y a SEULEMENT l'icône poubelle (pas de bouton "Voir")
+
+───────────────────────────────────────────────────────────────────
+📞 SUPPORT EN CAS DE PROBLÈME
+───────────────────────────────────────────────────────────────────
+
+Si le déploiement échoue ou si les problèmes persistent :
+
+• Discord Emergent : https://discord.gg/VzKfwCXC4A
+• Email Support : support@emergent.sh
+• Mentionnez : Job ID "egliseconnect-1"
+
+───────────────────────────────────────────────────────────────────
+📦 FICHIERS MODIFIÉS (Déjà prêts dans votre code)
+───────────────────────────────────────────────────────────────────
+
+✅ backend/server.py (2 corrections)
+✅ frontend/src/pages/CulteStatsPage.jsx (correction principale)
+✅ frontend/src/pages/VisitorsPage.jsx (UI)
+
+Tous les fichiers sont déjà modifiés et prêts.
+Il suffit de cliquer sur "Redeploy" dans l'interface Emergent.
+
+═══════════════════════════════════════════════════════════════════
