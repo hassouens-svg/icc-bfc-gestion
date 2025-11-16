@@ -591,6 +591,8 @@ test_plan:
     - "Data Export/Import System - Backend Endpoints"
   test_all: false
   test_priority: "high_first"
+  completed_tests:
+    - "Corrections Critiques - Super Admin Multi-City Access & Culte Stats Reload"
 
 agent_communication:
   - agent: "main"
