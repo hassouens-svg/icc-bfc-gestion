@@ -457,13 +457,6 @@ const VisitorsPage = () => {
                       </p>
                     </div>
                     <div className="flex space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => navigate(`/visitor/${visitor.id}`)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
                       {['super_admin', 'responsable_eglise', 'admin', 'promotions', 'referent'].includes(user.role) && (
                         <Button 
                           variant="ghost" 
