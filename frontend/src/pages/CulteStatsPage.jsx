@@ -864,69 +864,6 @@ const CulteStatsPage = () => {
           </CardContent>
         </Card>
 
-        {/* Summary Table by Date */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Récapitulatif par Dimanche</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Date</th>
-                    <th className="text-center py-3 px-4">Culte 1</th>
-                    <th className="text-center py-3 px-4">Culte 2</th>
-                    <th className="text-center py-3 px-4">EJP</th>
-                    <th className="text-center py-3 px-4">Total Fidèles</th>
-                    <th className="text-center py-3 px-4">Total STARS</th>
-                    <th className="text-center py-3 px-4">Total Général</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {summaryTableData.map((row, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium">{row.date}</td>
-                      <td className="text-center py-3 px-4">
-                        <div className="text-sm">
-                          <div>F: {row.culte_1.fideles}</div>
-                          <div className="text-yellow-600">S: {row.culte_1.stars}</div>
-                        </div>
-                      </td>
-                      <td className="text-center py-3 px-4">
-                        <div className="text-sm">
-                          <div>F: {row.culte_2.fideles}</div>
-                          <div className="text-yellow-600">S: {row.culte_2.stars}</div>
-                        </div>
-                      </td>
-                      <td className="text-center py-3 px-4">
-                        <div className="text-sm">
-                          <div>F: {row.ejp.fideles}</div>
-                          <div className="text-yellow-600">S: {row.ejp.stars}</div>
-                        </div>
-                      </td>
-                      <td className="text-center py-3 px-4 font-bold text-indigo-600">
-                        {row.total_fideles}
-                      </td>
-                      <td className="text-center py-3 px-4 font-bold text-yellow-600">
-                        {row.total_stars}
-                      </td>
-                      <td className="text-center py-3 px-4 font-bold text-green-600">
-                        {row.total}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {summaryTableData.length === 0 && (
-              <p className="text-center text-gray-500 py-8">
-                Aucune statistique trouvée
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
         {/* Evolution Chart */}
         {summary && summary.summary.length > 0 && (
           <Card>
