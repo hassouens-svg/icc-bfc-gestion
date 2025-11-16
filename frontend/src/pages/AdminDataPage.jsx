@@ -22,8 +22,8 @@ const AdminDataPage = () => {
       navigate('/acces-specifiques');
       return;
     }
-    if (user.role !== 'super_admin') {
-      toast.error('Accès refusé. Réservé aux Super Admin uniquement.');
+    if (!['super_admin', 'pasteur'].includes(user.role)) {
+      toast.error('Accès refusé. Réservé aux Super Admin et Pasteur uniquement.');
       navigate('/dashboard');
     }
   }, [user, navigate]);
