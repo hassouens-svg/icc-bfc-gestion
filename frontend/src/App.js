@@ -19,6 +19,7 @@ import FamillesImpactPage from './pages/FamillesImpactPage';
 import FamilleImpactDetailPage from './pages/FamilleImpactDetailPage';
 import DashboardPiloteFIPage from './pages/DashboardPiloteFIPage';
 import DashboardSuperviseurFIPage from './pages/DashboardSuperviseurFIPage';
+import DashboardSuperviseurPromosPage from './pages/DashboardSuperviseurPromosPage';
 import DashboardResponsableSecteurPage from './pages/DashboardResponsableSecteurPage';
 import MarquerPresencesFIPage from './pages/MarquerPresencesFIPage';
 import VueTableauFIPage from './pages/VueTableauFIPage';
