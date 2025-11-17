@@ -234,7 +234,11 @@ const VisitorsPage = () => {
       toast.success(data.message || 'Visiteurs créés avec succès!');
       setIsBulkDialogOpen(false);
       setBulkVisitors([{ firstname: '', lastname: '', phone: '', visit_date: new Date().toISOString().split('T')[0], types: ['Nouveau Arrivant'] }]);
-      loadVisitors();
+      
+      // Wait a bit before reloading to ensure data is persisted
+      setTimeout(() => {
+        loadVisitors();
+      }, 500);
     } catch (error) {
       toast.error(error.message || 'Erreur lors de la création en masse');
     }
