@@ -1,0 +1,263 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Layout from '../components/Layout';
+import { getUser, getVisitors } from '../utils/api';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Users, TrendingUp, BarChart3 } from 'lucide-react';
+
+const DashboardSuperviseurPromosPage = () => {
+  const navigate = useNavigate();
+  const user = getUser();
+  const [visitors, setVisitors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedPromo, setSelectedPromo] = useState('all');
+  const [selectedMonth, setSelectedMonth] = useState('all');
+  const [promoStats, setPromoStats] = useState([]);
+
+  useEffect(() => {
+    if (!user || user.role !== 'superviseur_promos') {
+      navigate('/dashboard');
+      return;
+    }
+    loadData();
+  }, [user, navigate]);
+
+  const loadData = async () => {
+    try {
+      const visitorsData = await getVisitors();
+      // Filter only visitors from user's city
+      const cityVisitors = visitorsData.filter(v => v.city === user.city);
+      setVisitors(cityVisitors);
+      calculatePromoStats(cityVisitors);
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculatePromoStats = (visitorsData) => {
+    // Group visitors by promo (assigned_month or promo_name)
+    const promoGroups = {};
+    
+    visitorsData.forEach(visitor => {
+      const promoKey = visitor.promo_name || visitor.assigned_month || 'Sans Promo';
+      
+      if (!promoGroups[promoKey]) {
+        promoGroups[promoKey] = {
+          promo_name: promoKey,
+          visitors: [],
+          nouveaux_arrivants: 0,
+          nouveaux_convertis: 0,
+          total_presences: 0,
+          total_absences: 0,
+          total_membres: 0,
+          taux_fidelisation: 0
+        };
+      }
+      
+      promoGroups[promoKey].visitors.push(visitor);
+      promoGroups[promoKey].total_membres++;
+      
+      // Count NA and NC
+      if (visitor.types?.includes('Nouveau Arrivant')) {
+        promoGroups[promoKey].nouveaux_arrivants++;
+      }
+      if (visitor.types?.includes('Nouveau Converti')) {
+        promoGroups[promoKey].nouveaux_convertis++;
+      }
+      
+      // Calculate presences/absences
+      const presencesDimanche = visitor.presences_dimanche?.length || 0;
+      const presencesJeudi = visitor.presences_jeudi?.length || 0;
+      const totalPresences = presencesDimanche + presencesJeudi;
+      
+      promoGroups[promoKey].total_presences += totalPresences;
+    });
+
+    // Calculate fidélisation for each promo
+    const stats = Object.values(promoGroups).map(promo => {
+      // Taux de fidélisation = Nombre moyen de présences par membre
+      // On suppose qu'il y a eu environ 8 dimanches par mois
+      const expectedPresences = promo.total_membres * 8; // 8 dimanches par mois
+      const taux = expectedPresences > 0 
+        ? Math.round((promo.total_presences / expectedPresences) * 100) 
+        : 0;
+      
+      return {
+        ...promo,
+        taux_fidelisation: taux
+      };
+    });
+
+    setPromoStats(stats);
+  };
+
+  // Filter stats based on selected promo and month
+  const filteredStats = promoStats.filter(stat => {
+    if (selectedPromo !== 'all' && stat.promo_name !== selectedPromo) return false;
+    if (selectedMonth !== 'all') {
+      // Filter visitors by month in their visit_date or assigned_month
+      const visitorsInMonth = stat.visitors.filter(v => {
+        return v.assigned_month === selectedMonth || v.visit_date?.startsWith(selectedMonth);
+      });
+      if (visitorsInMonth.length === 0) return false;
+    }
+    return true;
+  });
+
+  // Calculate average fidélisation
+  const averageFidelisation = filteredStats.length > 0
+    ? Math.round(filteredStats.reduce((sum, stat) => sum + stat.taux_fidelisation, 0) / filteredStats.length)
+    : 0;
+
+  // Get unique promos and months
+  const uniquePromos = [...new Set(visitors.map(v => v.promo_name || v.assigned_month).filter(Boolean))];
+  const uniqueMonths = [...new Set(visitors.map(v => v.assigned_month).filter(Boolean))].sort().reverse();
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard Superviseur Promotions</h1>
+          <p className="text-gray-500 mt-1">Vue d'ensemble de toutes les promotions - {user.city}</p>
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Filtres
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Promotion</label>
+                <Select value={selectedPromo} onValueChange={setSelectedPromo}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les promotions</SelectItem>
+                    {uniquePromos.map(promo => (
+                      <SelectItem key={promo} value={promo}>
+                        {promo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Mois</label>
+                <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les mois</SelectItem>
+                    {uniqueMonths.map(month => (
+                      <SelectItem key={month} value={month}>
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* KPI - Taux de Fidélisation */}
+        <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-indigo-100 text-sm">Taux de Fidélisation Moyen</p>
+                <h3 className="text-4xl font-bold mt-2">{averageFidelisation}%</h3>
+                <p className="text-indigo-100 text-sm mt-1">
+                  {selectedPromo !== 'all' 
+                    ? `Promo: ${selectedPromo}` 
+                    : `Moyenne de ${filteredStats.length} promotion(s)`
+                  }
+                </p>
+              </div>
+              <TrendingUp className="h-16 w-16 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tableau des Promotions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Liste des Promotions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4">Nom de la Promo</th>
+                    <th className="text-center py-3 px-4">Nouveaux Arrivants</th>
+                    <th className="text-center py-3 px-4">Nouveaux Convertis</th>
+                    <th className="text-center py-3 px-4">Total Membres</th>
+                    <th className="text-center py-3 px-4">Total Présences</th>
+                    <th className="text-center py-3 px-4">Taux Fidélisation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredStats.length > 0 ? (
+                    filteredStats.map((stat, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="py-3 px-4 font-medium">{stat.promo_name}</td>
+                        <td className="text-center py-3 px-4">{stat.nouveaux_arrivants}</td>
+                        <td className="text-center py-3 px-4">{stat.nouveaux_convertis}</td>
+                        <td className="text-center py-3 px-4">{stat.total_membres}</td>
+                        <td className="text-center py-3 px-4">{stat.total_presences}</td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`px-2 py-1 rounded text-sm font-medium ${
+                            stat.taux_fidelisation >= 70 
+                              ? 'bg-green-100 text-green-700'
+                              : stat.taux_fidelisation >= 50
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-red-100 text-red-700'
+                          }`}>
+                            {stat.taux_fidelisation}%
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center py-8 text-gray-500">
+                        Aucune promotion trouvée pour les filtres sélectionnés
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </Layout>
+  );
+};
+
+export default DashboardSuperviseurPromosPage;
