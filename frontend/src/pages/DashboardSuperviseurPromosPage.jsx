@@ -45,16 +45,36 @@ const DashboardSuperviseurPromosPage = () => {
     }
   };
 
-  const calculatePromoStats = (visitorsData) => {
-    // Group visitors by promo (promo_name)
+  const calculatePromoStats = (visitorsData, resposPromo) => {
+    // Create a map of assigned_month to promo_name and responsable
+    const monthToPromo = {};
+    resposPromo.forEach(respo => {
+      if (respo.assigned_month) {
+        // Extract month part (MM from YYYY-MM)
+        const monthPart = respo.assigned_month.split('-')[1];
+        monthToPromo[monthPart] = {
+          promo_name: respo.promo_name || respo.assigned_month,
+          responsable: respo.username,
+          assigned_month: respo.assigned_month
+        };
+      }
+    });
+    
+    // Group visitors by their month
     const promoGroups = {};
     
     visitorsData.forEach(visitor => {
-      const promoKey = visitor.promo_name || 'Sans Promo';
+      if (!visitor.assigned_month) return;
+      
+      // Extract month part from visitor's assigned_month
+      const monthPart = visitor.assigned_month.split('-')[1];
+      const promoInfo = monthToPromo[monthPart];
+      const promoKey = promoInfo ? promoInfo.promo_name : visitor.assigned_month;
       
       if (!promoGroups[promoKey]) {
         promoGroups[promoKey] = {
           promo_name: promoKey,
+          responsable: promoInfo ? promoInfo.responsable : 'Non assigné',
           nouveaux_arrivants: 0,
           nouveaux_convertis: 0,
           en_cours: 0,
@@ -80,6 +100,22 @@ const DashboardSuperviseurPromosPage = () => {
 
     const stats = Object.values(promoGroups);
     setPromoStats(stats);
+  };
+  
+  const calculateFormationStats = (visitorsData) => {
+    const stats = {
+      pcnc: 0,
+      bible: 0,
+      star: 0
+    };
+    
+    visitorsData.forEach(visitor => {
+      if (visitor.formation_pcnc) stats.pcnc++;
+      if (visitor.formation_au_coeur_bible) stats.bible++;
+      if (visitor.formation_star) stats.star++;
+    });
+    
+    setFormationStats(stats);
   };
 
   // No filters needed in this dashboard
