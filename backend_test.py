@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Church Visitor Management System
-Tests Familles d'Impact functionality with addresses
+Backend Testing for Bug Fixes - French Review Request
+Testing two critical bug fixes:
+1. VITE_API_URL error in bulk-add Anciens Visiteurs 
+2. Promo column displaying wrong data (assigned_month vs promo_name)
 """
 
 import requests
 import json
-import os
-from datetime import datetime, timezone
-from dotenv import load_dotenv
+import sys
+from datetime import datetime, timedelta
 
-# Load environment variables
-load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://italian-church-app.preview.emergentagent.com')
-API_URL = f"{BASE_URL}/api"
+# Backend URL from environment
+BACKEND_URL = "https://italian-church-app.preview.emergentagent.com/api"
+
+# Test accounts
+TEST_ACCOUNTS = {
+    "superadmin": {"username": "superadmin", "password": "superadmin123", "city": "Dijon"},
+    "promotions": {"username": "promotions", "password": "test123", "city": "Dijon"},
+    "superviseur_promos": {"username": "superviseur_promos", "password": "superviseur123", "city": "Dijon"}
+}
 
 class BackendTester:
     def __init__(self):
