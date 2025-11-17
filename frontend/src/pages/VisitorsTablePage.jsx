@@ -39,8 +39,13 @@ const VisitorsTablePage = () => {
     presence: 'all', // present, absent, all
     category: 'all', // Nouveau Arrivant, Nouveau Converti, De Passage, all
     status: 'actif', // actif, arrete, all
-    search: ''
+    search: '',
+    promo: 'all' // NEW: filter by promo
   });
+
+  // Fidélisation state
+  const [tauxFidelisation, setTauxFidelisation] = useState(0);
+  const [uniquePromos, setUniquePromos] = useState([]);
 
   useEffect(() => {
     if (!user) {
