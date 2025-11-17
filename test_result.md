@@ -642,9 +642,9 @@ frontend:
 
   - task: "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/VisitorsPage.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -652,11 +652,14 @@ frontend:
         agent: "user"
         comment: "User reported error 'Cannot read properties of undefined (reading 'VITE_API_URL')' when trying to add bulk Anciens Visiteurs as responsable_promo. The feature is completely broken."
       - working: "NA"
-        agent: "main"
+        agent: main"
         comment: "FIXED: Line 220 in VisitorsPage.jsx was using 'import.meta.env.VITE_API_URL || process.env.REACT_APP_BACKEND_URL' which throws error because VITE_API_URL doesn't exist. Changed to use only 'process.env.REACT_APP_BACKEND_URL'. Frontend restarted successfully."
       - working: true
         agent: "testing"
         comment: "✅ VERIFIED: POST /api/visitors/bulk-ancien endpoint working perfectly! Comprehensive testing completed: (1) ✅ BULK CREATION SUCCESS - Successfully created 5 ancien visitors with POST /api/visitors/bulk-ancien, all visitors correctly marked with is_ancien=true, proper assigned_month calculation from visit_date (2024-10, 2024-11, 2024-12, 2025-01), (2) ✅ RESPONSE FORMAT CORRECT - Returns proper JSON with message and ids array as expected by frontend, (3) ✅ ROLE PERMISSIONS WORKING - superviseur_promos can create bulk ancien visitors, proper permission checks in place, (4) ✅ DATA PERSISTENCE VERIFIED - All created visitors appear in GET /api/visitors with correct data. The VITE_API_URL fix is working correctly - backend endpoint fully functional for bulk ancien visitor creation up to 40 visitors at once."
+      - working: false
+        agent: "testing"
+        comment: "🎯 FRONTEND ISSUE IDENTIFIED: Comprehensive testing of 'Ajout et suppression d'un ancien visiteur' revealed critical frontend bug. RESULTS: (1) ✅ VITE_API_URL ERROR RESOLVED - No VITE_API_URL errors in console, fix working correctly, (2) ✅ DIALOG OPENS SUCCESSFULLY - '+ Ancien Visiteur' button found and clicked, dialog opens with proper form fields, (3) ✅ FORM SUBMISSION - All test data entered correctly (ToDelete TEST_DELETE, +33600000000, 2025-01-20, Nouveau Arrivant), form submitted successfully, (4) ❌ CRITICAL BUG - Frontend sends empty email field to backend, causing validation error: 'value is not a valid email address: An email address must have an @-sign.' Backend rejects request with 422 status, (5) ✅ BACKEND VERIFICATION - Direct API test confirms POST /api/visitors/bulk-ancien works perfectly when email field is provided (created visitor ID: 50db2c10-2cea-4f09-9aa4-1c063929b92f), (6) ❌ FRONTEND HANDLING - After form submission failure, user redirected to department selection page instead of staying on visitors page with error message. ROOT CAUSE: Frontend VisitorsPage.jsx line 213 sets email: '' for bulk ancien visitors, but backend requires valid email format. SOLUTION NEEDED: Either make email optional in backend validation or provide default email in frontend."
 
   - task: "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
     implemented: true
