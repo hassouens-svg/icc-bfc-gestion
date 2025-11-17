@@ -457,6 +457,11 @@ const VisitorsTablePage = () => {
                       const presenceInfo = getPresenceInfoForDate(visitor, filters.date);
                       return (
                         <tr key={visitor.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm">
+                            <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">
+                              {visitor.promo_name || '-'}
+                            </span>
+                          </td>
                           <td className="px-4 py-3 text-sm font-medium">{visitor.lastname}</td>
                           <td className="px-4 py-3 text-sm">{visitor.firstname}</td>
                           <td className="px-4 py-3 text-sm">
