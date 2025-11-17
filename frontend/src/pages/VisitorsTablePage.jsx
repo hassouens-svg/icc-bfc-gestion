@@ -469,7 +469,7 @@ const VisitorsTablePage = () => {
                         <tr key={visitor.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">
                             <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">
-                              {visitor.promo_name || '-'}
+                              {visitor.assigned_month || '-'}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-sm font-medium">{visitor.lastname}</td>
