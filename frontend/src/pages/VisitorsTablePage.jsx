@@ -314,7 +314,7 @@ const VisitorsTablePage = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {/* Search */}
               <div className="space-y-2">
                 <Label>Recherche</Label>
@@ -323,6 +323,24 @@ const VisitorsTablePage = () => {
                   value={filters.search}
                   onChange={(e) => setFilters({...filters, search: e.target.value})}
                 />
+              </div>
+
+              {/* Promo Filter */}
+              <div className="space-y-2">
+                <Label>Promotion</Label>
+                <Select value={filters.promo} onValueChange={(value) => setFilters({...filters, promo: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Toutes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les promos</SelectItem>
+                    {uniquePromos.map(promo => (
+                      <SelectItem key={promo} value={promo}>
+                        {promo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Status */}
