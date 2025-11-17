@@ -24,35 +24,36 @@ TEST_ACCOUNTS = {
 class BackendTester:
     def __init__(self):
         self.session = requests.Session()
-        self.tokens = {}
-        self.test_users = {}
-        self.test_visitors = []
+        self.token = None
+        self.current_user = None
         
-    def log(self, message, level="INFO"):
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        print(f"[{timestamp}] {level}: {message}")
-        
-    def make_request(self, method, endpoint, token=None, **kwargs):
-        """Make HTTP request with optional authentication"""
-        url = f"{API_URL}{endpoint}"
-        headers = kwargs.get('headers', {})
-        
-        if token:
-            headers['Authorization'] = f'Bearer {token}'
+    def login(self, account_key):
+        """Login with specified account"""
+        if account_key not in TEST_ACCOUNTS:
+            raise ValueError(f"Unknown account: {account_key}")
             
-        kwargs['headers'] = headers
+        account = TEST_ACCOUNTS[account_key]
         
-        try:
-            response = self.session.request(method, url, **kwargs)
-            self.log(f"{method} {endpoint} -> {response.status_code}")
-            return response
-        except Exception as e:
-            self.log(f"Request failed: {e}", "ERROR")
-            return None
+        print(f"🔐 Logging in as {account['username']}...")
+        
+        response = self.session.post(
+            f"{BACKEND_URL}/auth/login",
+            json=account,
+            headers={"Content-Type": "application/json"}
+        )
+        
+        if response.status_code != 200:
+            raise Exception(f"Login failed: {response.status_code} - {response.text}")
             
-    def setup_test_data(self):
-        """Initialize test data and users"""
-        self.log("Setting up test data...")
+        data = response.json()
+        self.token = data["token"]
+        self.current_user = data["user"]
+        
+        # Set authorization header for future requests
+        self.session.headers.update({"Authorization": f"Bearer {self.token}"})
+        
+        print(f"✅ Successfully logged in as {self.current_user['username']} (role: {self.current_user['role']})")
+        return data
         
         # Initialize database
         response = self.make_request('POST', '/init')
