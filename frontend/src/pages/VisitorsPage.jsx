@@ -531,11 +531,11 @@ const VisitorsPage = () => {
                           onChange={(e) => updateBulkRow(index, 'visit_date', e.target.value)}
                         />
                         <Select 
-                          value={visitor.types[0]} 
+                          value={visitor.types?.[0] || 'Nouveau Arrivant'} 
                           onValueChange={(value) => updateBulkRow(index, 'types', [value])}
                         >
                           <SelectTrigger>
-                            <SelectValue />
+                            <SelectValue placeholder="Type" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="Nouveau Arrivant">NA</SelectItem>
