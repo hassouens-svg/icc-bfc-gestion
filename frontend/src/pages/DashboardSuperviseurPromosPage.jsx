@@ -11,8 +11,6 @@ const DashboardSuperviseurPromosPage = () => {
   const user = getUser();
   const [visitors, setVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPromo, setSelectedPromo] = useState('all');
-  const [selectedMonth, setSelectedMonth] = useState('all');
   const [promoStats, setPromoStats] = useState([]);
 
   useEffect(() => {
