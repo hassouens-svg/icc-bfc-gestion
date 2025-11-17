@@ -25,11 +25,19 @@ const DashboardSuperviseurPromosPage = () => {
 
   const loadData = async () => {
     try {
+      // Load all users to get responsable_promo list
+      const allUsers = await getReferents();
+      const resposPromo = allUsers.filter(u => u.role === 'responsable_promo' && u.city === user.city);
+      setResponsablesPromo(resposPromo);
+      
+      // Load visitors
       const visitorsData = await getVisitors();
-      // Filter only visitors from user's city
       const cityVisitors = visitorsData.filter(v => v.city === user.city);
       setVisitors(cityVisitors);
-      calculatePromoStats(cityVisitors);
+      
+      // Calculate stats
+      calculatePromoStats(cityVisitors, resposPromo);
+      calculateFormationStats(cityVisitors);
     } catch (error) {
       console.error('Erreur lors du chargement des données:', error);
     } finally {
