@@ -684,15 +684,18 @@ async def get_visitors(
             # Referents see only their assigned month (default behavior)
             query["assigned_month"] = current_user.get("assigned_month")
     
-    # Special handling for promotions and responsable_promo roles
+    # Special handling for responsable_promo role ONLY
     # They should see all visitors from their assigned month regardless of year
-    if current_user["role"] in ["promotions", "responsable_promo"]:
+    # Example: responsable_promo with assigned_month="2024-08" sees ALL august visitors (2024-08, 2025-08, etc.)
+    if current_user["role"] == "responsable_promo":
         user_assigned_month = current_user.get("assigned_month")
         if user_assigned_month:
             # Extract month part only (MM from YYYY-MM)
             month_part = user_assigned_month.split("-")[-1] if "-" in user_assigned_month else user_assigned_month
             # Use regex to match any year with this month
             query["assigned_month"] = {"$regex": f"-{month_part}$"}
+    
+    # superviseur_promos sees ALL visitors from their city (no month filter)
     
     visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     
