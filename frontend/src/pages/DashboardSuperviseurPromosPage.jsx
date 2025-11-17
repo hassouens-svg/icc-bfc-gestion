@@ -38,27 +38,21 @@ const DashboardSuperviseurPromosPage = () => {
   };
 
   const calculatePromoStats = (visitorsData) => {
-    // Group visitors by promo (assigned_month or promo_name)
+    // Group visitors by promo (promo_name)
     const promoGroups = {};
     
     visitorsData.forEach(visitor => {
-      const promoKey = visitor.promo_name || visitor.assigned_month || 'Sans Promo';
+      const promoKey = visitor.promo_name || 'Sans Promo';
       
       if (!promoGroups[promoKey]) {
         promoGroups[promoKey] = {
           promo_name: promoKey,
-          visitors: [],
           nouveaux_arrivants: 0,
           nouveaux_convertis: 0,
-          total_presences: 0,
-          total_absences: 0,
-          total_membres: 0,
-          taux_fidelisation: 0
+          en_cours: 0,
+          suivi_arrete: 0
         };
       }
-      
-      promoGroups[promoKey].visitors.push(visitor);
-      promoGroups[promoKey].total_membres++;
       
       // Count NA and NC
       if (visitor.types?.includes('Nouveau Arrivant')) {
@@ -68,29 +62,15 @@ const DashboardSuperviseurPromosPage = () => {
         promoGroups[promoKey].nouveaux_convertis++;
       }
       
-      // Calculate presences/absences
-      const presencesDimanche = visitor.presences_dimanche?.length || 0;
-      const presencesJeudi = visitor.presences_jeudi?.length || 0;
-      const totalPresences = presencesDimanche + presencesJeudi;
-      
-      promoGroups[promoKey].total_presences += totalPresences;
+      // Count suivi status
+      if (visitor.tracking_stopped) {
+        promoGroups[promoKey].suivi_arrete++;
+      } else {
+        promoGroups[promoKey].en_cours++;
+      }
     });
 
-    // Calculate fidélisation for each promo
-    const stats = Object.values(promoGroups).map(promo => {
-      // Taux de fidélisation = Nombre moyen de présences par membre
-      // On suppose qu'il y a eu environ 8 dimanches par mois
-      const expectedPresences = promo.total_membres * 8; // 8 dimanches par mois
-      const taux = expectedPresences > 0 
-        ? Math.round((promo.total_presences / expectedPresences) * 100) 
-        : 0;
-      
-      return {
-        ...promo,
-        taux_fidelisation: taux
-      };
-    });
-
+    const stats = Object.values(promoGroups);
     setPromoStats(stats);
   };
 
