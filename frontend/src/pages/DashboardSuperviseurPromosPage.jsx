@@ -109,39 +109,35 @@ const DashboardSuperviseurPromosPage = () => {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Nom de la Promo</th>
-                    <th className="text-center py-3 px-4">Nouveaux Arrivants</th>
-                    <th className="text-center py-3 px-4">Nouveaux Convertis</th>
-                    <th className="text-center py-3 px-4">Total Membres</th>
-                    <th className="text-center py-3 px-4">Total Présences</th>
-                    <th className="text-center py-3 px-4">Taux Fidélisation</th>
+                    <th className="text-center py-3 px-4">Nouveaux Arrivants (NA)</th>
+                    <th className="text-center py-3 px-4">Nouveaux Convertis (NC)</th>
+                    <th className="text-center py-3 px-4">En Cours de Suivi</th>
+                    <th className="text-center py-3 px-4">Suivi Arrêté</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredStats.length > 0 ? (
-                    filteredStats.map((stat, index) => (
+                  {promoStats.length > 0 ? (
+                    promoStats.map((stat, index) => (
                       <tr key={index} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4 font-medium">{stat.promo_name}</td>
                         <td className="text-center py-3 px-4">{stat.nouveaux_arrivants}</td>
                         <td className="text-center py-3 px-4">{stat.nouveaux_convertis}</td>
-                        <td className="text-center py-3 px-4">{stat.total_membres}</td>
-                        <td className="text-center py-3 px-4">{stat.total_presences}</td>
                         <td className="text-center py-3 px-4">
-                          <span className={`px-2 py-1 rounded text-sm font-medium ${
-                            stat.taux_fidelisation >= 70 
-                              ? 'bg-green-100 text-green-700'
-                              : stat.taux_fidelisation >= 50
-                              ? 'bg-yellow-100 text-yellow-700'
-                              : 'bg-red-100 text-red-700'
-                          }`}>
-                            {stat.taux_fidelisation}%
+                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-medium">
+                            {stat.en_cours}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm font-medium">
+                            {stat.suivi_arrete}
                           </span>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="text-center py-8 text-gray-500">
-                        Aucune promotion trouvée pour les filtres sélectionnés
+                      <td colSpan="5" className="text-center py-8 text-gray-500">
+                        Aucune promotion trouvée
                       </td>
                     </tr>
                   )}
