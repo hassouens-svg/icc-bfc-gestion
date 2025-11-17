@@ -729,10 +729,15 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
-    # Check permissions
-    if current_user["role"] == "referent":
-        if visitor["assigned_month"] != current_user.get("assigned_month"):
-            raise HTTPException(status_code=403, detail="Access denied")
+    # Check permissions for referent and responsable_promo
+    if current_user["role"] in ["referent", "responsable_promo"]:
+        permissions = current_user.get("permissions", {})
+        if not permissions.get("can_view_all_months", False):
+            # Check if visitor's month matches user's month (regardless of year)
+            user_month = current_user.get("assigned_month", "").split("-")[-1] if current_user.get("assigned_month") else ""
+            visitor_month = visitor.get("assigned_month", "").split("-")[-1] if visitor.get("assigned_month") else ""
+            if user_month != visitor_month:
+                raise HTTPException(status_code=403, detail="Access denied")
     
     # Accueil can't see details (consultation only)
     if current_user["role"] == "accueil":
