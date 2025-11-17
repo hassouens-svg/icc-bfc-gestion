@@ -166,6 +166,77 @@ const VisitorsPage = () => {
     }
   };
 
+  const addBulkRow = () => {
+    if (bulkVisitors.length < 40) {
+      setBulkVisitors([...bulkVisitors, { 
+        firstname: '', 
+        lastname: '', 
+        phone: '', 
+        visit_date: new Date().toISOString().split('T')[0], 
+        types: ['Nouveau Arrivant'] 
+      }]);
+    } else {
+      toast.error('Maximum 40 visiteurs à la fois');
+    }
+  };
+
+  const removeBulkRow = (index) => {
+    setBulkVisitors(bulkVisitors.filter((_, i) => i !== index));
+  };
+
+  const updateBulkRow = (index, field, value) => {
+    const updated = [...bulkVisitors];
+    updated[index][field] = value;
+    setBulkVisitors(updated);
+  };
+
+  const handleBulkCreate = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    const invalidRows = bulkVisitors.filter(v => !v.firstname || !v.lastname || !v.phone);
+    if (invalidRows.length > 0) {
+      toast.error('Tous les champs (Prénom, Nom, Téléphone) sont obligatoires');
+      return;
+    }
+
+    try {
+      const visitorsToCreate = bulkVisitors.map(v => ({
+        firstname: v.firstname,
+        lastname: v.lastname,
+        city: user?.city || '',
+        types: v.types,
+        phone: v.phone,
+        email: '',
+        address: '',
+        arrival_channel: 'Ancien Visiteur',
+        visit_date: v.visit_date,
+        is_ancien: true
+      }));
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL || process.env.REACT_APP_BACKEND_URL}/api/visitors/bulk-ancien`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(visitorsToCreate)
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création en masse');
+      }
+
+      const data = await response.json();
+      toast.success(data.message || 'Visiteurs créés avec succès!');
+      setIsBulkDialogOpen(false);
+      setBulkVisitors([{ firstname: '', lastname: '', phone: '', visit_date: new Date().toISOString().split('T')[0], types: ['Nouveau Arrivant'] }]);
+      loadVisitors();
+    } catch (error) {
+      toast.error(error.message || 'Erreur lors de la création en masse');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
