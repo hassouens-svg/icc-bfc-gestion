@@ -75,9 +75,13 @@ const VisitorsTablePage = () => {
   const applyFilters = () => {
     let filtered = [...visitors];
 
-    // Extract unique promos
-    const promos = [...new Set(visitors.map(v => v.promo_name).filter(Boolean))];
-    setUniquePromos(promos);
+    // Extract unique months from assigned_month (show only month part, e.g., "11" from "2025-11")
+    const uniqueMonths = [...new Set(visitors.map(v => {
+      if (!v.assigned_month) return null;
+      const parts = v.assigned_month.split('-');
+      return parts.length === 2 ? parts[1] : null; // Extract month part only
+    }).filter(Boolean))];
+    setUniquePromos(uniqueMonths);
 
     // Filter by status
     if (filters.status === 'actif') {
@@ -86,9 +90,14 @@ const VisitorsTablePage = () => {
       filtered = filtered.filter(v => v.tracking_stopped);
     }
 
-    // Filter by promo
+    // Filter by promo (month only)
     if (filters.promo !== 'all') {
-      filtered = filtered.filter(v => v.promo_name === filters.promo);
+      filtered = filtered.filter(v => {
+        if (!v.assigned_month) return false;
+        const parts = v.assigned_month.split('-');
+        const month = parts.length === 2 ? parts[1] : null;
+        return month === filters.promo;
+      });
     }
 
     // Filter by category
