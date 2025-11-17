@@ -75,11 +75,20 @@ const VisitorsTablePage = () => {
   const applyFilters = () => {
     let filtered = [...visitors];
 
+    // Extract unique promos
+    const promos = [...new Set(visitors.map(v => v.promo_name).filter(Boolean))];
+    setUniquePromos(promos);
+
     // Filter by status
     if (filters.status === 'actif') {
       filtered = filtered.filter(v => !v.tracking_stopped);
     } else if (filters.status === 'arrete') {
       filtered = filtered.filter(v => v.tracking_stopped);
+    }
+
+    // Filter by promo
+    if (filters.promo !== 'all') {
+      filtered = filtered.filter(v => v.promo_name === filters.promo);
     }
 
     // Filter by category
@@ -117,6 +126,35 @@ const VisitorsTablePage = () => {
     }
 
     setFilteredVisitors(filtered);
+    calculateFidelisation(filtered);
+  };
+
+  const calculateFidelisation = (visitorsList) => {
+    if (visitorsList.length === 0) {
+      setTauxFidelisation(0);
+      return;
+    }
+
+    let totalPresences = 0;
+    let totalMembers = visitorsList.length;
+
+    visitorsList.forEach(visitor => {
+      const allPresences = [
+        ...(visitor.presences_dimanche || []),
+        ...(visitor.presences_jeudi || [])
+      ];
+      // Count only present (not absent)
+      const presentCount = allPresences.filter(p => p.present === true).length;
+      totalPresences += presentCount;
+    });
+
+    // Average presences per member
+    const avgPresencesPerMember = totalMembers > 0 ? totalPresences / totalMembers : 0;
+    // Assume 8 expected presences per month (2 per week * 4 weeks)
+    const expectedPresences = 8;
+    const taux = Math.round((avgPresencesPerMember / expectedPresences) * 100);
+    
+    setTauxFidelisation(Math.min(taux, 100)); // Cap at 100%
   };
 
   const handleDeleteVisitor = async () => {
