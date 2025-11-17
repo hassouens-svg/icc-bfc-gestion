@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getUser, getVisitors } from '../utils/api';
+import { getUser, getVisitors, getReferents } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Users, TrendingUp, BarChart3 } from 'lucide-react';
+import { Users, TrendingUp, BarChart3, GraduationCap } from 'lucide-react';
 
 const DashboardSuperviseurPromosPage = () => {
   const navigate = useNavigate();
   const user = getUser();
   const [visitors, setVisitors] = useState([]);
+  const [responsablesPromo, setResponsablesPromo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [promoStats, setPromoStats] = useState([]);
+  const [formationStats, setFormationStats] = useState({ pcnc: 0, bible: 0, star: 0 });
 
   useEffect(() => {
     if (!user || user.role !== 'superviseur_promos') {
