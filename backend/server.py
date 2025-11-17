@@ -628,6 +628,37 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
     await db.visitors.insert_one(doc)
     return {"message": "Visitor created successfully", "id": visitor.id}
 
+@api_router.post("/visitors/bulk-ancien")
+async def create_bulk_ancien_visitors(visitors_data: List[VisitorCreate], current_user: dict = Depends(get_current_user)):
+    # Only superviseur_promos, referent, promotions, super_admin, pasteur can create
+    if current_user["role"] not in ["superviseur_promos", "referent", "promotions", "super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied to create visitors")
+    
+    if len(visitors_data) > 40:
+        raise HTTPException(status_code=400, detail="Maximum 40 visitors can be added at once")
+    
+    created_ids = []
+    for visitor_data in visitors_data:
+        # Calculate assigned_month
+        try:
+            visit_dt = datetime.fromisoformat(visitor_data.visit_date)
+            assigned_month = visit_dt.strftime("%Y-%m")
+        except:
+            assigned_month = datetime.now(timezone.utc).strftime("%Y-%m")
+        
+        # Force is_ancien to True
+        visitor_dict = visitor_data.model_dump()
+        visitor_dict['is_ancien'] = True
+        
+        visitor = Visitor(**visitor_dict, assigned_month=assigned_month)
+        doc = visitor.model_dump()
+        doc['created_at'] = doc['created_at'].isoformat()
+        
+        await db.visitors.insert_one(doc)
+        created_ids.append(visitor.id)
+    
+    return {"message": f"{len(created_ids)} anciens visiteurs créés avec succès", "ids": created_ids}
+
 @api_router.get("/visitors")
 async def get_visitors(
     include_stopped: bool = False,
