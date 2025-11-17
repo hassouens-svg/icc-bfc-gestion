@@ -187,6 +187,7 @@ class VisitorCreate(BaseModel):
     address: Optional[str] = None  # Optional
     arrival_channel: str
     visit_date: str
+    is_ancien: bool = False
 
 class VisitorUpdate(BaseModel):
     firstname: Optional[str] = None
