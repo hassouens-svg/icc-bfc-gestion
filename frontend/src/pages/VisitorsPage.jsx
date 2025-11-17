@@ -24,6 +24,7 @@ const VisitorsPage = () => {
   const [sortOrder, setSortOrder] = useState('date_arrivee'); // 'date_arrivee' ou 'date_creation'
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isBulkDialogOpen, setIsBulkDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   
@@ -38,6 +39,11 @@ const VisitorsPage = () => {
     arrival_channel: '',
     visit_date: new Date().toISOString().split('T')[0],
   });
+
+  // Bulk ancien visitors
+  const [bulkVisitors, setBulkVisitors] = useState([
+    { firstname: '', lastname: '', phone: '', visit_date: new Date().toISOString().split('T')[0], types: ['Nouveau Arrivant'] }
+  ]);
 
   const visitorTypes = ['Nouveau Arrivant', 'Nouveau Converti', 'De Passage'];
   const arrivalChannels = ['Evangelisation', 'Réseaux sociaux', 'Invitation par un membre (hors evangelisation)', 'Par soi même'];
