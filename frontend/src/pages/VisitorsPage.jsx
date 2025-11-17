@@ -111,7 +111,9 @@ const VisitorsPage = () => {
       setVisitors(data);
       // Don't set filteredVisitors here, let useEffect handle it
     } catch (error) {
-      toast.error('Erreur lors du chargement des nouveaux arrivants et nouveaux convertiss');
+      console.error('Erreur lors du chargement des visiteurs:', error);
+      // Don't show error toast to avoid infinite loop
+      setVisitors([]);
     } finally {
       setLoading(false);
     }
