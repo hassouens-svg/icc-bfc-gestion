@@ -55,7 +55,7 @@ class BackendTester:
         print(f"✅ Successfully logged in as {self.current_user['username']} (role: {self.current_user['role']})")
         return data
         
-    def test_referent_login_without_department(self):
+    def test_bulk_ancien_visitors_endpoint(self):
         """Test 1: Referent login without department selection"""
         self.log("\n=== TEST 1: Referent Login Without Department ===")
         
