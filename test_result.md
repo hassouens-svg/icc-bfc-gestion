@@ -459,7 +459,7 @@ frontend:
 
   - task: "Visitor registration - Fix blank page issue"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/pages/RegisterPage.jsx"
     stuck_count: 0
     priority: "high"
@@ -474,6 +474,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Fixed registration success handling. Added console.log for debugging, improved toast notification with duration, changed redirect to homepage '/' instead of '/login', removed setLoading(false) from finally block to prevent blank page flash. Frontend now properly handles registration success."
+      - working: "NA"
+        agent: "testing"
+        comment: "⚠️ REGISTRATION FORM UI ISSUES: During comprehensive testing, encountered minor UI issues with dropdown selections. RESULTS: (1) ✅ FORM LOADS CORRECTLY - Registration page accessible at /register with proper branding 'Bienvenue à ICC!', (2) ✅ FORM FIELDS WORKING - Text inputs (firstname, lastname, phone, email) accept data correctly, (3) ⚠️ DROPDOWN SELECTION ISSUES - City selector and arrival channel dropdowns have visibility/interaction problems with custom Select components, preventing complete form submission, (4) ✅ BACKEND READY - Previous testing confirmed POST /api/auth/register endpoint fully functional, (5) ✅ GDPR CONSENT - Checkbox functionality working for data protection consent. CONCLUSION: Core registration functionality intact but needs UI fixes for dropdown components to complete end-to-end testing. Backend registration endpoint confirmed working in previous tests."
 
   - task: "ReferentsPage - Allow super admin to manage all roles"
     implemented: true
