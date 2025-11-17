@@ -210,7 +210,7 @@ const VisitorsPage = () => {
         city: user?.city || '',
         types: v.types,
         phone: v.phone,
-        email: '',
+        email: 'ancien@egliseconnect.com',
         address: '',
         arrival_channel: 'Ancien Visiteur',
         visit_date: v.visit_date,
