@@ -351,8 +351,16 @@ def main():
     tester = BackendTester()
     
     try:
-        # Login as promotions user (has permission to create visitors)
-        tester.login("promotions")
+        # Initialize database first
+        print("🔧 Initializing database...")
+        init_response = tester.session.post(f"{BACKEND_URL}/init")
+        if init_response.status_code == 200:
+            print("✅ Database initialized successfully")
+        else:
+            print(f"⚠️  Database init returned: {init_response.status_code}")
+        
+        # Login as superadmin (only working account)
+        tester.login("superadmin")
         
         # Run tests
         test_results = []
