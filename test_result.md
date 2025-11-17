@@ -683,9 +683,7 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus:
-    - "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
-    - "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -694,6 +692,8 @@ test_plan:
     - "CulteStatsPage - Statistics display after save"
     - "Super Admin Visitors Filter - Multi-city access"
     - "VisitorsPage - Remove Voir button, keep trash icon only"
+    - "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
+    - "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
 
 agent_communication:
   - agent: "main"
