@@ -678,14 +678,16 @@ metadata:
 
 test_plan:
   current_focus:
-    - "CulteStatsPage - Statistics display after save"
-    - "Super Admin Visitors Filter - Multi-city access"
-    - "VisitorsPage - Remove Voir button, keep trash icon only"
+    - "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
+    - "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
   completed_tests:
     - "Corrections Critiques - Super Admin Multi-City Access & Culte Stats Reload"
+    - "CulteStatsPage - Statistics display after save"
+    - "Super Admin Visitors Filter - Multi-city access"
+    - "VisitorsPage - Remove Voir button, keep trash icon only"
 
 agent_communication:
   - agent: "main"
