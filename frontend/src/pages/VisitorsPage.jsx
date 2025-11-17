@@ -217,7 +217,7 @@ const VisitorsPage = () => {
         is_ancien: true
       }));
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || process.env.REACT_APP_BACKEND_URL}/api/visitors/bulk-ancien`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors/bulk-ancien`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
