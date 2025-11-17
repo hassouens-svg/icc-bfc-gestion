@@ -74,27 +74,7 @@ const DashboardSuperviseurPromosPage = () => {
     setPromoStats(stats);
   };
 
-  // Filter stats based on selected promo and month
-  const filteredStats = promoStats.filter(stat => {
-    if (selectedPromo !== 'all' && stat.promo_name !== selectedPromo) return false;
-    if (selectedMonth !== 'all') {
-      // Filter visitors by month in their visit_date or assigned_month
-      const visitorsInMonth = stat.visitors.filter(v => {
-        return v.assigned_month === selectedMonth || v.visit_date?.startsWith(selectedMonth);
-      });
-      if (visitorsInMonth.length === 0) return false;
-    }
-    return true;
-  });
-
-  // Calculate average fidélisation
-  const averageFidelisation = filteredStats.length > 0
-    ? Math.round(filteredStats.reduce((sum, stat) => sum + stat.taux_fidelisation, 0) / filteredStats.length)
-    : 0;
-
-  // Get unique promos and months
-  const uniquePromos = [...new Set(visitors.map(v => v.promo_name || v.assigned_month).filter(Boolean))];
-  const uniqueMonths = [...new Set(visitors.map(v => v.assigned_month).filter(Boolean))].sort().reverse();
+  // No filters needed in this dashboard
 
   if (loading) {
     return (
