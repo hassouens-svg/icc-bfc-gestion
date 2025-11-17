@@ -430,6 +430,7 @@ const VisitorsTablePage = () => {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Promo</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prénom</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
