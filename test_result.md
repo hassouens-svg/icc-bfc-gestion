@@ -640,6 +640,36 @@ frontend:
         agent: "testing"
         comment: "✅ VERIFIED: Eye button removal working correctly! Frontend testing confirmed: (1) NO Eye icons/buttons found on visitors page - Eye button successfully removed, (2) Trash icons are present for delete functionality (though 0 visitors were visible during test due to authentication issues), (3) UI change implemented correctly as requested. The removal of 'Voir' button is working as expected."
 
+  - task: "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/VisitorsPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported error 'Cannot read properties of undefined (reading 'VITE_API_URL')' when trying to add bulk Anciens Visiteurs as responsable_promo. The feature is completely broken."
+      - working: "NA"
+        agent: "main"
+        comment: "FIXED: Line 220 in VisitorsPage.jsx was using 'import.meta.env.VITE_API_URL || process.env.REACT_APP_BACKEND_URL' which throws error because VITE_API_URL doesn't exist. Changed to use only 'process.env.REACT_APP_BACKEND_URL'. Frontend restarted successfully."
+
+  - task: "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/VisitorsTablePage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported that Promo column shows wrong data. User explained: Each responsable de promo manages visitors for a specific month (e.g., 2025-11 for November 2025). In the Promo column, we should display the full assigned_month (e.g., '2025-11'). In the Promotion filter dropdown, we should show only the month part without the year (e.g., '11' instead of '2025-11', '01' instead of '2025-01')."
+      - working: "NA"
+        agent: "main"
+        comment: "FIXED: (1) Changed applyFilters() to extract unique months from assigned_month instead of promo_name. The uniquePromos state now contains only month parts (e.g., '11', '01'). (2) Updated filter logic to compare only the month part when filtering. (3) Changed line 463 to display visitor.assigned_month instead of visitor.promo_name in the Promo column. Now the column shows full date (2025-11) and filter shows just month (11). Frontend restarted successfully."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
