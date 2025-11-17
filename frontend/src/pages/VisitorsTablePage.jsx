@@ -448,7 +448,7 @@ const VisitorsTablePage = () => {
                 <tbody className="divide-y divide-gray-200">
                   {filteredVisitors.length === 0 ? (
                     <tr>
-                      <td colSpan="8" className="px-4 py-8 text-center text-gray-500">
+                      <td colSpan="9" className="px-4 py-8 text-center text-gray-500">
                         Aucun nouveaux arrivants et nouveaux convertis trouvé
                       </td>
                     </tr>
