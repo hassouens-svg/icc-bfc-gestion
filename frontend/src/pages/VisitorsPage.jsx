@@ -54,7 +54,8 @@ const VisitorsPage = () => {
       return;
     }
     loadVisitors();
-  }, [user, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // Filter visitors based on search term, date, and status
