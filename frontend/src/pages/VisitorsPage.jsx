@@ -490,6 +490,90 @@ const VisitorsPage = () => {
                 </form>
               </DialogContent>
             </Dialog>
+            
+            {/* Ancien Visiteur Dialog */}
+            <Dialog open={isBulkDialogOpen} onOpenChange={setIsBulkDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Ancien Visiteur
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Ajouter des Anciens Visiteurs (jusqu'à 40)</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleBulkCreate} className="space-y-4">
+                  <div className="max-h-96 overflow-y-auto border rounded p-2">
+                    {bulkVisitors.map((visitor, index) => (
+                      <div key={index} className="grid grid-cols-6 gap-2 mb-2 items-center border-b pb-2">
+                        <Input
+                          placeholder="Prénom *"
+                          value={visitor.firstname}
+                          onChange={(e) => updateBulkRow(index, 'firstname', e.target.value)}
+                          required
+                        />
+                        <Input
+                          placeholder="Nom *"
+                          value={visitor.lastname}
+                          onChange={(e) => updateBulkRow(index, 'lastname', e.target.value)}
+                          required
+                        />
+                        <Input
+                          placeholder="Téléphone *"
+                          value={visitor.phone}
+                          onChange={(e) => updateBulkRow(index, 'phone', e.target.value)}
+                          required
+                        />
+                        <Input
+                          type="date"
+                          value={visitor.visit_date}
+                          onChange={(e) => updateBulkRow(index, 'visit_date', e.target.value)}
+                        />
+                        <Select 
+                          value={visitor.types[0]} 
+                          onValueChange={(value) => updateBulkRow(index, 'types', [value])}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Nouveau Arrivant">NA</SelectItem>
+                            <SelectItem value="Nouveau Converti">NC</SelectItem>
+                            <SelectItem value="De Passage">DP</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button 
+                          type="button"
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => removeBulkRow(index)}
+                          disabled={bulkVisitors.length === 1}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      onClick={addBulkRow}
+                      disabled={bulkVisitors.length >= 40}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Ajouter une ligne ({bulkVisitors.length}/40)
+                    </Button>
+                    <Button type="submit">
+                      Enregistrer tous ({bulkVisitors.length})
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+            </div>
           )}
         </div>
 
