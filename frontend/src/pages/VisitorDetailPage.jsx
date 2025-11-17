@@ -185,6 +185,18 @@ const VisitorDetailPage = () => {
                 <p className="font-medium">{visitor.arrival_channel}</p>
               </div>
               <div>
+                <p className="text-sm text-gray-500">Type de visite</p>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-1 rounded text-xs font-medium ${
+                    visitor.is_ancien 
+                      ? 'bg-gray-100 text-gray-700' 
+                      : 'bg-green-100 text-green-700'
+                  }`}>
+                    {visitor.is_ancien ? 'Ancien Visiteur' : 'Nouveau Visiteur'}
+                  </span>
+                </div>
+              </div>
+              <div>
                 <p className="text-sm text-gray-500">Date de visite</p>
                 <p className="font-medium">{visitor.visit_date}</p>
               </div>
