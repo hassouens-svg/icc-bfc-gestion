@@ -174,6 +174,7 @@ class Visitor(BaseModel):
     stop_reason: Optional[str] = None
     stopped_by: Optional[str] = None
     stopped_date: Optional[str] = None
+    is_ancien: bool = False  # True si ajouté via "Ancien Visiteur"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class VisitorCreate(BaseModel):
