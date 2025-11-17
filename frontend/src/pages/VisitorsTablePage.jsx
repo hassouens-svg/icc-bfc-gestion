@@ -174,7 +174,8 @@ const VisitorsTablePage = () => {
       presence: 'all',
       category: 'all',
       status: 'actif',
-      search: ''
+      search: '',
+      promo: 'all'
     });
   };
 
