@@ -25,13 +25,18 @@ const DashboardSuperviseurPromosPage = () => {
 
   const loadData = async () => {
     try {
-      // Load all users to get responsable_promo list
+      // Load all users to get responsable_promo and referent list
       const allUsers = await getReferents();
-      const resposPromo = allUsers.filter(u => u.role === 'responsable_promo' && u.city === user.city);
+      const resposPromo = allUsers.filter(u => (u.role === 'responsable_promo' || u.role === 'referent') && u.city === user.city);
       setResponsablesPromo(resposPromo);
       
-      // Load visitors
-      const visitorsData = await getVisitors();
+      // Load ALL visitors (including stopped ones)
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors?include_stopped=true`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const visitorsData = await response.json();
       const cityVisitors = visitorsData.filter(v => v.city === user.city);
       setVisitors(cityVisitors);
       
