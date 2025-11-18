@@ -296,82 +296,137 @@ const CitiesPage = () => {
 
         {/* City Statistics Dialog */}
         <Dialog open={isStatsDialogOpen} onOpenChange={setIsStatsDialogOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Statistiques - {selectedCity?.name}</DialogTitle>
             </DialogHeader>
+            
+            {/* Filtres */}
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <Label>Année</Label>
+                <Select value={statsYear?.toString()} onValueChange={(v) => { setStatsYear(parseInt(v)); if (selectedCity) loadCityStats(selectedCity.id); }}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
+                    <SelectItem value="2026">2026</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Mois (optionnel)</Label>
+                <Select value={statsMonth?.toString() || 'all'} onValueChange={(v) => { setStatsMonth(v === 'all' ? null : parseInt(v)); if (selectedCity) loadCityStats(selectedCity.id); }}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toute l'année</SelectItem>
+                    <SelectItem value="1">Janvier</SelectItem>
+                    <SelectItem value="2">Février</SelectItem>
+                    <SelectItem value="3">Mars</SelectItem>
+                    <SelectItem value="4">Avril</SelectItem>
+                    <SelectItem value="5">Mai</SelectItem>
+                    <SelectItem value="6">Juin</SelectItem>
+                    <SelectItem value="7">Juillet</SelectItem>
+                    <SelectItem value="8">Août</SelectItem>
+                    <SelectItem value="9">Septembre</SelectItem>
+                    <SelectItem value="10">Octobre</SelectItem>
+                    <SelectItem value="11">Novembre</SelectItem>
+                    <SelectItem value="12">Décembre</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             {statsLoading ? (
               <div className="flex justify-center items-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
               </div>
             ) : cityStats ? (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-sm">Total Responsable de promoss</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-3xl font-bold">{cityStats.total_referents}</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-sm">Total Nouveaux Arrivants</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-3xl font-bold">
-                        {cityStats.referent_stats.reduce((sum, r) => sum + r.total_visitors, 0)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                {/* PROMOTIONS */}
+                <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+                  <CardHeader>
+                    <CardTitle>📊 Promotions</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">NA</p>
+                        <p className="text-2xl font-bold text-blue-600">{cityStats.promotions.nouveaux_arrivants}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">NC</p>
+                        <p className="text-2xl font-bold text-green-600">{cityStats.promotions.nouveaux_convertis}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">DP</p>
+                        <p className="text-2xl font-bold text-orange-600">{cityStats.promotions.de_passage}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">% Fidélisation</p>
+                        <p className="text-2xl font-bold text-indigo-600">{cityStats.promotions.avg_fidelisation}%</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-lg">Statistiques par Responsable de promos</h4>
-                  {cityStats.referent_stats.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4">Aucun responsable de promos avec des données</p>
-                  ) : (
-                    cityStats.referent_stats.map((ref) => (
-                      <Card key={ref.referent_id}>
-                        <CardContent className="pt-6">
-                          <div className="space-y-3">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <p className="font-semibold text-lg">{ref.referent_name}</p>
-                                <p className="text-sm text-gray-500">Mois: {ref.assigned_month}</p>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-2xl font-bold text-indigo-600">{ref.avg_fidelity_rate}%</p>
-                                <p className="text-xs text-gray-500">Taux de fidélité</p>
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-4 gap-4 pt-2 border-t">
-                              <div>
-                                <p className="text-xs text-gray-500">Total</p>
-                                <p className="text-lg font-semibold">{ref.total_visitors}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-500">Arrivants</p>
-                                <p className="text-lg font-semibold text-blue-600">{ref.nouveaux_arrivants}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-500">Convertis</p>
-                                <p className="text-lg font-semibold text-green-600">{ref.nouveaux_convertis}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-500">De passage</p>
-                                <p className="text-lg font-semibold text-orange-600">{ref.de_passage}</p>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
-                </div>
+                {/* FAMILLES D'IMPACT */}
+                <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+                  <CardHeader>
+                    <CardTitle>🏠 Familles d'Impact</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">Secteurs</p>
+                        <p className="text-2xl font-bold text-purple-600">{cityStats.familles_impact.nombre_secteurs}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">Familles</p>
+                        <p className="text-2xl font-bold text-purple-600">{cityStats.familles_impact.nombre_familles}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">Membres</p>
+                        <p className="text-2xl font-bold text-purple-600">{cityStats.familles_impact.total_membres}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">% Fidélisation</p>
+                        <p className="text-2xl font-bold text-indigo-600">{cityStats.familles_impact.avg_fidelisation}%</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* CULTE STATS */}
+                <Card className="bg-gradient-to-br from-green-50 to-green-100">
+                  <CardHeader>
+                    <CardTitle>⛪ Statistiques Cultes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">Moy. Adultes</p>
+                        <p className="text-2xl font-bold text-green-600">{cityStats.culte_stats.avg_adultes}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">Moy. Enfants</p>
+                        <p className="text-2xl font-bold text-blue-600">{cityStats.culte_stats.avg_enfants}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">Moy. Stars</p>
+                        <p className="text-2xl font-bold text-yellow-600">{cityStats.culte_stats.avg_stars}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg">
+                        <p className="text-xs text-gray-500">Total Services</p>
+                        <p className="text-2xl font-bold text-gray-600">{cityStats.culte_stats.total_services}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             ) : (
               <p className="text-center text-gray-500 py-4">Aucune donnée disponible</p>
