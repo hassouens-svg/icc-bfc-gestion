@@ -386,7 +386,7 @@ const DashboardResponsableSecteurPage = () => {
                           <Heart className="h-6 w-6 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-900">{fi.name}</h3>
+                          <h3 className="font-semibold text-gray-900">{fi.name || fi.nom || `FI ${fi.id.substring(0, 8)}`}</h3>
                           <p className="text-sm text-gray-500">
                             {fi.pilote_name || 'Aucun pilote assigné'}
                           </p>
