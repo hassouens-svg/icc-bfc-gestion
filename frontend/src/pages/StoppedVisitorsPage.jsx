@@ -16,7 +16,7 @@ const StoppedVisitorsPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'promotions')) {
+    if (!user || !['admin', 'promotions', 'superviseur_promos', 'super_admin', 'pasteur'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
