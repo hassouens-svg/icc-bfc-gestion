@@ -107,6 +107,8 @@ const CitiesPage = () => {
   };
 
   const loadCityStats = async (cityId) => {
+    if (!cityId) return;
+    
     setStatsLoading(true);
     try {
       const yearParam = statsYear ? `year=${statsYear}` : '';
@@ -120,13 +122,15 @@ const CitiesPage = () => {
       });
       
       if (!response.ok) {
-        throw new Error('Erreur de chargement');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Erreur de chargement');
       }
       
       const stats = await response.json();
       setCityStats(stats);
     } catch (error) {
-      toast.error('Erreur lors du chargement des statistiques');
+      console.error('Error loading city stats:', error);
+      toast.error(error.message || 'Erreur lors du chargement des statistiques');
       setCityStats(null);
     } finally {
       setStatsLoading(false);
