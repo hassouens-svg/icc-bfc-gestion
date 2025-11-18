@@ -344,7 +344,7 @@ const GestionAccesPage = () => {
                   <Select 
                     value={newUser.role} 
                     onValueChange={(value) => setNewUser({...newUser, role: value})}
-                    disabled={user?.role === 'superviseur_promos'}
+                    disabled={user?.role === 'superviseur_promos' || user?.role === 'responsable_secteur'}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -352,6 +352,8 @@ const GestionAccesPage = () => {
                     <SelectContent>
                       {user?.role === 'superviseur_promos' ? (
                         <SelectItem value="referent">Responsable de Promos</SelectItem>
+                      ) : user?.role === 'responsable_secteur' ? (
+                        <SelectItem value="pilote_fi">Pilote FI</SelectItem>
                       ) : (
                         <>
                           <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
@@ -373,6 +375,9 @@ const GestionAccesPage = () => {
                   </Select>
                   {user?.role === 'superviseur_promos' && (
                     <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Responsable de Promos</p>
+                  )}
+                  {user?.role === 'responsable_secteur' && (
+                    <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Pilote FI</p>
                   )}
                 </div>
 
