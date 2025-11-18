@@ -13,6 +13,7 @@ import ReferentsPage from './pages/ReferentsPage';
 import CitiesPage from './pages/CitiesPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
+import EvangelisationPage from './pages/EvangelisationPage';
 import FidelisationPage from './pages/FidelisationPage';
 import SecteursPage from './pages/SecteursPage';
 import FamillesImpactPage from './pages/FamillesImpactPage';
