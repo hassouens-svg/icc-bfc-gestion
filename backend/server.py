@@ -2958,3 +2958,136 @@ logging.getLogger("uvicorn.access").setLevel(logging.ERROR)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+# ==================== EVANGELISATION MODELS ====================
+
+class EvangelisationData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    
+    type: str  # "eglise" or "familles_impact"
+    nombre_gagneurs_ame: int = 0
+    nombre_personnes_receptives: int = 0
+    nombre_priere_salut: int = 0
+    nombre_contacts_pris: int = 0
+    nombre_ames_invitees: int = 0
+    nombre_miracles: int = 0
+    commentaire: Optional[str] = None
+
+class EvangelisationRecord(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date: str
+    ville: str
+    created_by: str
+    eglise: Optional[EvangelisationData] = None
+    familles_impact: Optional[EvangelisationData] = None
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+# ==================== EVANGELISATION ENDPOINTS ====================
+
+@api_router.post("/evangelisation")
+async def create_evangelisation_record(record: EvangelisationRecord, current_user: dict = Depends(get_current_user)):
+    """Create evangelisation record"""
+    if current_user["role"] not in ["responsable_evangelisation", "super_admin", "pasteur", "responsable_eglise"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Set ville and created_by
+    record.ville = current_user.get("city", record.ville)
+    record.created_by = current_user["username"]
+    
+    # Convert to dict and save
+    record_dict = record.model_dump()
+    await db.evangelisation.insert_one(record_dict)
+    
+    return {"message": "Record created successfully", "id": record.id}
+
+@api_router.get("/evangelisation")
+async def get_evangelisation_records(
+    ville: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get evangelisation records with filters"""
+    if current_user["role"] not in ["responsable_evangelisation", "super_admin", "pasteur", "responsable_eglise"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    
+    # Filter by ville
+    if current_user["role"] in ["responsable_eglise", "responsable_evangelisation"]:
+        query["ville"] = current_user.get("city")
+    elif ville:
+        query["ville"] = ville
+    
+    # Date filters
+    if date_from and date_to:
+        query["date"] = {"$gte": date_from, "$lte": date_to}
+    elif date_from:
+        query["date"] = {"$gte": date_from}
+    elif date_to:
+        query["date"] = {"$lte": date_to}
+    
+    records = await db.evangelisation.find(query, {"_id": 0}).to_list(1000)
+    return records
+
+@api_router.get("/evangelisation/stats")
+async def get_evangelisation_stats(
+    ville: Optional[str] = None,
+    year: Optional[int] = None,
+    month: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get evangelisation statistics"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    
+    # Filter by ville
+    if current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user.get("city")
+    elif ville:
+        query["ville"] = ville
+    
+    # Date filters
+    if year and month:
+        query["date"] = {"$regex": f"^{year}-{month:02d}"}
+    elif year:
+        query["date"] = {"$regex": f"^{year}"}
+    
+    records = await db.evangelisation.find(query).to_list(1000)
+    
+    # Calculate totals
+    stats = {
+        "eglise": {
+            "nombre_gagneurs_ame": 0,
+            "nombre_personnes_receptives": 0,
+            "nombre_priere_salut": 0,
+            "nombre_contacts_pris": 0,
+            "nombre_ames_invitees": 0,
+            "nombre_miracles": 0
+        },
+        "familles_impact": {
+            "nombre_gagneurs_ame": 0,
+            "nombre_personnes_receptives": 0,
+            "nombre_priere_salut": 0,
+            "nombre_contacts_pris": 0,
+            "nombre_ames_invitees": 0,
+            "nombre_miracles": 0
+        },
+        "total_records": len(records)
+    }
+    
+    for record in records:
+        if record.get("eglise"):
+            for key in stats["eglise"]:
+                stats["eglise"][key] += record["eglise"].get(key, 0)
+        
+        if record.get("familles_impact"):
+            for key in stats["familles_impact"]:
+                stats["familles_impact"][key] += record["familles_impact"].get(key, 0)
+    
+    return stats
+
