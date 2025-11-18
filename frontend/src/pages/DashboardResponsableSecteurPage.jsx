@@ -282,7 +282,7 @@ const DashboardResponsableSecteurPage = () => {
                     <SelectItem value="all">Toutes les FI du secteur</SelectItem>
                     {famillesImpact.map((fi) => (
                       <SelectItem key={fi.id} value={fi.id}>
-                        {fi.name}
+                        {fi.name || fi.nom || `FI ${fi.id.substring(0, 8)}`}
                       </SelectItem>
                     ))}
                   </SelectContent>
