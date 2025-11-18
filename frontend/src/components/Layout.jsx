@@ -72,6 +72,9 @@ const Layout = ({ children }) => {
     // ACCUEIL & INTÉGRATION
     { path: '/culte-stats', label: 'Statistiques des Cultes', icon: BarChart3, roles: ['accueil', 'super_admin'], department: 'promotions' },
     
+    // ÉVANGÉLISATION
+    { path: '/evangelisation', label: 'Dynamique d\\'Évangélisation', icon: Heart, roles: ['responsable_evangelisation'], department: 'evangelisation' },
+    
     // COMMUNES - Villes accessible depuis les deux départements
     { path: '/cities', label: 'Villes', icon: MapPin, roles: ['superviseur_promos', 'superviseur_fi', 'super_admin'], department: null },
     
