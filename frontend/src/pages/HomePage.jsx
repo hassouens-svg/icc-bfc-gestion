@@ -62,6 +62,8 @@ const HomePage = () => {
       navigate('/dashboard');
     } else if (deptId === 'familles-impact') {
       navigate('/familles-impact');
+    } else if (deptId === 'evangelisation') {
+      navigate('/evangelisation');
     }
   };
 
