@@ -486,6 +486,78 @@ const CitiesPage = () => {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* ÉVANGÉLISATION */}
+                {cityStats.evangelisation && (
+                  <Card className="bg-gradient-to-br from-red-50 to-red-100">
+                    <CardHeader>
+                      <CardTitle>❤️ Évangélisation</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Église */}
+                      <div>
+                        <h4 className="font-semibold text-red-900 mb-2">Église</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Gagneurs d'âme</p>
+                            <p className="text-xl font-bold text-red-600">{cityStats.evangelisation.eglise.nombre_gagneurs_ame}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Pers. réceptives</p>
+                            <p className="text-xl font-bold text-orange-600">{cityStats.evangelisation.eglise.nombre_personnes_receptives}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Prières salut</p>
+                            <p className="text-xl font-bold text-green-600">{cityStats.evangelisation.eglise.nombre_priere_salut}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Contacts pris</p>
+                            <p className="text-xl font-bold text-blue-600">{cityStats.evangelisation.eglise.nombre_contacts_pris}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Âmes invitées</p>
+                            <p className="text-xl font-bold text-indigo-600">{cityStats.evangelisation.eglise.nombre_ames_invitees}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Miracles</p>
+                            <p className="text-xl font-bold text-yellow-600">{cityStats.evangelisation.eglise.nombre_miracles}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Familles d'Impact */}
+                      <div>
+                        <h4 className="font-semibold text-purple-900 mb-2">Familles d'Impact</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Gagneurs d'âme</p>
+                            <p className="text-xl font-bold text-purple-600">{cityStats.evangelisation.familles_impact.nombre_gagneurs_ame}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Pers. réceptives</p>
+                            <p className="text-xl font-bold text-pink-600">{cityStats.evangelisation.familles_impact.nombre_personnes_receptives}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Prières salut</p>
+                            <p className="text-xl font-bold text-green-600">{cityStats.evangelisation.familles_impact.nombre_priere_salut}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Contacts pris</p>
+                            <p className="text-xl font-bold text-blue-600">{cityStats.evangelisation.familles_impact.nombre_contacts_pris}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Âmes invitées</p>
+                            <p className="text-xl font-bold text-indigo-600">{cityStats.evangelisation.familles_impact.nombre_ames_invitees}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-500">Miracles</p>
+                            <p className="text-xl font-bold text-yellow-600">{cityStats.evangelisation.familles_impact.nombre_miracles}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             ) : (
               <p className="text-center text-gray-500 py-4">Aucune donnée disponible</p>
