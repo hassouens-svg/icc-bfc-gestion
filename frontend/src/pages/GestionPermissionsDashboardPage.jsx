@@ -113,7 +113,7 @@ const GestionPermissionsDashboardPage = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'super_admin') {
+    if (!currentUser || !['super_admin', 'pasteur'].includes(currentUser.role)) {
       navigate('/dashboard');
       return;
     }
