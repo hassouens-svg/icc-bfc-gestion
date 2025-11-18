@@ -1029,9 +1029,14 @@ async def delete_city(city_id: str, current_user: dict = Depends(get_current_use
     return {"message": "City deleted successfully"}
 
 @api_router.get("/cities/{city_id}/stats")
-async def get_city_stats(city_id: str, current_user: dict = Depends(get_current_user)):
-    """Get detailed statistics for a specific city"""
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
+async def get_city_stats(
+    city_id: str,
+    year: Optional[int] = None,
+    month: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get detailed statistics for a specific city with year/month filters"""
+    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Only admin can view city stats")
     
     city = await db.cities.find_one({"id": city_id})
