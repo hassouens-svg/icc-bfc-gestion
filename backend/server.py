@@ -1035,7 +1035,7 @@ async def get_city_stats(
     month: Optional[int] = None,
     current_user: dict = Depends(get_current_user)
 ):
-    """Get detailed statistics for a specific city with year/month filters"""
+    """Get comprehensive statistics for a specific city with year/month filters"""
     if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Only admin can view city stats")
     
@@ -1045,68 +1045,99 @@ async def get_city_stats(
     
     city_name = city["name"]
     
-    # Get all referents in this city
-    referents = await db.users.find({
-        "city": city_name,
-        "role": "referent"
-    }, {"_id": 0, "password": 0}).to_list(1000)
+    # Build query with filters
+    query = {"city": city_name}
+    if year and month:
+        query["assigned_month"] = f"{year}-{month:02d}"
+    elif year:
+        query["assigned_month"] = {"$regex": f"^{year}-"}
+    elif month:
+        query["assigned_month"] = {"$regex": f"-{month:02d}$"}
     
-    referent_stats = []
+    # PROMOTIONS STATS
+    visitors = await db.visitors.find(query).to_list(10000)
+    na_count = sum(1 for v in visitors if "Nouveau Arrivant" in v.get("types", []))
+    nc_count = sum(1 for v in visitors if "Nouveau Converti" in v.get("types", []))
+    dp_count = sum(1 for v in visitors if "De Passage" in v.get("types", []))
     
-    for referent in referents:
-        assigned_month = referent.get("assigned_month")
-        if not assigned_month:
-            continue
+    # Calculate average fidelisation for promotions
+    total_fidelisation = 0
+    promo_count = 0
+    for visitor in visitors:
+        if visitor.get("presences_dimanche") or visitor.get("presences_jeudi"):
+            total_presences = len([p for p in visitor.get("presences_dimanche", []) if p.get("present")]) + len([p for p in visitor.get("presences_jeudi", []) if p.get("present")])
+            expected = (len(visitor.get("presences_dimanche", [])) + len(visitor.get("presences_jeudi", [])))
+            if expected > 0:
+                total_fidelisation += (total_presences / expected) * 100
+                promo_count += 1
+    avg_fidelisation_promos = (total_fidelisation / promo_count) if promo_count > 0 else 0
+    
+    # FAMILLE D'IMPACT STATS
+    fi_query = {"city": city_name}
+    fis = await db.familles_impact.find(fi_query).to_list(10000)
+    secteurs = await db.secteurs.find({"city": city_name}).to_list(1000)
+    
+    # Count FI members
+    total_fi_members = 0
+    fi_fidelisation = 0
+    fi_count = 0
+    for fi in fis:
+        membres = fi.get("membres", [])
+        total_fi_members += len(membres)
         
-        # Get visitors for this referent
-        visitors = await db.visitors.find({
-            "city": city_name,
-            "assigned_month": assigned_month,
-            "tracking_stopped": False
-        }).to_list(10000)
-        
-        # Count by type
-        nouveaux_arrivants = sum(1 for v in visitors if "Nouveau Arrivant" in v.get("types", []))
-        nouveaux_convertis = sum(1 for v in visitors if "Nouveau Converti" in v.get("types", []))
-        de_passage = sum(1 for v in visitors if "De Passage" in v.get("types", []))
-        
-        # Calculate fidelity rate
-        total_visitors = len(visitors)
-        if total_visitors > 0:
-            year, month = map(int, assigned_month.split("-"))
-            weeks = get_weeks_in_month(year, month)
-            
-            total_rate = 0
-            for week in weeks:
-                total_presences = 0
-                for visitor in visitors:
-                    for presence in visitor.get("presences_dimanche", []) + visitor.get("presences_jeudi", []):
-                        if get_week_number(presence["date"]) == week and presence.get("present", False):
-                            total_presences += 1
-                
-                expected_presences = total_visitors * 2
-                rate = (total_presences / expected_presences * 100) if expected_presences > 0 else 0
-                total_rate += rate
-            
-            avg_fidelity = total_rate / len(weeks) if weeks else 0
-        else:
-            avg_fidelity = 0
-        
-        referent_stats.append({
-            "referent_id": referent["id"],
-            "referent_name": referent["username"],
-            "assigned_month": assigned_month,
-            "total_visitors": total_visitors,
-            "nouveaux_arrivants": nouveaux_arrivants,
-            "nouveaux_convertis": nouveaux_convertis,
-            "de_passage": de_passage,
-            "avg_fidelity_rate": round(avg_fidelity, 2)
-        })
+        # Calculate FI fidelisation
+        for membre in membres:
+            presences = membre.get("presences", [])
+            if presences:
+                present_count = sum(1 for p in presences if p.get("present"))
+                if len(presences) > 0:
+                    fi_fidelisation += (present_count / len(presences)) * 100
+                    fi_count += 1
+    
+    avg_fidelisation_fi = (fi_fidelisation / fi_count) if fi_count > 0 else 0
+    
+    # CULTE STATS
+    culte_query = {"ville": city_name}
+    if year and month:
+        culte_query["date"] = {"$regex": f"^{year}-{month:02d}"}
+    elif year:
+        culte_query["date"] = {"$regex": f"^{year}"}
+    
+    culte_stats = await db.culte_stats.find(culte_query).to_list(10000)
+    
+    total_adultes = sum(s.get("nombre_adultes", 0) for s in culte_stats)
+    total_enfants = sum(s.get("nombre_enfants", 0) for s in culte_stats)
+    total_stars = sum(s.get("nombre_stars", 0) for s in culte_stats)
+    culte_count = len(culte_stats)
+    
+    avg_adultes = (total_adultes / culte_count) if culte_count > 0 else 0
+    avg_enfants = (total_enfants / culte_count) if culte_count > 0 else 0
+    avg_stars = (total_stars / culte_count) if culte_count > 0 else 0
     
     return {
         "city_name": city_name,
-        "total_referents": len(referents),
-        "referent_stats": referent_stats
+        "filters": {
+            "year": year,
+            "month": month
+        },
+        "promotions": {
+            "nouveaux_arrivants": na_count,
+            "nouveaux_convertis": nc_count,
+            "de_passage": dp_count,
+            "avg_fidelisation": round(avg_fidelisation_promos, 2)
+        },
+        "familles_impact": {
+            "nombre_secteurs": len(secteurs),
+            "nombre_familles": len(fis),
+            "total_membres": total_fi_members,
+            "avg_fidelisation": round(avg_fidelisation_fi, 2)
+        },
+        "culte_stats": {
+            "avg_adultes": round(avg_adultes, 1),
+            "avg_enfants": round(avg_enfants, 1),
+            "avg_stars": round(avg_stars, 1),
+            "total_services": culte_count
+        }
     }
 
 # ==================== ANALYTICS ROUTES ====================
