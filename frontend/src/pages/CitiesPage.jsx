@@ -103,13 +103,31 @@ const CitiesPage = () => {
   const handleViewStats = async (city) => {
     setSelectedCity(city);
     setIsStatsDialogOpen(true);
+    await loadCityStats(city.id);
+  };
+
+  const loadCityStats = async (cityId) => {
     setStatsLoading(true);
-    
     try {
-      const stats = await getCityStats(city.id);
+      const yearParam = statsYear ? `year=${statsYear}` : '';
+      const monthParam = statsMonth ? `&month=${statsMonth}` : '';
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/cities/${cityId}/stats?${yearParam}${monthParam}`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur de chargement');
+      }
+      
+      const stats = await response.json();
       setCityStats(stats);
     } catch (error) {
       toast.error('Erreur lors du chargement des statistiques');
+      setCityStats(null);
     } finally {
       setStatsLoading(false);
     }
