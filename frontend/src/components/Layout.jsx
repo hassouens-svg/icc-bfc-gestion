@@ -113,6 +113,11 @@ const Layout = ({ children }) => {
       return item.department === 'familles-impact';
     }
     
+    // Rôle Évangélisation voit uniquement items Évangélisation
+    if (user?.role === 'responsable_evangelisation') {
+      return item.department === 'evangelisation';
+    }
+    
     return true;
   });
 
