@@ -1137,8 +1137,50 @@ async def get_city_stats(
             "avg_enfants": round(avg_enfants, 1),
             "avg_stars": round(avg_stars, 1),
             "total_services": culte_count
+        },
+        "evangelisation": await get_evangelisation_stats_for_city(city_name, year, month)
+    }
+
+async def get_evangelisation_stats_for_city(city_name: str, year: Optional[int], month: Optional[int]):
+    """Helper to get evangelisation stats for a city"""
+    query = {"ville": city_name}
+    
+    if year and month:
+        query["date"] = {"$regex": f"^{year}-{month:02d}"}
+    elif year:
+        query["date"] = {"$regex": f"^{year}"}
+    
+    records = await db.evangelisation.find(query).to_list(1000)
+    
+    stats = {
+        "eglise": {
+            "nombre_gagneurs_ame": 0,
+            "nombre_personnes_receptives": 0,
+            "nombre_priere_salut": 0,
+            "nombre_contacts_pris": 0,
+            "nombre_ames_invitees": 0,
+            "nombre_miracles": 0
+        },
+        "familles_impact": {
+            "nombre_gagneurs_ame": 0,
+            "nombre_personnes_receptives": 0,
+            "nombre_priere_salut": 0,
+            "nombre_contacts_pris": 0,
+            "nombre_ames_invitees": 0,
+            "nombre_miracles": 0
         }
     }
+    
+    for record in records:
+        if record.get("eglise"):
+            for key in stats["eglise"]:
+                stats["eglise"][key] += record["eglise"].get(key, 0)
+        
+        if record.get("familles_impact"):
+            for key in stats["familles_impact"]:
+                stats["familles_impact"][key] += record["familles_impact"].get(key, 0)
+    
+    return stats
 
 # ==================== ANALYTICS ROUTES ====================
 
