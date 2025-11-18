@@ -354,6 +354,7 @@ const GestionAccesPage = () => {
                           <SelectItem value="pilote_fi">Pilote FI</SelectItem>
                           <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
                           <SelectItem value="accueil">Accueil et Intégration</SelectItem>
+                          <SelectItem value="responsable_evangelisation">Responsable Évangélisation</SelectItem>
                           {user?.role === 'super_admin' && (
                             <>
                               <SelectItem value="promotions">Promotions</SelectItem>
