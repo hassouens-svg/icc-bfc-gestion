@@ -42,15 +42,19 @@ const GestionAccesPage = () => {
   });
 
   useEffect(() => {
-    if (!currentUser || !['super_admin', 'responsable_eglise'].includes(currentUser.role)) {
+    if (!currentUser || !['super_admin', 'responsable_eglise', 'superviseur_promos'].includes(currentUser.role)) {
       navigate('/dashboard');
       return;
     }
     setUser(currentUser);
     
-    // Pour responsable_eglise, fixer automatiquement la ville
-    if (currentUser.role === 'responsable_eglise') {
-      setNewUser(prev => ({ ...prev, city: currentUser.city }));
+    // Pour responsable_eglise et superviseur_promos, fixer automatiquement la ville et le rôle
+    if (currentUser.role === 'responsable_eglise' || currentUser.role === 'superviseur_promos') {
+      setNewUser(prev => ({ 
+        ...prev, 
+        city: currentUser.city,
+        role: currentUser.role === 'superviseur_promos' ? 'referent' : 'referent' // superviseur_promos ne peut créer que referent
+      }));
     }
     
     loadData();
