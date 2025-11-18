@@ -100,6 +100,13 @@ const HomePage = () => {
       description: 'Responsables d\'Église - Gestion complète de votre ville',
       icon: Shield,
       color: 'from-purple-400 to-pink-600'
+    },
+    {
+      id: 'evangelisation',
+      title: 'Dynamique d\'Évangélisation',
+      description: 'Enregistrement des activités d\'évangélisation de l\'église et des familles d\'impact',
+      icon: Heart,
+      color: 'from-red-400 to-pink-600'
     }
   ];
 
