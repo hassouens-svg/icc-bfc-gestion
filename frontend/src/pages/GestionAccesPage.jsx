@@ -335,25 +335,38 @@ const GestionAccesPage = () => {
 
                 <div className="space-y-2">
                   <Label>Rôle *</Label>
-                  <Select value={newUser.role} onValueChange={(value) => setNewUser({...newUser, role: value})}>
+                  <Select 
+                    value={newUser.role} 
+                    onValueChange={(value) => setNewUser({...newUser, role: value})}
+                    disabled={user?.role === 'superviseur_promos'}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
-                      <SelectItem value="superviseur_fi">Superviseur Familles d'Impact</SelectItem>
-                      <SelectItem value="referent">Responsable de Promos</SelectItem>
-                      <SelectItem value="pilote_fi">Pilote FI</SelectItem>
-                      <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
-                      <SelectItem value="accueil">Accueil et Intégration</SelectItem>
-                      {user?.role === 'super_admin' && (
+                      {user?.role === 'superviseur_promos' ? (
+                        <SelectItem value="referent">Responsable de Promos</SelectItem>
+                      ) : (
                         <>
-                          <SelectItem value="promotions">Promotions</SelectItem>
-                          <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
+                          <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
+                          <SelectItem value="superviseur_fi">Superviseur Familles d'Impact</SelectItem>
+                          <SelectItem value="referent">Responsable de Promos</SelectItem>
+                          <SelectItem value="pilote_fi">Pilote FI</SelectItem>
+                          <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
+                          <SelectItem value="accueil">Accueil et Intégration</SelectItem>
+                          {user?.role === 'super_admin' && (
+                            <>
+                              <SelectItem value="promotions">Promotions</SelectItem>
+                              <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
+                            </>
+                          )}
                         </>
                       )}
                     </SelectContent>
                   </Select>
+                  {user?.role === 'superviseur_promos' && (
+                    <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Responsable de Promos</p>
+                  )}
                 </div>
 
                 {(newUser.role === 'referent' || newUser.role === 'promotions') && (
