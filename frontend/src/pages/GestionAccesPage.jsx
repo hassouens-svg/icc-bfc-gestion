@@ -42,7 +42,7 @@ const GestionAccesPage = () => {
   });
 
   useEffect(() => {
-    if (!currentUser || !['super_admin', 'responsable_eglise', 'superviseur_promos'].includes(currentUser.role)) {
+    if (!currentUser || !['super_admin', 'pasteur', 'responsable_eglise', 'superviseur_promos'].includes(currentUser.role)) {
       navigate('/dashboard');
       return;
     }
