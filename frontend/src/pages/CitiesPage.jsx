@@ -24,6 +24,8 @@ const CitiesPage = () => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [cityStats, setCityStats] = useState(null);
   const [statsLoading, setStatsLoading] = useState(false);
+  const [statsYear, setStatsYear] = useState(new Date().getFullYear());
+  const [statsMonth, setStatsMonth] = useState(null);
 
   useEffect(() => {
     if (!user || !['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur'].includes(user.role)) {
