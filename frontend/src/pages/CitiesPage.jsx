@@ -309,7 +309,34 @@ const CitiesPage = () => {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <Label>Année</Label>
-                <Select value={statsYear?.toString()} onValueChange={(v) => { setStatsYear(parseInt(v)); if (selectedCity) loadCityStats(selectedCity.id); }}>
+                <Select value={statsYear?.toString()} onValueChange={async (v) => { 
+                  const newYear = parseInt(v);
+                  setStatsYear(newYear); 
+                  if (selectedCity?.id) {
+                    // Use the new year value immediately
+                    setStatsLoading(true);
+                    try {
+                      const yearParam = `year=${newYear}`;
+                      const monthParam = statsMonth ? `&month=${statsMonth}` : '';
+                      const url = `${process.env.REACT_APP_BACKEND_URL}/api/cities/${selectedCity.id}/stats?${yearParam}${monthParam}`;
+                      
+                      const response = await fetch(url, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+                      
+                      if (response.ok) {
+                        const stats = await response.json();
+                        setCityStats(stats);
+                      }
+                    } catch (error) {
+                      console.error(error);
+                    } finally {
+                      setStatsLoading(false);
+                    }
+                  }
+                }}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -322,7 +349,34 @@ const CitiesPage = () => {
               </div>
               <div>
                 <Label>Mois (optionnel)</Label>
-                <Select value={statsMonth?.toString() || 'all'} onValueChange={(v) => { setStatsMonth(v === 'all' ? null : parseInt(v)); if (selectedCity) loadCityStats(selectedCity.id); }}>
+                <Select value={statsMonth?.toString() || 'all'} onValueChange={async (v) => { 
+                  const newMonth = v === 'all' ? null : parseInt(v);
+                  setStatsMonth(newMonth); 
+                  if (selectedCity?.id) {
+                    // Use the new month value immediately
+                    setStatsLoading(true);
+                    try {
+                      const yearParam = `year=${statsYear}`;
+                      const monthParam = newMonth ? `&month=${newMonth}` : '';
+                      const url = `${process.env.REACT_APP_BACKEND_URL}/api/cities/${selectedCity.id}/stats?${yearParam}${monthParam}`;
+                      
+                      const response = await fetch(url, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+                      
+                      if (response.ok) {
+                        const stats = await response.json();
+                        setCityStats(stats);
+                      }
+                    } catch (error) {
+                      console.error(error);
+                    } finally {
+                      setStatsLoading(false);
+                    }
+                  }
+                }}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
