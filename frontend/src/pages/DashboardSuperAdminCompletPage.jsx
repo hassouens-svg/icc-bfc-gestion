@@ -1439,6 +1439,7 @@ const DashboardSuperAdminCompletPage = () => {
         {/* CULTE STATISTICS VIEW */}
         {selectedView === 'cultes' && culteStatsData && (
           <>
+            <DepartmentAlert view="Statistiques des Cultes" />
             {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card>
