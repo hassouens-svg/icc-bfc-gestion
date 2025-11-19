@@ -18,7 +18,9 @@ const HomePage = () => {
       try {
         setLoading(true);
         const citiesData = await getCities();
-        setCities(citiesData);
+        // Tri alphabétique par nom
+        const sortedCities = citiesData.sort((a, b) => a.name.localeCompare(b.name));
+        setCities(sortedCities);
       } catch (error) {
         // Silent fail - cities will be empty
       } finally {
