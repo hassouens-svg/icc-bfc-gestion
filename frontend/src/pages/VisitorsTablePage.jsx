@@ -66,6 +66,18 @@ const VisitorsTablePage = () => {
     applyFilters();
   }, [visitors, filters]);
 
+  const loadFidelisationData = async () => {
+    try {
+      setLoadingFidelisation(true);
+      const data = await getReferentFidelisation();
+      setFidelisationData(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des données de fidélisation:', error);
+    } finally {
+      setLoadingFidelisation(false);
+    }
+  };
+
   const loadVisitors = async () => {
     try {
       // Include stopped visitors if filter allows it
