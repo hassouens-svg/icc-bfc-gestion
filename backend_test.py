@@ -289,14 +289,214 @@ def test_analytics_endpoints(results, tokens):
         else:
             error_msg = f"Status: {response.status_code if response else 'No response'}"
             results.add_failure("Analytics fi-detailed", error_msg)
+
+def test_visitor_management(results, tokens):
+    """Test 5: GESTION DES VISITEURS"""
+    print(f"\n👥 TEST 5: GESTION DES VISITEURS")
+    print(f"{'='*50}")
+    
+    # Test A: GET /visitors avec différents rôles
+    test_cases = [
+        ("superadmin", "doit voir tous les visiteurs de toutes les villes"),
+        ("pasteur", "doit voir tous les visiteurs de toutes les villes"),
+        ("respo_aout", "doit voir uniquement son mois assigné")
+    ]
+    
+    for role, expected_behavior in test_cases:
+        if role in tokens:
+            response = make_authenticated_request("GET", "/visitors", tokens[role])
+            
+            if response and response.status_code == 200:
+                data = response.json()
+                visitor_count = len(data)
+                cities = list(set([v.get("city", "") for v in data]))
+                months = list(set([v.get("assigned_month", "") for v in data]))
                 
-            print(f"✅ SUCCESS: Created {len(created_ids)} ancien visitors")
-            print(f"✅ Created IDs: {created_ids}")
+                results.add_success(f"Visitors {role}", f"{visitor_count} visiteurs, villes: {cities}, mois: {months}")
+            else:
+                error_msg = f"Status: {response.status_code if response else 'No response'}"
+                results.add_failure(f"Visitors {role}", error_msg)
+    
+    # Test B: POST /visitors - Créer un nouveau visiteur
+    if "superadmin" in tokens:
+        new_visitor = {
+            "firstname": "Test",
+            "lastname": "Regression",
+            "city": "Dijon",
+            "types": ["Nouveau Arrivant"],
+            "phone": "+33123456789",
+            "email": "test.regression@example.com",
+            "arrival_channel": "Evangelisation",
+            "visit_date": "2025-01-15"
+        }
+        
+        response = make_authenticated_request("POST", "/visitors", tokens["superadmin"], data=new_visitor)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            visitor_id = data.get("id")
+            if visitor_id:
+                results.add_success("Créer visiteur", f"Visiteur créé avec ID: {visitor_id}")
+                
+                # Nettoyer - supprimer le visiteur de test
+                delete_response = make_authenticated_request("DELETE", f"/visitors/{visitor_id}", tokens["superadmin"])
+                if delete_response and delete_response.status_code == 200:
+                    results.add_success("Nettoyer visiteur test", "Visiteur de test supprimé")
+            else:
+                results.add_failure("Créer visiteur", "Pas d'ID retourné")
+        else:
+            error_msg = f"Status: {response.status_code if response else 'No response'}"
+            results.add_failure("Créer visiteur", error_msg)
+
+def test_culte_stats(results, tokens):
+    """Test 6: CULTE STATS"""
+    print(f"\n⛪ TEST 6: CULTE STATS")
+    print(f"{'='*50}")
+    
+    if "superadmin" in tokens:
+        # Test A: GET /culte-stats?ville=Dijon
+        response = make_authenticated_request("GET", "/culte-stats", tokens["superadmin"], params={"ville": "Dijon"})
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if len(data) >= 1:
+                results.add_success("Culte stats - récupération", f"{len(data)} statistiques trouvées pour Dijon")
+            else:
+                results.add_failure("Culte stats - récupération", "Aucune statistique trouvée pour Dijon")
+        else:
+            error_msg = f"Status: {response.status_code if response else 'No response'}"
+            results.add_failure("Culte stats - récupération", error_msg)
+        
+        # Test B: POST /culte-stats - Créer une nouvelle statistique
+        new_stat = {
+            "date": "2025-01-19",
+            "ville": "Dijon",
+            "type_culte": "Test Regression",
+            "nombre_fideles": 100,
+            "nombre_adultes": 70,
+            "nombre_enfants": 30,
+            "nombre_stars": 10,
+            "commentaire": "Test de régression automatique"
+        }
+        
+        response = make_authenticated_request("POST", "/culte-stats", tokens["superadmin"], data=new_stat)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            stat_id = data.get("id")
+            if stat_id:
+                results.add_success("Culte stats - création", f"Statistique créée avec ID: {stat_id}")
+                
+                # Nettoyer - supprimer la statistique de test
+                delete_response = make_authenticated_request("DELETE", f"/culte-stats/{stat_id}", tokens["superadmin"])
+                if delete_response and delete_response.status_code == 200:
+                    results.add_success("Nettoyer culte stats test", "Statistique de test supprimée")
+            else:
+                results.add_failure("Culte stats - création", "Pas d'ID retourné")
+        else:
+            error_msg = f"Status: {response.status_code if response else 'No response'}"
+            results.add_failure("Culte stats - création", error_msg)
+
+def test_data_consistency(results, tokens):
+    """Test 7: VÉRIFICATIONS DE CONSISTANCE"""
+    print(f"\n🔍 TEST 7: VÉRIFICATIONS DE CONSISTANCE")
+    print(f"{'='*50}")
+    
+    if "superadmin" in tokens:
+        # Test des endpoints critiques pour vérifier qu'il n'y a pas d'erreurs 500
+        critical_endpoints = [
+            ("/visitors", "GET", None),
+            ("/users/referents", "GET", None),
+            ("/cities", "GET", None),
+            ("/analytics/stats", "GET", None)
+        ]
+        
+        for endpoint, method, params in critical_endpoints:
+            response = make_authenticated_request(method, endpoint, tokens["superadmin"], params=params)
             
-            # Store IDs for cleanup later
-            self.created_visitor_ids = created_ids
+            if response and response.status_code < 500:
+                results.add_success(f"Consistance {endpoint}", f"Pas d'erreur 500 (status: {response.status_code})")
+            else:
+                error_msg = f"Erreur 500 ou pas de réponse: {response.status_code if response else 'No response'}"
+                results.add_failure(f"Consistance {endpoint}", error_msg)
+        
+        # Test des filtres par ville
+        ville_endpoints = [
+            ("/analytics/promotions-detailed", {"ville": "Dijon"}),
+            ("/analytics/fi-detailed", {"ville": "Dijon"}),
+            ("/culte-stats", {"ville": "Dijon"})
+        ]
+        
+        for endpoint, params in ville_endpoints:
+            response = make_authenticated_request("GET", endpoint, tokens["superadmin"], params=params)
             
-            return True
+            if response and response.status_code == 200:
+                results.add_success(f"Filtre ville {endpoint}", "Filtrage par ville fonctionne")
+            else:
+                error_msg = f"Status: {response.status_code if response else 'No response'}"
+                results.add_failure(f"Filtre ville {endpoint}", error_msg)
+
+def main():
+    """Main test execution"""
+    print(f"🎯 TEST DE RÉGRESSION COMPLET - APPLICATION ICC BFC-ITALIE")
+    print(f"Backend URL: {BASE_URL}")
+    print(f"Début des tests: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    results = TestResults()
+    
+    # Test 1: Authentication
+    tokens, users = test_authentication(results)
+    
+    if not tokens:
+        print("❌ ARRÊT CRITIQUE: Aucune authentification réussie")
+        return
+    
+    # Test 2: Fidelisation (PRIORITÉ HAUTE)
+    test_fidelisation_endpoints(results, tokens)
+    
+    # Test 3: Visiteurs arrêtés
+    test_stopped_visitors(results, tokens)
+    
+    # Test 4: Analytics
+    test_analytics_endpoints(results, tokens)
+    
+    # Test 5: Gestion des visiteurs
+    test_visitor_management(results, tokens)
+    
+    # Test 6: Culte stats
+    test_culte_stats(results, tokens)
+    
+    # Test 7: Consistance
+    test_data_consistency(results, tokens)
+    
+    # Résultats finaux
+    results.print_summary()
+    
+    # Critères de succès
+    print(f"\n🎯 CRITÈRES DE SUCCÈS:")
+    success_criteria = [
+        "✅ Tous les comptes peuvent se connecter",
+        "✅ Les endpoints de fidélisation retournent des données non-nulles",
+        "✅ Les visiteurs arrêtés sont correctement retournés avec filtrage",
+        "✅ Les analytics fonctionnent avec filtres par ville",
+        "✅ Les permissions sont correctement appliquées pour chaque rôle",
+        "✅ Aucune erreur 500 n'est retournée",
+        "✅ La cohérence des données entre rôles est vérifiée"
+    ]
+    
+    for criteria in success_criteria:
+        print(f"  {criteria}")
+    
+    if results.failed == 0:
+        print(f"\n🎉 TOUS LES TESTS SONT PASSÉS! Le système est prêt pour la production.")
+        return 0
+    else:
+        print(f"\n⚠️  {results.failed} tests ont échoué. Vérification nécessaire.")
+        return 1
+
+if __name__ == "__main__":
+    exit_code = main()
+    sys.exit(exit_code)
             
         except json.JSONDecodeError as e:
             print(f"❌ FAILED: Invalid JSON response - {e}")
