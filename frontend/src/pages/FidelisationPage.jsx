@@ -100,8 +100,8 @@ const FidelisationPage = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{data.total_visitors}</div>
-                <p className="text-xs text-muted-foreground">Assignés à votre mois</p>
+                <div className="text-2xl font-bold">{data.total_na || 0}</div>
+                <p className="text-xs text-muted-foreground">{data.total_visitors || 0} personnes au total</p>
               </CardContent>
             </Card>
 
