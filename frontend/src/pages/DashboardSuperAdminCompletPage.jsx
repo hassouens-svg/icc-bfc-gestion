@@ -708,16 +708,24 @@ const DashboardSuperAdminCompletPage = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {promosData.daily_details.map((day, index) => (
-                          <tr key={index} className="border-b hover:bg-gray-50">
-                            <td className="py-3 px-4">{day.date}</td>
-                            <td className="text-center py-3 px-4 font-medium">{day.total_personnes_recues}</td>
-                            <td className="text-center py-3 px-4 text-orange-600">{day.nbre_de_passage}</td>
-                            <td className="text-center py-3 px-4 text-blue-600">{day.nbre_residents}</td>
-                            <td className="text-center py-3 px-4 text-green-600">{day.nbre_na}</td>
-                            <td className="text-center py-3 px-4 text-red-600">{day.nbre_nc}</td>
+                        {promosData.daily_details.length > 0 ? (
+                          promosData.daily_details.map((day, index) => (
+                            <tr key={index} className="border-b hover:bg-gray-50">
+                              <td className="py-3 px-4">{day.date}</td>
+                              <td className="text-center py-3 px-4 font-medium">{day.total_personnes_recues}</td>
+                              <td className="text-center py-3 px-4 text-orange-600">{day.nbre_de_passage}</td>
+                              <td className="text-center py-3 px-4 text-blue-600">{day.nbre_residents}</td>
+                              <td className="text-center py-3 px-4 text-green-600">{day.nbre_na}</td>
+                              <td className="text-center py-3 px-4 text-red-600">{day.nbre_nc}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="6" className="text-center py-8 text-gray-500">
+                              Aucune donnée disponible. Sélectionnez une ville et/ou une période.
+                            </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>
