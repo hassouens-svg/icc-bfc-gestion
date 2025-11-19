@@ -852,6 +852,7 @@ const DashboardSuperAdminCompletPage = () => {
         {/* FAMILLES D'IMPACT VIEW */}
         {selectedView === 'fi' && fiData && (
           <>
+            <DepartmentAlert view="Familles d'Impact" />
             {/* Global KPIs FI */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card>
