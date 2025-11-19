@@ -508,6 +508,7 @@ const DashboardSuperAdminCompletPage = () => {
         {/* PROMOTIONS VIEW */}
         {selectedView === 'promotions' && promosData && (
           <>
+            <DepartmentAlert view="Promotions" />
             {/* Global KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <Card>
