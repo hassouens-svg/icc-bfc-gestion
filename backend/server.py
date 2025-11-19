@@ -1414,9 +1414,11 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     # Mais total_visitors compte TOUS (actifs + arrêtés)
     total_visitors = len(all_visitors)
     total_visitors_actifs = len(visitors)
-    if total_visitors == 0:
+    if total_visitors_actifs == 0:
+        # Retourner quand même total_visitors pour affichage
         return {
-            "total_visitors": 0,
+            "total_visitors": total_visitors,
+            "total_visitors_actifs": 0,
             "weekly_rates": [],
             "monthly_average": 0
         }
