@@ -52,9 +52,11 @@ class City(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
+    country: Optional[str] = "France"
 
 class CityCreate(BaseModel):
     name: str
+    country: Optional[str] = "France"
 
 class ReferentPermissions(BaseModel):
     can_view_all_months: bool = False
