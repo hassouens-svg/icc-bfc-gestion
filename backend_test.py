@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Backend Testing for Bug Fixes - French Review Request
-Testing two critical bug fixes:
-1. VITE_API_URL error in bulk-add Anciens Visiteurs 
-2. Promo column displaying wrong data (assigned_month vs promo_name)
+🎯 TEST DE RÉGRESSION COMPLET - APPLICATION ICC BFC-ITALIE
+Backend API Testing Suite for comprehensive regression testing
+
+This test suite verifies all critical functionalities after bug fixes for fidelisation.
 """
 
 import requests
@@ -11,14 +11,16 @@ import json
 import sys
 from datetime import datetime, timedelta
 
-# Backend URL from environment
-BACKEND_URL = "https://churchadmin-3.preview.emergentagent.com/api"
+# Configuration
+BASE_URL = "https://churchadmin-3.preview.emergentagent.com/api"
+HEADERS = {"Content-Type": "application/json"}
 
 # Test accounts
 TEST_ACCOUNTS = {
     "superadmin": {"username": "superadmin", "password": "superadmin123", "city": "Dijon"},
-    "promotions": {"username": "promotions", "password": "test123", "city": "Dijon"},
-    "superviseur_promos": {"username": "superviseur_promos", "password": "superviseur123", "city": "Dijon"}
+    "pasteur": {"username": "pasteur", "password": "pasteur123", "city": "Dijon"},
+    "respo_aout": {"username": "respo_aout", "password": "respo_aout123", "city": "Dijon"},
+    "joyce": {"username": "Joyce", "password": "Joyce123", "city": "Dijon"}
 }
 
 class BackendTester:
