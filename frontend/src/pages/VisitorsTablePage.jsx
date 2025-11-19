@@ -56,10 +56,8 @@ const VisitorsTablePage = () => {
       return;
     }
     loadVisitors();
-    // Load fidelisation data for responsable_promo
-    if (user.role === 'responsable_promo') {
-      loadFidelisationData();
-    }
+    // Load fidelisation data
+    loadFidelisationData();
   }, [user, navigate]);
 
   useEffect(() => {
