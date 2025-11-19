@@ -1732,12 +1732,6 @@ async def get_all_fi_public(ville: Optional[str] = None):
                 fi["pilote_telephone"] = pilote.get("telephone")
     
     return fis_with_address
-    
-    # Check permissions
-    if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id") != fi_id:
-        raise HTTPException(status_code=403, detail="Permission denied")
-    
-    return fi
 
 @api_router.put("/fi/familles-impact/{fi_id}")
 async def update_famille_impact(fi_id: str, fi_data: FamilleImpactCreate, current_user: dict = Depends(get_current_user)):
