@@ -56,18 +56,22 @@ const VisitorsTablePage = () => {
       return;
     }
     loadVisitors();
-    // Load fidelisation data
-    loadFidelisationData();
   }, [user, navigate]);
 
   useEffect(() => {
     applyFilters();
   }, [visitors, filters]);
 
-  // Recharger les données de fidélisation quand les filtres changent
-  // Recharger les données de fidélisation quand la date change
+  // Load fidelisation data after visitors are loaded
   useEffect(() => {
-    if (user) {
+    if (visitors.length > 0) {
+      loadFidelisationData();
+    }
+  }, [visitors]);
+
+  // Reload when date filter changes
+  useEffect(() => {
+    if (user && visitors.length > 0) {
       loadFidelisationData();
     }
   }, [filters.date]);
