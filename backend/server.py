@@ -2311,7 +2311,20 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     # Get ALL visitors (ne pas filtrer par mois/année ici - on filtre les PRÉSENCES plus tard)
     visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
     
-    # Group by assigned_month (Promo)
+    # Déterminer le mois filtré pour le calcul des dimanches/jeudis
+    if mois and mois != "all" and annee and annee != "all":
+        filter_year = int(annee)
+        filter_month = int(mois)
+        # Compter le nombre de dimanches et jeudis dans ce mois
+        num_days = calendar.monthrange(filter_year, filter_month)[1]
+        num_sundays = sum(1 for day in range(1, num_days + 1) if datetime(filter_year, filter_month, day).weekday() == 6)
+        num_thursdays = sum(1 for day in range(1, num_days + 1) if datetime(filter_year, filter_month, day).weekday() == 3)
+    else:
+        # Par défaut: 4 dimanches et 4 jeudis
+        num_sundays = 4
+        num_thursdays = 4
+    
+    # Group by assigned_month (Promo) - on garde TOUTES les promos
     promos_by_month = {}
     for visitor in visitors:
         month = visitor.get("assigned_month", "N/A")
@@ -2324,8 +2337,6 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
                 "dp_count": 0,
                 "residents_count": 0,
                 "visitors": [],
-                "presences_dimanche": [],
-                "presences_jeudi": [],
                 "suivis_arretes": []
             }
         
@@ -2351,34 +2362,38 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
                 "name": f"{visitor.get('firstname', '')} {visitor.get('lastname', '')}",
                 "reason": visitor.get("stop_reason", "Non spécifié")
             })
-        
-        # Aggregate presences
-        promos_by_month[month]["presences_dimanche"].extend(visitor.get("presences_dimanche", []))
-        promos_by_month[month]["presences_jeudi"].extend(visitor.get("presences_jeudi", []))
     
-    # Calculate fidelisation for each promo (weighted: Sunday x2, Thursday x1)
+    # Calculate fidelisation for each promo based on FILTERED month
     promos_stats = []
     for month, data in sorted(promos_by_month.items()):
         total = data["total_visitors"]
-        if total == 0:
-            fidelisation = 0
-        else:
-            # NEW WEIGHTED CALCULATION: Sunday presence x2, Thursday presence x1
-            total_weighted_presences = 0
-            for visitor in data["visitors"]:
-                presences_dimanche = len([p for p in visitor.get("presences_dimanche", []) if p.get("present")])
-                presences_jeudi = len([p for p in visitor.get("presences_jeudi", []) if p.get("present")])
-                visitor_weighted_score = (presences_dimanche * 2) + (presences_jeudi * 1)
-                total_weighted_presences += visitor_weighted_score
-            
-            # Fidelisation based on weighted score (max 12 per person: 4 Sundays x2 + 4 Thursdays x1)
-            expected_max = total * 12  # Max weighted score per person per month
-            fidelisation = (total_weighted_presences / expected_max) * 100 if expected_max > 0 else 0
         
-        total_presences_dimanche = len([p for p in data["presences_dimanche"] if p.get("present")])
-        total_presences_jeudi = len([p for p in data["presences_jeudi"] if p.get("present")])
-        expected_dimanche = total * 4  # 4 dimanches par mois
-        expected_jeudi = total * 4  # 4 jeudis par mois
+        # Filtrer les présences par mois/année si spécifié
+        total_presences_dimanche = 0
+        total_presences_jeudi = 0
+        
+        if total > 0:
+            for visitor in data["visitors"]:
+                # Filtrer les présences dimanche par mois/année
+                presences_dim = visitor.get("presences_dimanche", [])
+                if mois and mois != "all" and annee and annee != "all":
+                    presences_dim = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois}")]
+                total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
+                
+                # Filtrer les présences jeudi par mois/année
+                presences_jeu = visitor.get("presences_jeudi", [])
+                if mois and mois != "all" and annee and annee != "all":
+                    presences_jeu = [p for p in presences_jeu if p.get("date", "").startswith(f"{annee}-{mois}")]
+                total_presences_jeudi += len([p for p in presences_jeu if p.get("present")])
+        
+        # Expected = nombre de personnes × nombre de dimanches/jeudis dans le mois filtré
+        expected_dimanche = total * num_sundays
+        expected_jeudi = total * num_thursdays
+        
+        # Fidélisation pondérée: dimanche x2, jeudi x1
+        max_weighted = (expected_dimanche * 2) + (expected_jeudi * 1)
+        actual_weighted = (total_presences_dimanche * 2) + (total_presences_jeudi * 1)
+        fidelisation = (actual_weighted / max_weighted * 100) if max_weighted > 0 else 0
         
         promos_stats.append({
             "month": month,
