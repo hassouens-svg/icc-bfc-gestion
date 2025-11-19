@@ -3499,3 +3499,88 @@ async def get_evangelisation_stats(
     
     return stats
 
+
+@api_router.get("/analytics/age-distribution")
+async def get_age_distribution(
+    ville: str = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get age range distribution for visitors"""
+    # Permissions
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "superviseur_promos"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Build query
+    query = {}
+    
+    # For responsable_eglise, force their city
+    if current_user["role"] == "responsable_eglise":
+        query["city"] = current_user["city"]
+    # For responsable_promo, filter by city and assigned_month
+    elif current_user["role"] == "responsable_promo":
+        query["city"] = current_user["city"]
+        if current_user.get("assigned_month"):
+            query["assigned_month"] = current_user["assigned_month"]
+    # For others, use ville parameter
+    elif ville:
+        query["city"] = ville
+    
+    # Get visitors
+    visitors = await db.visitors.find(query, {"_id": 0, "age_range": 1}).to_list(10000)
+    
+    # Count by age range
+    age_counts = {}
+    for v in visitors:
+        age = v.get("age_range", "Non renseigné")
+        if not age:
+            age = "Non renseigné"
+        age_counts[age] = age_counts.get(age, 0) + 1
+    
+    # Format for PieChart
+    result = [{"name": age, "value": count} for age, count in age_counts.items()]
+    
+    return result
+
+
+@api_router.get("/analytics/arrival-channel-distribution")
+async def get_arrival_channel_distribution(
+    ville: str = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get arrival channel distribution for visitors"""
+    # Permissions
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "superviseur_promos"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Build query
+    query = {}
+    
+    # For responsable_eglise, force their city
+    if current_user["role"] == "responsable_eglise":
+        query["city"] = current_user["city"]
+    # For responsable_promo, filter by city and assigned_month
+    elif current_user["role"] == "responsable_promo":
+        query["city"] = current_user["city"]
+        if current_user.get("assigned_month"):
+            query["assigned_month"] = current_user["assigned_month"]
+    # For others, use ville parameter
+    elif ville:
+        query["city"] = ville
+    
+    # Get visitors
+    visitors = await db.visitors.find(query, {"_id": 0, "arrival_channel": 1}).to_list(10000)
+    
+    # Count by arrival channel
+    channel_counts = {}
+    for v in visitors:
+        channel = v.get("arrival_channel", "Non renseigné")
+        if not channel:
+            channel = "Non renseigné"
+        channel_counts[channel] = channel_counts.get(channel, 0) + 1
+    
+    # Format for PieChart
+    result = [{"name": channel, "value": count} for channel, count in channel_counts.items()]
+    
+    return result
+
+
