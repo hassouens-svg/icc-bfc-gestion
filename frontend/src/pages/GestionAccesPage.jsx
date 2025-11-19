@@ -421,10 +421,14 @@ const GestionAccesPage = () => {
                     </p>
                   </div>
                 )}
+                </div>
 
-                <Button type="submit" className="w-full">
-                  Créer l'utilisateur
-                </Button>
+                {/* Bouton fixe en bas */}
+                <div className="pt-4 border-t mt-4">
+                  <Button type="submit" className="w-full">
+                    Créer l'utilisateur
+                  </Button>
+                </div>
               </form>
             </DialogContent>
           </Dialog>
