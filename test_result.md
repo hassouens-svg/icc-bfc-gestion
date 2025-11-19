@@ -706,6 +706,7 @@ test_plan:
     - "VisitorsPage - Remove Voir button, keep trash icon only"
     - "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
     - "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
+    - "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
 
 agent_communication:
   - agent: "main"
