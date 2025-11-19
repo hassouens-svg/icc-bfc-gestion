@@ -569,35 +569,74 @@ const DashboardSuperAdminCompletPage = () => {
               </Card>
             </div>
 
-            {/* NA vs NC Pie Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Répartition NA vs NC</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: 'Nouveaux Arrivants', value: promosData.summary.total_na, color: '#10b981' },
-                        { name: 'Nouveaux Convertis', value: promosData.summary.total_nc, color: '#ef4444' }
-                      ]}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      <Cell fill="#10b981" />
-                      <Cell fill="#ef4444" />
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
+            {/* Graphiques */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Répartition NA / NC / DP */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Répartition NA / NC / DP</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Nouveaux Arrivants', value: promosData.summary.total_na, color: '#10b981' },
+                          { name: 'Nouveaux Convertis', value: promosData.summary.total_nc, color: '#ef4444' },
+                          { name: 'De Passage', value: promosData.summary.total_dp || 0, color: '#f59e0b' }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                        outerRadius={90}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        <Cell fill="#10b981" />
+                        <Cell fill="#ef4444" />
+                        <Cell fill="#f59e0b" />
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Canal d'arrivée */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Canal d'Arrivée</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Évangélisation', value: promosData.summary.canal_evangelisation || 0 },
+                          { name: 'Invitation', value: promosData.summary.canal_invitation || 0 },
+                          { name: 'Réseaux Sociaux', value: promosData.summary.canal_reseaux || 0 },
+                          { name: 'Autres', value: promosData.summary.canal_autres || 0 }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                        outerRadius={90}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        <Cell fill="#6366f1" />
+                        <Cell fill="#8b5cf6" />
+                        <Cell fill="#ec4899" />
+                        <Cell fill="#94a3b8" />
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Fidélisation par Promo */}
             <Card>
