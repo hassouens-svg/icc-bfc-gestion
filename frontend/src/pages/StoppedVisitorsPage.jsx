@@ -15,7 +15,11 @@ const StoppedVisitorsPage = () => {
   const [filteredVisitors, setFilteredVisitors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [selectedPromo, setSelectedPromo] = useState('all');
+  const [selectedPromo, setSelectedPromo] = useState(() => {
+    // Récupérer le filtre promo depuis localStorage (venant du dashboard)
+    const savedPromo = localStorage.getItem('stopped_visitors_filter_promo');
+    return savedPromo || 'all';
+  });
   const [responsablesPromo, setResponsablesPromo] = useState([]);
   const [promoStats, setPromoStats] = useState([]);
 
@@ -25,6 +29,8 @@ const StoppedVisitorsPage = () => {
       return;
     }
     loadData();
+    // Nettoyer le filtre sauvegardé après lecture
+    localStorage.removeItem('stopped_visitors_filter_promo');
   }, [user, navigate]);
 
   useEffect(() => {
