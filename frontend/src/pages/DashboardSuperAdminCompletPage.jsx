@@ -1756,7 +1756,11 @@ const DashboardSuperAdminCompletPage = () => {
             {/* Actions Rapides */}
             {canEdit && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button onClick={() => navigate('/culte-stats')} variant="outline" className="h-20">
+                <Button onClick={() => {
+                  // Sauvegarder le filtre ville actuel pour CulteStatsPage
+                  localStorage.setItem('culte_stats_filter_city', selectedCity);
+                  navigate('/culte-stats');
+                }} variant="outline" className="h-20">
                   <div className="text-center">
                     <BarChart3 className="h-6 w-6 mx-auto mb-2" />
                     <p>Gérer Statistiques Cultes</p>
