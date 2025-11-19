@@ -133,6 +133,12 @@ const VisitorsTablePage = () => {
       const includeStopped = filters.status === 'arrete' || filters.status === 'all';
       const data = await getVisitors(includeStopped);
       setVisitors(data);
+      
+      // Load fidelisation data immediately after visitors
+      if (!fidelisationLoadedRef.current) {
+        fidelisationLoadedRef.current = true;
+        setTimeout(() => loadFidelisationData(), 500);
+      }
     } catch (error) {
       toast.error('Erreur lors du chargement des nouveaux arrivants et nouveaux convertiss');
     } finally {
