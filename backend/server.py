@@ -1438,29 +1438,44 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     all_presence_dates = []
     for visitor in visitors:
         for p in visitor.get("presences_dimanche", []):
-            if p.get("date"):
-                all_presence_dates.append(p["date"])
+            date_val = p.get("date")
+            if date_val and isinstance(date_val, str):
+                all_presence_dates.append(date_val)
         for p in visitor.get("presences_jeudi", []):
-            if p.get("date"):
-                all_presence_dates.append(p["date"])
+            date_val = p.get("date")
+            if date_val and isinstance(date_val, str):
+                all_presence_dates.append(date_val)
     
-    if not all_presence_dates:
-        # Pas de présences
+    # Parse and validate dates
+    valid_dates = []
+    from datetime import datetime as dt
+    for date_str in all_presence_dates:
+        try:
+            parsed = dt.strptime(date_str, "%Y-%m-%d")
+            valid_dates.append(parsed)
+        except (ValueError, TypeError):
+            # Skip invalid dates
+            continue
+    
+    if not valid_dates:
+        # Pas de présences valides
         if assigned_month:
             # Utiliser le mois assigné
-            year, month = map(int, assigned_month.split("-"))
-            weeks = get_weeks_in_month(year, month)
+            try:
+                year, month = map(int, assigned_month.split("-"))
+                weeks = get_weeks_in_month(year, month)
+            except:
+                # Fallback to current year
+                current_year = datetime.now(timezone.utc).year
+                weeks = list(range(1, 53))
         else:
             # Pas de mois assigné, utiliser l'année en cours
             current_year = datetime.now(timezone.utc).year
-            weeks = list(range(1, 53))  # Toutes les semaines de l'année
+            weeks = list(range(1, 53))
     else:
         # Utiliser la date la plus ancienne des présences pour déterminer les semaines
-        min_date_str = min(all_presence_dates)
-        max_date_str = max(all_presence_dates)
-        from datetime import datetime as dt
-        min_date = dt.strptime(min_date_str, "%Y-%m-%d")
-        max_date = dt.strptime(max_date_str, "%Y-%m-%d")
+        min_date = min(valid_dates)
+        max_date = max(valid_dates)
         
         # Calculer toutes les semaines entre min et max
         weeks = set()
