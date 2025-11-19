@@ -682,7 +682,7 @@ async def get_visitors(
     # Both referent and responsable_promo should see all visitors from their assigned month regardless of year
     if current_user["role"] in ["referent", "responsable_promo"]:
         # Check if referent has permission to view all months
-        permissions = current_user.get("permissions", {})
+        permissions = current_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
             # Extract month from their assigned_month and match all years
             user_assigned_month = current_user.get("assigned_month")
