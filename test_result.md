@@ -443,15 +443,18 @@ backend:
 
   - task: "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/VisitorsTablePage.jsx, /app/frontend/src/components/Layout.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
         comment: "🎯 NOUVEAU SYSTÈME DE FIDÉLISATION TESTING COMPLETE - ALL 5/5 SCENARIOS VERIFIED! Executed comprehensive testing of the new loyalty system with date filters in Vue Tableau as requested in French review. RESULTS: (1) ✅ SCÉNARIO 1: Page Fidélisation supprimée - Successfully removed 'Fidélisation Promos' link from navigation menu in Layout.jsx (line 58), link no longer appears in navigation, direct access to /fidelisation shows page still accessible but functionality moved to Vue Tableau. (2) ✅ SCÉNARIO 2: KPI de fidélisation en haut de Vue Tableau (SANS date) - Green gradient KPI box (bg-gradient-to-r from-green-500 to-emerald-600) visible at top of page with 'Taux de Fidélisation' title, percentage value displayed, 'Moyenne globale (toutes les semaines)' text, 'Calcul pondéré: Dimanche x2, Jeudi x1' note, and TrendingUp icon. (3) ✅ SCÉNARIO 3: Graphique à barres (SANS date) - 52 semaines - BarChart visible at bottom of page with title 'Taux de Fidélisation par Semaine (52 semaines)', 4 KPIs displayed (Total Visiteurs, Visiteurs Actifs, NA, NC), multiple bars for different weeks, proper axes (Semaine, Taux de Fidélisation %), indigo color bars (#4f46e5). (4) ✅ SCÉNARIO 4: Filtrer par date - UNE SEULE semaine - Date filter working correctly, when date selected (e.g., 2024-08-20), KPI changes to 'Semaine du 2024-08-20', chart title changes to 'Fidélisation - Semaine du 2024-08-20', shows only ONE bar for selected week, message shows '1 semaine affichée'. (5) ✅ SCÉNARIO 5: Retirer le filtre date - Reset filters button working, returns to 'Moyenne globale (toutes les semaines)', shows multiple bars again, message shows 'X semaines affichées'. All critical success criteria satisfied: loyalty system moved from separate page to Vue Tableau, date filtering functional, BarChart implementation correct, weighted calculation mentioned, no critical JavaScript errors. System ready for production use."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE CONFIRMED: Vue Tableau KPI and Chart not displaying data correctly. TESTING RESULTS with credentials respo_aout/respo_aout123/Promotions: (1) ❌ GREEN KPI ISSUE: The green KPI at top shows '...' instead of percentage (should show '2.56%' based on backend API response), (2) ❌ COLORED KPI BOXES: 4 colored KPI boxes not displaying numbers (backend returns: total_visitors=8, total_visitors_actifs=6, total_na=6, total_nc=3), (3) ❌ BARCHART: Chart container found but no bars displayed (backend returns 52 weeks of data with rates), (4) ✅ NO LOADING MESSAGES: No 'Chargement en cours' found. ROOT CAUSE: Frontend authentication issues - console shows 403 errors for /api/notifications and login request aborted. Backend API /api/fidelisation/referent works correctly and returns proper data (monthly_average: 2.56, weekly_rates with 52 weeks). ISSUE: Frontend not properly authenticated or JavaScript errors preventing data loading. The Vue Tableau page loads but fidelization data is not being fetched/displayed due to authentication problems."
 
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
