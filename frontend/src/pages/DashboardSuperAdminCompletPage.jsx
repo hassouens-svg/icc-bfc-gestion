@@ -35,6 +35,7 @@ import {
   UserX
 } from 'lucide-react';
 import { toast } from 'sonner';
+import DepartmentAlert from '../components/DepartmentAlert';
 import {
   LineChart,
   Line,
