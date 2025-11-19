@@ -66,6 +66,13 @@ const VisitorsTablePage = () => {
     applyFilters();
   }, [visitors, filters]);
 
+  // Recharger les données de fidélisation quand les filtres changent
+  useEffect(() => {
+    if (user && user.role === 'responsable_promo') {
+      loadFidelisationData();
+    }
+  }, [filters.date]);
+
   const loadFidelisationData = async () => {
     try {
       setLoadingFidelisation(true);
