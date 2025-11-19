@@ -62,16 +62,16 @@ const VisitorsTablePage = () => {
     applyFilters();
   }, [visitors, filters]);
 
-  // Load fidelisation data after visitors are loaded
+  // Load fidelisation data once after initial load
   useEffect(() => {
-    if (visitors.length > 0) {
+    if (visitors.length > 0 && !fidelisationData) {
       loadFidelisationData();
     }
-  }, [visitors]);
+  }, [visitors.length]);
 
   // Reload when date filter changes
   useEffect(() => {
-    if (user && visitors.length > 0) {
+    if (filters.date && fidelisationData) {
       loadFidelisationData();
     }
   }, [filters.date]);
