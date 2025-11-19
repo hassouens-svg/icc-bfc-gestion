@@ -142,9 +142,12 @@ const SelectVillePage = () => {
             ))}
         </div>
 
-        {cities.length === 0 && (
+        {cities.length === 0 && !loading && (
           <Card className="p-8 text-center">
-            <p className="text-gray-500">Aucune ville disponible</p>
+            <p className="text-gray-500 mb-2">Aucune ville disponible</p>
+            <p className="text-xs text-gray-400">
+              Si ce message persiste, veuillez contacter l'administrateur.
+            </p>
           </Card>
         )}
 
