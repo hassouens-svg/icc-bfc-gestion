@@ -367,26 +367,33 @@ const VisitorsTablePage = () => {
           </div>
         </div>
 
-        {/* KPI Fidélisation */}
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-green-100 text-sm">Taux de Fidélisation</p>
-                <h3 className="text-4xl font-bold mt-2">{tauxFidelisation}%</h3>
-                <p className="text-green-100 text-sm mt-1">
-                  {filters.promo !== 'all' 
-                    ? `Promo: ${filters.promo}` 
-                    : 'Toutes les promotions'
-                  }
-                  {' • '}
-                  {filteredVisitors.length} membre(s)
-                </p>
+        {/* KPI Fidélisation - Only for responsable_promo */}
+        {user.role === 'responsable_promo' && (
+          <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-sm font-medium">Taux de Fidélisation</p>
+                  <h3 className="text-4xl font-bold mt-2">
+                    {loadingFidelisation ? '...' : `${calculateFidelisationRate().toFixed(1)}%`}
+                  </h3>
+                  <p className="text-green-100 text-sm mt-1">
+                    {filters.date 
+                      ? `Semaine du ${filters.date}` 
+                      : 'Moyenne globale (toutes les semaines)'
+                    }
+                  </p>
+                  <p className="text-green-50 text-xs mt-1">
+                    Calcul pondéré: Dimanche x2, Jeudi x1
+                  </p>
+                </div>
+                <div className="text-6xl opacity-20">
+                  <TrendingUp className="h-16 w-16" />
+                </div>
               </div>
-              <div className="text-6xl opacity-20">📊</div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Filters */}
         <Card>
