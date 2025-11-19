@@ -599,9 +599,9 @@ const DashboardSuperAdminCompletPage = () => {
                       <Pie
                         data={[
                           { name: 'Évangélisation', value: promosData.summary.canal_evangelisation || 0 },
-                          { name: 'Invitation', value: promosData.summary.canal_invitation || 0 },
-                          { name: 'Réseaux Sociaux', value: promosData.summary.canal_reseaux || 0 },
-                          { name: 'Autres', value: promosData.summary.canal_autres || 0 }
+                          { name: 'Réseaux sociaux', value: promosData.summary.canal_reseaux_sociaux || 0 },
+                          { name: 'Invitation par membre', value: promosData.summary.canal_invitation_membre || 0 },
+                          { name: 'Par soi même', value: promosData.summary.canal_par_soi_meme || 0 }
                         ]}
                         cx="50%"
                         cy="50%"
@@ -614,7 +614,7 @@ const DashboardSuperAdminCompletPage = () => {
                         <Cell fill="#6366f1" />
                         <Cell fill="#8b5cf6" />
                         <Cell fill="#ec4899" />
-                        <Cell fill="#94a3b8" />
+                        <Cell fill="#f59e0b" />
                       </Pie>
                       <Tooltip />
                     </PieChart>
