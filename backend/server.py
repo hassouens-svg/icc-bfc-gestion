@@ -2850,9 +2850,9 @@ async def update_culte_stats(
 
 @api_router.delete("/culte-stats/{stat_id}")
 async def delete_culte_stats(stat_id: str, current_user: dict = Depends(get_current_user)):
-    """Delete culte statistics - Super Admin only"""
-    if current_user["role"] != "super_admin":
-        raise HTTPException(status_code=403, detail="Only super_admin can delete stats")
+    """Delete culte statistics - Super Admin and Pasteur"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Only super_admin and pasteur can delete stats")
     
     result = await db.culte_stats.delete_one({"id": stat_id})
     
