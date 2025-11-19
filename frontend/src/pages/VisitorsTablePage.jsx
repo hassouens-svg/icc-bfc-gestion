@@ -565,6 +565,86 @@ const VisitorsTablePage = () => {
           </CardContent>
         </Card>
 
+        {/* Fidelisation Chart - Only for responsable_promo */}
+        {user.role === 'responsable_promo' && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-indigo-600" />
+                Taux de Fidélisation par Semaine
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loadingFidelisation ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="text-gray-500">Chargement des données de fidélisation...</div>
+                </div>
+              ) : fidelisationData && fidelisationData.weekly_rates && fidelisationData.weekly_rates.length > 0 ? (
+                <div>
+                  <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600">Total Visiteurs</p>
+                      <p className="text-2xl font-bold text-blue-600">{fidelisationData.total_visitors}</p>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600">Visiteurs Actifs</p>
+                      <p className="text-2xl font-bold text-green-600">{fidelisationData.total_visitors_actifs}</p>
+                    </div>
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600">Nouveaux Arrivants</p>
+                      <p className="text-2xl font-bold text-purple-600">{fidelisationData.total_na}</p>
+                    </div>
+                    <div className="bg-orange-50 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600">Nouveaux Convertis</p>
+                      <p className="text-2xl font-bold text-orange-600">{fidelisationData.total_nc}</p>
+                    </div>
+                  </div>
+                  <div className="h-96 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={fidelisationData.weekly_rates}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="week" 
+                          label={{ value: 'Semaine', position: 'insideBottom', offset: -5 }}
+                        />
+                        <YAxis 
+                          label={{ value: 'Taux de Fidélisation (%)', angle: -90, position: 'insideLeft' }}
+                          domain={[0, 100]}
+                        />
+                        <Tooltip 
+                          formatter={(value) => `${value}%`}
+                          labelFormatter={(label) => `Semaine ${label}`}
+                        />
+                        <Legend />
+                        <Line 
+                          type="monotone" 
+                          dataKey="rate" 
+                          stroke="#4f46e5" 
+                          strokeWidth={2}
+                          name="Taux de Fidélisation"
+                          dot={{ fill: '#4f46e5', r: 4 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-600">
+                      Moyenne mensuelle: <span className="font-bold text-indigo-600 text-lg">{fidelisationData.monthly_average}%</span>
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Calcul pondéré: Dimanche x2, Jeudi x1
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-center items-center h-64">
+                  <div className="text-gray-500">Aucune donnée de fidélisation disponible</div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Edit Presence Dialog */}
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogContent>
