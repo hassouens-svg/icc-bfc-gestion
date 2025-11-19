@@ -76,9 +76,19 @@ const VisitorsTablePage = () => {
     try {
       setLoadingFidelisation(true);
       const data = await getReferentFidelisation();
+      console.log('Fidelisation data loaded:', data);
       setFidelisationData(data);
     } catch (error) {
       console.error('Erreur lors du chargement des données de fidélisation:', error);
+      // Set default data to avoid showing "..."
+      setFidelisationData({
+        total_visitors: 0,
+        total_visitors_actifs: 0,
+        total_na: 0,
+        total_nc: 0,
+        weekly_rates: [],
+        monthly_average: 0
+      });
     } finally {
       setLoadingFidelisation(false);
     }
