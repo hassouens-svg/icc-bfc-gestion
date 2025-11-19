@@ -712,14 +712,21 @@ async def get_visitors(
 
 @api_router.get("/visitors/stopped")
 async def get_stopped_visitors(current_user: dict = Depends(get_current_user)):
-    # Only admin and promotions can see stopped visitors
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
-        raise HTTPException(status_code=403, detail="Only admin can view stopped visitors")
+    # Admin, pasteur, responsable_eglise, superviseur_promos can see stopped visitors
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "superviseur_promos", "promotions"]:
+        raise HTTPException(status_code=403, detail="Access denied")
     
-    query = {
-        "city": current_user["city"],
-        "tracking_stopped": True
-    }
+    # Pour responsable_eglise, filtrer par leur ville
+    if current_user["role"] == "responsable_eglise":
+        query = {
+            "city": current_user["city"],
+            "tracking_stopped": True
+        }
+    else:
+        # Super admin et pasteur voient toutes les villes (pas de filtre)
+        query = {
+            "tracking_stopped": True
+        }
     
     visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     return visitors
