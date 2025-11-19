@@ -2412,11 +2412,17 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
             "expected_presences_jeudi": expected_jeudi
         })
     
-    # Calculate Canal d'arrivée statistics
-    canal_counts = {}
+    # Calculate Canal d'arrivée statistics (4 canaux spécifiques)
+    canal_counts = {
+        "Evangelisation": 0,
+        "Réseaux sociaux": 0,
+        "Invitation par un membre (hors evangelisation)": 0,
+        "Par soi même": 0
+    }
     for visitor in visitors:
-        canal = visitor.get("arrival_channel", "Non spécifié")
-        canal_counts[canal] = canal_counts.get(canal, 0) + 1
+        canal = visitor.get("arrival_channel", "")
+        if canal in canal_counts:
+            canal_counts[canal] += 1
     
     # Global totals
     total_na = sum(p["na_count"] for p in promos_stats)
@@ -2425,7 +2431,7 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     total_visitors = sum(p["total_visitors"] for p in promos_stats)
     avg_fidelisation = sum(p["fidelisation"] for p in promos_stats) / len(promos_stats) if promos_stats else 0
     
-    # Détail des personnes reçues par jour (for filtered month/year)
+    # Détail des personnes reçues par jour (TOUJOURS affiché, pas seulement si mois+année)
     daily_details = []
     if mois and mois != "all" and annee and annee != "all":
         # Group by visit_date
