@@ -78,6 +78,45 @@ const VisitorsTablePage = () => {
     }
   };
 
+  // Calculer le taux de fidélisation en fonction de la date sélectionnée
+  const calculateFidelisationRate = () => {
+    if (!fidelisationData) return 0;
+
+    // Si une date est sélectionnée, calculer pour cette semaine uniquement
+    if (filters.date) {
+      const selectedDate = new Date(filters.date);
+      const weekNumber = getWeekNumber(filters.date);
+      
+      const weekData = fidelisationData.weekly_rates?.find(w => w.week === weekNumber);
+      return weekData ? weekData.rate : 0;
+    }
+
+    // Sinon, retourner la moyenne mensuelle globale
+    return fidelisationData.monthly_average || 0;
+  };
+
+  // Obtenir les données du graphique filtrées par date
+  const getChartData = () => {
+    if (!fidelisationData || !fidelisationData.weekly_rates) return [];
+
+    // Si une date est sélectionnée, ne montrer que cette semaine
+    if (filters.date) {
+      const weekNumber = getWeekNumber(filters.date);
+      const weekData = fidelisationData.weekly_rates.find(w => w.week === weekNumber);
+      return weekData ? [weekData] : [];
+    }
+
+    // Sinon, montrer toutes les 52 semaines
+    return fidelisationData.weekly_rates;
+  };
+
+  const getWeekNumber = (dateStr) => {
+    const date = new Date(dateStr);
+    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+    const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  };
+
   const loadVisitors = async () => {
     try {
       // Include stopped visitors if filter allows it
