@@ -3182,6 +3182,50 @@ logger = logging.getLogger(__name__)
 # Suppress uvicorn access logs
 logging.getLogger("uvicorn.access").setLevel(logging.ERROR)
 
+@app.on_event("startup")
+async def startup_initialize_cities():
+    """Initialize cities automatically on startup"""
+    try:
+        # Check if cities exist
+        cities_count = await db.cities.count_documents({})
+        
+        if cities_count == 0:
+            # No cities, create them
+            print("🏙️ Initializing cities...")
+            cities_data = [
+                {'id': str(uuid.uuid4()), 'name': 'Milan', 'country': 'Italie'},
+                {'id': str(uuid.uuid4()), 'name': 'Rome', 'country': 'Italie'},
+                {'id': str(uuid.uuid4()), 'name': 'Perugia', 'country': 'Italie'},
+                {'id': str(uuid.uuid4()), 'name': 'Bologne', 'country': 'Italie'},
+                {'id': str(uuid.uuid4()), 'name': 'Turin', 'country': 'Italie'},
+                {'id': str(uuid.uuid4()), 'name': 'Dijon', 'country': 'France'},
+                {'id': str(uuid.uuid4()), 'name': 'Auxerre', 'country': 'France'},
+                {'id': str(uuid.uuid4()), 'name': 'Besançon', 'country': 'France'},
+                {'id': str(uuid.uuid4()), 'name': 'Chalon-Sur-Saone', 'country': 'France'},
+                {'id': str(uuid.uuid4()), 'name': 'Dole', 'country': 'France'},
+                {'id': str(uuid.uuid4()), 'name': 'Sens', 'country': 'France'}
+            ]
+            await db.cities.insert_many(cities_data)
+            print(f"✅ {len(cities_data)} cities created")
+        else:
+            # Cities exist, ensure they have countries
+            print(f"🏙️ {cities_count} cities found, updating countries...")
+            cities_mapping = {
+                'Milan': 'Italie', 'Rome': 'Italie', 'Perugia': 'Italie',
+                'Bologne': 'Italie', 'Turin': 'Italie',
+                'Dijon': 'France', 'Auxerre': 'France', 'Besançon': 'France',
+                'Chalon-Sur-Saone': 'France', 'Dole': 'France', 'Sens': 'France'
+            }
+            
+            for city_name, country in cities_mapping.items():
+                await db.cities.update_many(
+                    {'name': {'$regex': f'^{city_name}$', '$options': 'i'}},
+                    {'$set': {'country': country}}
+                )
+            print("✅ Cities countries updated")
+    except Exception as e:
+        print(f"⚠️ Warning: Could not initialize cities: {e}")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
