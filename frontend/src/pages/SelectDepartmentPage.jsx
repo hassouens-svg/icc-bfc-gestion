@@ -22,8 +22,14 @@ const SelectDepartmentPage = () => {
     // Store the selected department
     localStorage.setItem('selected_department', deptId);
     
-    // La ville a déjà été sélectionnée au login, rediriger directement vers le dashboard
-    navigate('/dashboard-superadmin-complet');
+    // Pour super_admin, pasteur et responsable_eglise, rediriger vers sélection de ville ou dashboard
+    if (user.role === 'responsable_eglise') {
+      // Responsable d'église : sa ville est fixée, rediriger directement vers dashboard
+      navigate('/dashboard-superadmin-complet');
+    } else {
+      // Super admin et pasteur : choisir la ville
+      navigate('/select-ville', { state: { department: deptId } });
+    }
   };
 
   const departments = [
