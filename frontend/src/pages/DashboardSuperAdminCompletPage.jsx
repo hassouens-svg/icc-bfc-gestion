@@ -688,8 +688,8 @@ const DashboardSuperAdminCompletPage = () => {
               </CardContent>
             </Card>
 
-            {/* NOUVEAU: Détail des personnes reçues par jour */}
-            {promosData.daily_details && promosData.daily_details.length > 0 && (
+            {/* NOUVEAU: Détail des personnes reçues par jour - TOUJOURS AFFICHÉ */}
+            {promosData.daily_details && (
               <Card>
                 <CardHeader>
                   <CardTitle>Personnes Reçues</CardTitle>
