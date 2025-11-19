@@ -1,36 +1,38 @@
-# Migration des Pays des Villes
+# Initialisation et Migration des Villes
 
 ## Problème
-Les villes italiennes affichent "France" au lieu de "Italie" en production.
+1. Les villes ne s'affichent pas sur la page d'accueil en production
+2. Les villes italiennes affichent "France" au lieu de "Italie"
 
 ## Solution
-Un endpoint de migration a été créé pour mettre à jour automatiquement tous les pays des villes.
+Un endpoint d'initialisation a été créé qui :
+- Crée automatiquement toutes les villes si elles n'existent pas
+- Met à jour les pays des villes existantes
 
-## Instructions pour exécuter la migration en PRODUCTION
+## ⚠️ INSTRUCTIONS CRITIQUES POUR LA PRODUCTION
 
-### Option 1 : Via curl (Recommandé)
+### 🚀 COMMANDE UNIQUE À EXÉCUTER (Recommandé)
 
-1. **Connectez-vous en tant que superadmin** et obtenez votre token :
+Copiez-collez cette commande dans votre terminal (remplacez l'URL et le mot de passe) :
+
 ```bash
-curl -X POST "https://votre-url-production.com/api/auth/login" \
+# Commande tout-en-un (remplacez VOTRE-URL et VOTRE_MOT_DE_PASSE)
+TOKEN=$(curl -s -X POST "https://VOTRE-URL.emergent.host/api/auth/login" \
   -H "Content-Type: application/json" \
-  -d '{"username":"superadmin","password":"votre_mot_de_passe","city":"Dijon"}'
+  -d '{"username":"superadmin","password":"VOTRE_MOT_DE_PASSE","city":"Dijon"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin).get('token',''))") && \
+curl -s -X POST "https://VOTRE-URL.emergent.host/api/cities/initialize" \
+  -H "Authorization: Bearer $TOKEN" | python3 -m json.tool
 ```
 
-2. **Copiez le token** retourné dans la réponse (champ `"token"`)
-
-3. **Exécutez la migration** :
-```bash
-curl -X POST "https://votre-url-production.com/api/cities/migrate-countries" \
-  -H "Authorization: Bearer VOTRE_TOKEN_ICI"
-```
-
-4. **Vérifiez le résultat**. Vous devriez voir :
+**Résultat attendu** :
 ```json
 {
   "success": true,
-  "message": "X villes mises à jour",
-  "updated_count": X
+  "message": "X villes créées, Y villes mises à jour",
+  "created_count": X,
+  "updated_count": Y,
+  "total_cities": Z
 }
 ```
 
