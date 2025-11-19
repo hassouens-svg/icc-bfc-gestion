@@ -3289,7 +3289,7 @@ async def get_age_distribution(
 ):
     """Get age range distribution for visitors"""
     # Permissions
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "superviseur_promos"]:
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "promotions", "superviseur_promos"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Build query
@@ -3331,7 +3331,7 @@ async def get_arrival_channel_distribution(
 ):
     """Get arrival channel distribution for visitors"""
     # Permissions
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "superviseur_promos"]:
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "promotions", "superviseur_promos"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Build query
