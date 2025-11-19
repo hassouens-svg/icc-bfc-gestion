@@ -608,12 +608,7 @@ const DashboardSuperAdminCompletPage = () => {
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Pie
-                        data={[
-                          { name: 'Évangélisation', value: promosData.summary.canal_evangelisation || 0 },
-                          { name: 'Réseaux sociaux', value: promosData.summary.canal_reseaux_sociaux || 0 },
-                          { name: 'Invitation par membre', value: promosData.summary.canal_invitation_membre || 0 },
-                          { name: 'Par soi même', value: promosData.summary.canal_par_soi_meme || 0 }
-                        ]}
+                        data={arrivalChannelDist}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
@@ -626,6 +621,37 @@ const DashboardSuperAdminCompletPage = () => {
                         <Cell fill="#8b5cf6" />
                         <Cell fill="#ec4899" />
                         <Cell fill="#f59e0b" />
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Répartition par tranche d'âge */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Répartition par Tranche d'Âge</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={ageDistribution}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                        outerRadius={90}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        <Cell fill="#3b82f6" />
+                        <Cell fill="#10b981" />
+                        <Cell fill="#f59e0b" />
+                        <Cell fill="#ef4444" />
+                        <Cell fill="#8b5cf6" />
+                        <Cell fill="#6366f1" />
                       </Pie>
                       <Tooltip />
                     </PieChart>
