@@ -1407,11 +1407,14 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     elif not assigned_month:
         raise HTTPException(status_code=400, detail="No assigned month")
     
-    # Get all visitors for this referent (y compris tracking_stopped pour le comptage)
-    all_visitors = await db.visitors.find({
-        "city": current_user["city"],
-        "assigned_month": assigned_month
-    }, {"_id": 0}).to_list(10000)
+    # Get all visitors for this user
+    query = {"city": current_user["city"]}
+    
+    # Si l'utilisateur a un assigned_month, filtrer par celui-ci
+    if assigned_month:
+        query["assigned_month"] = assigned_month
+    
+    all_visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     
     # Pour la fidélisation, on ne compte que les visiteurs actifs
     visitors = [v for v in all_visitors if not v.get("tracking_stopped")]
