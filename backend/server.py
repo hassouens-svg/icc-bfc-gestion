@@ -2283,11 +2283,13 @@ async def generate_notifications(current_user: dict = Depends(get_current_user))
 # ==================== ADVANCED ANALYTICS FOR SUPER ADMIN/PASTEUR ====================
 
 @api_router.get("/analytics/promotions-detailed")
-async def get_promotions_detailed(ville: str = None, current_user: dict = Depends(get_current_user)):
+async def get_promotions_detailed(ville: str = None, mois: str = None, annee: str = None, current_user: dict = Depends(get_current_user)):
     """Get detailed promotions analytics for Super Admin/Pasteur with:
     - Fidélisation par promo (12 mois)
-    - Total NA vs NC
-    - Évolution par mois
+    - Total NA vs NC vs DP
+    - Canal d'arrivée
+    - Détails quotidiens
+    - Filtres: ville, mois, année
     """
     # Only super_admin, pasteur, and responsable_eglise can access
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
@@ -2300,12 +2302,18 @@ async def get_promotions_detailed(ville: str = None, current_user: dict = Depend
     if current_user["role"] == "responsable_eglise":
         base_query["city"] = current_user["city"]
     # Filtrer par ville si spécifié
-    elif ville:
+    elif ville and ville != "all":
         base_query["city"] = ville
     
     visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
     
-    # Group by assigned_month
+    # Apply month/year filters
+    if mois and mois != "all":
+        visitors = [v for v in visitors if v.get("assigned_month", "").split("-")[1] == mois if v.get("assigned_month")]
+    if annee and annee != "all":
+        visitors = [v for v in visitors if v.get("assigned_month", "").split("-")[0] == annee if v.get("assigned_month")]
+    
+    # Group by assigned_month (Promo)
     promos_by_month = {}
     for visitor in visitors:
         month = visitor.get("assigned_month", "N/A")
@@ -2315,57 +2323,129 @@ async def get_promotions_detailed(ville: str = None, current_user: dict = Depend
                 "total_visitors": 0,
                 "na_count": 0,
                 "nc_count": 0,
+                "dp_count": 0,
+                "residents_count": 0,
                 "visitors": [],
                 "presences_dimanche": [],
-                "presences_jeudi": []
+                "presences_jeudi": [],
+                "suivis_arretes": []
             }
         
         promos_by_month[month]["total_visitors"] += 1
         promos_by_month[month]["visitors"].append(visitor)
         
-        # Count NA vs NC
+        # Count NA vs NC vs DP
         types = visitor.get("types", [])
         if "Nouveau Arrivant" in types:
             promos_by_month[month]["na_count"] += 1
         if "Nouveau Converti" in types:
             promos_by_month[month]["nc_count"] += 1
+        if "De Passage" in types:
+            promos_by_month[month]["dp_count"] += 1
+        
+        # Count residents (not DP)
+        if "De Passage" not in types:
+            promos_by_month[month]["residents_count"] += 1
+        
+        # Track stopped tracking
+        if visitor.get("tracking_stopped"):
+            promos_by_month[month]["suivis_arretes"].append({
+                "name": f"{visitor.get('firstname', '')} {visitor.get('lastname', '')}",
+                "reason": visitor.get("stop_reason", "Non spécifié")
+            })
         
         # Aggregate presences
         promos_by_month[month]["presences_dimanche"].extend(visitor.get("presences_dimanche", []))
         promos_by_month[month]["presences_jeudi"].extend(visitor.get("presences_jeudi", []))
     
-    # Calculate fidelisation for each promo
+    # Calculate fidelisation for each promo (weighted: Sunday x2, Thursday x1)
     promos_stats = []
     for month, data in sorted(promos_by_month.items()):
         total = data["total_visitors"]
         if total == 0:
             fidelisation = 0
         else:
-            # Count visitors with at least 3 presences
-            visitors_with_presences = 0
+            # NEW WEIGHTED CALCULATION: Sunday presence x2, Thursday presence x1
+            total_weighted_presences = 0
             for visitor in data["visitors"]:
-                total_presences = len([p for p in visitor.get("presences_dimanche", []) if p.get("present")])
-                total_presences += len([p for p in visitor.get("presences_jeudi", []) if p.get("present")])
-                if total_presences >= 3:
-                    visitors_with_presences += 1
+                presences_dimanche = len([p for p in visitor.get("presences_dimanche", []) if p.get("present")])
+                presences_jeudi = len([p for p in visitor.get("presences_jeudi", []) if p.get("present")])
+                visitor_weighted_score = (presences_dimanche * 2) + (presences_jeudi * 1)
+                total_weighted_presences += visitor_weighted_score
             
-            fidelisation = (visitors_with_presences / total) * 100
+            # Fidelisation based on weighted score (max 12 per person: 4 Sundays x2 + 4 Thursdays x1)
+            expected_max = total * 12  # Max weighted score per person per month
+            fidelisation = (total_weighted_presences / expected_max) * 100 if expected_max > 0 else 0
+        
+        total_presences_dimanche = len([p for p in data["presences_dimanche"] if p.get("present")])
+        total_presences_jeudi = len([p for p in data["presences_jeudi"] if p.get("present")])
+        expected_dimanche = total * 4  # 4 dimanches par mois
+        expected_jeudi = total * 4  # 4 jeudis par mois
         
         promos_stats.append({
             "month": month,
+            "nbre_pers_suivis": total,
             "total_visitors": total,
             "na_count": data["na_count"],
             "nc_count": data["nc_count"],
+            "dp_count": data["dp_count"],
+            "residents_count": data["residents_count"],
+            "suivis_arretes_count": len(data["suivis_arretes"]),
+            "suivis_arretes_details": data["suivis_arretes"],
             "fidelisation": round(fidelisation, 1),
-            "total_presences_dimanche": len([p for p in data["presences_dimanche"] if p.get("present")]),
-            "total_presences_jeudi": len([p for p in data["presences_jeudi"] if p.get("present")])
+            "total_presences_dimanche": total_presences_dimanche,
+            "expected_presences_dimanche": expected_dimanche,
+            "total_presences_jeudi": total_presences_jeudi,
+            "expected_presences_jeudi": expected_jeudi
         })
+    
+    # Calculate Canal d'arrivée statistics
+    canal_counts = {}
+    for visitor in visitors:
+        canal = visitor.get("arrival_channel", "Non spécifié")
+        canal_counts[canal] = canal_counts.get(canal, 0) + 1
     
     # Global totals
     total_na = sum(p["na_count"] for p in promos_stats)
     total_nc = sum(p["nc_count"] for p in promos_stats)
+    total_dp = sum(p["dp_count"] for p in promos_stats)
     total_visitors = sum(p["total_visitors"] for p in promos_stats)
     avg_fidelisation = sum(p["fidelisation"] for p in promos_stats) / len(promos_stats) if promos_stats else 0
+    
+    # Détail des personnes reçues par jour (for filtered month/year)
+    daily_details = []
+    if mois and mois != "all" and annee and annee != "all":
+        # Group by visit_date
+        from datetime import datetime
+        from collections import defaultdict
+        daily_data = defaultdict(lambda: {
+            "total": 0, "dp": 0, "residents": 0, "na": 0, "nc": 0
+        })
+        
+        for visitor in visitors:
+            visit_date = visitor.get("visit_date", "")
+            if visit_date:
+                types = visitor.get("types", [])
+                daily_data[visit_date]["total"] += 1
+                if "De Passage" in types:
+                    daily_data[visit_date]["dp"] += 1
+                else:
+                    daily_data[visit_date]["residents"] += 1
+                if "Nouveau Arrivant" in types:
+                    daily_data[visit_date]["na"] += 1
+                if "Nouveau Converti" in types:
+                    daily_data[visit_date]["nc"] += 1
+        
+        # Sort by date
+        for date_str, data in sorted(daily_data.items()):
+            daily_details.append({
+                "date": date_str,
+                "total_personnes_recues": data["total"],
+                "nbre_de_passage": data["dp"],
+                "nbre_residents": data["residents"],
+                "nbre_na": data["na"],
+                "nbre_nc": data["nc"]
+            })
     
     return {
         "promos": promos_stats,
@@ -2374,8 +2454,14 @@ async def get_promotions_detailed(ville: str = None, current_user: dict = Depend
             "total_visitors": total_visitors,
             "total_na": total_na,
             "total_nc": total_nc,
-            "avg_fidelisation": round(avg_fidelisation, 1)
-        }
+            "total_dp": total_dp,
+            "avg_fidelisation": round(avg_fidelisation, 1),
+            "canal_evangelisation": canal_counts.get("Evangelisation", 0),
+            "canal_invitation": canal_counts.get("Invitation", 0),
+            "canal_reseaux": canal_counts.get("Réseaux Sociaux", 0),
+            "canal_autres": sum(v for k, v in canal_counts.items() if k not in ["Evangelisation", "Invitation", "Réseaux Sociaux"])
+        },
+        "daily_details": daily_details
     }
 
 @api_router.get("/analytics/visitors-table")
