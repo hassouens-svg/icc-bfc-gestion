@@ -390,13 +390,7 @@ const VisitorsTablePage = () => {
               <div>
                 <p className="text-green-100 text-sm font-medium">Taux de Fidélisation</p>
                 <h3 className="text-4xl font-bold mt-2">
-                  {loadingFidelisation ? (
-                    <span>Chargement...</span>
-                  ) : fidelisationData ? (
-                    `${calculateFidelisationRate().toFixed(1)}%`
-                  ) : (
-                    <span>Pas de données</span>
-                  )}
+                  {fidelisationData ? `${calculateFidelisationRate().toFixed(1)}%` : '0.0%'}
                 </h3>
                 <p className="text-green-100 text-sm mt-1">
                   {filters.date 
