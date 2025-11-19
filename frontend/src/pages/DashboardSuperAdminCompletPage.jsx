@@ -1204,8 +1204,8 @@ const DashboardSuperAdminCompletPage = () => {
           </>
         )}
 
-        {/* PRESENCES DIMANCHE VIEW */}
-        {selectedView === 'presences' && (
+        {/* PRESENCES DIMANCHE VIEW - SUPPRIMÉE (pas pertinent) */}
+        {/* {selectedView === 'presences' && (
           <>
             <DepartmentAlert view="Présences Dimanche" />
             {/* Filters for Presences Dimanche */}
