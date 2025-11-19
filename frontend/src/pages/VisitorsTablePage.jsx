@@ -616,9 +616,8 @@ const VisitorsTablePage = () => {
           </CardContent>
         </Card>
 
-        {/* Fidelisation Chart - Only for responsable_promo */}
-        {user.role === 'responsable_promo' && (
-          <Card className="mt-6">
+        {/* Fidelisation Chart */}
+        <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-indigo-600" />
