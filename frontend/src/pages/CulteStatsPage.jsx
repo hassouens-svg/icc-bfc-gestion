@@ -116,17 +116,24 @@ const CulteStatsPage = () => {
         return;
       }
       
-      // Pasteur et Super Admin voient TOUTES les villes
-      // Responsable d'église et Accueil voient UNIQUEMENT leur ville
-      const userCity = ['super_admin', 'pasteur'].includes(currentUser.role) 
-        ? null  // null = toutes les villes
-        : currentUser.city;
+      // Déterminer la ville à charger en tenant compte du filtre
+      let cityToLoad;
+      if (filterVille && filterVille !== 'all') {
+        // Si un filtre ville est appliqué, l'utiliser
+        cityToLoad = filterVille;
+      } else if (['super_admin', 'pasteur'].includes(currentUser.role)) {
+        // Pasteur et Super Admin voient TOUTES les villes par défaut
+        cityToLoad = null;
+      } else {
+        // Responsable d'église et Accueil voient UNIQUEMENT leur ville
+        cityToLoad = currentUser.city;
+      }
       
-      console.log('Loading culte stats for:', userCity ? `ville ${userCity}` : 'TOUTES les villes');
+      console.log('Loading culte stats for:', cityToLoad ? `ville ${cityToLoad}` : 'TOUTES les villes');
       
       const [statsData, summaryData] = await Promise.all([
-        getCulteStats(userCity),
-        getCulteStatsSummary(userCity)
+        getCulteStats(cityToLoad),
+        getCulteStatsSummary(cityToLoad)
       ]);
       
       console.log('Stats loaded:', statsData?.length || 0, 'records');
