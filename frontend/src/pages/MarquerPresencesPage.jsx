@@ -182,7 +182,7 @@ const MarquerPresencesPage = () => {
                 </div>
                 <Button 
                   onClick={handleSaveAll} 
-                  disabled={Object.keys(presences).length === 0}
+                  disabled={!canSave()}
                   className="bg-indigo-600 hover:bg-indigo-700"
                 >
                   <Save className="h-4 w-4 mr-2" />
