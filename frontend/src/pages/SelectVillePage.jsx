@@ -27,9 +27,18 @@ const SelectVillePage = () => {
   const loadCities = async () => {
     try {
       const citiesData = await getCities();
-      setCities(citiesData);
+      console.log('Cities loaded:', citiesData); // Debug
+      if (citiesData && Array.isArray(citiesData)) {
+        setCities(citiesData);
+      } else {
+        console.error('Invalid cities data:', citiesData);
+        toast.error('Format de données invalide');
+        setCities([]);
+      }
     } catch (error) {
+      console.error('Error loading cities:', error);
       toast.error('Erreur lors du chargement des villes');
+      setCities([]);
     } finally {
       setLoading(false);
     }
