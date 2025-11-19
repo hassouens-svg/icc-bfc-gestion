@@ -1443,9 +1443,16 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
                 all_presence_dates.append(p["date"])
     
     if not all_presence_dates:
-        # Pas de présences, utiliser le mois assigné
-        year, month = map(int, assigned_month.split("-"))
-        weeks = get_weeks_in_month(year, month)
+        # Pas de présences
+        if assigned_month:
+            # Utiliser le mois assigné
+            year, month = map(int, assigned_month.split("-"))
+            weeks = get_weeks_in_month(year, month)
+        else:
+            # Pas de mois assigné, utiliser l'année en cours
+            from datetime import datetime
+            current_year = datetime.now().year
+            weeks = list(range(1, 53))  # Toutes les semaines de l'année
     else:
         # Utiliser la date la plus ancienne des présences pour déterminer les semaines
         min_date_str = min(all_presence_dates)
