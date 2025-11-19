@@ -2285,12 +2285,15 @@ async def generate_notifications(current_user: dict = Depends(get_current_user))
 @api_router.get("/analytics/promotions-detailed")
 async def get_promotions_detailed(ville: str = None, mois: str = None, annee: str = None, current_user: dict = Depends(get_current_user)):
     """Get detailed promotions analytics for Super Admin/Pasteur with:
-    - Fidélisation par promo (12 mois)
+    - Fidélisation par promo (TOUTES les promos)
+    - Filtres mois/année appliqués sur les PRÉSENCES et données, pas sur les promos
     - Total NA vs NC vs DP
-    - Canal d'arrivée
-    - Détails quotidiens
-    - Filtres: ville, mois, année
+    - Canal d'arrivée (4 canaux spécifiques)
+    - Détails quotidiens par date
     """
+    from datetime import datetime
+    import calendar
+    
     # Only super_admin, pasteur, and responsable_eglise can access
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
@@ -2305,13 +2308,8 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     elif ville and ville != "all":
         base_query["city"] = ville
     
+    # Get ALL visitors (ne pas filtrer par mois/année ici - on filtre les PRÉSENCES plus tard)
     visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
-    
-    # Apply month/year filters
-    if mois and mois != "all":
-        visitors = [v for v in visitors if v.get("assigned_month", "").split("-")[1] == mois if v.get("assigned_month")]
-    if annee and annee != "all":
-        visitors = [v for v in visitors if v.get("assigned_month", "").split("-")[0] == annee if v.get("assigned_month")]
     
     # Group by assigned_month (Promo)
     promos_by_month = {}
