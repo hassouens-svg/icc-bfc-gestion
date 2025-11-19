@@ -522,7 +522,7 @@ const DashboardSuperAdminCompletPage = () => {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Visiteurs</CardTitle>
+                  <CardTitle className="text-sm font-medium">Total Personnes Reçues</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -608,7 +608,7 @@ const DashboardSuperAdminCompletPage = () => {
                     <thead>
                       <tr className="border-b">
                         <th className="text-left py-3 px-4">Mois</th>
-                        <th className="text-center py-3 px-4">Total Visiteurs</th>
+                        <th className="text-center py-3 px-4">Total Personnes Reçues</th>
                         <th className="text-center py-3 px-4">NA</th>
                         <th className="text-center py-3 px-4">NC</th>
                         <th className="text-center py-3 px-4">Présences Dim.</th>
