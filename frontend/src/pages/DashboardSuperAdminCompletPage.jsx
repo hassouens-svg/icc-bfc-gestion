@@ -172,6 +172,13 @@ const DashboardSuperAdminCompletPage = () => {
 
   const loadPromotionsData = async () => {
     try {
+      // Load age and arrival channel distributions
+      const ageData = await getAgeDistribution(selectedCity !== 'all' ? selectedCity : null);
+      setAgeDistribution(ageData);
+      
+      const channelData = await getArrivalChannelDistribution(selectedCity !== 'all' ? selectedCity : null);
+      setArrivalChannelDist(channelData);
+      
       // Pass filters directly to backend
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       const monthFilter = selectedMonth !== 'all' ? selectedMonth : null;
