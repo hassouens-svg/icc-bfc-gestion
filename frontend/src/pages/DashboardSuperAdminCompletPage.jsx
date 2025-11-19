@@ -617,7 +617,7 @@ const DashboardSuperAdminCompletPage = () => {
               </Card>
             </div>
 
-            {/* Fidélisation par Promo */}
+            {/* Fidélisation par Promo - NOUVEAU FORMAT */}
             <Card>
               <CardHeader>
                 <CardTitle>Fidélisation par Promo (Mois)</CardTitle>
@@ -627,12 +627,13 @@ const DashboardSuperAdminCompletPage = () => {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left py-3 px-4">Mois</th>
-                        <th className="text-center py-3 px-4">Total Personnes Reçues</th>
+                        <th className="text-left py-3 px-4">Promo</th>
+                        <th className="text-center py-3 px-4">Nbre de pers suivis</th>
                         <th className="text-center py-3 px-4">NA</th>
                         <th className="text-center py-3 px-4">NC</th>
-                        <th className="text-center py-3 px-4">Présences Dim.</th>
-                        <th className="text-center py-3 px-4">Présences Jeu.</th>
+                        <th className="text-center py-3 px-4">Nbre de suivis arrêtés</th>
+                        <th className="text-center py-3 px-4">Présences dimanche</th>
+                        <th className="text-center py-3 px-4">Présence jeudi</th>
                         <th className="text-center py-3 px-4">Fidélisation</th>
                       </tr>
                     </thead>
@@ -640,11 +641,34 @@ const DashboardSuperAdminCompletPage = () => {
                       {promosData.promos.map((promo, index) => (
                         <tr key={index} className="border-b hover:bg-gray-50">
                           <td className="py-3 px-4 font-medium">{promo.month}</td>
-                          <td className="text-center py-3 px-4">{promo.total_visitors}</td>
+                          <td className="text-center py-3 px-4">{promo.nbre_pers_suivis}</td>
                           <td className="text-center py-3 px-4 text-green-600">{promo.na_count}</td>
                           <td className="text-center py-3 px-4 text-red-600">{promo.nc_count}</td>
-                          <td className="text-center py-3 px-4">{promo.total_presences_dimanche}</td>
-                          <td className="text-center py-3 px-4">{promo.total_presences_jeudi}</td>
+                          <td className="text-center py-3 px-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <span>{promo.suivis_arretes_count}</span>
+                              {promo.suivis_arretes_count > 0 && (
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => {
+                                    const details = promo.suivis_arretes_details.map(s => 
+                                      `${s.name}: ${s.reason}`
+                                    ).join('\n');
+                                    alert(`Suivis arrêtés (${promo.month}):\n\n${details}`);
+                                  }}
+                                >
+                                  Voir
+                                </Button>
+                              )}
+                            </div>
+                          </td>
+                          <td className="text-center py-3 px-4">
+                            {promo.total_presences_dimanche} / {promo.expected_presences_dimanche}
+                          </td>
+                          <td className="text-center py-3 px-4">
+                            {promo.total_presences_jeudi} / {promo.expected_presences_jeudi}
+                          </td>
                           <td className="text-center py-3 px-4">
                             <span className={`font-bold ${promo.fidelisation >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
                               {promo.fidelisation}%
@@ -657,6 +681,43 @@ const DashboardSuperAdminCompletPage = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* NOUVEAU: Détail des personnes reçues par jour */}
+            {promosData.daily_details && promosData.daily_details.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Détail des personnes reçues (pour le mois sélectionné)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4">Date</th>
+                          <th className="text-center py-3 px-4">Nombre total de personnes reçues</th>
+                          <th className="text-center py-3 px-4">Nbre de "de passage"</th>
+                          <th className="text-center py-3 px-4">Nbre de résident</th>
+                          <th className="text-center py-3 px-4">Nbre de NA</th>
+                          <th className="text-center py-3 px-4">Nbre de NC</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {promosData.daily_details.map((day, index) => (
+                          <tr key={index} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4">{day.date}</td>
+                            <td className="text-center py-3 px-4 font-medium">{day.total_personnes_recues}</td>
+                            <td className="text-center py-3 px-4 text-orange-600">{day.nbre_de_passage}</td>
+                            <td className="text-center py-3 px-4 text-blue-600">{day.nbre_residents}</td>
+                            <td className="text-center py-3 px-4 text-green-600">{day.nbre_na}</td>
+                            <td className="text-center py-3 px-4 text-red-600">{day.nbre_nc}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Évolution Fidélisation */}
             <Card>
