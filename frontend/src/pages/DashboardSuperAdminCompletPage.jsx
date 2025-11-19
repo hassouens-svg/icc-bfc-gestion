@@ -428,11 +428,17 @@ const DashboardSuperAdminCompletPage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Toutes les villes</SelectItem>
-                      {cities.sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
-                        <SelectItem key={city.id} value={city.name}>
-                          {city.name} ({city.country || 'France'})
-                        </SelectItem>
-                      ))}
+                      {[...cities]
+                        .sort((a, b) => {
+                          const nameA = a?.name || '';
+                          const nameB = b?.name || '';
+                          return nameA.localeCompare(nameB);
+                        })
+                        .map((city) => (
+                          <SelectItem key={city.id} value={city.name}>
+                            {city.name} ({city.country || 'France'})
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 )}
