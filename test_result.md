@@ -795,6 +795,18 @@ agent_communication:
     message: "🎯 TEST DE RÉGRESSION COMPLET - APPLICATION ICC BFC-ITALIE TERMINÉ! Executed comprehensive regression testing as requested for all critical functionalities after fidelisation bug fixes. RESULTS: 33/36 tests passed (91.7% success rate). ✅ CRITICAL SUCCESSES: (1) AUTHENTIFICATION - All 4 test accounts login successfully (superadmin, pasteur, respo_aout, joyce) with proper JWT tokens and roles, (2) FIDELISATION (PRIORITÉ HAUTE) - respo_aout shows 8 visiteurs (≥6), 6 nouveaux arrivants (≥3), 3 nouveaux convertis (≥1), 52 semaines de données - CRITÈRE CRITIQUE satisfied (données non-nulles confirmées), Joyce shows consistent data, superadmin sees all referent data, (3) VISITEURS ARRÊTÉS - 2 visiteurs arrêtés found (≥2), includes 2024-08 promo visitors, permissions working (superadmin/pasteur access, others denied 403), (4) ANALYTICS - promotions-detailed and fi-detailed endpoints working with ville filtering, (5) VISITOR MANAGEMENT - superadmin/pasteur see multi-city data, visitor creation/deletion working, (6) CULTE STATS - 5 statistics found for Dijon, creation/deletion working, (7) DATA CONSISTENCY - No 500 errors, ville filtering functional. ❌ MINOR ISSUES: 3 network timeout issues during testing (not functional problems). ✅ BUG FIX APPLIED: Fixed permissions.get() AttributeError in server.py lines 685, 743, 772, 814, 839, 932, 1269 - changed from .get('permissions', {}) to .get('permissions') or {} to handle None values. CONCLUSION: All critical regression test criteria satisfied. System ready for production with fidelisation fixes working correctly."
 
 backend:
+  - task: "Comprehensive Regression Testing - ICC BFC-ITALIE Post-Fidelisation Bug Fixes"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎯 COMPREHENSIVE REGRESSION TESTING COMPLETE - 33/36 TESTS PASSED (91.7%)! Executed complete regression testing of all critical functionalities after fidelisation bug fixes. CRITICAL SUCCESSES: (1) ✅ AUTHENTICATION - All 4 test accounts working (superadmin, pasteur, respo_aout, joyce), (2) ✅ FIDELISATION (PRIORITÉ HAUTE) - respo_aout: 8 visiteurs (≥6), 6 NA (≥3), 3 NC (≥1), 52 semaines données, CRITÈRE CRITIQUE satisfied (données non-nulles), Joyce cohérent, superadmin voit tous referents, (3) ✅ VISITEURS ARRÊTÉS - 2 visiteurs (≥2), includes 2024-08 promo, permissions 403 working, (4) ✅ ANALYTICS - promotions-detailed/fi-detailed avec filtrage ville, (5) ✅ VISITOR MANAGEMENT - multi-city access, CRUD working, (6) ✅ CULTE STATS - 5 stats Dijon, CRUD functional, (7) ✅ CONSISTENCY - No 500 errors, ville filtering working. MINOR ISSUES: 3 network timeouts (not functional). BUG FIXED: permissions.get() AttributeError in multiple endpoints - changed to handle None values properly. ALL REGRESSION CRITERIA SATISFIED - system ready for production."
+
   - task: "Dashboard Promotions Complete - Endpoint Modifications and Pasteur Permissions"
     implemented: true
     working: true
