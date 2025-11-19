@@ -486,6 +486,23 @@ const VisitorsPage = () => {
                   </div>
 
                   <div className="space-y-2">
+                    <Label htmlFor="new-age-range">Tranche d'âge</Label>
+                    <Select 
+                      value={newVisitor.age_range}
+                      onValueChange={(value) => setNewVisitor({...newVisitor, age_range: value})}
+                    >
+                      <SelectTrigger id="new-age-range">
+                        <SelectValue placeholder="Sélectionnez une tranche d'âge" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ageRanges.map((range) => (
+                          <SelectItem key={range} value={range}>{range}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="new-visit-date">Date de visite *</Label>
                     <Input
                       id="new-visit-date"
