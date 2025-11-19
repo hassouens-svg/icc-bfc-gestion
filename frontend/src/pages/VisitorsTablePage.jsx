@@ -693,8 +693,15 @@ const VisitorsTablePage = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex justify-center items-center h-64">
-                  <div className="text-gray-500">Aucune donnée de fidélisation disponible</div>
+                <div className="flex flex-col justify-center items-center h-64 space-y-4">
+                  <div className="text-gray-500 text-center">
+                    <p className="font-medium text-lg">Aucune donnée de fidélisation disponible</p>
+                    <p className="text-sm mt-2 text-gray-400">
+                      {fidelisationData 
+                        ? "Pas de données de présences pour calculer la fidélisation"
+                        : "Les données n'ont pas pu être chargées"}
+                    </p>
+                  </div>
                 </div>
               )}
             </CardContent>
