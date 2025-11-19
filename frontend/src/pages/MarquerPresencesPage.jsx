@@ -91,26 +91,30 @@ const MarquerPresencesPage = () => {
     });
   };
 
-  const handleSaveAll = async () => {
-    // Validation: au moins une présence ou un commentaire doit être rempli
-    const hasAnyData = Object.keys(presences).length > 0 || Object.keys(comments).some(id => comments[id]?.trim());
-    
-    if (!hasAnyData) {
-      toast.error('Veuillez cocher au moins une case "présent" ou "absent", ou ajouter un commentaire avant de sauvegarder');
-      return;
-    }
+  // Fonction pour vérifier si tous les visiteurs ont au moins une présence ou un commentaire
+  const canSave = () => {
+    // Pour chaque visiteur, vérifier qu'il a soit une présence cochée, soit un commentaire
+    return visitors.every(visitor => {
+      const hasPresenceChecked = presences[visitor.id] !== undefined;
+      const hasComment = comments[visitor.id]?.trim();
+      return hasPresenceChecked || hasComment;
+    });
+  };
 
-    // Vérifier que chaque entrée a soit une présence cochée soit un commentaire
-    for (const visitorId of [...new Set([...Object.keys(presences), ...Object.keys(comments)])]) {
-      const hasPresenceChecked = presences[visitorId] !== undefined;
-      const hasComment = comments[visitorId]?.trim();
+  const handleSaveAll = async () => {
+    // Vérifier que tous les visiteurs ont soit une présence soit un commentaire
+    const allValid = canSave();
+    
+    if (!allValid) {
+      const missingVisitors = visitors.filter(v => {
+        const hasPresenceChecked = presences[v.id] !== undefined;
+        const hasComment = comments[v.id]?.trim();
+        return !hasPresenceChecked && !hasComment;
+      });
       
-      if (!hasPresenceChecked && !hasComment) {
-        const visitor = visitors.find(v => v.id === visitorId);
-        const visitorName = visitor ? `${visitor.firstname} ${visitor.lastname}` : 'ce visiteur';
-        toast.error(`Pour ${visitorName}: veuillez cocher "présent" ou "absent", ou ajouter un commentaire`);
-        return;
-      }
+      const names = missingVisitors.map(v => `${v.firstname} ${v.lastname}`).join(', ');
+      toast.error(`Veuillez cocher "présent" ou "absent", ou ajouter un commentaire pour: ${names}`);
+      return;
     }
 
     try {
