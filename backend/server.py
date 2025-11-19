@@ -189,6 +189,7 @@ class VisitorCreate(BaseModel):
     email: Optional[EmailStr] = None
     address: Optional[str] = None  # Optional
     arrival_channel: str
+    age_range: Optional[str] = None
     visit_date: str
     is_ancien: bool = False
 
