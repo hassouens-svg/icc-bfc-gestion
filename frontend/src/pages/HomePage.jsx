@@ -9,26 +9,6 @@ import { Users, TrendingUp, UserCheck, Shield, Church, Heart } from 'lucide-reac
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadCities = async () => {
-      try {
-        setLoading(true);
-        const citiesData = await getCities();
-        // Tri alphabétique par nom
-        const sortedCities = citiesData.sort((a, b) => a.name.localeCompare(b.name));
-        setCities(sortedCities);
-      } catch (error) {
-        // Silent fail - cities will be empty
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadCities();
-  }, []);
 
   const handleDepartmentChoice = (deptId) => {
     // Handle special access pages
