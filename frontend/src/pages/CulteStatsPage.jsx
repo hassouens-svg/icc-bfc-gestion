@@ -92,6 +92,14 @@ const CulteStatsPage = () => {
     localStorage.removeItem('culte_stats_filter_city');
     // eslint-disable-next-line
   }, []);
+
+  // Recharger les données quand le filtre ville change
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+    // eslint-disable-next-line
+  }, [filterVille]);
   
   const loadCities = async () => {
     try {
