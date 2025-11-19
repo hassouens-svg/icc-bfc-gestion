@@ -625,8 +625,22 @@ const DashboardSuperAdminCompletPage = () => {
 
             {/* Fidélisation par Promo - NOUVEAU FORMAT */}
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Fidélisation par Promo (Mois)</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="promo-filter" className="text-sm">Filtre Promo:</Label>
+                  <Select value={selectedPromoFilter} onValueChange={setSelectedPromoFilter}>
+                    <SelectTrigger id="promo-filter" className="w-[200px]">
+                      <SelectValue placeholder="Toutes les promos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes les promos</SelectItem>
+                      {promosData.promos.map((promo, index) => (
+                        <SelectItem key={index} value={promo.month}>{promo.month}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
