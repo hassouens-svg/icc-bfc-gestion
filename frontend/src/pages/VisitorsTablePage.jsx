@@ -77,22 +77,17 @@ const VisitorsTablePage = () => {
   }, [filters.date]);
 
   const loadFidelisationData = async () => {
+    if (loadingFidelisation) return; // Prevent multiple simultaneous calls
+    
     try {
       setLoadingFidelisation(true);
       const data = await getReferentFidelisation();
-      console.log('Fidelisation data loaded:', data);
-      setFidelisationData(data);
+      if (data && data.weekly_rates) {
+        setFidelisationData(data);
+      }
     } catch (error) {
-      console.error('Erreur lors du chargement des données de fidélisation:', error);
-      // Set default data to avoid showing "..."
-      setFidelisationData({
-        total_visitors: 0,
-        total_visitors_actifs: 0,
-        total_na: 0,
-        total_nc: 0,
-        weekly_rates: [],
-        monthly_average: 0
-      });
+      console.error('Erreur fidélisation:', error);
+      // Don't set null data, keep showing 0.0% if no data
     } finally {
       setLoadingFidelisation(false);
     }
