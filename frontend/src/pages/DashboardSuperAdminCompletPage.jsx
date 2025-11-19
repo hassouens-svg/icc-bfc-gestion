@@ -449,9 +449,9 @@ const DashboardSuperAdminCompletPage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Toutes les villes</SelectItem>
-                      {cities.map((city) => (
+                      {cities.sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
                         <SelectItem key={city.id} value={city.name}>
-                          {city.name}
+                          {city.name} ({city.country || 'France'})
                         </SelectItem>
                       ))}
                     </SelectContent>
