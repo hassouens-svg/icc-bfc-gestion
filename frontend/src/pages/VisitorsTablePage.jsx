@@ -697,7 +697,6 @@ const VisitorsTablePage = () => {
               )}
             </CardContent>
           </Card>
-        )}
 
         {/* Edit Presence Dialog */}
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
