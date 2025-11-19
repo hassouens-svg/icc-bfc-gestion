@@ -1394,12 +1394,17 @@ def get_weeks_in_month(year, month):
 
 @api_router.get("/fidelisation/referent")
 async def get_referent_fidelisation(current_user: dict = Depends(get_current_user)):
-    """Get fidelisation rate for referent and responsable_promo"""
-    if current_user["role"] not in ["referent", "responsable_promo"]:
-        raise HTTPException(status_code=403, detail="Only referents and responsable_promo can access this")
+    """Get fidelisation rate for referent, responsable_promo, superviseur_promos, and promotions roles"""
+    allowed_roles = ["referent", "responsable_promo", "superviseur_promos", "promotions", "super_admin", "pasteur"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
     
     assigned_month = current_user.get("assigned_month")
-    if not assigned_month:
+    # Pour les rôles sans assigned_month, utiliser tous les visiteurs de la ville
+    if not assigned_month and current_user["role"] in ["superviseur_promos", "super_admin", "pasteur"]:
+        # Ces rôles voient tous les visiteurs de leur ville
+        pass
+    elif not assigned_month:
         raise HTTPException(status_code=400, detail="No assigned month")
     
     # Get all visitors for this referent (y compris tracking_stopped pour le comptage)
