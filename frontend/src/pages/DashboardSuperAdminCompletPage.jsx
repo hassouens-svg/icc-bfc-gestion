@@ -113,6 +113,8 @@ const DashboardSuperAdminCompletPage = () => {
   
   // Data states
   const [cities, setCities] = useState([]);
+  const [ageDistribution, setAgeDistribution] = useState([]);
+  const [arrivalChannelDist, setArrivalChannelDist] = useState([]);
   const [promosData, setPromosData] = useState(null);
   const [visitorsTable, setVisitorsTable] = useState([]);
   const [fiData, setFiData] = useState(null);
