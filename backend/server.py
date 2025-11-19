@@ -1358,22 +1358,29 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     
     weekly_rates = []
     for week in weeks:
-        # Count presences for this week
-        total_presences = 0
+        # Count presences for this week with WEIGHTED LOGIC (dimanche x2, jeudi x1)
+        total_presences_dimanche = 0
+        total_presences_jeudi = 0
         for visitor in visitors:
-            for presence in visitor.get("presences_dimanche", []) + visitor.get("presences_jeudi", []):
+            for presence in visitor.get("presences_dimanche", []):
                 if get_week_number(presence["date"]) == week and presence.get("present", False):
-                    total_presences += 1
+                    total_presences_dimanche += 1
+            for presence in visitor.get("presences_jeudi", []):
+                if get_week_number(presence["date"]) == week and presence.get("present", False):
+                    total_presences_jeudi += 1
         
-        # Calculate rate (2 services per week: dimanche + jeudi)
-        expected_presences = total_visitors * 2
-        rate = (total_presences / expected_presences * 100) if expected_presences > 0 else 0
+        # Calculate rate with PONDÉRATION: dimanche x2, jeudi x1
+        expected_dimanche = total_visitors * 1  # 1 dimanche par semaine
+        expected_jeudi = total_visitors * 1  # 1 jeudi par semaine
+        max_weighted = (expected_dimanche * 2) + (expected_jeudi * 1)
+        actual_weighted = (total_presences_dimanche * 2) + (total_presences_jeudi * 1)
+        rate = (actual_weighted / max_weighted * 100) if max_weighted > 0 else 0
         
         weekly_rates.append({
             "week": week,
             "rate": round(rate, 2),
-            "presences": total_presences,
-            "expected": expected_presences
+            "presences": total_presences_dimanche + total_presences_jeudi,
+            "expected": expected_dimanche + expected_jeudi
         })
     
     # Calculate monthly average
