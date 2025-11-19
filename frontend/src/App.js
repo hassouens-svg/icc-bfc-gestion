@@ -85,7 +85,8 @@ function App() {
           <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
           <Route path="/acces-bergers-eglise" element={<AccesBergersEglisePage />} />
           <Route path="/select-department" element={<SelectDepartmentPage />} />
-          <Route path="/select-ville" element={<SelectVillePage />} />
+          {/* <Route path="/select-ville" element={<SelectVillePage />} /> */}
+          {/* Page de sélection de ville supprimée - La ville est sélectionnée au login */}
           <Route path="/gestion-acces" element={<GestionAccesPage />} />
           <Route path="/admin-data" element={<AdminDataPage />} />
           <Route path="/affectation-pilotes-fi" element={<AffectationPilotesFIPage />} />
