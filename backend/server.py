@@ -3186,6 +3186,9 @@ logging.getLogger("uvicorn.access").setLevel(logging.ERROR)
 async def startup_initialize_cities():
     """Initialize cities automatically on startup"""
     try:
+        # Clean up invalid cities (with null or empty name)
+        await db.cities.delete_many({'$or': [{'name': None}, {'name': ''}]})
+        
         # Check if cities exist
         cities_count = await db.cities.count_documents({})
         
