@@ -1414,8 +1414,13 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     # Les superviseurs et admins voient toute la ville
     if assigned_month and current_user["role"] in ["referent", "responsable_promo"]:
         query["assigned_month"] = assigned_month
+        print(f"🔍 Fidelisation query with filter: {query} for role {current_user['role']}")
+    else:
+        print(f"🔍 Fidelisation query without month filter: {query} for role {current_user['role']}")
     
     all_visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
+    print(f"📊 Found {len(all_visitors)} visitors")
+
     
     # Pour la fidélisation, on ne compte que les visiteurs actifs
     visitors = [v for v in all_visitors if not v.get("tracking_stopped")]
