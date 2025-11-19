@@ -64,17 +64,23 @@ const VisitorsTablePage = () => {
   }, [visitors, filters]);
 
   const loadFidelisationData = async () => {
-    if (loadingFidelisation) return; // Prevent multiple simultaneous calls
+    if (loadingFidelisation) return;
     
+    console.log('🔄 Loading fidelisation data...');
     try {
       setLoadingFidelisation(true);
       const data = await getReferentFidelisation();
+      console.log('✅ Fidelisation data received:', data);
+      
       if (data && data.weekly_rates) {
         setFidelisationData(data);
+        console.log('✅ Fidelisation data set in state');
+      } else {
+        console.warn('⚠️ No weekly_rates in data');
       }
     } catch (error) {
-      console.error('Erreur fidélisation:', error);
-      // Don't set null data, keep showing 0.0% if no data
+      console.error('❌ Erreur fidélisation:', error);
+      toast.error('Erreur lors du chargement des données de fidélisation');
     } finally {
       setLoadingFidelisation(false);
     }
