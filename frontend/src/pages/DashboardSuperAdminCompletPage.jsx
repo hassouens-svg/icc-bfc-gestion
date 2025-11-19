@@ -12,7 +12,9 @@ import {
   getUser,
   getFamillesImpact,
   getMembresFI,
-  getPresencesFI
+  getPresencesFI,
+  getAgeDistribution,
+  getArrivalChannelDistribution
 } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
