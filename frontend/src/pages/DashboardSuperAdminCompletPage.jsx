@@ -94,6 +94,7 @@ const DashboardSuperAdminCompletPage = () => {
   };
   
   const [selectedView, setSelectedView] = useState('promotions'); // 'promotions' or 'fi' or 'presences' or 'cultes'
+  const [selectedPromoFilter, setSelectedPromoFilter] = useState('all'); // Filter for "Fidélisation par Promo" table
   const [selectedCity, setSelectedCity] = useState(() => {
     // Pour responsable_eglise, forcer sa ville
     if (user?.role === 'responsable_eglise') {
