@@ -658,7 +658,9 @@ const DashboardSuperAdminCompletPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {promosData.promos.map((promo, index) => (
+                      {promosData.promos
+                        .filter(promo => selectedPromoFilter === 'all' || promo.month === selectedPromoFilter)
+                        .map((promo, index) => (
                         <tr key={index} className="border-b hover:bg-gray-50">
                           <td className="py-3 px-4 font-medium">{promo.month}</td>
                           <td className="text-center py-3 px-4">{promo.nbre_pers_suivis}</td>
