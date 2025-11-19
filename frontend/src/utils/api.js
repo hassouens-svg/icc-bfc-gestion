@@ -482,3 +482,21 @@ export const importAllData = async (data) => {
   const response = await apiClient.post('/admin/import-all-data', data, { timeout: 120000 });
   return response.data;
 };
+
+
+// Analytics - Age Distribution
+export const getAgeDistribution = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/analytics/age-distribution', { params });
+  return response.data;
+};
+
+// Analytics - Arrival Channel Distribution
+export const getArrivalChannelDistribution = async (ville = null) => {
+  const params = {};
+  if (ville) params.ville = ville;
+  const response = await apiClient.get('/analytics/arrival-channel-distribution', { params });
+  return response.data;
+};
+
