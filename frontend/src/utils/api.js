@@ -395,9 +395,11 @@ export const getStatsPasteur = async () => {
 };
 
 // Advanced Analytics for Super Admin/Pasteur
-export const getPromotionsDetailed = async (ville = null) => {
+export const getPromotionsDetailed = async (ville = null, mois = null, annee = null) => {
   const params = {};
   if (ville) params.ville = ville;
+  if (mois) params.mois = mois;
+  if (annee) params.annee = annee;
   const response = await apiClient.get('/analytics/promotions-detailed', { params });
   return response.data;
 };
