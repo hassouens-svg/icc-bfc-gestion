@@ -42,11 +42,7 @@ const HomePage = () => {
       return;
     }
 
-    if (!selectedCity) {
-      toast.error('Veuillez sélectionner une ville d\'abord');
-      return;
-    }
-
+    // Plus besoin de sélectionner la ville ici - elle sera sélectionnée au login
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Veuillez vous connecter');
