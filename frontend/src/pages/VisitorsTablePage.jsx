@@ -49,6 +49,7 @@ const VisitorsTablePage = () => {
   const [uniquePromos, setUniquePromos] = useState([]);
   const [fidelisationData, setFidelisationData] = useState(null);
   const [loadingFidelisation, setLoadingFidelisation] = useState(false);
+  const fidelisationLoadedRef = React.useRef(false);
 
   useEffect(() => {
     if (!user) {
@@ -56,25 +57,19 @@ const VisitorsTablePage = () => {
       return;
     }
     loadVisitors();
-  }, [user, navigate]);
+  }, []);
 
   useEffect(() => {
     applyFilters();
   }, [visitors, filters]);
 
-  // Load fidelisation data once after initial load
+  // Load fidelisation data ONCE after visitors are loaded
   useEffect(() => {
-    if (visitors.length > 0 && !fidelisationData) {
+    if (visitors.length > 0 && !fidelisationLoadedRef.current) {
+      fidelisationLoadedRef.current = true;
       loadFidelisationData();
     }
   }, [visitors.length]);
-
-  // Reload when date filter changes
-  useEffect(() => {
-    if (filters.date && fidelisationData) {
-      loadFidelisationData();
-    }
-  }, [filters.date]);
 
   const loadFidelisationData = async () => {
     if (loadingFidelisation) return; // Prevent multiple simultaneous calls
