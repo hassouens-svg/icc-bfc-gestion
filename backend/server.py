@@ -2475,10 +2475,10 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
             "total_nc": total_nc,
             "total_dp": total_dp,
             "avg_fidelisation": round(avg_fidelisation, 1),
-            "canal_evangelisation": canal_counts.get("Evangelisation", 0),
-            "canal_invitation": canal_counts.get("Invitation", 0),
-            "canal_reseaux": canal_counts.get("Réseaux Sociaux", 0),
-            "canal_autres": sum(v for k, v in canal_counts.items() if k not in ["Evangelisation", "Invitation", "Réseaux Sociaux"])
+            "canal_evangelisation": canal_counts["Evangelisation"],
+            "canal_reseaux_sociaux": canal_counts["Réseaux sociaux"],
+            "canal_invitation_membre": canal_counts["Invitation par un membre (hors evangelisation)"],
+            "canal_par_soi_meme": canal_counts["Par soi même"]
         },
         "daily_details": daily_details
     }
