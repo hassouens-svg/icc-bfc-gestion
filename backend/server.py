@@ -2406,18 +2406,26 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
             promos_by_month[month] = {
                 "month": month,
                 "total_visitors": 0,
+                "total_visitors_all": 0,  # Inclut les suivis arrêtés
                 "na_count": 0,
                 "nc_count": 0,
                 "dp_count": 0,
                 "residents_count": 0,
                 "visitors": [],
+                "visitors_actifs": [],  # Seulement ceux avec suivi actif
                 "suivis_arretes": []
             }
         
-        promos_by_month[month]["total_visitors"] += 1
+        # Compter TOUS les visiteurs (y compris arrêtés) pour les stats globales
+        promos_by_month[month]["total_visitors_all"] += 1
         promos_by_month[month]["visitors"].append(visitor)
         
-        # Count NA vs NC vs DP
+        # Compter seulement les visiteurs actifs (pas arrêtés) pour "nbre_pers_suivis"
+        if not visitor.get("tracking_stopped"):
+            promos_by_month[month]["total_visitors"] += 1
+            promos_by_month[month]["visitors_actifs"].append(visitor)
+        
+        # Count NA vs NC vs DP (tous, même arrêtés)
         types = visitor.get("types", [])
         if "Nouveau Arrivant" in types:
             promos_by_month[month]["na_count"] += 1
