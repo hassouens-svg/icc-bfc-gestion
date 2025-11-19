@@ -1410,8 +1410,10 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     # Get all visitors for this user
     query = {"city": current_user["city"]}
     
-    # Si l'utilisateur a un assigned_month, filtrer par celui-ci
-    if assigned_month:
+    # Pour responsable_promo et superviseurs, montrer TOUS les visiteurs de leur ville
+    # (pas seulement leur mois assigné)
+    # Les autres rôles (referent) gardent le filtre par assigned_month
+    if assigned_month and current_user["role"] == "referent":
         query["assigned_month"] = assigned_month
     
     all_visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
