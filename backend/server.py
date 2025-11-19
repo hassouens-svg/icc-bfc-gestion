@@ -3184,50 +3184,65 @@ logging.getLogger("uvicorn.access").setLevel(logging.ERROR)
 
 @app.on_event("startup")
 async def startup_initialize_cities():
-    """Initialize cities automatically on startup"""
+    """Initialize cities automatically on startup - ALWAYS update countries"""
     try:
+        print("🏙️ Initializing cities system...")
+        
         # Clean up invalid cities (with null or empty name)
-        await db.cities.delete_many({'$or': [{'name': None}, {'name': ''}]})
+        deleted = await db.cities.delete_many({'$or': [{'name': None}, {'name': ''}]})
+        if deleted.deleted_count > 0:
+            print(f"🗑️ Cleaned {deleted.deleted_count} invalid cities")
         
-        # Check if cities exist
-        cities_count = await db.cities.count_documents({})
+        # Define cities with countries
+        cities_mapping = {
+            'Milan': 'Italie',
+            'Rome': 'Italie', 
+            'Perugia': 'Italie',
+            'Bologne': 'Italie',
+            'Turin': 'Italie',
+            'Dijon': 'France',
+            'Auxerre': 'France',
+            'Besançon': 'France',
+            'Chalon-Sur-Saone': 'France',
+            'Dole': 'France',
+            'Sens': 'France'
+        }
         
-        if cities_count == 0:
-            # No cities, create them
-            print("🏙️ Initializing cities...")
-            cities_data = [
-                {'id': str(uuid.uuid4()), 'name': 'Milan', 'country': 'Italie'},
-                {'id': str(uuid.uuid4()), 'name': 'Rome', 'country': 'Italie'},
-                {'id': str(uuid.uuid4()), 'name': 'Perugia', 'country': 'Italie'},
-                {'id': str(uuid.uuid4()), 'name': 'Bologne', 'country': 'Italie'},
-                {'id': str(uuid.uuid4()), 'name': 'Turin', 'country': 'Italie'},
-                {'id': str(uuid.uuid4()), 'name': 'Dijon', 'country': 'France'},
-                {'id': str(uuid.uuid4()), 'name': 'Auxerre', 'country': 'France'},
-                {'id': str(uuid.uuid4()), 'name': 'Besançon', 'country': 'France'},
-                {'id': str(uuid.uuid4()), 'name': 'Chalon-Sur-Saone', 'country': 'France'},
-                {'id': str(uuid.uuid4()), 'name': 'Dole', 'country': 'France'},
-                {'id': str(uuid.uuid4()), 'name': 'Sens', 'country': 'France'}
-            ]
-            await db.cities.insert_many(cities_data)
-            print(f"✅ {len(cities_data)} cities created")
-        else:
-            # Cities exist, ensure they have countries
-            print(f"🏙️ {cities_count} cities found, updating countries...")
-            cities_mapping = {
-                'Milan': 'Italie', 'Rome': 'Italie', 'Perugia': 'Italie',
-                'Bologne': 'Italie', 'Turin': 'Italie',
-                'Dijon': 'France', 'Auxerre': 'France', 'Besançon': 'France',
-                'Chalon-Sur-Saone': 'France', 'Dole': 'France', 'Sens': 'France'
-            }
+        # ALWAYS update or create each city (not just when count is 0)
+        created = 0
+        updated = 0
+        
+        for city_name, country in cities_mapping.items():
+            # Check if city exists (case-insensitive)
+            existing = await db.cities.find_one({'name': {'$regex': f'^{city_name}$', '$options': 'i'}})
             
-            for city_name, country in cities_mapping.items():
-                await db.cities.update_many(
-                    {'name': {'$regex': f'^{city_name}$', '$options': 'i'}},
+            if existing:
+                # Update existing city - FORCE country update
+                result = await db.cities.update_one(
+                    {'_id': existing['_id']},
                     {'$set': {'country': country}}
                 )
-            print("✅ Cities countries updated")
+                if result.modified_count > 0:
+                    updated += 1
+                    print(f"  ✅ {city_name} → {country}")
+            else:
+                # Create new city
+                new_city = {
+                    'id': str(uuid.uuid4()),
+                    'name': city_name,
+                    'country': country
+                }
+                await db.cities.insert_one(new_city)
+                created += 1
+                print(f"  ➕ {city_name} → {country} (created)")
+        
+        total_cities = await db.cities.count_documents({})
+        print(f"✅ Cities initialized: {created} created, {updated} updated, {total_cities} total")
+        
     except Exception as e:
         print(f"⚠️ Warning: Could not initialize cities: {e}")
+        import traceback
+        traceback.print_exc()
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
