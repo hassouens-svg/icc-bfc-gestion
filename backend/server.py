@@ -1387,9 +1387,9 @@ def get_weeks_in_month(year, month):
 
 @api_router.get("/fidelisation/referent")
 async def get_referent_fidelisation(current_user: dict = Depends(get_current_user)):
-    """Get fidelisation rate for current referent"""
-    if current_user["role"] != "referent":
-        raise HTTPException(status_code=403, detail="Only referents can access this")
+    """Get fidelisation rate for referent and responsable_promo"""
+    if current_user["role"] not in ["referent", "responsable_promo"]:
+        raise HTTPException(status_code=403, detail="Only referents and responsable_promo can access this")
     
     assigned_month = current_user.get("assigned_month")
     if not assigned_month:
