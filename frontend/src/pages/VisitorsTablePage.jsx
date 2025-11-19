@@ -47,6 +47,8 @@ const VisitorsTablePage = () => {
   // Fidélisation state
   const [tauxFidelisation, setTauxFidelisation] = useState(0);
   const [uniquePromos, setUniquePromos] = useState([]);
+  const [fidelisationData, setFidelisationData] = useState(null);
+  const [loadingFidelisation, setLoadingFidelisation] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -54,6 +56,10 @@ const VisitorsTablePage = () => {
       return;
     }
     loadVisitors();
+    // Load fidelisation data for responsable_promo
+    if (user.role === 'responsable_promo') {
+      loadFidelisationData();
+    }
   }, [user, navigate]);
 
   useEffect(() => {
