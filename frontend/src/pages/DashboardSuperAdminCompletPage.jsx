@@ -167,15 +167,17 @@ const DashboardSuperAdminCompletPage = () => {
 
   const loadPromotionsData = async () => {
     try {
-      // Filtrer par ville si une ville spécifique est sélectionnée
+      // Pass filters directly to backend
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
+      const monthFilter = selectedMonth !== 'all' ? selectedMonth : null;
+      const yearFilter = selectedYear !== 'all' ? selectedYear : null;
       
       const [promos, visitors] = await Promise.all([
-        getPromotionsDetailed(cityFilter),
+        getPromotionsDetailed(cityFilter, monthFilter, yearFilter),
         getVisitorsTable(cityFilter)
       ]);
       
-      // Filtrer les visiteurs par mois/année si sélectionnés
+      // Filtrer les visiteurs par mois/année si sélectionnés côté frontend (pour le tableau)
       let filteredVisitors = visitors;
       if (selectedMonth !== 'all' || selectedYear !== 'all') {
         filteredVisitors = visitors.filter(v => {
@@ -191,30 +193,7 @@ const DashboardSuperAdminCompletPage = () => {
         });
       }
       
-      // Recalculer les stats avec visiteurs filtrés
-      const filteredPromos = promos;
-      if (selectedMonth !== 'all' || selectedYear !== 'all') {
-        // Filtrer aussi les promos
-        filteredPromos.promos = promos.promos?.filter(p => {
-          const [year, month] = p.month.split('-');
-          const monthMatch = selectedMonth === 'all' || month === selectedMonth;
-          const yearMatch = selectedYear === 'all' || year === selectedYear;
-          return monthMatch && yearMatch;
-        });
-        
-        // Recalculer summary
-        filteredPromos.summary = {
-          total_promos: filteredPromos.promos?.length || 0,
-          total_visitors: filteredVisitors.length,
-          total_na: filteredVisitors.filter(v => v.types?.includes('Nouveau Arrivant')).length,
-          total_nc: filteredVisitors.filter(v => v.types?.includes('Nouveau Converti')).length,
-          avg_fidelisation: filteredPromos.promos?.length > 0 
-            ? filteredPromos.promos.reduce((sum, p) => sum + (p.fidelisation || 0), 0) / filteredPromos.promos.length 
-            : 0
-        };
-      }
-      
-      setPromosData(filteredPromos);
+      setPromosData(promos);
       setVisitorsTable(filteredVisitors);
     } catch (error) {
       console.error('Error loading promotions:', error);
