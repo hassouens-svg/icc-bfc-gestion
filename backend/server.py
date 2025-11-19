@@ -1441,8 +1441,8 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
                     total_presences_jeudi += 1
         
         # Calculate rate with PONDÉRATION: dimanche x2, jeudi x1
-        expected_dimanche = total_visitors * 1  # 1 dimanche par semaine
-        expected_jeudi = total_visitors * 1  # 1 jeudi par semaine
+        expected_dimanche = total_visitors_actifs * 1  # 1 dimanche par semaine
+        expected_jeudi = total_visitors_actifs * 1  # 1 jeudi par semaine
         max_weighted = (expected_dimanche * 2) + (expected_jeudi * 1)
         actual_weighted = (total_presences_dimanche * 2) + (total_presences_jeudi * 1)
         rate = (actual_weighted / max_weighted * 100) if max_weighted > 0 else 0
@@ -1457,8 +1457,15 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     # Calculate monthly average
     monthly_average = sum(w["rate"] for w in weekly_rates) / len(weekly_rates) if weekly_rates else 0
     
+    # Compter NA et NC de TOUS les visiteurs
+    total_na = len([v for v in all_visitors if "Nouveau Arrivant" in v.get("types", [])])
+    total_nc = len([v for v in all_visitors if "Nouveau Converti" in v.get("types", [])])
+    
     return {
         "total_visitors": total_visitors,
+        "total_visitors_actifs": total_visitors_actifs,
+        "total_na": total_na,
+        "total_nc": total_nc,
         "weekly_rates": weekly_rates,
         "monthly_average": round(monthly_average, 2)
     }
