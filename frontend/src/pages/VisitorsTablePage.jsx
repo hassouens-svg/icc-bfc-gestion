@@ -617,7 +617,9 @@ const VisitorsTablePage = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-indigo-600" />
-                Taux de Fidélisation par Semaine
+                {filters.date 
+                  ? `Fidélisation - Semaine du ${filters.date}` 
+                  : 'Taux de Fidélisation par Semaine (52 semaines)'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -647,7 +649,7 @@ const VisitorsTablePage = () => {
                   </div>
                   <div className="h-96 w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={fidelisationData.weekly_rates}>
+                      <BarChart data={getChartData()}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis 
                           dataKey="week" 
@@ -662,23 +664,25 @@ const VisitorsTablePage = () => {
                           labelFormatter={(label) => `Semaine ${label}`}
                         />
                         <Legend />
-                        <Line 
-                          type="monotone" 
+                        <Bar 
                           dataKey="rate" 
-                          stroke="#4f46e5" 
-                          strokeWidth={2}
+                          fill="#4f46e5"
                           name="Taux de Fidélisation"
-                          dot={{ fill: '#4f46e5', r: 4 }}
+                          radius={[8, 8, 0, 0]}
                         />
-                      </LineChart>
+                      </BarChart>
                     </ResponsiveContainer>
                   </div>
                   <div className="mt-4 text-center">
-                    <p className="text-sm text-gray-600">
-                      Moyenne mensuelle: <span className="font-bold text-indigo-600 text-lg">{fidelisationData.monthly_average}%</span>
-                    </p>
+                    {!filters.date && (
+                      <p className="text-sm text-gray-600">
+                        Moyenne globale: <span className="font-bold text-indigo-600 text-lg">{fidelisationData.monthly_average}%</span>
+                      </p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
-                      Calcul pondéré: Dimanche x2, Jeudi x1
+                      {getChartData().length === 1 
+                        ? `1 semaine affichée` 
+                        : `${getChartData().length} semaines affichées`}
                     </p>
                   </div>
                 </div>
