@@ -2390,7 +2390,16 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         base_query["city"] = ville
     
     # Get ALL visitors (y compris tracking_stopped pour les statistiques)
-    visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
+    all_visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
+    
+    # Filtrer les visiteurs pour les indicateurs globaux si mois/année spécifiés
+    visitors_for_summary = all_visitors
+    if mois and mois != "all" and annee and annee != "all":
+        # Filtrer les visiteurs dont assigned_month correspond au mois/année
+        visitors_for_summary = [v for v in all_visitors if v.get("assigned_month", "").startswith(f"{annee}-{mois}")]
+    
+    # Utiliser all_visitors pour les stats détaillées (toutes les promos)
+    visitors = all_visitors
     
     # Déterminer le mois filtré pour le calcul des dimanches/jeudis
     if mois and mois != "all" and annee and annee != "all":
