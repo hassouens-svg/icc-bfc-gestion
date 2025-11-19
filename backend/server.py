@@ -2455,7 +2455,8 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         total_presences_jeudi = 0
         
         if total > 0:
-            for visitor in data["visitors"]:
+            # Compter seulement les présences des visiteurs ACTIFS (pas arrêtés)
+            for visitor in data["visitors_actifs"]:
                 # Filtrer les présences dimanche par mois/année
                 presences_dim = visitor.get("presences_dimanche", [])
                 if mois and mois != "all" and annee and annee != "all":
