@@ -789,12 +789,6 @@ const DashboardSuperAdminCompletPage = () => {
                         <th className="text-left py-2 px-2">Téléphone</th>
                         <th className="text-left py-2 px-2">Email</th>
                         <th className="text-center py-2 px-2">Mois</th>
-                        <th className="text-center py-2 px-2">Prés. Dim.</th>
-                        <th className="text-center py-2 px-2">Prés. Jeu.</th>
-                        <th className="text-center py-2 px-2">Total Prés.</th>
-                        <th className="text-left py-2 px-2">FI Assignée</th>
-                        <th className="text-center py-2 px-2">Commentaires</th>
-                        {canEdit && <th className="text-center py-2 px-2">Actions</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -805,28 +799,13 @@ const DashboardSuperAdminCompletPage = () => {
                           <td className="py-2 px-2">
                             <span className="text-xs">
                               {visitor.types?.includes('Nouveau Arrivant') && <span className="bg-green-100 text-green-800 px-1 py-0.5 rounded mr-1">NA</span>}
-                              {visitor.types?.includes('Nouveau Converti') && <span className="bg-red-100 text-red-800 px-1 py-0.5 rounded">NC</span>}
+                              {visitor.types?.includes('Nouveau Converti') && <span className="bg-red-100 text-red-800 px-1 py-0.5 rounded mr-1">NC</span>}
+                              {visitor.types?.includes('De Passage') && <span className="bg-orange-100 text-orange-800 px-1 py-0.5 rounded">DP</span>}
                             </span>
                           </td>
                           <td className="py-2 px-2">{visitor.phone}</td>
                           <td className="py-2 px-2 text-xs">{visitor.email || '-'}</td>
                           <td className="text-center py-2 px-2">{visitor.assigned_month}</td>
-                          <td className="text-center py-2 px-2">{visitor.presences_dimanche_count}</td>
-                          <td className="text-center py-2 px-2">{visitor.presences_jeudi_count}</td>
-                          <td className="text-center py-2 px-2 font-bold">{visitor.total_presences}</td>
-                          <td className="py-2 px-2 text-xs">{visitor.assigned_fi || '-'}</td>
-                          <td className="text-center py-2 px-2">{visitor.comments_count}</td>
-                          {canEdit && (
-                            <td className="text-center py-2 px-2">
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => navigate(`/visitors/${visitor.id}`)}
-                              >
-                                Voir
-                              </Button>
-                            </td>
-                          )}
                         </tr>
                       ))}
                     </tbody>
