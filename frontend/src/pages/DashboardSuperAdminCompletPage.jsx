@@ -1764,6 +1764,7 @@ const DashboardSuperAdminCompletPage = () => {
         {/* Vue Évangélisation */}
         {selectedView === 'evangelisation' && (
           <>
+            <DepartmentAlert view="Évangélisation" />
             <Card className="bg-gradient-to-br from-red-50 to-pink-100">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-red-900">
