@@ -92,6 +92,27 @@ const MarquerPresencesPage = () => {
   };
 
   const handleSaveAll = async () => {
+    // Validation: au moins une présence ou un commentaire doit être rempli
+    const hasAnyData = Object.keys(presences).length > 0 || Object.keys(comments).some(id => comments[id]?.trim());
+    
+    if (!hasAnyData) {
+      toast.error('Veuillez cocher au moins une case "présent" ou "absent", ou ajouter un commentaire avant de sauvegarder');
+      return;
+    }
+
+    // Vérifier que chaque entrée a soit une présence cochée soit un commentaire
+    for (const visitorId of [...new Set([...Object.keys(presences), ...Object.keys(comments)])]) {
+      const hasPresenceChecked = presences[visitorId] !== undefined;
+      const hasComment = comments[visitorId]?.trim();
+      
+      if (!hasPresenceChecked && !hasComment) {
+        const visitor = visitors.find(v => v.id === visitorId);
+        const visitorName = visitor ? `${visitor.firstname} ${visitor.lastname}` : 'ce visiteur';
+        toast.error(`Pour ${visitorName}: veuillez cocher "présent" ou "absent", ou ajouter un commentaire`);
+        return;
+      }
+    }
+
     try {
       const promises = Object.entries(presences).map(([visitorId, isPresent]) => {
         return addPresence(
