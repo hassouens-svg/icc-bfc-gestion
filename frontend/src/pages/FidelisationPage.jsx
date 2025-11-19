@@ -28,7 +28,7 @@ const FidelisationPage = () => {
 
   const loadData = async () => {
     try {
-      if (user.role === 'referent') {
+      if (user.role === 'referent' || user.role === 'responsable_promo') {
         const result = await getReferentFidelisation();
         setData(result);
       } else if (['superviseur_promos', 'superviseur_fi', 'promotions', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
