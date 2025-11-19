@@ -1144,8 +1144,8 @@ const DashboardSuperAdminCompletPage = () => {
                     <tbody>
                       {filteredMembres.map((membre) => (
                         <tr key={membre.id} className="border-b hover:bg-gray-50">
-                          <td className="py-2 px-2">{membre.firstname} {membre.lastname}</td>
-                          <td className="py-2 px-2">{membre.phone}</td>
+                          <td className="py-2 px-2">{membre.prenom} {membre.nom}</td>
+                          <td className="py-2 px-2">{membre.phone || '-'}</td>
                           <td className="py-2 px-2">{membre.ville}</td>
                           <td className="py-2 px-2 text-xs">{membre.fi_nom}</td>
                           <td className="py-2 px-2 text-xs">{membre.secteur_nom}</td>
