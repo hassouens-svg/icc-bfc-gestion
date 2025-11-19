@@ -23,39 +23,77 @@ TEST_ACCOUNTS = {
     "joyce": {"username": "Joyce", "password": "Joyce123", "city": "Dijon"}
 }
 
-class BackendTester:
+class TestResults:
     def __init__(self):
-        self.session = requests.Session()
-        self.token = None
-        self.current_user = None
+        self.passed = 0
+        self.failed = 0
+        self.errors = []
+        self.successes = []
+    
+    def add_success(self, test_name, message=""):
+        self.passed += 1
+        self.successes.append(f"✅ {test_name}: {message}")
+        print(f"✅ {test_name}: {message}")
+    
+    def add_failure(self, test_name, error):
+        self.failed += 1
+        self.errors.append(f"❌ {test_name}: {error}")
+        print(f"❌ {test_name}: {error}")
+    
+    def print_summary(self):
+        print(f"\n{'='*60}")
+        print(f"🎯 TEST DE RÉGRESSION COMPLET - RÉSULTATS FINAUX")
+        print(f"{'='*60}")
+        print(f"✅ Tests réussis: {self.passed}")
+        print(f"❌ Tests échoués: {self.failed}")
+        print(f"📊 Taux de réussite: {(self.passed/(self.passed+self.failed)*100):.1f}%")
         
-    def login(self, account_key):
-        """Login with specified account"""
-        if account_key not in TEST_ACCOUNTS:
-            raise ValueError(f"Unknown account: {account_key}")
-            
-        account = TEST_ACCOUNTS[account_key]
+        if self.errors:
+            print(f"\n❌ ÉCHECS DÉTAILLÉS:")
+            for error in self.errors:
+                print(f"  {error}")
         
-        print(f"🔐 Logging in as {account['username']}...")
-        
-        response = self.session.post(
-            f"{BACKEND_URL}/auth/login",
+        print(f"\n✅ SUCCÈS:")
+        for success in self.successes:
+            print(f"  {success}")
+
+def login_user(account_name):
+    """Login and return JWT token"""
+    account = TEST_ACCOUNTS[account_name]
+    
+    try:
+        response = requests.post(
+            f"{BASE_URL}/auth/login",
             json=account,
-            headers={"Content-Type": "application/json"}
+            headers=HEADERS,
+            timeout=10
         )
         
-        if response.status_code != 200:
-            raise Exception(f"Login failed: {response.status_code} - {response.text}")
-            
-        data = response.json()
-        self.token = data["token"]
-        self.current_user = data["user"]
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("token"), data.get("user")
+        else:
+            return None, f"Login failed: {response.status_code} - {response.text}"
+    except Exception as e:
+        return None, f"Login error: {str(e)}"
+
+def make_authenticated_request(method, endpoint, token, data=None, params=None):
+    """Make authenticated API request"""
+    headers = {**HEADERS, "Authorization": f"Bearer {token}"}
+    
+    try:
+        if method.upper() == "GET":
+            response = requests.get(f"{BASE_URL}{endpoint}", headers=headers, params=params, timeout=10)
+        elif method.upper() == "POST":
+            response = requests.post(f"{BASE_URL}{endpoint}", headers=headers, json=data, timeout=10)
+        elif method.upper() == "PUT":
+            response = requests.put(f"{BASE_URL}{endpoint}", headers=headers, json=data, timeout=10)
+        elif method.upper() == "DELETE":
+            response = requests.delete(f"{BASE_URL}{endpoint}", headers=headers, timeout=10)
         
-        # Set authorization header for future requests
-        self.session.headers.update({"Authorization": f"Bearer {self.token}"})
-        
-        print(f"✅ Successfully logged in as {self.current_user['username']} (role: {self.current_user['role']})")
-        return data
+        return response
+    except Exception as e:
+        return None
         
     def test_bulk_ancien_visitors_endpoint(self):
         """
