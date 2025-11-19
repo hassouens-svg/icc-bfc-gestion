@@ -445,7 +445,7 @@ backend:
     implemented: true
     working: false
     file: "/app/frontend/src/pages/VisitorsTablePage.jsx, /app/frontend/src/components/Layout.jsx"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -455,6 +455,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUE CONFIRMED: Vue Tableau KPI and Chart not displaying data correctly. TESTING RESULTS with credentials respo_aout/respo_aout123/Promotions: (1) ❌ GREEN KPI ISSUE: The green KPI at top shows '...' instead of percentage (should show '2.56%' based on backend API response), (2) ❌ COLORED KPI BOXES: 4 colored KPI boxes not displaying numbers (backend returns: total_visitors=8, total_visitors_actifs=6, total_na=6, total_nc=3), (3) ❌ BARCHART: Chart container found but no bars displayed (backend returns 52 weeks of data with rates), (4) ✅ NO LOADING MESSAGES: No 'Chargement en cours' found. ROOT CAUSE: Frontend authentication issues - console shows 403 errors for /api/notifications and login request aborted. Backend API /api/fidelisation/referent works correctly and returns proper data (monthly_average: 2.56, weekly_rates with 52 weeks). ISSUE: Frontend not properly authenticated or JavaScript errors preventing data loading. The Vue Tableau page loads but fidelization data is not being fetched/displayed due to authentication problems."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL REACT ERRORS PREVENTING FIDELISATION DISPLAY: Comprehensive testing with credentials respo_aout/respo_aout123/Promotions revealed severe React runtime errors blocking all fidelisation functionality. TESTING RESULTS: (1) ✅ LOGIN SUCCESSFUL: Authentication working correctly, user logged in as 'respo_aout (Responsable de promos)' in Dijon, (2) ✅ NAVIGATION: Successfully navigated to /visitors-table page, (3) ❌ CRITICAL REACT ERRORS: Console shows 'Maximum update depth exceeded' errors indicating infinite re-rendering loops in React components, preventing KPI and chart from loading, (4) ❌ NO FIDELISATION ELEMENTS: Green KPI element (.bg-gradient-to-r.from-green-500.to-emerald-600) not found, no 'Taux de Fidélisation' text on page, no colored KPI boxes, no chart container, (5) ❌ COMPONENT FAILURE: React errors at multiple bundle.js locations (54649:167, 54635:12, 57237:16, 57210:5, 82742:5, 81834:7, 65462:11, 52741:68, 58772:154, 58785:56) indicate widespread component rendering issues. ROOT CAUSE: React infinite update loops are crashing the fidelisation components before they can render. The VisitorsTablePage.jsx component has setState calls that trigger infinite re-renders, preventing the KPI and chart from displaying. IMPACT: All fidelisation functionality (KPI percentage, 4 colored boxes, BarChart, date filtering) is completely non-functional due to React errors. REQUIRES IMMEDIATE FIX: Debug and fix React infinite update loops in VisitorsTablePage.jsx to restore fidelisation display."
 
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
