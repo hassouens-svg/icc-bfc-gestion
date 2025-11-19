@@ -200,6 +200,7 @@ class VisitorUpdate(BaseModel):
     address: Optional[str] = None
     email: Optional[EmailStr] = None
     arrival_channel: Optional[str] = None
+    age_range: Optional[str] = None
     types: Optional[List[str]] = None
     type: Optional[str] = None
     city: Optional[str] = None
