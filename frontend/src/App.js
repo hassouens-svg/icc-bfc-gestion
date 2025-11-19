@@ -61,7 +61,6 @@ function App() {
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/stopped-visitors" element={<StoppedVisitorsPage />} />
           <Route path="/evangelisation" element={<EvangelisationPage />} />
-          <Route path="/fidelisation" element={<FidelisationPage />} />
           
           {/* Familles d'Impact Routes */}
           <Route path="/familles-impact/secteurs" element={<SecteursPage />} />
