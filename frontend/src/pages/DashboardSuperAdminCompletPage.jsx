@@ -1444,7 +1444,7 @@ const DashboardSuperAdminCompletPage = () => {
               </>
             )}
           </>
-        )}
+        )} */}
 
         {/* CULTE STATISTICS VIEW */}
         {selectedView === 'cultes' && culteStatsData && (
