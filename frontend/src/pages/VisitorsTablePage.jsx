@@ -63,14 +63,6 @@ const VisitorsTablePage = () => {
     applyFilters();
   }, [visitors, filters]);
 
-  // Load fidelisation data ONCE after visitors are loaded
-  useEffect(() => {
-    if (visitors.length > 0 && !fidelisationLoadedRef.current) {
-      fidelisationLoadedRef.current = true;
-      loadFidelisationData();
-    }
-  }, [visitors.length]);
-
   const loadFidelisationData = async () => {
     if (loadingFidelisation) return; // Prevent multiple simultaneous calls
     
