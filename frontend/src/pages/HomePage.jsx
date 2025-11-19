@@ -148,30 +148,6 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* City Selection */}
-        <Card className="w-full max-w-md mb-8 bg-white/10 backdrop-blur-xl border-white/20 mx-auto shadow-2xl">
-          <CardContent className="pt-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-white/90">Sélectionnez votre ville</label>
-              <Select value={selectedCity} onValueChange={setSelectedCity} disabled={loading}>
-                <SelectTrigger className="w-full bg-white/10 border-white/30 text-white backdrop-blur" data-testid="home-city-select">
-                  <SelectValue placeholder={loading ? "Chargement des villes..." : "Choisir une ville..."} />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((city) => (
-                    <SelectItem key={city.id} value={city.name}>
-                      {city.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {loading && (
-                <p className="text-xs text-white/70 mt-1">Chargement des villes disponibles...</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Department Cards */}
         <div className="w-full animate-fade-in-up" style={{animationDelay: '0.2s'}}>
           <h2 className="text-3xl font-semibold text-white text-center mb-8">
