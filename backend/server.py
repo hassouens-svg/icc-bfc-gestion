@@ -740,7 +740,7 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
     
     # Check permissions for referent and responsable_promo
     if current_user["role"] in ["referent", "responsable_promo"]:
-        permissions = current_user.get("permissions", {})
+        permissions = current_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
             # Check if visitor's month matches user's month (regardless of year)
             user_month = current_user.get("assigned_month", "").split("-")[-1] if current_user.get("assigned_month") else ""
@@ -768,7 +768,7 @@ async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_us
     
     # Check permissions for referents
     if current_user["role"] == "referent":
-        permissions = current_user.get("permissions", {})
+        permissions = current_user.get("permissions") or {}
         if not permissions.get("can_edit_visitors", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot edit visitors")
     
@@ -810,7 +810,7 @@ async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict =
     
     # Check permissions for referents
     if current_user["role"] == "referent":
-        permissions = current_user.get("permissions", {})
+        permissions = current_user.get("permissions") or {}
         if not permissions.get("can_add_comments", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot add comments")
     
@@ -835,7 +835,7 @@ async def add_presence(visitor_id: str, presence: PresenceAdd, current_user: dic
     
     # Check permissions for referents
     if current_user["role"] == "referent":
-        permissions = current_user.get("permissions", {})
+        permissions = current_user.get("permissions") or {}
         if not permissions.get("can_mark_presence", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot mark presence")
     
@@ -928,7 +928,7 @@ async def stop_tracking(visitor_id: str, stop_data: StopTracking, current_user: 
     
     # Check permissions for referents
     if current_user["role"] == "referent":
-        permissions = current_user.get("permissions", {})
+        permissions = current_user.get("permissions") or {}
         if not permissions.get("can_stop_tracking", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot stop tracking")
     
@@ -1266,7 +1266,7 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     
     # If referent or responsable_promo, filter by their assigned month (all years)
     if current_user["role"] in ["referent", "responsable_promo"]:
-        permissions = current_user.get("permissions", {})
+        permissions = current_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
             assigned_month = current_user.get("assigned_month")
             if assigned_month:
