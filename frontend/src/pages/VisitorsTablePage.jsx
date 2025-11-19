@@ -66,21 +66,16 @@ const VisitorsTablePage = () => {
   const loadFidelisationData = async () => {
     if (loadingFidelisation) return;
     
-    console.log('🔄 Loading fidelisation data...');
     try {
       setLoadingFidelisation(true);
       const data = await getReferentFidelisation();
-      console.log('✅ Fidelisation data received:', data);
       
       if (data && data.weekly_rates) {
         setFidelisationData(data);
-        console.log('✅ Fidelisation data set in state');
-      } else {
-        console.warn('⚠️ No weekly_rates in data');
       }
     } catch (error) {
-      console.error('❌ Erreur fidélisation:', error);
-      toast.error('Erreur lors du chargement des données de fidélisation');
+      console.error('Erreur chargement fidélisation:', error);
+      // Don't show toast to avoid annoying users
     } finally {
       setLoadingFidelisation(false);
     }
