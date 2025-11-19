@@ -106,10 +106,15 @@ const StoppedVisitorsPage = () => {
       );
     }
 
-    // Filter by promo
+    // Filter by promo (accepter soit promo_name soit assigned_month)
     if (selectedPromo !== 'all') {
       filtered = filtered.filter(v => {
         if (!v.assigned_month) return false;
+        
+        // Matcher par assigned_month directement
+        if (v.assigned_month === selectedPromo) return true;
+        
+        // Ou matcher par promo_name
         const monthPart = v.assigned_month.split('-')[1];
         const respo = responsablesPromo.find(r => r.assigned_month && r.assigned_month.split('-')[1] === monthPart);
         const promoName = respo ? (respo.promo_name || respo.assigned_month) : v.assigned_month;
