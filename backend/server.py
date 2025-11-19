@@ -1458,8 +1458,9 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
         # Utiliser la date la plus ancienne des présences pour déterminer les semaines
         min_date_str = min(all_presence_dates)
         max_date_str = max(all_presence_dates)
-        min_date = datetime.strptime(min_date_str, "%Y-%m-%d")
-        max_date = datetime.strptime(max_date_str, "%Y-%m-%d")
+        from datetime import datetime as dt
+        min_date = dt.strptime(min_date_str, "%Y-%m-%d")
+        max_date = dt.strptime(max_date_str, "%Y-%m-%d")
         
         # Calculer toutes les semaines entre min et max
         weeks = set()
