@@ -152,6 +152,7 @@ const VisitorsPage = () => {
         email: '',
         address: '',
         arrival_channel: '',
+        age_range: '',
         visit_date: new Date().toISOString().split('T')[0],
       });
       loadVisitors();
