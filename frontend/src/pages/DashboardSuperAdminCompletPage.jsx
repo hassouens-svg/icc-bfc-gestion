@@ -653,20 +653,17 @@ const DashboardSuperAdminCompletPage = () => {
                           <td className="text-center py-3 px-4">
                             <div className="flex items-center justify-center gap-2">
                               <span>{promo.suivis_arretes_count}</span>
-                              {promo.suivis_arretes_count > 0 && (
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => {
-                                    const details = promo.suivis_arretes_details.map(s => 
-                                      `${s.name}: ${s.reason}`
-                                    ).join('\n');
-                                    alert(`Suivis arrêtés (${promo.month}):\n\n${details}`);
-                                  }}
-                                >
-                                  Voir
-                                </Button>
-                              )}
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  // Sauvegarder le filtre promo pour StoppedVisitorsPage
+                                  localStorage.setItem('stopped_visitors_filter_promo', promo.month);
+                                  navigate('/stopped-visitors');
+                                }}
+                              >
+                                Voir
+                              </Button>
                             </div>
                           </td>
                           <td className="text-center py-3 px-4">
