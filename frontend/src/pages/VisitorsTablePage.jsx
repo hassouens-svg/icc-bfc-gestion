@@ -65,8 +65,9 @@ const VisitorsTablePage = () => {
   }, [visitors, filters]);
 
   // Recharger les données de fidélisation quand les filtres changent
+  // Recharger les données de fidélisation quand la date change
   useEffect(() => {
-    if (user && user.role === 'responsable_promo') {
+    if (user) {
       loadFidelisationData();
     }
   }, [filters.date]);
