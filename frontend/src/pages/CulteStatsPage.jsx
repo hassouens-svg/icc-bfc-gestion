@@ -355,9 +355,14 @@ const CulteStatsPage = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Statistiques des Cultes</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Statistiques des Cultes
+              {filterVille && filterVille !== 'all' && (
+                <span className="text-indigo-600"> - {filterVille}</span>
+              )}
+            </h2>
             <p className="text-gray-500 mt-1">
-              Ville: {user?.city} | Accueil & Intégration
+              Ville: {filterVille && filterVille !== 'all' ? filterVille : 'Toutes les villes'} | Accueil & Intégration
             </p>
           </div>
         </div>
