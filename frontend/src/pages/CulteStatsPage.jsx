@@ -66,7 +66,14 @@ const CulteStatsPage = () => {
   // Filters
   const [filterDate, setFilterDate] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [filterVille, setFilterVille] = useState('all');
+  const [filterVille, setFilterVille] = useState(() => {
+    // Récupérer le filtre ville depuis localStorage (venant du dashboard)
+    const savedFilter = localStorage.getItem('culte_stats_filter_city');
+    if (savedFilter && savedFilter !== 'all') {
+      return savedFilter;
+    }
+    return 'all';
+  });
   
   // Edit mode
   const [editingId, setEditingId] = useState(null);
@@ -81,6 +88,8 @@ const CulteStatsPage = () => {
     }
     loadData();
     loadCities();
+    // Nettoyer le filtre sauvegardé après lecture
+    localStorage.removeItem('culte_stats_filter_city');
     // eslint-disable-next-line
   }, []);
   
