@@ -414,7 +414,7 @@ const DashboardPasteurPage = () => {
                         <div key={city.id} className="p-4 border rounded-lg">
                           <div className="flex justify-between items-start mb-3">
                             <div>
-                              <h3 className="text-lg font-semibold">{city.name}</h3>
+                              <h3 className="text-lg font-semibold">{city.name} ({city.country || 'France'})</h3>
                               <p className="text-sm text-gray-500">{cityReferents.length} responsables actifs</p>
                             </div>
                             <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
