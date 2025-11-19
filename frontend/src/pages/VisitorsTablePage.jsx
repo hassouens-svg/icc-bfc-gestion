@@ -56,6 +56,8 @@ const VisitorsTablePage = () => {
       navigate('/login');
       return;
     }
+    // Reset ref when component mounts
+    fidelisationLoadedRef.current = false;
     loadVisitors();
   }, []);
 
