@@ -164,6 +164,7 @@ class Visitor(BaseModel):
     email: Optional[EmailStr] = None
     address: Optional[str] = None  # New field
     arrival_channel: str  # Comment ils ont connu ICC
+    age_range: Optional[str] = None  # "13-18 ans", "18-25 ans", etc.
     visit_date: str
     assigned_month: str  # "2025-01"
     presences_dimanche: List[PresenceEntry] = Field(default_factory=list)
