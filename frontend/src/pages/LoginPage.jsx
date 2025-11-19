@@ -112,9 +112,9 @@ const LoginPage = () => {
                     <SelectValue placeholder="Sélectionnez votre ville" />
                   </SelectTrigger>
                   <SelectContent>
-                    {cities.map((c) => (
+                    {cities.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
                       <SelectItem key={c.id} value={c.name} data-testid={`city-option-${c.name}`}>
-                        {c.name}
+                        {c.name} ({c.country || 'France'})
                       </SelectItem>
                     ))}
                   </SelectContent>
