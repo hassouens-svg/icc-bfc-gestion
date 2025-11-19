@@ -2511,23 +2511,24 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
             "expected_presences_jeudi": expected_jeudi
         })
     
-    # Calculate Canal d'arrivée statistics (4 canaux spécifiques)
+    # Calculate Canal d'arrivée statistics (4 canaux spécifiques) - FILTRÉ par mois/année
     canal_counts = {
         "Evangelisation": 0,
         "Réseaux sociaux": 0,
         "Invitation par un membre (hors evangelisation)": 0,
         "Par soi même": 0
     }
-    for visitor in visitors:
+    for visitor in visitors_for_summary:
         canal = visitor.get("arrival_channel", "")
         if canal in canal_counts:
             canal_counts[canal] += 1
     
-    # Global totals
-    total_na = sum(p["na_count"] for p in promos_stats)
-    total_nc = sum(p["nc_count"] for p in promos_stats)
-    total_dp = sum(p["dp_count"] for p in promos_stats)
-    total_visitors = sum(p["total_visitors"] for p in promos_stats)
+    # Global totals - FILTRÉS par mois/année
+    total_na = len([v for v in visitors_for_summary if "Nouveau Arrivant" in v.get("types", [])])
+    total_nc = len([v for v in visitors_for_summary if "Nouveau Converti" in v.get("types", [])])
+    total_dp = len([v for v in visitors_for_summary if "De Passage" in v.get("types", [])])
+    total_visitors = len([v for v in visitors_for_summary if not v.get("tracking_stopped")])
+    # Avg fidelisation reste basé sur promos_stats (toutes les promos visibles)
     avg_fidelisation = sum(p["fidelisation"] for p in promos_stats) / len(promos_stats) if promos_stats else 0
     
     # Détail des personnes reçues par jour (TOUJOURS affiché)
