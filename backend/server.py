@@ -2372,8 +2372,8 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    # Get all visitors (multi-ville pour super admin/pasteur, single ville for responsable_eglise)
-    base_query = {"tracking_stopped": False}
+    # Get all visitors INCLUDING tracking_stopped (pour compter les suivis arrêtés)
+    base_query = {}
     
     # For responsable_eglise, force filter by their city
     if current_user["role"] == "responsable_eglise":
@@ -2382,7 +2382,7 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     elif ville and ville != "all":
         base_query["city"] = ville
     
-    # Get ALL visitors (ne pas filtrer par mois/année ici - on filtre les PRÉSENCES plus tard)
+    # Get ALL visitors (y compris tracking_stopped pour les statistiques)
     visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
     
     # Déterminer le mois filtré pour le calcul des dimanches/jeudis
