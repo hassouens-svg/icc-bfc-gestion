@@ -2447,40 +2447,44 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     total_visitors = sum(p["total_visitors"] for p in promos_stats)
     avg_fidelisation = sum(p["fidelisation"] for p in promos_stats) / len(promos_stats) if promos_stats else 0
     
-    # Détail des personnes reçues par jour (TOUJOURS affiché, pas seulement si mois+année)
+    # Détail des personnes reçues par jour (TOUJOURS affiché)
+    from datetime import datetime
+    from collections import defaultdict
+    daily_data = defaultdict(lambda: {
+        "total": 0, "dp": 0, "residents": 0, "na": 0, "nc": 0
+    })
+    
+    # Group by visit_date avec filtre optionnel par mois/année
+    for visitor in visitors:
+        visit_date = visitor.get("visit_date", "")
+        if visit_date:
+            # Appliquer filtre mois/année si spécifié
+            if mois and mois != "all" and annee and annee != "all":
+                if not visit_date.startswith(f"{annee}-{mois}"):
+                    continue
+            
+            types = visitor.get("types", [])
+            daily_data[visit_date]["total"] += 1
+            if "De Passage" in types:
+                daily_data[visit_date]["dp"] += 1
+            else:
+                daily_data[visit_date]["residents"] += 1
+            if "Nouveau Arrivant" in types:
+                daily_data[visit_date]["na"] += 1
+            if "Nouveau Converti" in types:
+                daily_data[visit_date]["nc"] += 1
+    
+    # Sort by date
     daily_details = []
-    if mois and mois != "all" and annee and annee != "all":
-        # Group by visit_date
-        from datetime import datetime
-        from collections import defaultdict
-        daily_data = defaultdict(lambda: {
-            "total": 0, "dp": 0, "residents": 0, "na": 0, "nc": 0
+    for date_str, data in sorted(daily_data.items()):
+        daily_details.append({
+            "date": date_str,
+            "total_personnes_recues": data["total"],
+            "nbre_de_passage": data["dp"],
+            "nbre_residents": data["residents"],
+            "nbre_na": data["na"],
+            "nbre_nc": data["nc"]
         })
-        
-        for visitor in visitors:
-            visit_date = visitor.get("visit_date", "")
-            if visit_date:
-                types = visitor.get("types", [])
-                daily_data[visit_date]["total"] += 1
-                if "De Passage" in types:
-                    daily_data[visit_date]["dp"] += 1
-                else:
-                    daily_data[visit_date]["residents"] += 1
-                if "Nouveau Arrivant" in types:
-                    daily_data[visit_date]["na"] += 1
-                if "Nouveau Converti" in types:
-                    daily_data[visit_date]["nc"] += 1
-        
-        # Sort by date
-        for date_str, data in sorted(daily_data.items()):
-            daily_details.append({
-                "date": date_str,
-                "total_personnes_recues": data["total"],
-                "nbre_de_passage": data["dp"],
-                "nbre_residents": data["residents"],
-                "nbre_na": data["na"],
-                "nbre_nc": data["nc"]
-            })
     
     return {
         "promos": promos_stats,
