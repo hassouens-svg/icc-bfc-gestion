@@ -692,7 +692,7 @@ const DashboardSuperAdminCompletPage = () => {
             {promosData.daily_details && promosData.daily_details.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Détail des personnes reçues (pour le mois sélectionné)</CardTitle>
+                  <CardTitle>Personnes Reçues</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
