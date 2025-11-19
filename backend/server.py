@@ -959,6 +959,51 @@ async def get_cities():
     cities = await db.cities.find({}, {"_id": 0}).to_list(1000)
     return cities
 
+@api_router.post("/cities/migrate-countries")
+async def migrate_cities_countries(current_user: dict = Depends(get_current_user)):
+    """Migration endpoint to update all cities with their countries - Admin only"""
+    if current_user["role"] not in ["super_admin"]:
+        raise HTTPException(status_code=403, detail="Only super_admin can run migrations")
+    
+    # Define all cities with their countries
+    cities_mapping = {
+        'Milan': 'Italie',
+        'Rome': 'Italie',
+        'Perugia': 'Italie',
+        'Bologne': 'Italie',
+        'Turin': 'Italie',
+        'Dijon': 'France',
+        'Auxerre': 'France',
+        'Besançon': 'France',
+        'Chalon-Sur-Saone': 'France',
+        'Chalon-sur-Saone': 'France',
+        'Dole': 'France',
+        'Sens': 'France'
+    }
+    
+    updated_count = 0
+    for city_name, country in cities_mapping.items():
+        # Try exact match first
+        result = await db.cities.update_many(
+            {'name': city_name},
+            {'$set': {'country': country}}
+        )
+        updated_count += result.modified_count
+        
+        # Try case-insensitive match if exact match didn't work
+        if result.modified_count == 0:
+            result = await db.cities.update_many(
+                {'name': {'$regex': f'^{city_name}$', '$options': 'i'}},
+                {'$set': {'country': country}}
+            )
+            updated_count += result.modified_count
+    
+    return {
+        "success": True,
+        "message": f"{updated_count} villes mises à jour",
+        "updated_count": updated_count
+    }
+
 @api_router.put("/cities/{city_id}")
 async def update_city(city_id: str, city_data: CityCreate, current_user: dict = Depends(get_current_user)):
     """Update city name (Admin only)"""
