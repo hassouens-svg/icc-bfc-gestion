@@ -274,11 +274,12 @@ const GestionAccesPage = () => {
                 Nouvel Utilisateur
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleCreateUser} className="space-y-4">
+              <form onSubmit={handleCreateUser} className="flex flex-col flex-1 overflow-hidden">
+                <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                 <div className="space-y-2">
                   <Label>Nom d'utilisateur *</Label>
                   <Input
