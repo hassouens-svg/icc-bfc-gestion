@@ -1423,9 +1423,35 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
             "monthly_average": 0
         }
     
-    # Parse month (format: "2025-01")
-    year, month = map(int, assigned_month.split("-"))
-    weeks = get_weeks_in_month(year, month)
+    # Déterminer la plage de dates basée sur les présences réelles
+    # Trouver la date min et max des présences
+    all_presence_dates = []
+    for visitor in visitors:
+        for p in visitor.get("presences_dimanche", []):
+            if p.get("date"):
+                all_presence_dates.append(p["date"])
+        for p in visitor.get("presences_jeudi", []):
+            if p.get("date"):
+                all_presence_dates.append(p["date"])
+    
+    if not all_presence_dates:
+        # Pas de présences, utiliser le mois assigné
+        year, month = map(int, assigned_month.split("-"))
+        weeks = get_weeks_in_month(year, month)
+    else:
+        # Utiliser la date la plus ancienne des présences pour déterminer les semaines
+        min_date_str = min(all_presence_dates)
+        max_date_str = max(all_presence_dates)
+        min_date = datetime.strptime(min_date_str, "%Y-%m-%d")
+        max_date = datetime.strptime(max_date_str, "%Y-%m-%d")
+        
+        # Calculer toutes les semaines entre min et max
+        weeks = set()
+        current = min_date
+        while current <= max_date:
+            weeks.add(current.isocalendar()[1])
+            current += timedelta(days=1)
+        weeks = sorted(list(weeks))
     
     weekly_rates = []
     for week in weeks:
