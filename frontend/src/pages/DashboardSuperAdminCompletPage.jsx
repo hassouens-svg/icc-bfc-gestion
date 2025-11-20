@@ -193,10 +193,8 @@ const DashboardSuperAdminCompletPage = () => {
       console.error('Error loading data:', error);
       toast.error('Erreur lors du chargement');
     } finally {
-      // Use timeout to prevent rapid loading state changes
-      loadingTimeoutRef.current = setTimeout(() => {
-        setLoading(false);
-      }, 300);
+      // Set loading to false immediately, the timeout was causing issues
+      setLoading(false);
     }
   }, [selectedView, selectedCity, selectedMonth, selectedYear]);
 
