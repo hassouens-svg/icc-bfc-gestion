@@ -137,22 +137,45 @@ const DashboardSuperAdminCompletPage = () => {
   // Filters for culte stats
   const [culteTypeFilter, setCulteTypeFilter] = useState('all');
   const [fideleTypeFilter, setFideleTypeFilter] = useState('all');
+  
+  // Use refs to prevent race conditions
+  const abortControllerRef = useRef(null);
+  const loadingTimeoutRef = useRef(null);
+  const citiesLoadedRef = useRef(false);
 
+  // Load cities once on mount
   useEffect(() => {
-    if (!user || !['super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
-      navigate('/dashboard');
-      return;
-    }
-    loadData();
-    // eslint-disable-next-line
-  }, [selectedView, selectedCity, selectedMonth, selectedYear]);
+    const loadCities = async () => {
+      if (citiesLoadedRef.current) return;
+      try {
+        const citiesData = await getCities();
+        setCities(citiesData);
+        citiesLoadedRef.current = true;
+      } catch (error) {
+        console.error('Error loading cities:', error);
+        toast.error('Erreur lors du chargement des villes');
+      }
+    };
+    loadCities();
+  }, []);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
+    // Cancel any pending requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Clear any pending loading timeout
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+    }
+    
+    // Create new abort controller
+    abortControllerRef.current = new AbortController();
+    
     setLoading(true);
+    
     try {
-      const citiesData = await getCities();
-      setCities(citiesData);
-      
       if (selectedView === 'promotions') {
         await loadPromotionsData();
       } else if (selectedView === 'fi') {
@@ -163,12 +186,38 @@ const DashboardSuperAdminCompletPage = () => {
         await loadCulteStatsData();
       }
     } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Request cancelled');
+        return;
+      }
       console.error('Error loading data:', error);
       toast.error('Erreur lors du chargement');
     } finally {
-      setLoading(false);
+      // Use timeout to prevent rapid loading state changes
+      loadingTimeoutRef.current = setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
-  };
+  }, [selectedView, selectedCity, selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    if (!user || !['super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
+      navigate('/dashboard');
+      return;
+    }
+    
+    loadData();
+    
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, [user, navigate, loadData]);
 
   const loadPromotionsData = async () => {
     try {
