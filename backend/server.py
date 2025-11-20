@@ -2596,10 +2596,14 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
             canal_counts[canal] += 1
     
     # Global totals - FILTRÉS par mois/année
-    total_na = len([v for v in visitors_for_summary if "Nouveau Arrivant" in v.get("types", [])])
+    # LOGIQUE NOUVELLE: NA = Total personnes reçues (tous sont NA au départ)
+    total_personnes_recues = len(visitors_for_summary)  # Tous les visiteurs (même arrêtés)
+    total_na = total_personnes_recues  # NA = Total personnes reçues
     total_nc = len([v for v in visitors_for_summary if "Nouveau Converti" in v.get("types", [])])
     total_dp = len([v for v in visitors_for_summary if "De Passage" in v.get("types", [])])
-    total_visitors = len([v for v in visitors_for_summary if not v.get("tracking_stopped")])
+    total_suivis_arretes = len([v for v in visitors_for_summary if v.get("tracking_stopped")])
+    total_personnes_suivies = total_na - total_suivis_arretes  # Personnes suivies = NA - Suivis arrêtés
+    
     # Avg fidelisation reste basé sur promos_stats (toutes les promos visibles)
     avg_fidelisation = sum(p["fidelisation"] for p in promos_stats) / len(promos_stats) if promos_stats else 0
     
