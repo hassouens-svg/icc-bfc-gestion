@@ -579,62 +579,91 @@ const DashboardSuperAdminCompletPage = () => {
         {selectedView === 'promotions' && promosData && (
           <>
             <DepartmentAlert view="Promotions" />
-            {/* Global KPIs */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Promos</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{promosData.summary.total_promos}</div>
-                  <p className="text-xs text-muted-foreground">Mois de suivi</p>
-                </CardContent>
-              </Card>
-
+            {/* Global KPIs - NOUVELLE ORGANISATION: 7 cartes */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+              {/* 1. Total Personnes Reçues */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Personnes Reçues</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{promosData.summary.total_visitors}</div>
-                  <p className="text-xs text-muted-foreground">Tous types confondus</p>
+                  <div className="text-2xl font-bold">{promosData.summary.total_personnes_recues || 0}</div>
+                  <p className="text-xs text-muted-foreground">Tous visiteurs</p>
                 </CardContent>
               </Card>
 
+              {/* 2. Nombre NA = Total Personnes Reçues */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Nouveaux Arrivants</CardTitle>
+                  <CardTitle className="text-sm font-medium">Nombre NA</CardTitle>
                   <UserPlus className="h-4 w-4 text-green-500" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{promosData.summary.total_na}</div>
-                  <p className="text-xs text-muted-foreground">NA</p>
+                  <div className="text-2xl font-bold text-green-600">{promosData.summary.total_na || 0}</div>
+                  <p className="text-xs text-muted-foreground">Nouveaux Arrivants</p>
                 </CardContent>
               </Card>
 
+              {/* 3. Nombre NC */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Nouveaux Convertis</CardTitle>
+                  <CardTitle className="text-sm font-medium">Nombre NC</CardTitle>
                   <Heart className="h-4 w-4 text-red-500" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-red-600">{promosData.summary.total_nc}</div>
-                  <p className="text-xs text-muted-foreground">NC</p>
+                  <div className="text-2xl font-bold text-red-600">{promosData.summary.total_nc || 0}</div>
+                  <p className="text-xs text-muted-foreground">Nouveaux Convertis</p>
                 </CardContent>
               </Card>
 
+              {/* 4. Nombre "De Passage" */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Fidélisation Moyenne</CardTitle>
-                  <Percent className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">De Passage</CardTitle>
+                  <Users className="h-4 w-4 text-orange-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-orange-600">{promosData.summary.total_dp || 0}</div>
+                  <p className="text-xs text-muted-foreground">Personnes</p>
+                </CardContent>
+              </Card>
+
+              {/* 5. Nombre Suivis Arrêtés */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Suivis Arrêtés</CardTitle>
+                  <Users className="h-4 w-4 text-gray-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-gray-600">{promosData.summary.total_suivis_arretes || 0}</div>
+                  <p className="text-xs text-muted-foreground">Dont {promosData.summary.total_dp || 0} DP</p>
+                </CardContent>
+              </Card>
+
+              {/* 6. Nombre Personnes Suivies = NA - Suivis Arrêtés */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pers. Suivies</CardTitle>
+                  <Users className="h-4 w-4 text-blue-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-blue-600">{promosData.summary.total_personnes_suivies || 0}</div>
+                  <p className="text-xs text-muted-foreground">NA - Arrêtés</p>
+                </CardContent>
+              </Card>
+
+              {/* 7. Fidélisation Moyenne */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Fidélisation</CardTitle>
+                  <Percent className="h-4 w-4 text-indigo-500" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-indigo-600">
-                    {promosData.summary.avg_fidelisation}%
+                    {promosData.summary.avg_fidelisation || 0}%
                   </div>
-                  <p className="text-xs text-muted-foreground">Toutes promos</p>
+                  <p className="text-xs text-muted-foreground">40% dim + 60% jeu</p>
                 </CardContent>
               </Card>
             </div>
