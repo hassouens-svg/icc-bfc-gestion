@@ -75,10 +75,8 @@ const DashboardPasteurPage = () => {
       }
       toast.error('Erreur lors du chargement');
     } finally {
-      // Use timeout to prevent rapid loading state changes
-      loadingTimeoutRef.current = setTimeout(() => {
-        setLoading(false);
-      }, 300);
+      // Set loading to false immediately
+      setLoading(false);
     }
   }, [selectedCity, selectedDepartment]);
 
