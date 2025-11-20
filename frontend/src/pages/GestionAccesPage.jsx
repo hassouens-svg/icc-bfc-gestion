@@ -79,7 +79,7 @@ const GestionAccesPage = () => {
       setUsers(results[0].status === 'fulfilled' ? results[0].value : []);
       setCities(results[1].status === 'fulfilled' ? results[1].value : []);
       setSecteurs(results[2].status === 'fulfilled' ? results[2].value : []);
-      setFamillesImpact(fisData);
+      setFamillesImpact(results[3].status === 'fulfilled' ? results[3].value : []);
     } catch (error) {
       toast.error('Erreur lors du chargement');
     } finally {
