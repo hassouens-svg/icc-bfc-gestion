@@ -1461,32 +1461,11 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
             continue
     
     if not valid_dates:
-        # Pas de présences valides
-        if assigned_month:
-            # Utiliser le mois assigné
-            try:
-                year, month = map(int, assigned_month.split("-"))
-                weeks = get_weeks_in_month(year, month)
-            except:
-                # Fallback to current year
-                current_year = datetime.now(timezone.utc).year
-                weeks = list(range(1, 53))
-        else:
-            # Pas de mois assigné, utiliser l'année en cours
-            current_year = datetime.now(timezone.utc).year
-            weeks = list(range(1, 53))
+        # Pas de présences valides - générer quand même les 52 semaines
+        weeks = list(range(1, 53))
     else:
-        # Utiliser la date la plus ancienne des présences pour déterminer les semaines
-        min_date = min(valid_dates)
-        max_date = max(valid_dates)
-        
-        # Calculer toutes les semaines entre min et max
-        weeks = set()
-        current = min_date
-        while current <= max_date:
-            weeks.add(current.isocalendar()[1])
-            current += timedelta(days=1)
-        weeks = sorted(list(weeks))
+        # Utiliser toutes les 52 semaines de l'année mais ne calculer le taux que pour celles qui ont des présences
+        weeks = list(range(1, 53))
     
     weekly_rates = []
     for week in weeks:
