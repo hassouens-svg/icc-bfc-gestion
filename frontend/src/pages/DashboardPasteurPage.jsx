@@ -106,11 +106,15 @@ const DashboardPasteurPage = () => {
       // Filtrer par ville si une ville spécifique est sélectionnée
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       
-      const [promosData, referentsData, statsData] = await Promise.all([
+      const results = await Promise.allSettled([
         getPromotionsDetailed(cityFilter),
         getReferents(),
         getStats() // Pour récupérer les KPIs formations
       ]);
+      
+      const promosData = results[0].status === 'fulfilled' ? results[0].value : { summary: {}, promos: [] };
+      const referentsData = results[1].status === 'fulfilled' ? results[1].value : [];
+      const statsData = results[2].status === 'fulfilled' ? results[2].value : {};
       
       // Filter referents by city if needed
       let filteredReferents = referentsData;
