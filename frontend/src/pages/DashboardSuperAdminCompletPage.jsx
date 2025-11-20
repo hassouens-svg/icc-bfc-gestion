@@ -764,13 +764,12 @@ const DashboardSuperAdminCompletPage = () => {
                     <thead>
                       <tr className="border-b">
                         <th className="text-left py-3 px-4">Promo</th>
-                        <th className="text-center py-3 px-4">Pers. Reçues</th>
-                        <th className="text-center py-3 px-4">NA (= Reçues)</th>
-                        <th className="text-center py-3 px-4">NC</th>
+                        <th className="text-center py-3 px-4">Pers. Reçues (NA)</th>
+                        <th className="text-center py-3 px-4">dont NC</th>
                         <th className="text-center py-3 px-4">Suivis Arrêtés</th>
                         <th className="text-center py-3 px-4">Pers. Suivies</th>
-                        <th className="text-center py-3 px-4">Présences Dim (40%)</th>
-                        <th className="text-center py-3 px-4">Présences Jeu (60%)</th>
+                        <th className="text-center py-3 px-4">Présences Dim (60%)</th>
+                        <th className="text-center py-3 px-4">Présences Jeu (40%)</th>
                         <th className="text-center py-3 px-4">Fidélisation</th>
                       </tr>
                     </thead>
