@@ -24,33 +24,82 @@ const DashboardPasteurPage = () => {
   
   // FI stats
   const [fiStats, setFiStats] = useState(null);
+  
+  // Use refs to prevent race conditions
+  const abortControllerRef = useRef(null);
+  const loadingTimeoutRef = useRef(null);
+  const citiesLoadedRef = useRef(false);
 
+  // Load cities once on mount
   useEffect(() => {
-    if (!user || user.role !== 'pasteur') {
-      navigate('/dashboard');
-      return;
-    }
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCity, selectedDepartment]);
+    const loadCities = async () => {
+      if (citiesLoadedRef.current) return;
+      try {
+        const citiesData = await getCities();
+        setCities(citiesData);
+        citiesLoadedRef.current = true;
+      } catch (error) {
+        console.error('Error loading cities:', error);
+        toast.error('Erreur lors du chargement des villes');
+      }
+    };
+    loadCities();
+  }, []);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
+    // Cancel any pending requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Clear any pending loading timeout
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+    }
+    
+    // Create new abort controller
+    abortControllerRef.current = new AbortController();
+    
     setLoading(true);
+    
     try {
-      const citiesData = await getCities();
-      setCities(citiesData);
-      
       if (selectedDepartment === 'promotions') {
         await loadPromosData();
       } else {
         await loadFIData();
       }
     } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Request cancelled');
+        return;
+      }
       toast.error('Erreur lors du chargement');
     } finally {
-      setLoading(false);
+      // Use timeout to prevent rapid loading state changes
+      loadingTimeoutRef.current = setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
-  };
+  }, [selectedCity, selectedDepartment]);
+
+  useEffect(() => {
+    if (!user || user.role !== 'pasteur') {
+      navigate('/dashboard');
+      return;
+    }
+    
+    loadData();
+    
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, [user, navigate, loadData]);
 
   const loadPromosData = async () => {
     try {
