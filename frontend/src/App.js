@@ -92,6 +92,7 @@ function App() {
           <Route path="/affectation-responsables-secteur" element={<AffectationResponsablesSecteurPage />} />
         </Routes>
       </BrowserRouter>
+      </CitiesProvider>
     </div>
   );
 }
