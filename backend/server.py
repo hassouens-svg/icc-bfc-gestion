@@ -2650,10 +2650,12 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         "promos": promos_stats,
         "summary": {
             "total_promos": len(promos_stats),
-            "total_visitors": total_visitors,
-            "total_na": total_na,
+            "total_personnes_recues": total_personnes_recues,  # Nouveau: Total personnes reçues
+            "total_na": total_na,  # = total_personnes_recues
             "total_nc": total_nc,
             "total_dp": total_dp,
+            "total_suivis_arretes": total_suivis_arretes,  # Nouveau
+            "total_personnes_suivies": total_personnes_suivies,  # Nouveau: NA - Suivis arrêtés
             "avg_fidelisation": round(avg_fidelisation, 1),
             "canal_evangelisation": canal_counts["Evangelisation"],
             "canal_reseaux_sociaux": canal_counts["Réseaux sociaux"],
