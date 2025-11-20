@@ -143,23 +143,7 @@ const DashboardSuperAdminCompletPage = () => {
   // Use refs to prevent race conditions
   const abortControllerRef = useRef(null);
   const loadingTimeoutRef = useRef(null);
-  const citiesLoadedRef = useRef(false);
-
-  // Load cities once on mount
-  useEffect(() => {
-    const loadCities = async () => {
-      if (citiesLoadedRef.current) return;
-      try {
-        const citiesData = await getCities();
-        setCities(citiesData);
-        citiesLoadedRef.current = true;
-      } catch (error) {
-        console.error('Error loading cities:', error);
-        toast.error('Erreur lors du chargement des villes');
-      }
-    };
-    loadCities();
-  }, []);
+  // Cities now loaded from Context - no need for local loading
 
   const loadData = useCallback(async () => {
     // Cancel any pending requests
