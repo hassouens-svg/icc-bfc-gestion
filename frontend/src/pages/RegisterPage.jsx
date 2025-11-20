@@ -21,6 +21,7 @@ const RegisterPage = () => {
     email: '',
     address: '',
     arrival_channel: '',
+    age_range: '',
     visit_date: new Date().toISOString().split('T')[0],
   });
   const [loading, setLoading] = useState(false);
