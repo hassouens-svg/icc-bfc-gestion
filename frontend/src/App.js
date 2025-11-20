@@ -45,7 +45,8 @@ import AffectationResponsablesSecteurPage from './pages/AffectationResponsablesS
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <CitiesProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
