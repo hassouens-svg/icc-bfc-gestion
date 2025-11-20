@@ -5,7 +5,7 @@ Restore original data by removing test city
 
 import requests
 
-BASE_URL = "https://churchadmin-3.preview.emergentagent.com/api"
+BASE_URL = "https://churchtrack-1.preview.emergentagent.com/api"
 SUPER_ADMIN = {"username": "superadmin", "password": "superadmin123", "city": "Dijon"}
 
 def login():
