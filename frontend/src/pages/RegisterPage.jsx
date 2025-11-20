@@ -40,6 +40,14 @@ const RegisterPage = () => {
     'Par soi même'
   ];
 
+  const ageRanges = [
+    '13-18 ans',
+    '18-25 ans',
+    '25-35 ans',
+    '35-50 ans',
+    '+50 ans'
+  ];
+
   useEffect(() => {
     const loadCities = async () => {
       try {
