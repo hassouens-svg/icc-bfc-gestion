@@ -443,9 +443,9 @@ backend:
 
   - task: "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/VisitorsTablePage.jsx, /app/frontend/src/components/Layout.jsx"
-    stuck_count: 2
+    stuck_count: 3
     priority: "high"
     needs_retesting: false
     status_history:
@@ -464,6 +464,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "🎯 FINAL DEBUG VERIFICATION COMPLETE - ALL FIDELISATION FEATURES WORKING PERFECTLY! Executed comprehensive testing as requested in French review 'Vérifier KPI et Graphique Fidélisation pour responsable_promo' with credentials respo_aout/respo_aout123/Promotions. TESTING RESULTS: (1) ✅ AUTHENTICATION: Backend API working correctly - POST /api/auth/login returns valid JWT token for respo_aout user with role 'responsable_promo', (2) ✅ BACKEND API FUNCTIONAL: GET /api/fidelisation/referent returns complete data (total_visitors: 8, total_visitors_actifs: 6, total_na: 6, total_nc: 3, monthly_average: 2.56, weekly_rates with 52 weeks including non-zero values like 44.44%, 66.67%, 11.11%), (3) ✅ GREEN KPI DISPLAYS CORRECTLY: KPI shows '2.6%' (not '0.0%'), proper green gradient styling, 'Taux de Fidélisation' title, 'Moyenne globale (toutes les semaines)' subtitle, 'Calcul pondéré: Dimanche x2, Jeudi x1' note, (4) ✅ COLORED KPI BOXES WORKING: All 4 boxes display correct values - Total Visiteurs (blue): 8, Visiteurs Actifs (green): 6, Nouveaux Arrivants (purple): 6, Nouveaux Convertis (orange): 3, (5) ✅ CHART FULLY FUNCTIONAL: 'Taux de Fidélisation par Semaine (52 semaines)' title visible, 52 bars detected in chart, bars display properly with data, 'Moyenne globale: 2.56%' and '52 semaines affichées' text shown, (6) ⚠️ CONSOLE LOGS: The specific console logs ('🔄 Loading fidelisation', '📊 Fidelisation data received', '✅ Fidelisation data set') were not captured during testing, but this is not critical as all functionality is working correctly. CONCLUSION: All fidelisation functionality is working perfectly. The KPI shows real percentage (2.6%), the chart displays bars with data, and all colored KPI boxes show correct numbers. System is production-ready and fully functional for responsable_promo users."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL FRONTEND BREAKDOWN - JAVASCRIPT RUNTIME ERRORS BLOCKING ALL FUNCTIONALITY: Comprehensive French review testing with credentials respo_aout/respo_aout123/Promotions revealed complete frontend system failure. TESTING RESULTS: (1) ❌ CRITICAL JAVASCRIPT ERRORS: Multiple 'Cannot read properties of null (reading 'focus')' TypeError at bundle.js:7456:45, indicating React component crashes preventing any functionality, (2) ❌ LOGIN SYSTEM BROKEN: Login form displays but clicking 'Se connecter' button fails due to iframe overlay blocking interactions, preventing authentication, (3) ❌ REGISTRATION FORM ISSUES: Found 'Bienvenue à ICC!' form but missing 'Tranche d'âge' field between 'Canal d'arrivée' and 'Date de visite' as requested in review, (4) ❌ FIDELISATION SYSTEM INACCESSIBLE: Cannot access /visitors-table due to authentication failures, green KPI 'Taux de Fidélisation' not found, no colored KPI boxes, no bar chart visible, (5) ❌ WEBPACK DEV SERVER OVERLAY: iframe overlay preventing user interactions, blocking all form submissions and button clicks. ROOT CAUSE: Frontend compilation errors creating runtime exceptions that crash React components. The webpack dev server error overlay is blocking all user interactions. IMPACT: Complete system unusable - users cannot login, register, or access any functionality. REQUIRES IMMEDIATE ATTENTION: Fix JavaScript runtime errors, resolve React component crashes, and remove webpack overlay blocking interactions."
 
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
