@@ -579,45 +579,21 @@ const DashboardSuperAdminCompletPage = () => {
         {selectedView === 'promotions' && promosData && (
           <>
             <DepartmentAlert view="Promotions" />
-            {/* Global KPIs - NOUVELLE ORGANISATION: 7 cartes */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-              {/* 1. Total Personnes Reçues */}
+            {/* Global KPIs - 5 cartes (NA et NC supprimées car peuvent être mêmes personnes) */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {/* 1. Total Personnes Reçues (toutes sont NA) */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Personnes Reçues</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Pers. Reçues (NA)</CardTitle>
+                  <Users className="h-4 w-4 text-green-500" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{promosData.summary.total_personnes_recues || 0}</div>
-                  <p className="text-xs text-muted-foreground">Tous visiteurs</p>
+                  <div className="text-2xl font-bold text-green-600">{promosData.summary.total_personnes_recues || 0}</div>
+                  <p className="text-xs text-muted-foreground">Toutes = NA, dont {promosData.summary.total_nc || 0} NC</p>
                 </CardContent>
               </Card>
 
-              {/* 2. Nombre NA = Total Personnes Reçues */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Nombre NA</CardTitle>
-                  <UserPlus className="h-4 w-4 text-green-500" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{promosData.summary.total_na || 0}</div>
-                  <p className="text-xs text-muted-foreground">Nouveaux Arrivants</p>
-                </CardContent>
-              </Card>
-
-              {/* 3. Nombre NC */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Nombre NC</CardTitle>
-                  <Heart className="h-4 w-4 text-red-500" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-red-600">{promosData.summary.total_nc || 0}</div>
-                  <p className="text-xs text-muted-foreground">Nouveaux Convertis</p>
-                </CardContent>
-              </Card>
-
-              {/* 4. Nombre "De Passage" */}
+              {/* 2. Nombre "De Passage" */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">De Passage</CardTitle>
@@ -629,7 +605,7 @@ const DashboardSuperAdminCompletPage = () => {
                 </CardContent>
               </Card>
 
-              {/* 5. Nombre Suivis Arrêtés */}
+              {/* 3. Nombre Suivis Arrêtés */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Suivis Arrêtés</CardTitle>
@@ -641,7 +617,7 @@ const DashboardSuperAdminCompletPage = () => {
                 </CardContent>
               </Card>
 
-              {/* 6. Nombre Personnes Suivies = NA - Suivis Arrêtés */}
+              {/* 4. Nombre Personnes Suivies = Total - Suivis Arrêtés */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Pers. Suivies</CardTitle>
@@ -649,11 +625,11 @@ const DashboardSuperAdminCompletPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-blue-600">{promosData.summary.total_personnes_suivies || 0}</div>
-                  <p className="text-xs text-muted-foreground">NA - Arrêtés</p>
+                  <p className="text-xs text-muted-foreground">Total - Arrêtés</p>
                 </CardContent>
               </Card>
 
-              {/* 7. Fidélisation Moyenne */}
+              {/* 5. Fidélisation Moyenne */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Fidélisation</CardTitle>
@@ -663,7 +639,7 @@ const DashboardSuperAdminCompletPage = () => {
                   <div className="text-2xl font-bold text-indigo-600">
                     {promosData.summary.avg_fidelisation || 0}%
                   </div>
-                  <p className="text-xs text-muted-foreground">40% dim + 60% jeu</p>
+                  <p className="text-xs text-muted-foreground">60% dim + 40% jeu</p>
                 </CardContent>
               </Card>
             </div>
