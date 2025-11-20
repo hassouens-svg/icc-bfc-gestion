@@ -74,8 +74,8 @@ const Layout = ({ children }) => {
     // ÉVANGÉLISATION
     { path: '/evangelisation', label: "Dynamique d'Évangélisation", icon: Heart, roles: ['responsable_evangelisation'], department: 'evangelisation' },
     
-    // COMMUNES - Villes accessible depuis les deux départements
-    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['superviseur_promos', 'superviseur_fi', 'super_admin'], department: null },
+    // COMMUNES - Villes UNIQUEMENT pour super_admin et pasteur (pas superviseur_promos)
+    { path: '/cities', label: 'Villes', icon: MapPin, roles: ['super_admin', 'pasteur'], department: null },
     
     // SUPER ADMIN / PASTEUR / RESPONSABLE D'ÉGLISE - toujours visibles
     { path: '/dashboard-superadmin-complet', label: 'Dashboard Super Admin', icon: Home, roles: ['super_admin'], department: null },
