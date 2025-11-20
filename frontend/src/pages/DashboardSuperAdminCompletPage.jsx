@@ -200,7 +200,8 @@ const DashboardSuperAdminCompletPage = () => {
         clearTimeout(loadingTimeoutRef.current);
       }
     };
-  }, [user, navigate, loadData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedView, selectedCity, selectedMonth, selectedYear]); // FIXED: Removed loadData to break circular dependency
 
   const loadPromotionsData = async () => {
     try {
