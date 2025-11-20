@@ -9,7 +9,6 @@ import {
   getMembresTable,
   getPresencesDimanche,
   getCulteStatsSummary,
-  getCities,
   getUser,
   getFamillesImpact,
   getMembresFI,
