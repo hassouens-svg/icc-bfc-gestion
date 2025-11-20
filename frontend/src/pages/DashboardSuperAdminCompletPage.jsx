@@ -113,7 +113,8 @@ const DashboardSuperAdminCompletPage = () => {
   const [loading, setLoading] = useState(true);
   
   // Data states
-  const [cities, setCities] = useState([]);
+  // Use shared cities from Context - NO MORE DUPLICATE getCities() CALLS
+  const { cities } = useCities();
   const [ageDistribution, setAgeDistribution] = useState([]);
   const [arrivalChannelDist, setArrivalChannelDist] = useState([]);
   const [promosData, setPromosData] = useState(null);
