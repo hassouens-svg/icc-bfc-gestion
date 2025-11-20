@@ -70,17 +70,16 @@ const GestionAccesPage = () => {
 
   const loadData = async () => {
     try {
+      // Cities now loaded from Context - only load users, secteurs, and FI
       const results = await Promise.allSettled([
         getUsers(),
-        getCities(),
         getSecteurs(),
         getFamillesImpact()
       ]);
       
       setUsers(results[0].status === 'fulfilled' ? results[0].value : []);
-      setCities(results[1].status === 'fulfilled' ? results[1].value : []);
-      setSecteurs(results[2].status === 'fulfilled' ? results[2].value : []);
-      setFamillesImpact(results[3].status === 'fulfilled' ? results[3].value : []);
+      setSecteurs(results[1].status === 'fulfilled' ? results[1].value : []);
+      setFamillesImpact(results[2].status === 'fulfilled' ? results[2].value : []);
     } catch (error) {
       toast.error('Erreur lors du chargement');
     } finally {
