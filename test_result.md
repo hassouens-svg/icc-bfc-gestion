@@ -471,6 +471,18 @@ backend:
         agent: "testing"
         comment: "❌ COMPREHENSIVE ICC BFC-ITALIE TESTING FAILED - AUTHENTICATION ISSUES BLOCKING ALL FEATURES: Executed comprehensive testing of all 8 requested new features but encountered critical authentication problems preventing proper verification. TESTING RESULTS: (1) ❌ LOGIN FAILURES: Both respo_aout/respo_aout123 and superadmin/superadmin123 credentials failed to authenticate properly - login forms redirect back to login page instead of dashboard, (2) ❌ VISITOR FORM TESTING BLOCKED: Cannot access /visitors page to test 'Tranche d'âge' field due to authentication failures, (3) ❌ FIDELISATION KPI TESTING BLOCKED: Cannot access /visitors-table to test green KPI 'Taux de Fidélisation' and weekly chart (52 weeks) due to login issues, (4) ❌ DASHBOARD PIE CHARTS TESTING BLOCKED: Cannot access /dashboard-superadmin-complet to test 'Répartition par Tranche d'Âge' and 'Canal d'Arrivée' pie charts, (5) ❌ PROMO FILTER TESTING BLOCKED: Cannot test 'Filtre Promo' on fidelization table due to dashboard access issues, (6) ✅ NAVIGATION VERIFICATION: Confirmed 'Fidélisation' link correctly removed from navigation, (7) ⚠️ FIDELISATION PAGE ACCESS: Direct access to /fidelisation still works but may need redirect implementation. ROOT CAUSE: Frontend authentication system appears broken - login forms accept credentials but fail to establish proper session, redirecting users back to login instead of dashboard. IMPACT: All new ICC BFC-ITALIE features cannot be properly tested due to authentication blocking access to protected pages. REQUIRES IMMEDIATE FIX: Debug and fix authentication system (JWT token handling, session management, login redirect logic) before feature testing can be completed."
 
+  - task: "ICC BFC-ITALIE Nouvelles Fonctionnalités - 8 Features Testing"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/VisitorsPage.jsx, /app/frontend/src/pages/VisitorsTablePage.jsx, /app/frontend/src/pages/DashboardSuperAdminCompletPage.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ COMPREHENSIVE ICC BFC-ITALIE TESTING FAILED - AUTHENTICATION ISSUES BLOCKING ALL FEATURES: Executed comprehensive testing of all 8 requested new features but encountered critical authentication problems preventing proper verification. TESTING ATTEMPTED: (1) TEST 1: 'Tranche d'âge' field in visitor creation form - BLOCKED by login failures, (2) TEST 2: Dynamic KPI 'Taux de Fidélisation' on visitors table - BLOCKED by authentication, (3) TEST 3: Weekly fidelization chart (52 weeks) - BLOCKED by login issues, (4) TEST 4: Dynamic date filter for fidelization - BLOCKED by access issues, (5) TEST 5: 'Répartition par Tranche d'Âge' pie chart on dashboard - BLOCKED by superadmin login failure, (6) TEST 6: 'Canal d'Arrivée' pie chart on dashboard - BLOCKED by dashboard access, (7) TEST 7: 'Promos' filter on fidelization table - BLOCKED by authentication, (8) TEST 8: Verify 'Fidélisation' page removal - PARTIALLY VERIFIED (navigation link removed, direct access still works). AUTHENTICATION ISSUES: Both respo_aout/respo_aout123 and superadmin/superadmin123 credentials fail to establish proper sessions, login forms redirect back to login page instead of dashboard. IMPACT: Cannot verify any of the 8 new ICC BFC-ITALIE features due to authentication system blocking access to protected pages. REQUIRES IMMEDIATE FIX: Debug authentication system (JWT handling, session management, login redirect logic) before comprehensive feature testing can be completed."
+
   - task: "Frontend compilation - Fix invalid JavaScript identifiers"
     implemented: true
     working: true
