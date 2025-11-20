@@ -262,6 +262,22 @@ const RegisterPage = () => {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="age_range">Tranche d'âge (optionnel)</Label>
+              <Select value={formData.age_range} onValueChange={(value) => setFormData({...formData, age_range: value})}>
+                <SelectTrigger data-testid="age-range-select">
+                  <SelectValue placeholder="Sélectionnez votre tranche d'âge" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ageRanges.map((range) => (
+                    <SelectItem key={range} value={range}>
+                      {range}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="visit_date">Date de visite *</Label>
               <Input
                 id="visit_date"
