@@ -221,43 +221,71 @@ const DashboardSuperAdminCompletPage = () => {
 
   const loadPromotionsData = async () => {
     try {
-      // Load age and arrival channel distributions
-      const ageData = await getAgeDistribution(selectedCity !== 'all' ? selectedCity : null);
-      setAgeDistribution(ageData);
-      
-      const channelData = await getArrivalChannelDistribution(selectedCity !== 'all' ? selectedCity : null);
-      setArrivalChannelDist(channelData);
-      
       // Pass filters directly to backend
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       const monthFilter = selectedMonth !== 'all' ? selectedMonth : null;
       const yearFilter = selectedYear !== 'all' ? selectedYear : null;
       
-      const [promos, visitors] = await Promise.all([
+      // Load all data with proper error handling for each
+      const results = await Promise.allSettled([
+        getAgeDistribution(cityFilter),
+        getArrivalChannelDistribution(cityFilter),
         getPromotionsDetailed(cityFilter, monthFilter, yearFilter),
         getVisitorsTable(cityFilter)
       ]);
       
-      // Filtrer les visiteurs par mois/année si sélectionnés côté frontend (pour le tableau)
-      let filteredVisitors = visitors;
-      if (selectedMonth !== 'all' || selectedYear !== 'all') {
-        filteredVisitors = visitors.filter(v => {
-          const assignedMonth = v.assigned_month; // Format: "2025-01"
-          if (!assignedMonth) return false;
-          
-          const [year, month] = assignedMonth.split('-');
-          
-          const monthMatch = selectedMonth === 'all' || month === selectedMonth;
-          const yearMatch = selectedYear === 'all' || year === selectedYear;
-          
-          return monthMatch && yearMatch;
-        });
+      // Process results
+      if (results[0].status === 'fulfilled') {
+        setAgeDistribution(results[0].value || []);
+      } else {
+        console.error('Error loading age distribution:', results[0].reason);
+        setAgeDistribution([]);
       }
       
-      setPromosData(promos);
-      setVisitorsTable(filteredVisitors);
+      if (results[1].status === 'fulfilled') {
+        setArrivalChannelDist(results[1].value || []);
+      } else {
+        console.error('Error loading arrival channel:', results[1].reason);
+        setArrivalChannelDist([]);
+      }
+      
+      if (results[2].status === 'fulfilled') {
+        setPromosData(results[2].value);
+      } else {
+        console.error('Error loading promos:', results[2].reason);
+        setPromosData(null);
+      }
+      
+      if (results[3].status === 'fulfilled') {
+        let filteredVisitors = results[3].value || [];
+        
+        // Filtrer les visiteurs par mois/année si sélectionnés côté frontend (pour le tableau)
+        if (selectedMonth !== 'all' || selectedYear !== 'all') {
+          filteredVisitors = filteredVisitors.filter(v => {
+            const assignedMonth = v.assigned_month; // Format: "2025-01"
+            if (!assignedMonth) return false;
+            
+            const [year, month] = assignedMonth.split('-');
+            
+            const monthMatch = selectedMonth === 'all' || month === selectedMonth;
+            const yearMatch = selectedYear === 'all' || year === selectedYear;
+            
+            return monthMatch && yearMatch;
+          });
+        }
+        
+        setVisitorsTable(filteredVisitors);
+      } else {
+        console.error('Error loading visitors:', results[3].reason);
+        setVisitorsTable([]);
+      }
     } catch (error) {
       console.error('Error loading promotions:', error);
+      // Set default empty values to prevent undefined errors
+      setAgeDistribution([]);
+      setArrivalChannelDist([]);
+      setPromosData(null);
+      setVisitorsTable([]);
     }
   };
 
