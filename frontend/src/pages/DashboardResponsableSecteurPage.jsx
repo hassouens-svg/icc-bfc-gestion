@@ -141,6 +141,7 @@ const DashboardResponsableSecteurPage = () => {
 
       const totalMembres = allMembresForDate.length;
       const presents = allPresencesForDate.filter(p => p.present === true).length;
+      // Les absents sont les membres marqués comme absents (present: false)
       const absents = allPresencesForDate.filter(p => p.present === false).length;
 
       // Nouveaux membres (7 derniers jours)
