@@ -469,6 +469,14 @@ export const migratePresences = async () => {
   return response.data;
 };
 
+// Admin - Export Credentials
+export const exportCredentials = async () => {
+  const response = await apiClient.get('/admin/export-credentials', {
+    responseType: 'blob'
+  });
+  return response.data;
+};
+
 
 export const updateCulteStats = async (id, data) => {
   const response = await apiClient.put(`/culte-stats/${id}`, data);
