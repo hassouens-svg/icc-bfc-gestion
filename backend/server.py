@@ -2810,7 +2810,7 @@ async def get_fi_detailed(ville: str = None, date: str = None, current_user: dic
             "fi_list": [{"id": f["id"], "nom": f.get("nom", "N/A")} for f in secteur_fi]
         })
     
-    # Fidélisation par FI
+    # Fidélisation par FI (based on selected date or all-time)
     fi_fidelisation = []
     for fi in familles:
         fi_membres = [m for m in membres if m.get("fi_id") == fi["id"]]
@@ -2820,14 +2820,18 @@ async def get_fi_detailed(ville: str = None, date: str = None, current_user: dic
         if total_membres == 0:
             fidelisation = 0
         else:
-            # Count membres with at least 3 presences
-            membres_fideles = 0
-            for membre in fi_membres:
-                membre_presences = [p for p in fi_presences if p.get("membre_fi_id") == membre["id"] and p.get("present")]
-                if len(membre_presences) >= 3:
-                    membres_fideles += 1
-            
-            fidelisation = (membres_fideles / total_membres) * 100
+            if date:
+                # Pour une date spécifique : taux de présence ce jour-là
+                presents = len([p for p in fi_presences if p.get("present")])
+                fidelisation = (presents / total_membres) * 100 if total_membres > 0 else 0
+            else:
+                # Sans date : Compte les membres avec au moins 3 présences (historique)
+                membres_fideles = 0
+                for membre in fi_membres:
+                    membre_presences = [p for p in fi_presences if p.get("membre_fi_id") == membre["id"] and p.get("present")]
+                    if len(membre_presences) >= 3:
+                        membres_fideles += 1
+                fidelisation = (membres_fideles / total_membres) * 100
         
         fi_fidelisation.append({
             "fi_id": fi["id"],
