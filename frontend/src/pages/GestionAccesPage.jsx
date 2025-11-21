@@ -482,8 +482,18 @@ const GestionAccesPage = () => {
         {/* Ne pas afficher la liste complète pour superviseur_fi et responsable_secteur */}
         {!['superviseur_fi', 'responsable_secteur'].includes(currentUser.role) && (
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Liste des utilisateurs ({users.length})</CardTitle>
+              {currentUser.role === 'super_admin' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPasswords(!showPasswords)}
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  {showPasswords ? 'Masquer' : 'Afficher'} mots de passe
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
