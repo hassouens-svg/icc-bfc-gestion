@@ -1131,36 +1131,52 @@ const DashboardSuperAdminCompletPage = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Fidélisation par Famille d'Impact</CardTitle>
+                {selectedDateFI && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    Données filtrées pour le {new Date(selectedDateFI + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                )}
+                {!selectedDateFI && (
+                  <p className="text-sm text-blue-600 mt-2">
+                    💡 Sélectionnez une date ci-dessus pour voir les présences d'une journée spécifique
+                  </p>
+                )}
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto max-h-96 overflow-y-auto">
-                  <table className="w-full">
-                    <thead className="sticky top-0 bg-gray-50">
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4">Famille d'Impact</th>
-                        <th className="text-left py-3 px-4">Ville</th>
-                        <th className="text-center py-3 px-4">Membres</th>
-                        <th className="text-center py-3 px-4">Présences</th>
-                        <th className="text-center py-3 px-4">Fidélisation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filterByCity(fiData.fi_fidelisation, 'ville').map((fi, index) => (
-                        <tr key={index} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4 font-medium">{fi.fi_nom}</td>
-                          <td className="py-3 px-4">{fi.ville}</td>
-                          <td className="text-center py-3 px-4">{fi.total_membres}</td>
-                          <td className="text-center py-3 px-4">{fi.total_presences}</td>
-                          <td className="text-center py-3 px-4">
-                            <span className={`font-bold ${fi.fidelisation >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
-                              {fi.fidelisation}%
-                            </span>
-                          </td>
+                {fiData && fiData.fi_fidelisation && fiData.fi_fidelisation.length > 0 ? (
+                  <div className="overflow-x-auto max-h-96 overflow-y-auto">
+                    <table className="w-full">
+                      <thead className="sticky top-0 bg-gray-50">
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4">Famille d'Impact</th>
+                          <th className="text-left py-3 px-4">Ville</th>
+                          <th className="text-center py-3 px-4">Membres</th>
+                          <th className="text-center py-3 px-4">Présences{selectedDateFI ? ' ce jour' : ''}</th>
+                          <th className="text-center py-3 px-4">Fidélisation{selectedDateFI ? ' (%)' : ' (3+ présences)'}</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {filterByCity(fiData.fi_fidelisation, 'ville').map((fi, index) => (
+                          <tr key={index} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4 font-medium">{fi.fi_nom}</td>
+                            <td className="py-3 px-4">{fi.ville}</td>
+                            <td className="text-center py-3 px-4">{fi.total_membres}</td>
+                            <td className="text-center py-3 px-4">{fi.total_presences}</td>
+                            <td className="text-center py-3 px-4">
+                              <span className={`font-bold ${fi.fidelisation >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
+                                {fi.fidelisation}%
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    Aucune donnée disponible. Assurez-vous qu'il y a des FI avec des membres et des présences.
+                  </div>
+                )}
               </CardContent>
             </Card>
 
