@@ -52,7 +52,14 @@ const AffectationPilotesFIPage = () => {
       ]);
 
       setSecteurs(secteursData);
-      setFamillesImpact(fisData);
+      
+      // Si responsable_secteur, filtrer les FI de son secteur uniquement
+      let filteredFIs = fisData;
+      if (currentUser.role === 'responsable_secteur' && currentUser.assigned_secteur_id) {
+        filteredFIs = fisData.filter(fi => fi.secteur_id === currentUser.assigned_secteur_id);
+        console.log(`📍 Responsable Secteur: ${filteredFIs.length} FI dans son secteur`);
+      }
+      setFamillesImpact(filteredFIs);
       
       // Filtrer uniquement les pilotes FI
       const pilotesData = usersData.filter(user => user.role === 'pilote_fi');
