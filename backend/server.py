@@ -3431,6 +3431,76 @@ async def get_arrival_channel_distribution(
     
     return result
 
+@api_router.get("/admin/export-credentials")
+async def export_credentials(current_user: dict = Depends(get_current_user)):
+    """
+    Export all user credentials (logins and passwords) to Excel
+    Accessible only to super_admin
+    """
+    if current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Only super_admin can export credentials")
+    
+    try:
+        import io
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment
+        
+        # Get all users
+        users = await db.users.find({}, {"_id": 0}).to_list(10000)
+        
+        # Create workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Credentials"
+        
+        # Headers
+        headers = ["Nom d'utilisateur", "Mot de passe", "Rôle", "Ville", "Email"]
+        ws.append(headers)
+        
+        # Style headers
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF")
+        
+        for cell in ws[1]:
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+        
+        # Add data
+        for user in users:
+            ws.append([
+                user.get("username", ""),
+                user.get("plain_password", "********"),  # Plain password if stored, otherwise masked
+                user.get("role", ""),
+                user.get("city", ""),
+                user.get("email", "")
+            ])
+        
+        # Adjust column widths
+        ws.column_dimensions['A'].width = 25
+        ws.column_dimensions['B'].width = 20
+        ws.column_dimensions['C'].width = 25
+        ws.column_dimensions['D'].width = 20
+        ws.column_dimensions['E'].width = 30
+        
+        # Save to BytesIO
+        excel_file = io.BytesIO()
+        wb.save(excel_file)
+        excel_file.seek(0)
+        
+        from fastapi.responses import StreamingResponse
+        
+        return StreamingResponse(
+            excel_file,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": f"attachment; filename=credentials_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            }
+        )
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de l'export: {str(e)}")
+
 @api_router.post("/admin/migrate-presences")
 async def migrate_presences(current_user: dict = Depends(get_current_user)):
     """
