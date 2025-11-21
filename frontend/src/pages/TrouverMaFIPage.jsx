@@ -298,6 +298,18 @@ const TrouverMaFIPage = () => {
                                 </a>
                               </div>
                             )}
+                            {(fi.heure_debut || fi.heure_fin) && (
+                              <div style="margin-bottom: 6px;">
+                                <strong>🕐 Horaires :</strong><br />
+                                {fi.heure_debut && fi.heure_fin ? (
+                                  <span>{fi.heure_debut} - {fi.heure_fin}</span>
+                                ) : fi.heure_debut ? (
+                                  <span>Début : {fi.heure_debut}</span>
+                                ) : (
+                                  <span>Fin : {fi.heure_fin}</span>
+                                )}
+                              </div>
+                            )}
                             <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
                               <span style="color: #4f46e5; font-weight: 600;">
                                 📏 À {fi.distance.toFixed(1)} km
