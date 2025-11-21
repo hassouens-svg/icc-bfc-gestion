@@ -2547,11 +2547,6 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         total_presences_dimanche = 0
         total_presences_jeudi = 0
         
-        if month == "2024-11":  # DEBUG
-            print(f"DEBUG PROMO 2024-11: total_visitors={total}, visitors_actifs={len(data['visitors_actifs'])}")
-            print(f"DEBUG filter: mois={mois}, annee={annee}")
-            print(f"DEBUG visitors names: {[v.get('firstname') for v in data['visitors_actifs']]}")
-        
         if total > 0:
             # Compter seulement les présences des visiteurs ACTIFS (pas arrêtés)
             for visitor in data["visitors_actifs"]:
