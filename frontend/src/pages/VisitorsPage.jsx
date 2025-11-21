@@ -642,6 +642,11 @@ const VisitorsPage = () => {
                             {type}
                           </span>
                         ))}
+                        {visitor.ejp && (
+                          <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-xs font-bold">
+                            EJP
+                          </span>
+                        )}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">
                         {visitor.arrival_channel} • {visitor.visit_date}
