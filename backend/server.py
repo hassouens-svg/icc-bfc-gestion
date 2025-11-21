@@ -746,7 +746,7 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
         raise HTTPException(status_code=404, detail="Visitor not found")
     
     # Check permissions for referent and responsable_promo
-    if current_user["role"] in ["referent", "responsable_promo"]:
+    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
             # Check if visitor's month matches user's month (regardless of year)
