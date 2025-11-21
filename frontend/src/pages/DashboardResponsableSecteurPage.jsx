@@ -71,9 +71,14 @@ const DashboardResponsableSecteurPage = () => {
       for (const fi of secteurFIs) {
         try {
           const fiMembres = await getMembresFI(fi.id);
-          membres = [...membres, ...fiMembres.map(m => ({ ...m, fi_name: fi.name, fi_id: fi.id }))];
+          // Ajouter les infos de la FI à chaque membre
+          membres = [...membres, ...fiMembres.map(m => ({ 
+            ...m, 
+            fi_name: fi.name || fi.nom || `FI ${fi.id.substring(0, 8)}`,
+            fi_id: fi.id 
+          }))];
         } catch (error) {
-          console.error(`Erreur chargement membres FI ${fi.name}:`, error);
+          console.error(`Erreur chargement membres FI ${fi.name || fi.nom}:`, error);
         }
       }
       setAllMembres(membres);
