@@ -37,6 +37,7 @@ import AccesBergersEglisePage from './pages/AccesBergersEglisePage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
 import SelectDepartmentPage from './pages/SelectDepartmentPage';
 import GestionAccesPage from './pages/GestionAccesPage';
+import AttributionPilotesPage from './pages/AttributionPilotesPage';
 import SelectVillePage from './pages/SelectVillePage';
 import AdminDataPage from './pages/AdminDataPage';
 import AffectationPilotesFIPage from './pages/AffectationPilotesFIPage';
