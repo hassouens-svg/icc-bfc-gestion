@@ -30,7 +30,7 @@ const AffectationPilotesFIPage = () => {
       navigate('/login');
       return;
     }
-    if (!['super_admin', 'superviseur_fi'].includes(currentUser.role)) {
+    if (!['super_admin', 'superviseur_fi', 'responsable_secteur'].includes(currentUser.role)) {
       toast.error('Accès refusé');
       navigate('/dashboard');
     }
