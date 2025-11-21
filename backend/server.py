@@ -2553,14 +2553,20 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
                 # Filtrer les présences dimanche par mois/année
                 presences_dim = visitor.get("presences_dimanche", [])
                 if mois and mois != "all" and annee and annee != "all":
-                    presences_dim = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois}")]
-                total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
+                    # Filtrer d'abord par date, puis compter les présents
+                    presences_dim_filtered = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois}")]
+                    total_presences_dimanche += len([p for p in presences_dim_filtered if p.get("present")])
+                else:
+                    total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
                 
                 # Filtrer les présences jeudi par mois/année
                 presences_jeu = visitor.get("presences_jeudi", [])
                 if mois and mois != "all" and annee and annee != "all":
-                    presences_jeu = [p for p in presences_jeu if p.get("date", "").startswith(f"{annee}-{mois}")]
-                total_presences_jeudi += len([p for p in presences_jeu if p.get("present")])
+                    # Filtrer d'abord par date, puis compter les présents
+                    presences_jeu_filtered = [p for p in presences_jeu if p.get("date", "").startswith(f"{annee}-{mois}")]
+                    total_presences_jeudi += len([p for p in presences_jeu_filtered if p.get("present")])
+                else:
+                    total_presences_jeudi += len([p for p in presences_jeu if p.get("present")])
         
         # Expected = nombre de personnes × nombre de dimanches/jeudis dans le mois filtré
         expected_dimanche = total * num_sundays
