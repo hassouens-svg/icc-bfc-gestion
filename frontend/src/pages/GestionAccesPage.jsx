@@ -537,16 +537,89 @@ const GestionAccesPage = () => {
         </Card>
         )}
 
-        {/* Message pour superviseur_fi et responsable_secteur */}
-        {['superviseur_fi', 'responsable_secteur'].includes(currentUser.role) && (
+        {/* Liste des pilotes pour superviseur_fi */}
+        {currentUser.role === 'superviseur_fi' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Pilotes FI ({users.filter(u => u.role === 'pilote_fi').length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {users.filter(u => u.role === 'pilote_fi').length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">Aucun pilote créé</p>
+                ) : (
+                  users.filter(u => u.role === 'pilote_fi').map((user) => (
+                    <div
+                      key={user.id}
+                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50"
+                    >
+                      <div>
+                        <p className="font-medium">{user.username}</p>
+                        <p className="text-sm text-gray-500">Pilote FI - {user.city}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteUser(user.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Liste des responsables de secteur pour superviseur_fi */}
+        {currentUser.role === 'superviseur_fi' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Responsables de Secteur ({users.filter(u => u.role === 'responsable_secteur').length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {users.filter(u => u.role === 'responsable_secteur').length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">Aucun responsable créé</p>
+                ) : (
+                  users.filter(u => u.role === 'responsable_secteur').map((user) => (
+                    <div
+                      key={user.id}
+                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50"
+                    >
+                      <div>
+                        <p className="font-medium">{user.username}</p>
+                        <p className="text-sm text-gray-500">Responsable de Secteur - {user.city}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteUser(user.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Message pour responsable_secteur */}
+        {currentUser.role === 'responsable_secteur' && (
           <Card>
             <CardContent className="pt-6">
               <div className="text-center py-8">
                 <p className="text-gray-600 mb-2">
-                  Vous pouvez créer des comptes en utilisant le bouton "+ Nouvel utilisateur" ci-dessus.
-                </p>
-                <p className="text-sm text-gray-500">
-                  La liste complète des utilisateurs n'est accessible qu'aux administrateurs.
+                  Vous pouvez créer des comptes Pilote en utilisant le bouton "+ Nouvel utilisateur" ci-dessus.
                 </p>
               </div>
             </CardContent>
