@@ -208,6 +208,7 @@ class VisitorUpdate(BaseModel):
     formation_pcnc: Optional[bool] = None
     formation_au_coeur_bible: Optional[bool] = None
     formation_star: Optional[bool] = None
+    ejp: Optional[bool] = None
 
 class CommentAdd(BaseModel):
     text: str
