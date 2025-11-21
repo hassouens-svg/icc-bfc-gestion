@@ -463,6 +463,13 @@ export const getCulteStatsSummary = async (ville = null, startDate = null, endDa
   return response.data;
 };
 
+// Admin - Migrate Presences
+export const migratePresences = async () => {
+  const response = await apiClient.post('/admin/migrate-presences');
+  return response.data;
+};
+
+
 export const updateCulteStats = async (id, data) => {
   const response = await apiClient.put(`/culte-stats/${id}`, data);
   return response.data;
