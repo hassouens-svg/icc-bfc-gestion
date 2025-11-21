@@ -30,6 +30,7 @@ const DashboardResponsableSecteurPage = () => {
     tauxFidelisation: 0
   });
   const [presencesTableData, setPresencesTableData] = useState([]);
+  const [filterMembresFI, setFilterMembresFI] = useState('all');
 
   useEffect(() => {
     if (!user || user.role !== 'responsable_secteur') {
