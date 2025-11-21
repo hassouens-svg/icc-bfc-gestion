@@ -755,11 +755,22 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
     if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
-            # Check if visitor's month matches user's month (regardless of year)
-            user_month = current_user.get("assigned_month", "").split("-")[-1] if current_user.get("assigned_month") else ""
-            visitor_month = visitor.get("assigned_month", "").split("-")[-1] if visitor.get("assigned_month") else ""
-            if user_month != visitor_month:
-                raise HTTPException(status_code=403, detail="Access denied")
+            # Check if visitor's month matches user's month(s) (regardless of year)
+            user_assigned = current_user.get("assigned_month", "")
+            if user_assigned:
+                # Support multiple months separated by commas
+                user_months_list = [m.strip() for m in user_assigned.split(',')]
+                visitor_month = visitor.get("assigned_month", "")
+                # Check if visitor's month matches any of user's assigned months
+                allowed = False
+                for um in user_months_list:
+                    user_month_part = um.split("-")[-1] if "-" in um else um
+                    visitor_month_part = visitor_month.split("-")[-1] if "-" in visitor_month else visitor_month
+                    if user_month_part == visitor_month_part:
+                        allowed = True
+                        break
+                if not allowed:
+                    raise HTTPException(status_code=403, detail="Access denied")
     
     # Accueil can't see details (consultation only)
     if current_user["role"] == "accueil":
