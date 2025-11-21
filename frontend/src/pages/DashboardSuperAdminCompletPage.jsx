@@ -390,6 +390,46 @@ const DashboardSuperAdminCompletPage = () => {
     return data.filter(item => item[cityField] === selectedCity);
   };
 
+  // Handle migration of presences
+  const handleMigratePresences = async () => {
+    const confirmMigration = window.confirm(
+      "⚠️ MIGRATION DES PRÉSENCES\n\n" +
+      "Cette action va corriger l'attribution des présences jeudi/dimanche.\n\n" +
+      "Les présences marquées un jeudi seront déplacées de 'presences_dimanche' vers 'presences_jeudi'.\n\n" +
+      "Voulez-vous continuer?"
+    );
+    
+    if (!confirmMigration) return;
+    
+    try {
+      toast.loading('Migration en cours...', { id: 'migration' });
+      
+      const result = await migratePresences();
+      
+      toast.success(
+        `✅ Migration terminée!\n\n` +
+        `Visiteurs mis à jour: ${result.visitors_updated}\n` +
+        `Présences déplacées: ${result.presences_moved}`,
+        { id: 'migration', duration: 10000 }
+      );
+      
+      // Afficher les détails si disponibles
+      if (result.details && result.details.length > 0) {
+        console.log('📋 Détails de la migration:', result.details);
+      }
+      
+      // Recharger les données
+      await loadData();
+      
+    } catch (error) {
+      console.error('Erreur migration:', error);
+      toast.error(
+        `❌ Erreur lors de la migration: ${error.response?.data?.detail || error.message}`,
+        { id: 'migration', duration: 8000 }
+      );
+    }
+  };
+
   // Filter visitors table
   const filteredVisitors = visitorsTable.filter(v => {
     if (selectedCity !== 'all' && v.city !== selectedCity) return false;
