@@ -554,7 +554,10 @@ const DashboardResponsableSecteurPage = () => {
               En tant que Responsable de Secteur, vous pouvez créer des comptes Pilote pour gérer vos Familles d'Impact.
             </p>
             <Button 
-              onClick={() => navigate('/gestion-acces')}
+              onClick={() => {
+                toast.info('Fonctionnalité de création de pilote disponible via le menu Gestion d\'Accès');
+                navigate('/gestion-acces');
+              }}
               className="bg-indigo-600 hover:bg-indigo-700"
             >
               <UserPlus className="h-4 w-4 mr-2" />
