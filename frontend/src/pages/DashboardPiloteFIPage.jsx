@@ -335,6 +335,78 @@ const DashboardPiloteFIPage = () => {
             </form>
           </DialogContent>
         </Dialog>
+
+        {/* Modal Modifier FI */}
+        <Dialog open={isEditFIDialogOpen} onOpenChange={setIsEditFIDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Modifier les informations de la FI</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                // TODO: Appeler l'API pour mettre à jour la FI
+                // await updateFamilleImpact(user.assigned_fi_id, fiInfo);
+                toast.success('Informations mises à jour avec succès!');
+                setIsEditFIDialogOpen(false);
+                loadData();
+              } catch (error) {
+                toast.error('Erreur lors de la mise à jour');
+              }
+            }}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Nom de la FI</label>
+                  <input
+                    type="text"
+                    value={fiInfo.nom}
+                    onChange={(e) => setFiInfo({ ...fiInfo, nom: e.target.value })}
+                    className="w-full border rounded px-3 py-2"
+                    placeholder="Nom de la Famille d'Impact"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Adresse</label>
+                  <input
+                    type="text"
+                    value={fiInfo.adresse}
+                    onChange={(e) => setFiInfo({ ...fiInfo, adresse: e.target.value })}
+                    className="w-full border rounded px-3 py-2"
+                    placeholder="Adresse complète"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Heure de début</label>
+                    <input
+                      type="time"
+                      value={fiInfo.heure_debut}
+                      onChange={(e) => setFiInfo({ ...fiInfo, heure_debut: e.target.value })}
+                      className="w-full border rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Heure de fin</label>
+                    <input
+                      type="time"
+                      value={fiInfo.heure_fin}
+                      onChange={(e) => setFiInfo({ ...fiInfo, heure_fin: e.target.value })}
+                      className="w-full border rounded px-3 py-2"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => setIsEditFIDialogOpen(false)}>
+                    Annuler
+                  </Button>
+                  <Button type="submit">
+                    Enregistrer
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
