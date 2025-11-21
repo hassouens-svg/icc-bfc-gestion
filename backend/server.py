@@ -1173,26 +1173,35 @@ async def get_city_stats(
     avg_fidelisation_promos = (total_fidelisation / promo_count) if promo_count > 0 else 0
     
     # FAMILLE D'IMPACT STATS
-    fi_query = {"city": city_name}
-    fis = await db.familles_impact.find(fi_query).to_list(10000)
-    secteurs = await db.secteurs.find({"city": city_name}).to_list(1000)
+    fi_query = {"ville": city_name}  # Note: FI uses "ville" not "city"
+    fis = await db.familles_impact.find(fi_query, {"_id": 0}).to_list(10000)
+    secteurs = await db.secteurs.find({"ville": city_name}, {"_id": 0}).to_list(1000)
     
-    # Count FI members
-    total_fi_members = 0
+    # Count FI members from membres_fi collection
+    fi_ids = [fi["id"] for fi in fis]
+    membres_query = {"fi_id": {"$in": fi_ids}} if fi_ids else {"fi_id": None}
+    membres = await db.membres_fi.find(membres_query, {"_id": 0}).to_list(10000)
+    total_fi_members = len(membres)
+    
+    # Calculate FI fidelisation from presences_fi collection
+    presences_query = {"fi_id": {"$in": fi_ids}} if fi_ids else {"fi_id": None}
+    if year and month:
+        presences_query["date"] = {"$regex": f"^{year}-{month:02d}"}
+    elif year:
+        presences_query["date"] = {"$regex": f"^{year}"}
+    
+    presences = await db.presences_fi.find(presences_query, {"_id": 0}).to_list(100000)
+    
+    # Calculate fidelisation per member
     fi_fidelisation = 0
     fi_count = 0
-    for fi in fis:
-        membres = fi.get("membres", [])
-        total_fi_members += len(membres)
-        
-        # Calculate FI fidelisation
-        for membre in membres:
-            presences = membre.get("presences", [])
-            if presences:
-                present_count = sum(1 for p in presences if p.get("present"))
-                if len(presences) > 0:
-                    fi_fidelisation += (present_count / len(presences)) * 100
-                    fi_count += 1
+    for membre in membres:
+        membre_presences = [p for p in presences if p.get("membre_fi_id") == membre["id"]]
+        if membre_presences:
+            present_count = sum(1 for p in membre_presences if p.get("present"))
+            if len(membre_presences) > 0:
+                fi_fidelisation += (present_count / len(membre_presences)) * 100
+                fi_count += 1
     
     avg_fidelisation_fi = (fi_fidelisation / fi_count) if fi_count > 0 else 0
     
