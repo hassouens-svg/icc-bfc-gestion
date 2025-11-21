@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://churchtrack-1.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://presence-tracker-65.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 # TOUS les comptes à tester
