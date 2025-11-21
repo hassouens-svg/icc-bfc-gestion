@@ -27,6 +27,8 @@ const FamillesImpactPage = () => {
     ville: user?.city || '',
     adresse: '',
     pilote_ids: [],
+    heure_debut: '',
+    heure_fin: '',
   });
 
   useEffect(() => {
