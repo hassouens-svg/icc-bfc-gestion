@@ -2554,8 +2554,10 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
                 presences_dim = visitor.get("presences_dimanche", [])
                 if mois and mois != "all" and annee and annee != "all":
                     # Filtrer d'abord par date, puis compter les présents
-                    presences_dim_filtered = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois}")]
-                    total_presences_dimanche += len([p for p in presences_dim_filtered if p.get("present")])
+                    presences_dim_filtered = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois}") and p.get("present")]
+                    total_presences_dimanche += len(presences_dim_filtered)
+                    if month == "2024-11":  # DEBUG logging
+                        print(f"DEBUG Visitor {visitor.get('firstname')}: Dimanche filtered={len(presences_dim_filtered)}, total_dim={[p.get('date') for p in presences_dim if p.get('present')]}")
                 else:
                     total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
                 
@@ -2563,8 +2565,10 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
                 presences_jeu = visitor.get("presences_jeudi", [])
                 if mois and mois != "all" and annee and annee != "all":
                     # Filtrer d'abord par date, puis compter les présents
-                    presences_jeu_filtered = [p for p in presences_jeu if p.get("date", "").startswith(f"{annee}-{mois}")]
-                    total_presences_jeudi += len([p for p in presences_jeu_filtered if p.get("present")])
+                    presences_jeu_filtered = [p for p in presences_jeu if p.get("date", "").startswith(f"{annee}-{mois}") and p.get("present")]
+                    total_presences_jeudi += len(presences_jeu_filtered)
+                    if month == "2024-11":  # DEBUG logging
+                        print(f"DEBUG Visitor {visitor.get('firstname')}: Jeudi filtered={len(presences_jeu_filtered)}, total_jeu={[p.get('date') for p in presences_jeu if p.get('present')]}")
                 else:
                     total_presences_jeudi += len([p for p in presences_jeu if p.get("present")])
         
