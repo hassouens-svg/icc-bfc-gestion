@@ -68,6 +68,7 @@ function App() {
           
           {/* Familles d'Impact Routes */}
           <Route path="/familles-impact/secteurs" element={<SecteursPage />} />
+          <Route path="/familles-impact/gerer-fi" element={<GererFIPage />} />
           <Route path="/familles-impact" element={<FamillesImpactPage />} />
           <Route path="/familles-impact/fi/:fiId" element={<FamilleImpactDetailPage />} />
           <Route path="/familles-impact/affectation" element={<AffectationFIPage />} />
