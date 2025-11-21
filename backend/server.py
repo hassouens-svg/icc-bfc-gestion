@@ -1767,7 +1767,7 @@ async def delete_secteur(secteur_id: str, current_user: dict = Depends(get_curre
     # Check if there are FI in this secteur
     fi_count = await db.familles_impact.count_documents({"secteur_id": secteur_id})
     if fi_count > 0:
-        raise HTTPException(status_code=400, detail=f"Cannot delete secteur with {fi_count} Familles d'Impact")
+        raise HTTPException(status_code=400, detail=f"Impossible de supprimer le secteur : il contient encore {fi_count} Famille(s) d'Impact. Veuillez d'abord supprimer ou réassigner les FI.")
     
     result = await db.secteurs.delete_one({"id": secteur_id})
     if result.deleted_count == 0:
