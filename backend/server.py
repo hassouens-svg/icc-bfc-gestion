@@ -840,8 +840,8 @@ async def add_presence(visitor_id: str, presence: PresenceAdd, current_user: dic
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
-    # Check permissions for referents
-    if current_user["role"] == "referent":
+    # Check permissions for referents/responsables
+    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_mark_presence", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot mark presence")
