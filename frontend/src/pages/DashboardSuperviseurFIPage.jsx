@@ -124,7 +124,8 @@ const DashboardSuperviseurFIPage = () => {
     if (selectedDate && famillesImpact.length > 0) {
       loadKPIsByDate();
     }
-  }, [selectedDate, selectedSecteur, selectedFI, famillesImpact]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, selectedSecteur, selectedFI]); // FIXED: Removed famillesImpact to prevent infinite loop
 
   if (loading) {
     return (
