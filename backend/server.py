@@ -2785,8 +2785,11 @@ async def get_fi_detailed(ville: str = None, date: str = None, current_user: dic
     # Get all membres
     membres = await db.membres_fi.find({}, {"_id": 0}).to_list(10000)
     
-    # Get all presences
-    presences = await db.presences_fi.find({}, {"_id": 0}).to_list(100000)
+    # Get all presences (filtered by date if specified)
+    presences_query = {}
+    if date:
+        presences_query["date"] = date
+    presences = await db.presences_fi.find(presences_query, {"_id": 0}).to_list(100000)
     
     # Group by secteur
     secteurs_stats = []
