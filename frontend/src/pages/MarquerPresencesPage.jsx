@@ -119,9 +119,22 @@ const MarquerPresencesPage = () => {
 
     try {
       // Déterminer si c'est un dimanche ou un jeudi
-      const date = new Date(selectedDate);
+      // Parser la date en ajoutant un timestamp pour éviter les problèmes UTC
+      const [year, month, day] = selectedDate.split('-').map(Number);
+      const date = new Date(year, month - 1, day); // Mois est 0-indexed
       const dayOfWeek = date.getDay(); // 0 = Dimanche, 4 = Jeudi
-      const type = dayOfWeek === 0 ? 'dimanche' : (dayOfWeek === 4 ? 'jeudi' : 'dimanche');
+      
+      let type = 'dimanche'; // Par défaut
+      if (dayOfWeek === 4) {
+        type = 'jeudi';
+      } else if (dayOfWeek === 0) {
+        type = 'dimanche';
+      } else {
+        // Si ce n'est ni dimanche ni jeudi, demander confirmation
+        console.warn(`⚠️ Date sélectionnée (${selectedDate}) n'est ni un dimanche ni un jeudi (jour: ${dayOfWeek})`);
+      }
+      
+      console.log(`📅 Date: ${selectedDate}, Jour: ${dayOfWeek}, Type: ${type}`);
       
       const promises = Object.entries(presences).map(([visitorId, isPresent]) => {
         return addPresence(
