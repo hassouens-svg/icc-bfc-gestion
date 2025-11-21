@@ -65,6 +65,15 @@ const VisitorsTablePage = () => {
     applyFilters();
   }, [visitors, filters]);
 
+  // Recalculate fidelisation rate when data or date filter changes
+  useEffect(() => {
+    if (fidelisationData) {
+      const rate = calculateFidelisationRate();
+      setTauxFidelisation(rate);
+      console.log('📊 Taux de fidélisation recalculé:', rate);
+    }
+  }, [fidelisationData, filters.date]);
+
   const loadFidelisationData = async () => {
     if (loadingFidelisation) return;
     
