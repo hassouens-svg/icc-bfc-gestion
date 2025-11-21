@@ -259,6 +259,8 @@ class FamilleImpactCreate(BaseModel):
     adresse: Optional[str] = None
     pilote_id: Optional[str] = None  # DEPRECATED
     pilote_ids: Optional[List[str]] = []  # Multiple pilotes
+    heure_debut: Optional[str] = None  # Heure de début (HH:MM)
+    heure_fin: Optional[str] = None  # Heure de fin (HH:MM)
 
 class MembreFI(BaseModel):
     model_config = ConfigDict(extra="ignore")
