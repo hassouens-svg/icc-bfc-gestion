@@ -3420,6 +3420,95 @@ async def get_arrival_channel_distribution(
     
     return result
 
+@api_router.post("/admin/migrate-presences")
+async def migrate_presences(current_user: dict = Depends(get_current_user)):
+    """
+    Endpoint pour migrer les présences mal attribuées (jeudi dans dimanche)
+    Accessible uniquement aux super_admin
+    """
+    if current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Only super_admin can run migration")
+    
+    try:
+        # Get all visitors
+        visitors = await db.visitors.find({}, {"_id": 0}).to_list(10000)
+        
+        total_visitors = len(visitors)
+        visitors_updated = 0
+        presences_moved = 0
+        migration_details = []
+        
+        for visitor in visitors:
+            visitor_id = visitor.get("id")
+            presences_dim = visitor.get("presences_dimanche", [])
+            presences_jeu = visitor.get("presences_jeudi", [])
+            
+            if not presences_dim:
+                continue
+            
+            # Séparer les présences dimanche et jeudi
+            real_dimanche = []
+            real_jeudi = []
+            
+            for presence in presences_dim:
+                date_str = presence.get("date", "")
+                if not date_str:
+                    real_dimanche.append(presence)
+                    continue
+                
+                try:
+                    year, month, day = date_str.split('-')
+                    date_obj = datetime(int(year), int(month), int(day))
+                    day_of_week = date_obj.weekday()  # 0=Monday, 6=Sunday
+                    
+                    if day_of_week == 6:  # Sunday
+                        real_dimanche.append(presence)
+                    else:  # Thursday or other days → jeudi
+                        real_jeudi.append(presence)
+                        presences_moved += 1
+                except Exception as e:
+                    # En cas d'erreur, garder dans dimanche
+                    real_dimanche.append(presence)
+            
+            # Si des présences doivent être déplacées
+            if real_jeudi:
+                visitors_updated += 1
+                
+                # Fusionner avec les présences jeudi existantes (éviter les doublons)
+                existing_jeudi_dates = {p.get("date") for p in presences_jeu}
+                for p in real_jeudi:
+                    if p.get("date") not in existing_jeudi_dates:
+                        presences_jeu.append(p)
+                
+                # Update visitor
+                await db.visitors.update_one(
+                    {"id": visitor_id},
+                    {
+                        "$set": {
+                            "presences_dimanche": real_dimanche,
+                            "presences_jeudi": presences_jeu
+                        }
+                    }
+                )
+                
+                visitor_name = f"{visitor.get('firstname', '')} {visitor.get('lastname', '')}"
+                migration_details.append({
+                    "visitor": visitor_name,
+                    "presences_moved": len(real_jeudi)
+                })
+        
+        return {
+            "success": True,
+            "message": "Migration terminée avec succès",
+            "total_visitors": total_visitors,
+            "visitors_updated": visitors_updated,
+            "presences_moved": presences_moved,
+            "details": migration_details[:20]  # Limiter à 20 pour ne pas surcharger la réponse
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la migration: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
