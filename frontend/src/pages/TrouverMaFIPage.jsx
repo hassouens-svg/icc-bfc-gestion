@@ -276,30 +276,30 @@ const TrouverMaFIPage = () => {
                         })}
                       >
                         <Popup maxWidth={250}>
-                          <div style="padding: 8px;">
-                            <h3 style="font-weight: bold; font-size: 16px; margin-bottom: 8px; color: #4f46e5;">
+                          <div style={{padding: '8px'}}>
+                            <h3 style={{fontWeight: 'bold', fontSize: '16px', marginBottom: '8px', color: '#4f46e5'}}>
                               {fi.nom}
                             </h3>
-                            <div style="margin-bottom: 6px;">
+                            <div style={{marginBottom: '6px'}}>
                               <strong>📍 Adresse :</strong><br />
                               {fi.adresse}, {fi.ville}
                             </div>
                             {fi.pilote_nom && (
-                              <div style="margin-bottom: 6px;">
+                              <div style={{marginBottom: '6px'}}>
                                 <strong>👤 Pilote :</strong><br />
                                 {fi.pilote_nom}
                               </div>
                             )}
                             {fi.pilote_telephone && (
-                              <div style="margin-bottom: 6px;">
+                              <div style={{marginBottom: '6px'}}>
                                 <strong>📞 Téléphone :</strong><br />
-                                <a href={`tel:${fi.pilote_telephone}`} style="color: #4f46e5; text-decoration: underline;">
+                                <a href={`tel:${fi.pilote_telephone}`} style={{color: '#4f46e5', textDecoration: 'underline'}}>
                                   {fi.pilote_telephone}
                                 </a>
                               </div>
                             )}
                             {(fi.heure_debut || fi.heure_fin) && (
-                              <div style="margin-bottom: 6px;">
+                              <div style={{marginBottom: '6px'}}>
                                 <strong>🕐 Horaires :</strong><br />
                                 {fi.heure_debut && fi.heure_fin ? (
                                   <span>{fi.heure_debut} - {fi.heure_fin}</span>
@@ -310,8 +310,8 @@ const TrouverMaFIPage = () => {
                                 )}
                               </div>
                             )}
-                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                              <span style="color: #4f46e5; font-weight: 600;">
+                            <div style={{marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #e5e7eb'}}>
+                              <span style={{color: '#4f46e5', fontWeight: 600}}>
                                 📏 À {fi.distance.toFixed(1)} km
                               </span>
                             </div>
