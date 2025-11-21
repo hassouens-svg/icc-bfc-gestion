@@ -102,7 +102,13 @@ const DashboardPiloteFIPage = () => {
               <TrendingUp className="h-4 w-4 mr-2" />
               Vue Tableau
             </Button>
-            <Button onClick={() => setIsEditFIDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={() => {
+              if (stats?.fi_id) {
+                navigate(`/famille-impact/${stats.fi_id}`);
+              } else {
+                toast.error('Aucune FI assignée');
+              }
+            }} className="bg-blue-600 hover:bg-blue-700">
               <Settings className="h-4 w-4 mr-2" />
               Modifier FI
             </Button>
