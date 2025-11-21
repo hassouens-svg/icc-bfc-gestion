@@ -150,6 +150,41 @@ const DashboardPiloteFIPage = () => {
           </Card>
         </div>
 
+        {/* NOUVEAU: Tableau de présences sous les KPIs */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tableau des Présences</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="text-left py-3 px-4">Membre</th>
+                    <th className="text-center py-3 px-4">Téléphone</th>
+                    <th className="text-center py-3 px-4">Statut</th>
+                    <th className="text-center py-3 px-4">Total Présences</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {membres.map((membre) => (
+                    <tr key={membre.id} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4 font-medium">{membre.prenom} {membre.nom}</td>
+                      <td className="text-center py-3 px-4">{membre.telephone}</td>
+                      <td className="text-center py-3 px-4">
+                        <span className={`px-2 py-1 rounded text-xs ${membre.is_nouveau ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                          {membre.is_nouveau ? 'Nouveau' : 'Ancien'}
+                        </span>
+                      </td>
+                      <td className="text-center py-3 px-4">{membre.total_presences || 0}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Liste des Membres */}
         <Card>
           <CardHeader>
