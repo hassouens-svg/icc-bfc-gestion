@@ -132,16 +132,8 @@ const DashboardResponsableSecteurPage = () => {
           const membresWithFI = membres.map(m => ({ ...m, fi_id: fi.id, fi_name: fi.name || fi.nom }));
           allMembresForDate = [...allMembresForDate, ...membresWithFI];
           
-          // Créer une présence pour chaque membre (même s'il n'y a pas de données)
-          membresWithFI.forEach(membre => {
-            const presence = presences.find(p => p.membre_id === membre.id);
-            allPresencesForDate.push({
-              membre_id: membre.id,
-              fi_id: fi.id,
-              date: selectedDate,
-              present: presence ? presence.present : false
-            });
-          });
+          // Utiliser UNIQUEMENT les présences réelles marquées par le pilote
+          allPresencesForDate = [...allPresencesForDate, ...presences.map(p => ({ ...p, fi_id: fi.id }))];
         } catch (error) {
           console.error(`Erreur chargement KPIs FI ${fi.name}:`, error);
         }
