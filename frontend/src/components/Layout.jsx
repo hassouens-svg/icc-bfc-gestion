@@ -86,7 +86,6 @@ const Layout = ({ children }) => {
     { path: '/admin-data', label: 'Gestion des Données', icon: Database, roles: ['super_admin'], department: null },
     
     // AFFECTATIONS SUPERVISEUR FI
-    { path: '/affectation-pilotes-fi', label: 'Attribution Pilotes FI', icon: UserPlus, roles: ['super_admin', 'superviseur_fi'], department: null },
     { path: '/affectation-responsables-secteur', label: 'Attribution Responsables Secteurs', icon: UserPlus, roles: ['super_admin', 'superviseur_fi'], department: null },
   ];
 
