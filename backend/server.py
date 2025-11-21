@@ -2758,11 +2758,11 @@ async def get_visitors_table(ville: str = None, current_user: dict = Depends(get
     return enriched_visitors
 
 @api_router.get("/analytics/fi-detailed")
-async def get_fi_detailed(ville: str = None, current_user: dict = Depends(get_current_user)):
+async def get_fi_detailed(ville: str = None, date: str = None, current_user: dict = Depends(get_current_user)):
     """Get detailed FI analytics with:
     - Nombre de secteurs, FI, membres
     - Évolution par secteur
-    - Fidélisation par FI
+    - Fidélisation par FI (filtrée par date si spécifiée)
     """
     # Only super_admin, pasteur, and responsable_eglise can access
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
