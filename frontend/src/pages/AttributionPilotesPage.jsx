@@ -31,8 +31,11 @@ const AttributionPilotesPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      // Charger toutes les FI du secteur
-      const allFI = await getFamillesImpact();
+      // Récupérer la ville de l'utilisateur
+      const userCity = currentUser.city;
+      
+      // Charger toutes les FI de la ville
+      const allFI = await getFamillesImpact(null, userCity);
       
       // Filtrer par secteur si responsable_secteur
       let filteredFI = allFI;
@@ -42,20 +45,22 @@ const AttributionPilotesPage = () => {
       
       setFamillesImpact(filteredFI);
       
-      // Charger tous les pilotes
-      const allUsers = await getUsers();
+      // Charger tous les pilotes de la ville
+      const allUsers = await getUsers(userCity);
       const pilotesList = allUsers.filter(u => u.role === 'pilote_fi');
       
-      // Si responsable_secteur, filtrer les pilotes de son secteur
-      if (currentUser.role === 'responsable_secteur') {
-        // On peut filtrer par ville ou autre critère si nécessaire
+      // Si responsable_secteur, filtrer les pilotes de son secteur si nécessaire
+      if (currentUser.role === 'responsable_secteur' && currentUser.assigned_secteur_id) {
+        // Filtrer les pilotes du même secteur (si la logique le nécessite)
         setPilotes(pilotesList.filter(p => p.city === currentUser.city));
       } else {
         setPilotes(pilotesList);
       }
+      
+      console.log('✅ Données chargées:', { fis: filteredFI.length, pilotes: pilotesList.length });
     } catch (error) {
       toast.error('Erreur lors du chargement des données');
-      console.error(error);
+      console.error('❌ Erreur chargement:', error);
     } finally {
       setLoading(false);
     }
