@@ -139,9 +139,16 @@ const VisitorDetailPage = () => {
               Retour
             </Button>
             <div>
-              <h2 className="text-3xl font-bold text-gray-900" data-testid="visitor-name">
-                {visitor.firstname} {visitor.lastname}
-              </h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-3xl font-bold text-gray-900" data-testid="visitor-name">
+                  {visitor.firstname} {visitor.lastname}
+                </h2>
+                {visitor.ejp && (
+                  <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-sm font-bold">
+                    EJP
+                  </span>
+                )}
+              </div>
               <p className="text-gray-500 mt-1">Détails et suivi du nouveaux arrivants et nouveaux convertis</p>
             </div>
           </div>
