@@ -497,7 +497,23 @@ const DashboardResponsableSecteurPage = () => {
         {/* Liste des Membres */}
         <Card>
           <CardHeader>
-            <CardTitle>Tous les Membres du Secteur</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Membres de votre secteur</CardTitle>
+              <div className="w-64">
+                <Label>Filtrer par FI</Label>
+                <Select value={filterMembresFI} onValueChange={setFilterMembresFI}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les FI</SelectItem>
+                    {famillesImpact.map((fi) => (
+                      <SelectItem key={fi.id} value={fi.id}>{fi.name || fi.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {allMembres.length === 0 ? (
@@ -513,24 +529,28 @@ const DashboardResponsableSecteurPage = () => {
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Téléphone</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Famille d'Impact</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro FI</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {allMembres.map((membre) => (
-                      <tr key={membre.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                          {membre.prenom} {membre.nom}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{membre.telephone}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{membre.fi_name}</td>
-                        <td className="px-4 py-3 text-sm">
-                          <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                            Actif
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                    {allMembres
+                      .filter(m => filterMembresFI === 'all' || m.fi_id === filterMembresFI)
+                      .map((membre, index) => (
+                        <tr key={membre.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                            {membre.prenom} {membre.nom}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600">{membre.telephone}</td>
+                          <td className="px-4 py-3 text-sm text-gray-600">{membre.fi_name || '-'}</td>
+                          <td className="px-4 py-3 text-sm text-gray-600">#{index + 1}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                              Actif
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
