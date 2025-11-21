@@ -640,7 +640,7 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
 @api_router.post("/visitors/bulk-ancien")
 async def create_bulk_ancien_visitors(visitors_data: List[VisitorCreate], current_user: dict = Depends(get_current_user)):
     # Only superviseur_promos, responsable_promo, referent, super_admin, pasteur can create
-    if current_user["role"] not in ["superviseur_promos", "responsable_promo", "referent", "super_admin", "pasteur"]:
+    if current_user["role"] not in ["superviseur_promos", "responsable_promo", "referent", "promotions", "super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Permission denied to create visitors")
     
     if len(visitors_data) > 40:
