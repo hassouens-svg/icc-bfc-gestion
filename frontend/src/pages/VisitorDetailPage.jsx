@@ -126,6 +126,32 @@ const VisitorDetailPage = () => {
     setShowStopConfirm(false);
   };
 
+  const handleOpenEditDialog = () => {
+    setEditData({
+      firstname: visitor.firstname,
+      lastname: visitor.lastname,
+      phone: visitor.phone,
+      email: visitor.email || '',
+      address: visitor.address || '',
+      arrival_channel: visitor.arrival_channel,
+      age_range: visitor.age_range || '',
+      types: visitor.types || [],
+      ejp: visitor.ejp || false
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await updateVisitor(id, editData);
+      toast.success('Informations mises à jour');
+      await loadVisitor();
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
