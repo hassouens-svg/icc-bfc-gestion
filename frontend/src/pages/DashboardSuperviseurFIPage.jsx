@@ -89,8 +89,20 @@ const DashboardSuperviseurFIPage = () => {
           const membres = await getMembresFI(fi.id);
           const presences = await getPresencesFI(fi.id, selectedDate);
           
-          allMembres = [...allMembres, ...membres];
-          allPresences = [...allPresences, ...presences];
+          // Marquer chaque membre avec son FI
+          const membresWithFI = membres.map(m => ({ ...m, fi_id: fi.id }));
+          allMembres = [...allMembres, ...membresWithFI];
+          
+          // Créer une présence pour chaque membre
+          membresWithFI.forEach(membre => {
+            const presence = presences.find(p => p.membre_id === membre.id);
+            allPresences.push({
+              membre_id: membre.id,
+              fi_id: fi.id,
+              date: selectedDate,
+              present: presence ? presence.present : false
+            });
+          });
         } catch (error) {
           console.error(`Erreur chargement FI ${fi.name}:`, error);
         }
