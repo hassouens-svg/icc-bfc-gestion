@@ -19,7 +19,9 @@ const DashboardPiloteFIPage = () => {
   const [membres, setMembres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
+  const [isEditFIDialogOpen, setIsEditFIDialogOpen] = useState(false);
   const [newMember, setNewMember] = useState({ prenom: '', nom: '', telephone: '', is_nouveau: true });
+  const [fiInfo, setFiInfo] = useState({ nom: '', adresse: '', heure_debut: '', heure_fin: '' });
 
   useEffect(() => {
     if (!user || user.role !== 'pilote_fi') {
