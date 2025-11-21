@@ -383,6 +383,12 @@ const GestionAccesPage = () => {
                   {user?.role === 'superviseur_promos' && (
                     <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Responsable de Promos</p>
                   )}
+                  {user?.role === 'superviseur_fi' && (
+                    <p className="text-xs text-gray-500">Vous pouvez créer: Pilote FI et Responsable Secteur</p>
+                  )}
+                  {user?.role === 'responsable_secteur' && (
+                    <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Pilote FI</p>
+                  )}
                   {user?.role === 'responsable_secteur' && (
                     <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Pilote FI</p>
                   )}
