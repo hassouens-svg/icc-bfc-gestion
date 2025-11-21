@@ -2549,28 +2549,36 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         total_presences_dimanche = 0
         total_presences_jeudi = 0
         
+        if month == "2024-11":  # DEBUG
+            print(f"DEBUG PROMO 2024-11: total_visitors={total}, visitors_actifs={len(data['visitors_actifs'])}")
+            print(f"DEBUG filter: mois={mois}, annee={annee}")
+        
         if total > 0:
             # Compter seulement les présences des visiteurs ACTIFS (pas arrêtés)
             for visitor in data["visitors_actifs"]:
                 # Filtrer les présences dimanche par mois/année
                 presences_dim = visitor.get("presences_dimanche", [])
                 if mois and mois != "all" and annee and annee != "all":
+                    # Normaliser le mois avec zéro devant si nécessaire
+                    mois_padded = mois.zfill(2)
                     # Filtrer d'abord par date, puis compter les présents
-                    presences_dim_filtered = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois}") and p.get("present")]
+                    presences_dim_filtered = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois_padded}") and p.get("present")]
                     total_presences_dimanche += len(presences_dim_filtered)
                     if month == "2024-11":  # DEBUG logging
-                        print(f"DEBUG Visitor {visitor.get('firstname')}: Dimanche filtered={len(presences_dim_filtered)}, total_dim={[p.get('date') for p in presences_dim if p.get('present')]}")
+                        print(f"DEBUG Visitor {visitor.get('firstname')}: Dimanche filtered={len(presences_dim_filtered)}, all_dates={[p.get('date') for p in presences_dim if p.get('present')]}")
                 else:
                     total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
                 
                 # Filtrer les présences jeudi par mois/année
                 presences_jeu = visitor.get("presences_jeudi", [])
                 if mois and mois != "all" and annee and annee != "all":
+                    # Normaliser le mois avec zéro devant si nécessaire
+                    mois_padded = mois.zfill(2)
                     # Filtrer d'abord par date, puis compter les présents
-                    presences_jeu_filtered = [p for p in presences_jeu if p.get("date", "").startswith(f"{annee}-{mois}") and p.get("present")]
+                    presences_jeu_filtered = [p for p in presences_jeu if p.get("date", "").startswith(f"{annee}-{mois_padded}") and p.get("present")]
                     total_presences_jeudi += len(presences_jeu_filtered)
                     if month == "2024-11":  # DEBUG logging
-                        print(f"DEBUG Visitor {visitor.get('firstname')}: Jeudi filtered={len(presences_jeu_filtered)}, total_jeu={[p.get('date') for p in presences_jeu if p.get('present')]}")
+                        print(f"DEBUG Visitor {visitor.get('firstname')}: Jeudi filtered={len(presences_jeu_filtered)}, all_dates={[p.get('date') for p in presences_jeu if p.get('present')]}")
                 else:
                     total_presences_jeudi += len([p for p in presences_jeu if p.get("present")])
         
