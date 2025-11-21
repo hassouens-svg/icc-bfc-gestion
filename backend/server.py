@@ -3310,7 +3310,12 @@ async def get_age_distribution(
     elif current_user["role"] == "responsable_promo":
         query["city"] = current_user["city"]
         if current_user.get("assigned_month"):
-            query["assigned_month"] = current_user["assigned_month"]
+            # Support multiple months separated by commas
+            months_list = [m.strip() for m in current_user["assigned_month"].split(',')]
+            if len(months_list) > 1:
+                query["assigned_month"] = {"$in": months_list}
+            else:
+                query["assigned_month"] = current_user["assigned_month"]
     # For others, use ville parameter
     elif ville:
         query["city"] = ville
@@ -3352,7 +3357,12 @@ async def get_arrival_channel_distribution(
     elif current_user["role"] == "responsable_promo":
         query["city"] = current_user["city"]
         if current_user.get("assigned_month"):
-            query["assigned_month"] = current_user["assigned_month"]
+            # Support multiple months separated by commas
+            months_list = [m.strip() for m in current_user["assigned_month"].split(',')]
+            if len(months_list) > 1:
+                query["assigned_month"] = {"$in": months_list}
+            else:
+                query["assigned_month"] = current_user["assigned_month"]
     # For others, use ville parameter
     elif ville:
         query["city"] = ville
