@@ -354,6 +354,11 @@ const GestionAccesPage = () => {
                     <SelectContent>
                       {user?.role === 'superviseur_promos' ? (
                         <SelectItem value="referent">Responsable de Promos</SelectItem>
+                      ) : user?.role === 'superviseur_fi' ? (
+                        <>
+                          <SelectItem value="pilote_fi">Pilote FI</SelectItem>
+                          <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
+                        </>
                       ) : user?.role === 'responsable_secteur' ? (
                         <SelectItem value="pilote_fi">Pilote FI</SelectItem>
                       ) : (
