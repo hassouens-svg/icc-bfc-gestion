@@ -311,6 +311,53 @@ const DashboardSuperviseurFIPage = () => {
                 </Card>
               </div>
             )}
+            
+            {/* NOUVEAU: Tableau de présences sous les KPIs */}
+            {selectedDate && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-4">Tableau des Présences du {selectedDate}</h3>
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="text-left py-3 px-4">Famille d'Impact</th>
+                        <th className="text-center py-3 px-4">Secteur</th>
+                        <th className="text-center py-3 px-4">Total Membres</th>
+                        <th className="text-center py-3 px-4">Présents</th>
+                        <th className="text-center py-3 px-4">Absents</th>
+                        <th className="text-center py-3 px-4">Taux (%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {famillesImpact
+                        .filter(fi => selectedSecteur === 'all' || fi.secteur_id === selectedSecteur)
+                        .filter(fi => selectedFI === 'all' || fi.id === selectedFI)
+                        .map((fi) => {
+                          const membres = fi.membres || [];
+                          const presents = membres.filter(m => m.present).length;
+                          const absents = membres.length - presents;
+                          const taux = membres.length > 0 ? ((presents / membres.length) * 100).toFixed(1) : 0;
+                          
+                          return (
+                            <tr key={fi.id} className="border-b hover:bg-gray-50">
+                              <td className="py-3 px-4 font-medium">{fi.name}</td>
+                              <td className="text-center py-3 px-4">{fi.secteur_name || '-'}</td>
+                              <td className="text-center py-3 px-4">{membres.length}</td>
+                              <td className="text-center py-3 px-4 text-green-600">{presents}</td>
+                              <td className="text-center py-3 px-4 text-red-600">{absents}</td>
+                              <td className="text-center py-3 px-4">
+                                <span className={`font-bold ${taux >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
+                                  {taux}%
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
