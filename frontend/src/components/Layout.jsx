@@ -51,7 +51,7 @@ const Layout = ({ children }) => {
 
   const navItems = [
     // PROMOTIONS - visible uniquement si département promotions ou rôles promos
-    { path: '/dashboard', label: 'Dashboard Promotions', icon: Home, roles: ['referent', 'promotions'], department: 'promotions' },
+    { path: '/dashboard', label: 'Dashboard Promotions', icon: Home, roles: ['referent', 'promotions', 'responsable_promo'], department: 'promotions' },
     { path: '/dashboard-superviseur-promos', label: 'Dashboard Superviseur', icon: BarChart3, roles: ['superviseur_promos'], department: 'promotions' },
     { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['superviseur_promos', 'referent', 'accueil', 'promotions'], department: 'promotions' },
     { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['superviseur_promos', 'referent', 'promotions'], department: 'promotions' },
