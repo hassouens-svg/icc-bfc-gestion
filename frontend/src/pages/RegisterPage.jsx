@@ -289,6 +289,21 @@ const RegisterPage = () => {
               />
             </div>
 
+            {/* Case à cocher EJP */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 p-3 border rounded-lg bg-purple-50 border-purple-200">
+                <Checkbox
+                  id="ejp"
+                  checked={formData.ejp}
+                  onCheckedChange={(checked) => setFormData({...formData, ejp: checked})}
+                  data-testid="ejp-checkbox"
+                />
+                <Label htmlFor="ejp" className="font-medium cursor-pointer text-purple-900">
+                  École de Jeunes Prophètes (EJP)
+                </Label>
+              </div>
+            </div>
+
             {/* Section RGPD */}
             <div className="border-t pt-6 mt-6">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
