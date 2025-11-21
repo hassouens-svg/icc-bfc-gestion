@@ -51,11 +51,7 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis
+  Cell
 } from 'recharts';
 
 const DashboardSuperAdminCompletPage = () => {
