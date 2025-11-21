@@ -876,6 +876,18 @@ backend:
         agent: "testing"
         comment: "❌ CRITICAL ISSUE CONFIRMED: Vue Tableau KPI and Chart not displaying data correctly. TESTING RESULTS with credentials respo_aout/respo_aout123/Promotions: (1) ❌ GREEN KPI ISSUE: The green KPI at top shows '...' instead of percentage (should show '2.56%' based on backend API response), (2) ❌ COLORED KPI BOXES: 4 colored KPI boxes not displaying numbers (backend returns: total_visitors=8, total_visitors_actifs=6, total_na=6, total_nc=3), (3) ❌ BARCHART: Chart container found but no bars displayed (backend returns 52 weeks of data with rates), (4) ✅ NO LOADING MESSAGES: No 'Chargement en cours' found. ROOT CAUSE: Frontend authentication issues - console shows 403 errors for /api/notifications and login request aborted. Backend API /api/fidelisation/referent works correctly and returns proper data (monthly_average: 2.56, weekly_rates with 52 weeks). ISSUE: Frontend not properly authenticated or JavaScript errors preventing data loading. The Vue Tableau page loads but fidelization data is not being fetched/displayed due to authentication problems."
 
+  - task: "FI System - heure_debut and heure_fin fields support in public API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 FI TIME FIELDS TESTING COMPLETE - ALL TESTS PASSED! Executed comprehensive testing of /api/public/fi/all endpoint to verify heure_debut and heure_fin fields support as requested in review. RESULTS: (1) ✅ API ENDPOINT FUNCTIONAL - GET /api/public/fi/all?ville=Dijon returns 200 status with 1 FI entry, endpoint accessible without authentication as expected for public access, (2) ✅ RESPONSE STRUCTURE VERIFIED - All required fields present: id, nom, ville, adresse, secteur_id, plus the new time fields heure_debut and heure_fin, (3) ✅ SPECIFIC FI RÉPUBLIQUE FOUND - Located 'FI République' with exact expected values: adresse='1 Place de la République', heure_debut='18:00', heure_fin='20:00', all values match the test data setup perfectly, (4) ✅ TIME FIELDS FORMAT VALID - Both heure_debut and heure_fin are properly formatted as HH:MM strings, data types and format validation passed, (5) ✅ BACKEND IMPLEMENTATION CORRECT - Lines 1799-1800 in server.py correctly include heure_debut and heure_fin in the projection fields, ensuring these fields are returned in the API response. CONCLUSION: The FI system correctly supports and returns the new time fields. The fidelity calculation bug fix and FI start/end times addition are both working perfectly. Backend API /api/public/fi/all fully functional with time field support."
+
   - agent: "testing"
     message: "🎯 URGENT: Vue Tableau KPI and Chart Issue Confirmed! Tested with credentials respo_aout/respo_aout123/Promotions as requested. CRITICAL FINDINGS: (1) Green KPI shows '...' instead of '2.56%', (2) 4 colored KPI boxes show no numbers, (3) BarChart has no bars displayed. Backend API works perfectly - /api/fidelisation/referent returns correct data (monthly_average: 2.56, total_visitors: 8, etc.). ROOT CAUSE: Frontend authentication issues causing 403 errors and preventing data loading. The Vue Tableau page structure is correct but fidelization data is not being fetched due to authentication problems. Main agent should investigate frontend authentication flow and API call handling in VisitorsTablePage.jsx."
 
