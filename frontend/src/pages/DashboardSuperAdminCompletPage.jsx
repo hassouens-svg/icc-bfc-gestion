@@ -1044,7 +1044,12 @@ const DashboardSuperAdminCompletPage = () => {
                       value={selectedDateFI || ''}
                       onChange={(e) => {
                         setSelectedDateFI(e.target.value);
-                        if (e.target.value) loadFIKPIsByDate(e.target.value);
+                        if (e.target.value) {
+                          loadFIKPIsByDate(e.target.value);
+                          loadFIData(e.target.value); // Recharger les stats FI avec la date
+                        } else {
+                          loadFIData(null); // Recharger sans filtre de date
+                        }
                       }}
                     />
                   </div>
