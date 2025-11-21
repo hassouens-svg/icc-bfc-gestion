@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Checkbox } from '../components/ui/checkbox';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
-import { Plus, Edit, Trash2, Lock, Unlock, Key, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Lock, Unlock, Key, Eye, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 const GestionAccesPage = () => {
