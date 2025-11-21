@@ -116,6 +116,38 @@ const DashboardSuperviseurFIPage = () => {
         tauxFidelisation: tauxFidelisation.toFixed(1)
       });
 
+      // Construire les données du tableau de présence par FI
+      const tableData = fisToAnalyze.map(fi => {
+        const fiMembres = allMembres.filter(m => {
+          // Vérifier si le membre appartient à cette FI
+          return m.fi_id === fi.id;
+        });
+        const fiPresences = allPresences.filter(p => {
+          const membre = fiMembres.find(m => m.id === p.membre_id);
+          return membre !== undefined;
+        });
+        
+        const fiPresents = fiPresences.filter(p => p.present === true).length;
+        const fiAbsents = fiPresences.filter(p => p.present === false).length;
+        const fiTotalMembres = fiMembres.length;
+        const fiTaux = fiTotalMembres > 0 ? ((fiPresents / fiTotalMembres) * 100).toFixed(1) : '0.0';
+
+        // Trouver le secteur de cette FI
+        const secteur = secteurs.find(s => s.id === fi.secteur_id);
+
+        return {
+          fi_id: fi.id,
+          fi_name: fi.name || fi.nom || `FI ${fi.id.substring(0, 8)}`,
+          secteur_name: secteur ? secteur.name : '-',
+          totalMembres: fiTotalMembres,
+          presents: fiPresents,
+          absents: fiAbsents,
+          taux: fiTaux
+        };
+      });
+      
+      setPresencesTableData(tableData);
+
     } catch (error) {
       console.error('Erreur calcul KPIs:', error);
     }
