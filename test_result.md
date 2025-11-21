@@ -748,8 +748,11 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus: 
+    - "Trouver ma FI - Map Popup Time Fields Display (heure_debut and heure_fin)"
+  stuck_tasks: 
+    - "ICC BFC-ITALIE Nouvelles Fonctionnalités - 8 Features Testing"
+    - "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
   test_all: false
   test_priority: "high_first"
   completed_tests:
