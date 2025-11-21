@@ -763,8 +763,8 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
 
 @api_router.put("/visitors/{visitor_id}")
 async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_user: dict = Depends(get_current_user)):
-    # Allow promotions, accueil, admin, super_admin, and referent to update visitors
-    allowed_roles = ["promotions", "accueil", "admin", "super_admin", "referent"]
+    # Allow promotions, accueil, admin, super_admin, referent, and responsable_promo to update visitors
+    allowed_roles = ["promotions", "accueil", "admin", "super_admin", "referent", "responsable_promo"]
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Permission denied")
     
@@ -773,8 +773,8 @@ async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_us
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
-    # Check permissions for referents
-    if current_user["role"] == "referent":
+    # Check permissions for referents/responsables
+    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_edit_visitors", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot edit visitors")
