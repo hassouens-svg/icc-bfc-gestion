@@ -310,6 +310,26 @@ const FamilleImpactDetailPage = () => {
                   Cette adresse sera utilisée sur la carte "Trouver ma FI"
                 </p>
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Heure de début (optionnel)</Label>
+                  <Input
+                    type="time"
+                    value={editFIData.heure_debut}
+                    onChange={(e) => setEditFIData({...editFIData, heure_debut: e.target.value})}
+                    placeholder="HH:MM"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Heure de fin (optionnel)</Label>
+                  <Input
+                    type="time"
+                    value={editFIData.heure_fin}
+                    onChange={(e) => setEditFIData({...editFIData, heure_fin: e.target.value})}
+                    placeholder="HH:MM"
+                  />
+                </div>
+              </div>
               <div className="flex space-x-2">
                 <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1">
                   Annuler
