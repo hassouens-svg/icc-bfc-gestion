@@ -30,6 +30,7 @@ const DashboardSuperviseurFIPage = () => {
     nouveaux: 0,
     tauxFidelisation: 0
   });
+  const [presencesTableData, setPresencesTableData] = useState([]);
 
   useEffect(() => {
     if (!user || !['superviseur_fi', 'admin', 'super_admin', 'pasteur', 'responsable_eglise'].includes(user.role)) {
