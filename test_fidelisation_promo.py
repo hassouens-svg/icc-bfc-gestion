@@ -12,8 +12,9 @@ from uuid import uuid4
 
 # Connect to MongoDB (match backend connection)
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+db_name = os.environ.get('DB_NAME', 'test_database')  # Use same DB as backend
 client = MongoClient(mongo_url)
-db = client['churchmanagement']  # Access the specific database
+db = client[db_name]
 
 def clean_test_data():
     """Nettoyer les données de test précédentes"""
