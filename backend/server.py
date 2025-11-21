@@ -694,11 +694,17 @@ async def get_visitors(
             # Extract month from their assigned_month and match all years
             user_assigned_month = current_user.get("assigned_month")
             if user_assigned_month:
-                # Extract month part only (MM from YYYY-MM)
-                month_part = user_assigned_month.split("-")[-1] if "-" in user_assigned_month else user_assigned_month
-                # Use regex to match any year with this month
-                # Example: referent with assigned_month="2024-08" sees ALL august visitors (2024-08, 2025-08, etc.)
-                query["assigned_month"] = {"$regex": f"-{month_part}$"}
+                # Support multiple months separated by commas (e.g., "2024-08,2025-08,2026-08")
+                months_list = [m.strip() for m in user_assigned_month.split(',')]
+                if len(months_list) > 1:
+                    # Multiple months: use $in to match any of them
+                    query["assigned_month"] = {"$in": months_list}
+                else:
+                    # Single month: Extract month part only (MM from YYYY-MM) to match all years
+                    month_part = user_assigned_month.split("-")[-1] if "-" in user_assigned_month else user_assigned_month
+                    # Use regex to match any year with this month
+                    # Example: referent with assigned_month="2024-08" sees ALL august visitors (2024-08, 2025-08, etc.)
+                    query["assigned_month"] = {"$regex": f"-{month_part}$"}
     
     # superviseur_promos sees ALL visitors from their city (no month filter)
     
