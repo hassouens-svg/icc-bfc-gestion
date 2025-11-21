@@ -274,13 +274,40 @@ const GestionAccesPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">Gestion des Accès</h2>
             <p className="text-gray-500 mt-1">Créez et gérez tous les accès utilisateurs</p>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Nouvel Utilisateur
+          <div className="flex gap-2">
+            {user?.role === 'super_admin' && (
+              <Button
+                onClick={async () => {
+                  try {
+                    toast.loading('Génération du fichier...', { id: 'export-creds' });
+                    const blob = await exportCredentials();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `credentials_${new Date().toISOString().split('T')[0]}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    toast.success('Export réussi!', { id: 'export-creds' });
+                  } catch (error) {
+                    toast.error('Erreur lors de l\'export', { id: 'export-creds' });
+                  }
+                }}
+                variant="outline"
+                className="bg-green-50 hover:bg-green-100 border-green-200"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Identifiants
               </Button>
-            </DialogTrigger>
+            )}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nouvel Utilisateur
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
