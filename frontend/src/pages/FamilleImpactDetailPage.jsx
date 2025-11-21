@@ -162,6 +162,11 @@ const FamilleImpactDetailPage = () => {
             {fi?.adresse && (
               <p className="text-sm text-gray-600 mt-1">📍 {fi.adresse}</p>
             )}
+            {(fi?.heure_debut || fi?.heure_fin) && (
+              <p className="text-sm text-gray-600 mt-1">
+                🕐 {fi.heure_debut || '--:--'} - {fi.heure_fin || '--:--'}
+              </p>
+            )}
           </div>
           <div className="flex space-x-2">
             {['admin', 'super_admin', 'superviseur_fi', 'responsable_secteur'].includes(user?.role) && (
