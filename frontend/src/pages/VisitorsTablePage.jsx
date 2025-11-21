@@ -396,8 +396,22 @@ const VisitorsTablePage = () => {
         <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-green-100 text-sm font-medium">Taux de Fidélisation</p>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-green-100 text-sm font-medium">Taux de Fidélisation</p>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      loadFidelisationData();
+                      toast.success('Données actualisées');
+                    }}
+                    className="text-white hover:bg-white/20 h-8"
+                    title="Actualiser les données"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                  </Button>
+                </div>
                 <h3 className="text-4xl font-bold mt-2">
                   {fidelisationData ? `${calculateFidelisationRate().toFixed(1)}%` : '0.0%'}
                 </h3>
