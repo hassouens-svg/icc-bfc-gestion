@@ -146,11 +146,8 @@ const VisitorsTablePage = () => {
       const data = await getVisitors(includeStopped);
       setVisitors(data);
       
-      // Load fidelisation data immediately after visitors
-      if (!fidelisationLoadedRef.current) {
-        fidelisationLoadedRef.current = true;
-        setTimeout(() => loadFidelisationData(), 500);
-      }
+      // Load fidelisation data after visitors - always refresh to get latest presences
+      setTimeout(() => loadFidelisationData(), 500);
     } catch (error) {
       toast.error('Erreur lors du chargement des nouveaux arrivants et nouveaux convertiss');
     } finally {
