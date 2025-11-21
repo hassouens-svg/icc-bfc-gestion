@@ -49,12 +49,18 @@ const GestionAccesPage = () => {
     }
     setUser(currentUser);
     
-    // Pour responsable_eglise, superviseur_promos et responsable_secteur, fixer automatiquement la ville et le rôle
+    // Fixer automatiquement la ville et le rôle selon le user connecté
     if (currentUser.role === 'responsable_eglise' || currentUser.role === 'superviseur_promos') {
       setNewUser(prev => ({ 
         ...prev, 
         city: currentUser.city,
         role: currentUser.role === 'superviseur_promos' ? 'referent' : 'referent' // superviseur_promos ne peut créer que referent
+      }));
+    } else if (currentUser.role === 'superviseur_fi') {
+      setNewUser(prev => ({ 
+        ...prev, 
+        city: currentUser.city,
+        role: 'pilote_fi' // Par défaut pilote_fi, mais peut créer aussi responsable_secteur
       }));
     } else if (currentUser.role === 'responsable_secteur') {
       setNewUser(prev => ({ 
