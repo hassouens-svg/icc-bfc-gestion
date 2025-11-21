@@ -501,6 +501,11 @@ const GestionAccesPage = () => {
                         {getRoleLabel(user.role)} - {user.city}
                         {user.assigned_month && ` - ${user.assigned_month}`}
                       </p>
+                      {currentUser.role === 'super_admin' && user.plain_password && (
+                        <p className="text-xs text-blue-600 font-mono">
+                          🔑 Mot de passe: {showPasswords ? user.plain_password : '********'}
+                        </p>
+                      )}
                       {user.is_blocked && (
                         <p className="text-xs text-red-600 font-semibold">BLOQUÉ</p>
                       )}
