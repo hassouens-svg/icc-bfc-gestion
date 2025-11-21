@@ -620,7 +620,7 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
         raise HTTPException(status_code=403, detail="Accueil role is read-only, cannot create visitors")
     
     # Only superviseur_promos, responsable_promo, referent, super_admin, pasteur can create
-    if current_user["role"] not in ["superviseur_promos", "responsable_promo", "referent", "super_admin", "pasteur"]:
+    if current_user["role"] not in ["superviseur_promos", "responsable_promo", "referent", "promotions", "super_admin", "pasteur"]:
         raise HTTPException(status_code=403, detail="Permission denied to create visitors")
     
     # Calculate assigned_month
