@@ -709,37 +709,26 @@ const DashboardSuperAdminCompletPage = () => {
             </div>
 
             {/* Répartition par tranche d'âge - HISTOGRAMME PLEINE LARGEUR */}
-            <Card className="mt-4">{/* Changé en histogramme */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Répartition par Tranche d'Âge</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={ageDistribution}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
-                        outerRadius={90}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        <Cell fill="#3b82f6" />
-                        <Cell fill="#10b981" />
-                        <Cell fill="#f59e0b" />
-                        <Cell fill="#ef4444" />
-                        <Cell fill="#8b5cf6" />
-                        <Cell fill="#6366f1" />
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle>Répartition par Tranche d'Âge</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={ageDistribution}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]}>
+                      {ageDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6366f1'][index % 6]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
             {/* Fidélisation par Promo - NOUVEAU FORMAT */}
             <Card>
