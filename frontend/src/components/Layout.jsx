@@ -67,6 +67,7 @@ const Layout = ({ children }) => {
     { path: '/familles-impact', label: 'Familles d\'Impact', icon: Heart, roles: ['superviseur_fi', 'responsable_secteur'], department: 'familles-impact' },
     { path: '/familles-impact/affectation', label: 'Affectation FI', icon: UserPlus, roles: ['superviseur_fi'], department: 'familles-impact' },
     { path: '/familles-impact/secteurs', label: 'Gérer Secteurs', icon: MapPin, roles: ['superviseur_fi'], department: 'familles-impact' },
+    { path: '/familles-impact/gerer-fi', label: 'Gérer FI', icon: Heart, roles: ['superviseur_fi'], department: 'familles-impact' },
     
     // ACCUEIL & INTÉGRATION
     { path: '/culte-stats', label: 'Statistiques des Cultes', icon: BarChart3, roles: ['accueil', 'super_admin'], department: 'promotions' },
