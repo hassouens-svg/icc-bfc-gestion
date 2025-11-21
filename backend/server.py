@@ -796,12 +796,12 @@ async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_curre
         raise HTTPException(status_code=404, detail="Visitor not found")
     
     # Check permissions based on role
-    allowed_roles = ["super_admin", "responsable_eglise", "superviseur_promos", "promotions", "referent"]
+    allowed_roles = ["super_admin", "responsable_eglise", "superviseur_promos", "promotions", "referent", "responsable_promo"]
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Permission denied")
     
-    if current_user["role"] == "referent":
-        # Referents can only delete visitors from their assigned month
+    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
+        # Referents/Responsables can only delete visitors from their assigned month
         if visitor["assigned_month"] != current_user.get("assigned_month"):
             raise HTTPException(status_code=403, detail="Vous ne pouvez supprimer que vos visiteurs assignés")
     
