@@ -536,9 +536,9 @@ const DashboardResponsableSecteurPage = () => {
                       .map((membre, index) => (
                         <tr key={membre.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                            {membre.prenom} {membre.nom}
+                            {membre.prenom || membre.firstname || '-'} {membre.nom || membre.lastname || '-'}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">{membre.telephone}</td>
+                          <td className="px-4 py-3 text-sm text-gray-600">{membre.telephone || membre.phone || '-'}</td>
                           <td className="px-4 py-3 text-sm text-gray-600">{membre.fi_name || '-'}</td>
                           <td className="px-4 py-3 text-sm text-gray-600">#{index + 1}</td>
                           <td className="px-4 py-3 text-sm">
