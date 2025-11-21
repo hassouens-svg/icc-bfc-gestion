@@ -23,6 +23,7 @@ const RegisterPage = () => {
     arrival_channel: '',
     age_range: '',
     visit_date: new Date().toISOString().split('T')[0],
+    ejp: false,
   });
   const [loading, setLoading] = useState(false);
   const [gdprConsent, setGdprConsent] = useState(null); // null, true, ou false
