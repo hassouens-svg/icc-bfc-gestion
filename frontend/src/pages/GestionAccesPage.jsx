@@ -535,6 +535,23 @@ const GestionAccesPage = () => {
             </div>
           </CardContent>
         </Card>
+        )}
+
+        {/* Message pour superviseur_fi et responsable_secteur */}
+        {['superviseur_fi', 'responsable_secteur'].includes(currentUser.role) && (
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-8">
+                <p className="text-gray-600 mb-2">
+                  Vous pouvez créer des comptes en utilisant le bouton "+ Nouvel utilisateur" ci-dessus.
+                </p>
+                <p className="text-sm text-gray-500">
+                  La liste complète des utilisateurs n'est accessible qu'aux administrateurs.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Edit User Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
