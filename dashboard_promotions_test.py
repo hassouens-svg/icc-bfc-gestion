@@ -12,7 +12,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://presence-tracker-65.preview.emergentagent.com/api"
+BACKEND_URL = "https://church-data-sync.preview.emergentagent.com/api"
 
 # Test accounts
 TEST_ACCOUNTS = {
