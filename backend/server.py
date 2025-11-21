@@ -2451,8 +2451,6 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     from datetime import datetime
     import calendar
     
-    print(f"DEBUG API PARAMS: ville={ville}, mois={mois}, annee={annee}")
-    
     # Only super_admin, pasteur, and responsable_eglise can access
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
