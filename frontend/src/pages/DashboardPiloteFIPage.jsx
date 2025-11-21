@@ -102,6 +102,10 @@ const DashboardPiloteFIPage = () => {
               <TrendingUp className="h-4 w-4 mr-2" />
               Vue Tableau
             </Button>
+            <Button onClick={() => setIsEditFIDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700">
+              <Settings className="h-4 w-4 mr-2" />
+              Modifier FI
+            </Button>
             <Button onClick={() => setIsAddMemberDialogOpen(true)} className="bg-green-600 hover:bg-green-700">
               <UserPlus className="h-4 w-4 mr-2" />
               Ajouter un Membre
