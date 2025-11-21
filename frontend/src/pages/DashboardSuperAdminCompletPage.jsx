@@ -345,6 +345,7 @@ const DashboardSuperAdminCompletPage = () => {
       
       let allMembres = [];
       let allPresences = [];
+      let fiDetailsForTable = []; // Pour le tableau
 
       for (const fi of fisData) {
         try {
@@ -353,6 +354,21 @@ const DashboardSuperAdminCompletPage = () => {
           
           allMembres = [...allMembres, ...membres];
           allPresences = [...allPresences, ...presences];
+          
+          // Calculer les stats pour chaque FI individuellement pour le tableau
+          const fiMembresCount = membres.length;
+          const fiPresents = presences.filter(p => p.present === true).length;
+          const fiFidelisation = fiMembresCount > 0 ? (fiPresents / fiMembresCount) * 100 : 0;
+          
+          fiDetailsForTable.push({
+            fi_id: fi.id,
+            fi_nom: fi.nom || fi.name,
+            ville: fi.ville,
+            secteur_id: fi.secteur_id,
+            total_membres: fiMembresCount,
+            total_presences: fiPresents,
+            fidelisation: Math.round(fiFidelisation * 10) / 10 // Arrondi à 1 décimale
+          });
         } catch (error) {
           console.error(`Erreur chargement FI ${fi.name}:`, error);
         }
@@ -378,6 +394,14 @@ const DashboardSuperAdminCompletPage = () => {
         nouveaux,
         tauxFidelisation: tauxFidelisation.toFixed(1)
       });
+      
+      // Mettre à jour aussi fiData avec les données calculées pour le tableau
+      if (fiData) {
+        setFiData({
+          ...fiData,
+          fi_fidelisation: fiDetailsForTable
+        });
+      }
 
     } catch (error) {
       console.error('Erreur calcul KPIs FI:', error);
