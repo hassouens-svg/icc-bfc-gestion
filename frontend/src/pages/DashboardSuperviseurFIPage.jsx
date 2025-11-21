@@ -369,14 +369,9 @@ const DashboardSuperviseurFIPage = () => {
                           <td className="text-center py-3 px-4">{row.totalMembres}</td>
                           <td className="text-center py-3 px-4 text-green-600 font-semibold">{row.presents}</td>
                           <td className="text-center py-3 px-4 text-red-600 font-semibold">{row.absents}</td>
-                              <td className="text-center py-3 px-4">
-                                <span className={`font-bold ${taux >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
-                                  {taux}%
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                          <td className="text-center py-3 px-4 text-indigo-600 font-semibold">{row.taux}%</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
