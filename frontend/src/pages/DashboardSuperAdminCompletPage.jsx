@@ -779,13 +779,8 @@ const DashboardSuperAdminCompletPage = () => {
                         .map((promo, index) => (
                         <tr key={index} className="border-b hover:bg-gray-50">
                           <td className="py-3 px-4 font-medium">{promo.month}</td>
-                          <td className="text-center py-3 px-4">{promo.na_count}</td>
                           <td className="text-center py-3 px-4 text-green-600">{promo.na_count}</td>
                           <td className="text-center py-3 px-4 text-red-600">{promo.nc_count}</td>
-                          <td className="text-center py-3 px-4">{promo.suivis_arretes_count}</td>
-                          <td className="text-center py-3 px-4 text-blue-600">{promo.nbre_pers_suivis}</td>
-                          <td className="text-center py-3 px-4">{promo.total_presences_dimanche} / {promo.expected_presences_dimanche}</td>
-                          <td className="text-center py-3 px-4">{promo.total_presences_jeudi} / {promo.expected_presences_jeudi}</td>
                           <td className="text-center py-3 px-4">
                             <div className="flex items-center justify-center gap-2">
                               <span>{promo.suivis_arretes_count}</span>
@@ -793,7 +788,6 @@ const DashboardSuperAdminCompletPage = () => {
                                 variant="outline" 
                                 size="sm"
                                 onClick={() => {
-                                  // Sauvegarder le filtre promo pour StoppedVisitorsPage
                                   localStorage.setItem('stopped_visitors_filter_promo', promo.month);
                                   navigate('/stopped-visitors');
                                 }}
@@ -802,12 +796,9 @@ const DashboardSuperAdminCompletPage = () => {
                               </Button>
                             </div>
                           </td>
-                          <td className="text-center py-3 px-4">
-                            {promo.total_presences_dimanche} / {promo.expected_presences_dimanche}
-                          </td>
-                          <td className="text-center py-3 px-4">
-                            {promo.total_presences_jeudi} / {promo.expected_presences_jeudi}
-                          </td>
+                          <td className="text-center py-3 px-4 text-blue-600">{promo.nbre_pers_suivis}</td>
+                          <td className="text-center py-3 px-4">{promo.total_presences_dimanche} / {promo.expected_presences_dimanche}</td>
+                          <td className="text-center py-3 px-4">{promo.total_presences_jeudi} / {promo.expected_presences_jeudi}</td>
                           <td className="text-center py-3 px-4">
                             <span className={`font-bold ${promo.fidelisation >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
                               {promo.fidelisation}%
