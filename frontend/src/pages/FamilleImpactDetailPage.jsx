@@ -25,7 +25,7 @@ const FamilleImpactDetailPage = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newMembre, setNewMembre] = useState({ prenom: '', nom: '', fi_id: fiId });
   const [presenceComments, setPresenceComments] = useState({});
-  const [editFIData, setEditFIData] = useState({ nom: '', adresse: '' });
+  const [editFIData, setEditFIData] = useState({ nom: '', adresse: '', heure_debut: '', heure_fin: '' });
 
   useEffect(() => {
     if (!user) {
