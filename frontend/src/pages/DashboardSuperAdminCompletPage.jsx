@@ -706,8 +706,10 @@ const DashboardSuperAdminCompletPage = () => {
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
+            </div>
 
-              {/* Répartition par tranche d'âge */}
+            {/* Répartition par tranche d'âge - HISTOGRAMME PLEINE LARGEUR */}
+            <Card className="mt-4">{/* Changé en histogramme */}
               <Card>
                 <CardHeader>
                   <CardTitle>Répartition par Tranche d'Âge</CardTitle>
