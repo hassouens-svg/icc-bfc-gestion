@@ -815,8 +815,8 @@ async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict =
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
-    # Check permissions for referents
-    if current_user["role"] == "referent":
+    # Check permissions for referents/responsables
+    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_add_comments", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot add comments")
