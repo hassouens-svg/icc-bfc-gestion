@@ -10,10 +10,10 @@ from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
 from uuid import uuid4
 
-# Connect to MongoDB
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/churchmanagement')
+# Connect to MongoDB (match backend connection)
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = MongoClient(mongo_url)
-db = client.churchmanagement
+db = client['churchmanagement']  # Access the specific database
 
 def clean_test_data():
     """Nettoyer les données de test précédentes"""
