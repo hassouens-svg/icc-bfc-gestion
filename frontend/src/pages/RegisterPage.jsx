@@ -299,7 +299,7 @@ const RegisterPage = () => {
                   data-testid="ejp-checkbox"
                 />
                 <Label htmlFor="ejp" className="font-medium cursor-pointer text-purple-900">
-                  École de Jeunes Prophètes (EJP)
+                  Église des Jeunes Prodiges (EJP)
                 </Label>
               </div>
             </div>
