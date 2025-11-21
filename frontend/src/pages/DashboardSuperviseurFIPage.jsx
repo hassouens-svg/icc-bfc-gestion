@@ -123,18 +123,14 @@ const DashboardSuperviseurFIPage = () => {
 
       // Construire les données du tableau de présence par FI
       const tableData = fisToAnalyze.map(fi => {
-        const fiMembres = allMembres.filter(m => {
-          // Vérifier si le membre appartient à cette FI
-          return m.fi_id === fi.id;
-        });
-        const fiPresences = allPresences.filter(p => {
-          const membre = fiMembres.find(m => m.id === p.membre_id);
-          return membre !== undefined;
-        });
+        const fiMembres = allMembres.filter(m => m.fi_id === fi.id);
+        const fiPresences = allPresences.filter(p => p.fi_id === fi.id);
         
         const fiPresents = fiPresences.filter(p => p.present === true).length;
         const fiAbsents = fiPresences.filter(p => p.present === false).length;
         const fiTotalMembres = fiMembres.length;
+        
+        // Le taux est basé sur les présents par rapport au total des membres de la FI
         const fiTaux = fiTotalMembres > 0 ? ((fiPresents / fiTotalMembres) * 100).toFixed(1) : '0.0';
 
         // Trouver le secteur de cette FI
