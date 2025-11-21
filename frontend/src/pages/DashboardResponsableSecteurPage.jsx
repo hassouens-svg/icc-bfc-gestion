@@ -165,7 +165,8 @@ const DashboardResponsableSecteurPage = () => {
     if (selectedDate && famillesImpact.length > 0) {
       loadKPIsByDate();
     }
-  }, [selectedDate, selectedFI, famillesImpact]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, selectedFI]); // FIXED: Removed famillesImpact to prevent infinite loop
 
   if (loading) {
     return (
