@@ -575,7 +575,16 @@ const VisitorsTablePage = () => {
                             </span>
                           </td>
                           <td className="px-4 py-3 text-sm font-medium">{visitor.lastname}</td>
-                          <td className="px-4 py-3 text-sm">{visitor.firstname}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span>{visitor.firstname}</span>
+                              {visitor.ejp && (
+                                <span className="px-2 py-0.5 bg-purple-600 text-white rounded-full text-xs font-bold">
+                                  EJP
+                                </span>
+                              )}
+                            </div>
+                          </td>
                           <td className="px-4 py-3 text-sm">
                             {visitor.types.join(', ')}
                           </td>
