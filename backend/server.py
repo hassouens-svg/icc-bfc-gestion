@@ -2782,13 +2782,17 @@ async def get_fi_detailed(ville: str = None, date: str = None, current_user: dic
     # Get all FI
     familles = await db.familles_impact.find(query, {"_id": 0}).to_list(1000)
     
-    # Get all membres
-    membres = await db.membres_fi.find({}, {"_id": 0}).to_list(10000)
+    # Get all membres - ONLY for the FIs in the filtered familles
+    fi_ids = [f["id"] for f in familles]
+    membres_query = {"fi_id": {"$in": fi_ids}} if fi_ids else {"fi_id": None}
+    membres = await db.membres_fi.find(membres_query, {"_id": 0}).to_list(10000)
     
-    # Get all presences (filtered by date if specified)
+    # Get all presences (filtered by date if specified and by FI)
     presences_query = {}
     if date:
         presences_query["date"] = date
+    if fi_ids:
+        presences_query["fi_id"] = {"$in": fi_ids}
     presences = await db.presences_fi.find(presences_query, {"_id": 0}).to_list(100000)
     
     # Group by secteur
