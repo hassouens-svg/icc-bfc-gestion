@@ -430,6 +430,124 @@ const VisitorDetailPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Edit Visitor Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Modifier les informations</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Prénom *</Label>
+                <Input
+                  value={editData.firstname}
+                  onChange={(e) => setEditData({...editData, firstname: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Nom *</Label>
+                <Input
+                  value={editData.lastname}
+                  onChange={(e) => setEditData({...editData, lastname: e.target.value})}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Téléphone *</Label>
+              <Input
+                value={editData.phone}
+                onChange={(e) => setEditData({...editData, phone: e.target.value})}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={editData.email}
+                onChange={(e) => setEditData({...editData, email: e.target.value})}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Adresse</Label>
+              <Input
+                value={editData.address}
+                onChange={(e) => setEditData({...editData, address: e.target.value})}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Canal d'arrivée</Label>
+              <Select value={editData.arrival_channel} onValueChange={(value) => setEditData({...editData, arrival_channel: value})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Evangelisation">Evangelisation</SelectItem>
+                  <SelectItem value="Réseaux sociaux">Réseaux sociaux</SelectItem>
+                  <SelectItem value="Invitation par un membre (hors evangelisation)">Invitation par un membre</SelectItem>
+                  <SelectItem value="Par soi même">Par soi même</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Tranche d'âge</Label>
+              <Select value={editData.age_range} onValueChange={(value) => setEditData({...editData, age_range: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une tranche d'âge" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="15-25 ans">15-25 ans</SelectItem>
+                  <SelectItem value="25-35 ans">25-35 ans</SelectItem>
+                  <SelectItem value="35-50 ans">35-50 ans</SelectItem>
+                  <SelectItem value="+50 ans">+50 ans</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Types de visiteur</Label>
+              <div className="flex flex-wrap gap-2">
+                {['Nouveau Arrivant', 'Nouveau Converti', 'De Passage'].map((type) => (
+                  <div key={type} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`type-${type}`}
+                      checked={editData.types.includes(type)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setEditData({...editData, types: [...editData.types, type]});
+                        } else {
+                          setEditData({...editData, types: editData.types.filter(t => t !== type)});
+                        }
+                      }}
+                    />
+                    <label htmlFor={`type-${type}`} className="text-sm cursor-pointer">
+                      {type}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 p-3 border rounded-lg bg-purple-50 border-purple-200">
+              <Checkbox
+                id="edit-ejp"
+                checked={editData.ejp}
+                onCheckedChange={(checked) => setEditData({...editData, ejp: checked})}
+              />
+              <Label htmlFor="edit-ejp" className="font-medium cursor-pointer text-purple-900">
+                Église des Jeunes Prodiges (EJP)
+              </Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Annuler
+            </Button>
+            <Button onClick={handleSaveEdit}>
+              Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Confirm Stop Dialog */}
       <AlertDialog open={showStopConfirm} onOpenChange={setShowStopConfirm}>
         <AlertDialogContent>
