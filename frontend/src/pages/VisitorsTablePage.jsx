@@ -120,10 +120,16 @@ const VisitorsTablePage = () => {
   };
 
   const getWeekNumber = (dateStr) => {
+    // Use ISO week number calculation to match backend
     const date = new Date(dateStr);
-    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    // Set to nearest Thursday (current date + 4 - current day number) to get ISO week
+    const dayNum = date.getDay() || 7; // Sunday = 7 instead of 0
+    date.setDate(date.getDate() + 4 - dayNum);
+    // Get first day of year
+    const yearStart = new Date(date.getFullYear(), 0, 1);
+    // Calculate full weeks to nearest Thursday
+    const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    return weekNo;
   };
 
   const loadVisitors = async () => {
