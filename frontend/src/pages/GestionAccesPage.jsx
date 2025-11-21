@@ -452,16 +452,18 @@ const GestionAccesPage = () => {
           </Dialog>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Liste des utilisateurs ({users.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {users.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">Aucun utilisateur</p>
-              ) : (
-                users.map((user) => (
+        {/* Ne pas afficher la liste complète pour superviseur_fi et responsable_secteur */}
+        {!['superviseur_fi', 'responsable_secteur'].includes(currentUser.role) && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Liste des utilisateurs ({users.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {users.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">Aucun utilisateur</p>
+                ) : (
+                  users.map((user) => (
                   <div
                     key={user.id}
                     className={`flex justify-between items-center p-4 border rounded-lg ${user.is_blocked ? 'bg-red-50 border-red-200' : 'hover:bg-gray-50'}`}
