@@ -532,6 +532,25 @@ const DashboardResponsableSecteurPage = () => {
         </Card>
 
         {/* Message d'information */}
+        {/* Section Gestion d'Accès */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Gestion d'Accès - Pilotes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600 mb-4">
+              En tant que Responsable de Secteur, vous pouvez créer des comptes Pilote pour gérer vos Familles d'Impact.
+            </p>
+            <Button 
+              onClick={() => navigate('/gestion-acces')}
+              className="bg-indigo-600 hover:bg-indigo-700"
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Créer un accès Pilote
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="bg-blue-50 border-blue-200">
           <CardContent className="pt-6">
             <div className="flex items-start space-x-3">
