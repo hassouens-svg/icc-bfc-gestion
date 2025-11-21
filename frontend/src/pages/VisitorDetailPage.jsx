@@ -190,14 +190,26 @@ const VisitorDetailPage = () => {
               <p className="text-gray-500 mt-1">Détails et suivi du nouveaux arrivants et nouveaux convertis</p>
             </div>
           </div>
-          <Button
-            variant="destructive"
-            onClick={() => setShowStopDialog(true)}
-            data-testid="stop-tracking-button"
-          >
-            <StopCircle className="h-4 w-4 mr-2" />
-            Arrêter le suivi
-          </Button>
+          <div className="flex gap-2">
+            {['super_admin', 'admin', 'promotions', 'referent', 'responsable_promo'].includes(user?.role) && (
+              <Button
+                variant="outline"
+                onClick={handleOpenEditDialog}
+                data-testid="edit-visitor-button"
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Modifier
+              </Button>
+            )}
+            <Button
+              variant="destructive"
+              onClick={() => setShowStopDialog(true)}
+              data-testid="stop-tracking-button"
+            >
+              <StopCircle className="h-4 w-4 mr-2" />
+              Arrêter le suivi
+            </Button>
+          </div>
         </div>
 
         {/* Basic Info */}
