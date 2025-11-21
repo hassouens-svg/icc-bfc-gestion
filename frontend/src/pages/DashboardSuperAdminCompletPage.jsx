@@ -273,13 +273,13 @@ const DashboardSuperAdminCompletPage = () => {
     }
   };
 
-  const loadFIData = async () => {
+  const loadFIData = async (dateFilter = null) => {
     try {
       // Filtrer par ville si une ville spécifique est sélectionnée
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       
       const results = await Promise.allSettled([
-        getFIDetailed(cityFilter),
+        getFIDetailed(cityFilter, dateFilter || selectedDateFI),
         getMembresTable(cityFilter)
       ]);
       
