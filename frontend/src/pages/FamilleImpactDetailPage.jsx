@@ -169,7 +169,7 @@ const FamilleImpactDetailPage = () => {
             )}
           </div>
           <div className="flex space-x-2">
-            {['admin', 'super_admin', 'superviseur_fi', 'responsable_secteur'].includes(user?.role) && (
+            {['admin', 'super_admin', 'superviseur_fi', 'responsable_secteur', 'pilote_fi'].includes(user?.role) && (
               <Button onClick={handleEditFI} variant="outline">
                 <Edit className="h-4 w-4 mr-2" />
                 Modifier les informations
