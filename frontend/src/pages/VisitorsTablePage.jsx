@@ -937,7 +937,7 @@ const VisitorsTablePage = () => {
                       onCheckedChange={(checked) => setVisitorToEdit({...visitorToEdit, ejp: checked})}
                     />
                     <label htmlFor="ejp" className="text-sm cursor-pointer font-medium text-purple-900">
-                      École de Jeunes Prophètes (EJP)
+                      Église des Jeunes Prodiges (EJP)
                     </label>
                   </div>
                 </div>
