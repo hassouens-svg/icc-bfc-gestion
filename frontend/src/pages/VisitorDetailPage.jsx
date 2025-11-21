@@ -24,6 +24,18 @@ const VisitorDetailPage = () => {
   const [stopReason, setStopReason] = useState('');
   const [showStopDialog, setShowStopDialog] = useState(false);
   const [showStopConfirm, setShowStopConfirm] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editData, setEditData] = useState({
+    firstname: '',
+    lastname: '',
+    phone: '',
+    email: '',
+    address: '',
+    arrival_channel: '',
+    age_range: '',
+    types: [],
+    ejp: false
+  });
 
   // Calendar states
   const [selectedDate, setSelectedDate] = useState('');
