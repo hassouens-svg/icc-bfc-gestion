@@ -88,6 +88,7 @@ function App() {
           <Route path="/select-department" element={<SelectDepartmentPage />} />
           <Route path="/select-ville" element={<SelectVillePage />} />
           <Route path="/gestion-acces" element={<GestionAccesPage />} />
+          <Route path="/attribution-pilotes" element={<AttributionPilotesPage />} />
           <Route path="/admin-data" element={<AdminDataPage />} />
           <Route path="/affectation-pilotes-fi" element={<AffectationPilotesFIPage />} />
           <Route path="/affectation-responsables-secteur" element={<AffectationResponsablesSecteurPage />} />
