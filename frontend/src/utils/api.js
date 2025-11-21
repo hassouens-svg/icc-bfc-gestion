@@ -411,9 +411,10 @@ export const getVisitorsTable = async (ville = null) => {
   return response.data;
 };
 
-export const getFIDetailed = async (ville = null) => {
+export const getFIDetailed = async (ville = null, date = null) => {
   const params = {};
   if (ville) params.ville = ville;
+  if (date) params.date = date;
   const response = await apiClient.get('/analytics/fi-detailed', { params });
   return response.data;
 };
