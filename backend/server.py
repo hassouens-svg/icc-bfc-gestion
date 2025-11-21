@@ -2566,10 +2566,13 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         fidelisation_jeudi = (total_presences_jeudi / expected_jeudi * 100) if expected_jeudi > 0 else 0
         fidelisation = (fidelisation_dimanche * 0.6) + (fidelisation_jeudi * 0.4)
         
+        # CORRECTION: Pers. Suivies = Pers. Reçues (total_all) - Suivis Arrêtés
+        nbre_pers_suivis = data["total_visitors_all"] - len(data["suivis_arretes"])
+        
         promos_stats.append({
             "month": month,
-            "nbre_pers_suivis": total,
-            "total_visitors": total,
+            "nbre_pers_suivis": nbre_pers_suivis,  # Pers. Reçues - Arrêtés
+            "total_visitors": data["total_visitors_all"],  # Total incluant arrêtés
             "na_count": data["na_count"],
             "nc_count": data["nc_count"],
             "dp_count": data["dp_count"],
