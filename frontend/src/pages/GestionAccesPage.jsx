@@ -477,6 +477,7 @@ const GestionAccesPage = () => {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Ne pas afficher la liste complète pour superviseur_fi et responsable_secteur */}
