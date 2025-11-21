@@ -476,6 +476,16 @@ const DashboardSuperAdminCompletPage = () => {
                   🔐 Gérer les Permissions Dashboard
                 </Button>
               )}
+              {/* Migration Présences - Pour Super Admin uniquement */}
+              {user?.role === 'super_admin' && (
+                <Button 
+                  onClick={handleMigratePresences} 
+                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white border-0 shadow-lg"
+                >
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  🔧 Migrer Présences Jeudi
+                </Button>
+              )}
             </div>
           )}
         </div>
