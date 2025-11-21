@@ -468,8 +468,7 @@ const DashboardResponsableSecteurPage = () => {
                   return (
                     <div
                       key={fi.id}
-                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                      onClick={() => navigate(`/familles-impact/fi/${fi.id}`)}
+                      className="flex justify-between items-center p-4 border rounded-lg"
                     >
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center">
@@ -478,18 +477,13 @@ const DashboardResponsableSecteurPage = () => {
                         <div>
                           <h3 className="font-semibold text-gray-900">{fi.name || fi.nom || `FI ${fi.id.substring(0, 8)}`}</h3>
                           <p className="text-sm text-gray-500">
-                            {fi.pilote_name || 'Aucun pilote assigné'}
+                            <span className="font-medium">Pilote :</span> {fi.pilote_name || 'Aucun pilote assigné'}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-indigo-600">{fiMembreCount}</p>
-                          <p className="text-xs text-gray-500">membres</p>
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          Voir détails →
-                        </Button>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-indigo-600">{fiMembreCount}</p>
+                        <p className="text-xs text-gray-500">membres</p>
                       </div>
                     </div>
                   );
