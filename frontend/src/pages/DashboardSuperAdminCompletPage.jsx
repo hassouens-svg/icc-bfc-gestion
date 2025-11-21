@@ -1229,43 +1229,6 @@ const DashboardSuperAdminCompletPage = () => {
               </CardContent>
             </Card>
 
-            {/* Fidélisation par FI */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Fidélisation par Famille d'Impact</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto max-h-96 overflow-y-auto">
-                  <table className="w-full">
-                    <thead className="sticky top-0 bg-gray-50">
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4">Famille d'Impact</th>
-                        <th className="text-left py-3 px-4">Ville</th>
-                        <th className="text-center py-3 px-4">Membres</th>
-                        <th className="text-center py-3 px-4">Présences</th>
-                        <th className="text-center py-3 px-4">Fidélisation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filterByCity(fiData.fi_fidelisation, 'ville').map((fi, index) => (
-                        <tr key={index} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4 font-medium">{fi.fi_nom}</td>
-                          <td className="py-3 px-4">{fi.ville}</td>
-                          <td className="text-center py-3 px-4">{fi.total_membres}</td>
-                          <td className="text-center py-3 px-4">{fi.total_presences}</td>
-                          <td className="text-center py-3 px-4">
-                            <span className={`font-bold ${fi.fidelisation >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
-                              {fi.fidelisation}%
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Tableau Membres Complet */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
