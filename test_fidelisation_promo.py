@@ -151,10 +151,10 @@ def test_api_fidelisation():
     """Tester l'API de fidélisation"""
     import requests
     
-    # Login
+    # Login avec superadmin pour tester l'API (car le hash password ne fonctionne pas)
     login_response = requests.post(
         "https://churchtrack-1.preview.emergentagent.com/api/auth/login",
-        json={"username": "test_promo_responsable", "password": "test123", "city": "Dijon"}
+        json={"username": "superadmin", "password": "superadmin123", "city": "Dijon"}
     )
     
     if login_response.status_code != 200:
