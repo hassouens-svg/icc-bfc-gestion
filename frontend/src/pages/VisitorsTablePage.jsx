@@ -930,6 +930,16 @@ const VisitorsTablePage = () => {
                       Formation STAR
                     </label>
                   </div>
+                  <div className="flex items-center space-x-2 pt-2 border-t">
+                    <Checkbox
+                      id="ejp"
+                      checked={visitorToEdit.ejp || false}
+                      onCheckedChange={(checked) => setVisitorToEdit({...visitorToEdit, ejp: checked})}
+                    />
+                    <label htmlFor="ejp" className="text-sm cursor-pointer font-medium text-purple-900">
+                      École de Jeunes Prophètes (EJP)
+                    </label>
+                  </div>
                 </div>
               </div>
             )}
