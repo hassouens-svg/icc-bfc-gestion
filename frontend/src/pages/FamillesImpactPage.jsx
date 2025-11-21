@@ -167,6 +167,26 @@ const FamillesImpactPage = () => {
                         placeholder="Adresse complète de la FI"
                       />
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Heure de début (optionnel)</Label>
+                        <Input
+                          type="time"
+                          value={newFI.heure_debut}
+                          onChange={(e) => setNewFI({...newFI, heure_debut: e.target.value})}
+                          placeholder="HH:MM"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Heure de fin (optionnel)</Label>
+                        <Input
+                          type="time"
+                          value={newFI.heure_fin}
+                          onChange={(e) => setNewFI({...newFI, heure_fin: e.target.value})}
+                          placeholder="HH:MM"
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-2">
                       <Label>Pilotes assignés (plusieurs possibles)</Label>
                       <div className="border rounded-md p-4 space-y-2 max-h-48 overflow-y-auto">
