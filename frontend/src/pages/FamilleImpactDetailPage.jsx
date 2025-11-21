@@ -118,7 +118,9 @@ const FamilleImpactDetailPage = () => {
       nom: fi.nom,
       adresse: fi.adresse || '',
       secteur_id: fi.secteur_id,
-      ville: fi.ville
+      ville: fi.ville,
+      heure_debut: fi.heure_debut || '',
+      heure_fin: fi.heure_fin || ''
     });
     setIsEditDialogOpen(true);
   };
