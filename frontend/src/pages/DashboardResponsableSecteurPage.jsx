@@ -127,8 +127,20 @@ const DashboardResponsableSecteurPage = () => {
           const membres = await getMembresFI(fi.id);
           const presences = await getPresencesFI(fi.id, selectedDate);
           
-          allMembresForDate = [...allMembresForDate, ...membres];
-          allPresencesForDate = [...allPresencesForDate, ...presences];
+          // Marquer chaque membre avec son FI
+          const membresWithFI = membres.map(m => ({ ...m, fi_id: fi.id, fi_name: fi.name || fi.nom }));
+          allMembresForDate = [...allMembresForDate, ...membresWithFI];
+          
+          // Créer une présence pour chaque membre (même s'il n'y a pas de données)
+          membresWithFI.forEach(membre => {
+            const presence = presences.find(p => p.membre_id === membre.id);
+            allPresencesForDate.push({
+              membre_id: membre.id,
+              fi_id: fi.id,
+              date: selectedDate,
+              present: presence ? presence.present : false
+            });
+          });
         } catch (error) {
           console.error(`Erreur chargement KPIs FI ${fi.name}:`, error);
         }
