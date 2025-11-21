@@ -56,9 +56,11 @@ const VisitorsTablePage = () => {
       navigate('/login');
       return;
     }
-    // Reset ref when component mounts
+    // Reset ref when component mounts to force reload
     fidelisationLoadedRef.current = false;
     loadVisitors();
+    // Force reload fidelisation data when page is accessed
+    loadFidelisationData();
   }, []);
 
   useEffect(() => {
