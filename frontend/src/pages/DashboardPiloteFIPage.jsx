@@ -5,7 +5,7 @@ import { getStatsPiloteFI, getMembresFI, createMembreFI, getUser } from '../util
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Users, TrendingUp, Calendar, Percent, UserPlus } from 'lucide-react';
+import { Users, TrendingUp, Calendar, Percent, UserPlus, Settings } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Label } from '../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
