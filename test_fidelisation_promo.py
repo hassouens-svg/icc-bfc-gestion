@@ -165,8 +165,29 @@ def test_api_fidelisation():
     token = login_response.json()["token"]
     print(f"✅ Login réussi")
     
-    # Appeler l'API de fidélisation
+    # Appeler l'API de promotions pour voir les données de novembre
     headers = {"Authorization": f"Bearer {token}"}
+    promo_response = requests.get(
+        "https://churchtrack-1.preview.emergentagent.com/api/analytics/promotions-detailed?ville=Dijon&mois=11&annee=2024",
+        headers=headers
+    )
+    
+    if promo_response.status_code == 200:
+        promo_data = promo_response.json()
+        nov_promo = [p for p in promo_data['promos'] if p['month'] == '2024-11']
+        if nov_promo:
+            p = nov_promo[0]
+            print(f"\n📈 RÉSULTAT API (Promo 2024-11):")
+            print(f"  Pers. Reçues (NA): {p['na_count']}")
+            print(f"  dont NC: {p['nc_count']}")
+            print(f"  Suivis Arrêtés: {p['suivis_arretes_count']}")
+            print(f"  Pers. Suivies: {p['nbre_pers_suivis']}")
+            print(f"  Présences dimanche: {p['total_presences_dimanche']}/{p['expected_presences_dimanche']}")
+            print(f"  Présences jeudi: {p['total_presences_jeudi']}/{p['expected_presences_jeudi']}")
+            print(f"  FIDÉLISATION: {p['fidelisation']}%")
+            return True
+    
+    # Fallback: Appeler l'API de fidélisation générale
     fid_response = requests.get(
         "https://churchtrack-1.preview.emergentagent.com/api/fidelisation/referent",
         headers=headers
