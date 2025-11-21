@@ -69,7 +69,7 @@ const AttributionPilotesPage = () => {
 
     try {
       // Mettre à jour la FI avec le nouveau pilote
-      await updateMembreFI(selectedFI.id, {
+      await updateFamilleImpact(selectedFI.id, {
         ...selectedFI,
         pilote_id: selectedPilote
       });
