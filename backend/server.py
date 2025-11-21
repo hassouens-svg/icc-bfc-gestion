@@ -192,6 +192,7 @@ class VisitorCreate(BaseModel):
     age_range: Optional[str] = None
     visit_date: str
     is_ancien: bool = False
+    ejp: bool = False
 
 class VisitorUpdate(BaseModel):
     firstname: Optional[str] = None
