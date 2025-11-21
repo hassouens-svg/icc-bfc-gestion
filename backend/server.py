@@ -933,8 +933,8 @@ async def stop_tracking(visitor_id: str, stop_data: StopTracking, current_user: 
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
-    # Check permissions for referents
-    if current_user["role"] == "referent":
+    # Check permissions for referents/responsables
+    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_stop_tracking", True):
             raise HTTPException(status_code=403, detail="Permission denied: cannot stop tracking")
