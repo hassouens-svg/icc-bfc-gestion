@@ -1272,7 +1272,7 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     city = current_user["city"]
     
     # If referent or responsable_promo, filter by their assigned month (all years)
-    if current_user["role"] in ["referent", "responsable_promo"]:
+    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
             assigned_month = current_user.get("assigned_month")
