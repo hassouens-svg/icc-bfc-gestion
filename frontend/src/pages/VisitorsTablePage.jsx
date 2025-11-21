@@ -49,7 +49,7 @@ const VisitorsTablePage = () => {
   const [uniquePromos, setUniquePromos] = useState([]);
   const [fidelisationData, setFidelisationData] = useState(null);
   const [loadingFidelisation, setLoadingFidelisation] = useState(false);
-  const fidelisationLoadedRef = React.useRef(false);
+  // Removed fidelisationLoadedRef to allow data refresh
 
   useEffect(() => {
     if (!user) {
