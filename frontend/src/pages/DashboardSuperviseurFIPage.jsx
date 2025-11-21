@@ -420,6 +420,34 @@ const DashboardSuperviseurFIPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Section Gestion d'Accès */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Gestion d'Accès</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600 mb-4">
+              En tant que Superviseur FI, vous pouvez créer des comptes Responsable de Secteur et Pilote.
+            </p>
+            <div className="flex gap-3">
+              <Button 
+                onClick={() => navigate('/gestion-acces')}
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Créer un Responsable de Secteur
+              </Button>
+              <Button 
+                onClick={() => navigate('/gestion-acces')}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Créer un Pilote
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
