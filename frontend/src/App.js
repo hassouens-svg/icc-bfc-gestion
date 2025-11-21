@@ -16,6 +16,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
 import EvangelisationPage from './pages/EvangelisationPage';
 import SecteursPage from './pages/SecteursPage';
+import GererFIPage from './pages/GererFIPage';
 import FamillesImpactPage from './pages/FamillesImpactPage';
 import FamilleImpactDetailPage from './pages/FamilleImpactDetailPage';
 import DashboardPiloteFIPage from './pages/DashboardPiloteFIPage';
