@@ -1420,7 +1420,12 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
     # Pour referent, responsable_promo ET promotions, filtrer par assigned_month
     # Les superviseurs et admins voient toute la ville
     if assigned_month and current_user["role"] in ["referent", "responsable_promo", "promotions"]:
-        query["assigned_month"] = assigned_month
+        # Support multiple months separated by commas (e.g., "2024-08,2025-08,2026-08")
+        months_list = [m.strip() for m in assigned_month.split(',')]
+        if len(months_list) > 1:
+            query["assigned_month"] = {"$in": months_list}
+        else:
+            query["assigned_month"] = assigned_month
     
     all_visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
 
