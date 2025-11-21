@@ -278,15 +278,18 @@ const DashboardSuperAdminCompletPage = () => {
       // Filtrer par ville si une ville spécifique est sélectionnée
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
       
+      console.log(`🔄 loadFIData appelé avec dateFilter: ${dateFilter}, cityFilter: ${cityFilter}`);
+      
       const results = await Promise.allSettled([
         getFIDetailed(cityFilter, dateFilter || selectedDateFI),
         getMembresTable(cityFilter)
       ]);
       
       if (results[0].status === 'fulfilled') {
+        console.log('✅ FI data loaded:', results[0].value);
         setFiData(results[0].value);
       } else {
-        console.error('Error loading FI detailed:', results[0].reason);
+        console.error('❌ Error loading FI detailed:', results[0].reason);
         setFiData(null);
       }
       
