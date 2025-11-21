@@ -2558,8 +2558,6 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
                     # Filtrer d'abord par date, puis compter les présents
                     presences_dim_filtered = [p for p in presences_dim if p.get("date", "").startswith(f"{annee}-{mois_padded}") and p.get("present")]
                     total_presences_dimanche += len(presences_dim_filtered)
-                    if month == "2024-11":  # DEBUG logging
-                        print(f"DEBUG Visitor {visitor.get('firstname')}: Dimanche {len(presences_dim_filtered)} present dates in Nov: {[p.get('date') for p in presences_dim_filtered]}")
                 else:
                     total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
                 
