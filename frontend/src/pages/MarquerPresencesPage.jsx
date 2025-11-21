@@ -118,18 +118,24 @@ const MarquerPresencesPage = () => {
     }
 
     try {
+      // Déterminer si c'est un dimanche ou un jeudi
+      const date = new Date(selectedDate);
+      const dayOfWeek = date.getDay(); // 0 = Dimanche, 4 = Jeudi
+      const type = dayOfWeek === 0 ? 'dimanche' : (dayOfWeek === 4 ? 'jeudi' : 'dimanche');
+      
       const promises = Object.entries(presences).map(([visitorId, isPresent]) => {
         return addPresence(
           visitorId,
           selectedDate,
           isPresent,
-          'dimanche',
+          type,
           comments[visitorId] || null
         );
       });
 
       await Promise.all(promises);
-      toast.success(`${Object.keys(presences).length} présences enregistrées/mises à jour pour le ${selectedDate}`);
+      const dayName = type === 'dimanche' ? 'Dimanche' : 'Jeudi';
+      toast.success(`${Object.keys(presences).length} présences ${dayName} enregistrées pour le ${selectedDate}`);
       
       // Recharger les visiteurs pour rafraîchir les données
       await loadVisitors();
