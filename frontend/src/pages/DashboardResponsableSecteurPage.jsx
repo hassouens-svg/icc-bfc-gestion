@@ -389,8 +389,9 @@ const DashboardResponsableSecteurPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            )}
+                </>
+              )}
+            </div>
 
             {/* Tableau des présences par FI */}
             {selectedDate && presencesTableData.length > 0 && (
