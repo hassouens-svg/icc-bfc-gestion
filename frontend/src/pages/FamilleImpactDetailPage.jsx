@@ -214,23 +214,25 @@ const FamilleImpactDetailPage = () => {
           </div>
         </div>
 
-        {/* Date Selector */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Calendar className="h-5 w-5 mr-2" />
-              Présences du jeudi
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="max-w-xs"
-            />
-          </CardContent>
-        </Card>
+        {/* Date Selector - Caché pour responsable_secteur */}
+        {user?.role !== 'responsable_secteur' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Calendar className="h-5 w-5 mr-2" />
+                Présences du jeudi
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="max-w-xs"
+              />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Membres et Présences */}
         <Card>
