@@ -327,15 +327,28 @@ const DashboardResponsableSecteurPage = () => {
               </div>
             </div>
 
-            {selectedDate && (
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-6 w-6 text-blue-600" />
+                    <div>
+                      <p className="text-xs text-gray-600">Total Membres</p>
+                      <p className="text-xl font-bold text-blue-600">{selectedDate ? kpisFI.totalMembres : allMembres.length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {selectedDate && (
+                <>
                 <Card>
                   <CardContent className="pt-6">
                     <div className="flex items-center space-x-2">
-                      <Users className="h-6 w-6 text-blue-600" />
+                      <UserCheck className="h-6 w-6 text-green-600" />
                       <div>
-                        <p className="text-xs text-gray-600">Total Membres</p>
-                        <p className="text-xl font-bold text-blue-600">{kpisFI.totalMembres}</p>
+                        <p className="text-xs text-gray-600">Présents</p>
+                        <p className="text-xl font-bold text-green-600">{kpisFI.presents}</p>
                       </div>
                     </div>
                   </CardContent>
