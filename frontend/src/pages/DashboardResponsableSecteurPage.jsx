@@ -459,15 +459,14 @@ const DashboardResponsableSecteurPage = () => {
             ) : (
               <div className="space-y-3">
                 {famillesImpact.map((fi) => {
-                  const fiMembres = allMembres.filter(m => 
-                    famillesImpact.find(f => f.id === fi.id && m.fi_name === f.name)
-                  );
-                  const fiMembreCount = allMembres.filter(m => m.fi_name === fi.name).length;
+                  // Compter les membres de cette FI en utilisant fi_id
+                  const fiMembreCount = allMembres.filter(m => m.fi_id === fi.id).length;
                   
                   return (
                     <div
                       key={fi.id}
-                      className="flex justify-between items-center p-4 border rounded-lg"
+                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                      onClick={() => navigate(`/famille-impact/${fi.id}`)}
                     >
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center">
