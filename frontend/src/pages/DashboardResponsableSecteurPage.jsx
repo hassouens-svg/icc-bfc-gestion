@@ -357,18 +357,6 @@ const DashboardResponsableSecteurPage = () => {
                 <Card>
                   <CardContent className="pt-6">
                     <div className="flex items-center space-x-2">
-                      <UserCheck className="h-6 w-6 text-green-600" />
-                      <div>
-                        <p className="text-xs text-gray-600">Présents</p>
-                        <p className="text-xl font-bold text-green-600">{kpisFI.presents}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center space-x-2">
                       <UserX className="h-6 w-6 text-red-600" />
                       <div>
                         <p className="text-xs text-gray-600">Absents</p>
