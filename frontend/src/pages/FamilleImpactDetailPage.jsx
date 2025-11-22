@@ -256,30 +256,32 @@ const FamilleImpactDetailPage = () => {
                             <p className="text-xs text-green-600">Nouveau arrivant</p>
                           )}
                         </div>
-                        <div className="flex items-center space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={presence?.present || false}
-                              onCheckedChange={(checked) => handlePresenceChange(membre.id, checked)}
+                        {user?.role !== 'responsable_secteur' && (
+                          <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                checked={presence?.present || false}
+                                onCheckedChange={(checked) => handlePresenceChange(membre.id, checked)}
+                              />
+                              <Label className="cursor-pointer">Présent</Label>
+                            </div>
+                            <Input
+                              placeholder="Commentaire..."
+                              value={presenceComments[membre.id] || presence?.commentaire || ''}
+                              onChange={(e) => setPresenceComments({...presenceComments, [membre.id]: e.target.value})}
+                              className="w-48"
                             />
-                            <Label className="cursor-pointer">Présent</Label>
+                            {['admin', 'super_admin', 'superviseur_fi', 'pilote_fi'].includes(user?.role) && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteMembre(membre.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
                           </div>
-                          <Input
-                            placeholder="Commentaire..."
-                            value={presenceComments[membre.id] || presence?.commentaire || ''}
-                            onChange={(e) => setPresenceComments({...presenceComments, [membre.id]: e.target.value})}
-                            className="w-48"
-                          />
-                          {['admin', 'super_admin', 'superviseur_fi', 'pilote_fi'].includes(user?.role) && (
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleDeleteMembre(membre.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </div>
                   );
