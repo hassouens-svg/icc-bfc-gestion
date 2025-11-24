@@ -67,6 +67,11 @@ const DashboardResponsableSecteurPage = () => {
       const secteurFIs = fisData.filter(fi => fi.secteur_id === user.assigned_secteur_id);
       setFamillesImpact(secteurFIs);
 
+      // Charger les pilotes de la ville
+      const usersData = await getUsers();
+      const pilotesData = usersData.filter(u => u.role === 'pilote_fi' && u.city === user.city);
+      setPilotes(pilotesData);
+
       // Charger les membres de toutes les FI du secteur avec leurs présences pour calculer fidélisation
       let membres = [];
       for (const fi of secteurFIs) {
