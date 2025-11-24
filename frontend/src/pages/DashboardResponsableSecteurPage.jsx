@@ -16,6 +16,7 @@ const DashboardResponsableSecteurPage = () => {
   const [secteur, setSecteur] = useState(null);
   const [famillesImpact, setFamillesImpact] = useState([]);
   const [allMembres, setAllMembres] = useState([]);
+  const [pilotes, setPilotes] = useState([]);
   const [fidelisation, setFidelisation] = useState(0);
   const [loading, setLoading] = useState(true);
   
