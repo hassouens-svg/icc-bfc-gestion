@@ -507,8 +507,8 @@ async def get_referents(current_user: dict = Depends(get_current_user)):
 
 @api_router.put("/users/{user_id}")
 async def update_user(user_id: str, update_data: UserUpdate, current_user: dict = Depends(get_current_user)):
-    """Update user information (Admin only)"""
-    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin"]:
+    """Update user information"""
+    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin", "superviseur_fi", "responsable_secteur"]:
         raise HTTPException(status_code=403, detail="Only admin can update users")
     
     # Super admin can update users from any city, others only from their city
@@ -519,6 +519,11 @@ async def update_user(user_id: str, update_data: UserUpdate, current_user: dict 
     
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    # Responsable secteur and superviseur_fi can only update pilotes
+    if current_user["role"] in ["responsable_secteur", "superviseur_fi"]:
+        if user["role"] != "pilote_fi":
+            raise HTTPException(status_code=403, detail="Can only update pilotes")
     
     # Build update dict with only provided fields
     update_dict = {}
