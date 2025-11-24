@@ -587,6 +587,22 @@ async def delete_user(user_id: str, current_user: dict = Depends(get_current_use
         await db.users.delete_one({"id": user_id})
         return {"message": "User deleted successfully"}
     
+    # Responsable secteur can delete pilote_fi from their city (even if assigned to FI)
+    if current_user["role"] == "responsable_secteur":
+        if user_to_delete["city"] != current_user["city"]:
+            raise HTTPException(status_code=403, detail="Cannot delete users from other cities")
+        if user_to_delete["role"] != "pilote_fi":
+            raise HTTPException(status_code=403, detail="Can only delete pilotes")
+        
+        # Désassigner le pilote de toutes les FI avant de le supprimer
+        await db.familles_impact.update_many(
+            {"pilote_ids": user_id},
+            {"$pull": {"pilote_ids": user_id}}
+        )
+        
+        await db.users.delete_one({"id": user_id})
+        return {"message": "User deleted successfully"}
+    
     raise HTTPException(status_code=403, detail="Only admin can delete users")
 
 @api_router.put("/users/{user_id}/block")
