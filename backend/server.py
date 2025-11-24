@@ -439,6 +439,18 @@ async def create_user(user_data: UserCreate, current_user: dict = Depends(get_cu
         # Superviseurs can only create referents
         if user_data.role not in ["referent", "accueil", "promotions"]:
             raise HTTPException(status_code=403, detail="You can only create referent, accueil, or promotions users")
+    elif current_user["role"] == "responsable_secteur":
+        # Responsable secteur can only create pilotes
+        if user_data.role != "pilote_fi":
+            raise HTTPException(status_code=403, detail="You can only create pilote_fi users")
+        # Force city to be the same
+        user_data.city = current_user["city"]
+    elif current_user["role"] == "superviseur_fi":
+        # Superviseur FI can create pilotes and responsable_secteur
+        if user_data.role not in ["pilote_fi", "responsable_secteur"]:
+            raise HTTPException(status_code=403, detail="You can only create pilote_fi or responsable_secteur users")
+        # Force city to be the same
+        user_data.city = current_user["city"]
     else:
         raise HTTPException(status_code=403, detail="Not authorized to create users")
     
