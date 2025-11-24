@@ -480,7 +480,59 @@ const GestionAccesPage = () => {
           </div>
         </div>
 
-        {/* Ne pas afficher la liste complète pour superviseur_fi et responsable_secteur */}
+        {/* Liste des pilotes pour responsable_secteur */}
+        {currentUser.role === 'responsable_secteur' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Liste des pilotes de votre secteur ({users.filter(u => u.role === 'pilote_fi').length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {users.filter(u => u.role === 'pilote_fi').length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">Aucun pilote créé. Utilisez le bouton "+ Nouvel Utilisateur" pour créer votre premier pilote.</p>
+                ) : (
+                  users.filter(u => u.role === 'pilote_fi').map((user) => (
+                  <div
+                    key={user.id}
+                    className={`flex justify-between items-center p-4 border rounded-lg ${user.is_blocked ? 'bg-red-50 border-red-200' : 'hover:bg-gray-50'}`}
+                  >
+                    <div>
+                      <p className="font-medium">{user.username}</p>
+                      <p className="text-sm text-gray-500">
+                        Pilote FI - {user.city}
+                      </p>
+                      {user.is_blocked && (
+                        <p className="text-xs text-red-600 font-semibold">BLOQUÉ</p>
+                      )}
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={async () => {
+                          if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${user.username} ?`)) {
+                            try {
+                              await deleteUser(user.id);
+                              toast.success('Pilote supprimé');
+                              loadUsers();
+                            } catch (error) {
+                              toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
+                            }
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Ne pas afficher la liste complète pour superviseur_fi */}
         {!['superviseur_fi', 'responsable_secteur'].includes(currentUser.role) && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
