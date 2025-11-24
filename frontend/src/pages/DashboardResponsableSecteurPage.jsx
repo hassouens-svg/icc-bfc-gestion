@@ -492,6 +492,73 @@ const DashboardResponsableSecteurPage = () => {
           </CardContent>
         </Card>
 
+        {/* Liste des Pilotes du Secteur */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Pilotes de votre secteur</CardTitle>
+            <Button onClick={() => navigate('/gestion-acces')}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Créer un pilote
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {(() => {
+              const pilotesList = pilotes.filter(p => 
+                p.city === user.city && 
+                (p.assigned_secteur_id === secteur?.id || 
+                 famillesImpact.some(fi => fi.pilote_ids?.includes(p.id)))
+              );
+              
+              return pilotesList.length === 0 ? (
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-500">Aucun pilote dans ce secteur</p>
+                  <Button 
+                    onClick={() => navigate('/gestion-acces')} 
+                    className="mt-4"
+                    variant="outline"
+                  >
+                    Créer le premier pilote
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {pilotesList.map((pilote) => {
+                    const assignedFI = famillesImpact.find(fi => fi.pilote_ids?.includes(pilote.id));
+                    return (
+                      <div
+                        key={pilote.id}
+                        className="flex justify-between items-center p-4 border rounded-lg"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <Users className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{pilote.username}</p>
+                            <p className="text-sm text-gray-500">
+                              {assignedFI ? `Assigné à: ${assignedFI.nom || assignedFI.name}` : 'Non assigné'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate('/affectation-pilotes-fi')}
+                          >
+                            {assignedFI ? 'Changer FI' : 'Assigner à une FI'}
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+          </CardContent>
+        </Card>
+
         {/* Liste des Membres */}
         <Card>
           <CardHeader>
