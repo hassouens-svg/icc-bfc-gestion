@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { getVisitors, getUser, createVisitor, deleteVisitor } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
