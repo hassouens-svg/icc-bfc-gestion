@@ -67,6 +67,11 @@ const VisitorsPage = () => {
     let filtered = [...visitors];
     
     // Filter by search term
+    // Filter by city
+    if (filterCity && filterCity !== 'all') {
+      filtered = filtered.filter(v => v.city === filterCity);
+    }
+    
     if (searchTerm) {
       filtered = filtered.filter(v =>
         (v.firstname && v.firstname.toLowerCase().includes(searchTerm.toLowerCase())) ||
