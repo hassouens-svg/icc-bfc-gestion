@@ -112,7 +112,7 @@ const VisitorsPage = () => {
     }
     
     setFilteredVisitors(filtered);
-  }, [searchTerm, filterDate, filterStatus, visitors, sortOrder]);
+  }, [searchTerm, filterDate, filterCity, filterStatus, visitors, sortOrder]);
 
   const loadVisitors = async () => {
     try {
