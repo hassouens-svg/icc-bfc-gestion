@@ -169,7 +169,10 @@ const DashboardSuperAdminCompletPage = () => {
       } else if (selectedView === 'presences') {
         await loadPresencesDimancheData();
       } else if (selectedView === 'cultes') {
-        await loadCulteStatsData();
+        // Redirection automatique vers la page de gestion des statistiques de culte
+        localStorage.setItem('culte_stats_filter_city', selectedCity);
+        navigate('/culte-stats');
+        return;
       }
     } catch (error) {
       if (error.name === 'AbortError') {
