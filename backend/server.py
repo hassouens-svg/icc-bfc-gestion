@@ -3052,14 +3052,14 @@ async def get_presences_dimanche(
 
 @api_router.post("/culte-stats")
 async def create_culte_stats(stats: CulteStatsCreate, current_user: dict = Depends(get_current_user)):
-    """Create culte statistics - Accueil can create for their city"""
-    # Accueil can only create for their city
-    if current_user["role"] == "accueil" and stats.ville != current_user["city"]:
+    """Create culte statistics - Accueil, Pasteur, and Responsable Église can create for their city"""
+    # Accueil, Responsable Église can only create for their city
+    if current_user["role"] in ["accueil", "responsable_eglise"] and stats.ville != current_user["city"]:
         raise HTTPException(status_code=403, detail="Can only create stats for your city")
     
-    # Super admin can create for any city
-    if current_user["role"] not in ["accueil", "super_admin"]:
-        raise HTTPException(status_code=403, detail="Only accueil and super_admin can create culte stats")
+    # Check role permissions
+    if current_user["role"] not in ["accueil", "super_admin", "pasteur", "responsable_eglise"]:
+        raise HTTPException(status_code=403, detail="Not authorized to create culte stats")
     
     culte_stat = CulteStats(
         **stats.model_dump(),
