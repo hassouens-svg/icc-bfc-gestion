@@ -759,6 +759,7 @@ const CulteStatsPage = () => {
                         <td className="py-3 px-4">{stat.date}</td>
                         <td className="py-3 px-4 text-gray-600">{stat.ville}</td>
                         <td className="py-3 px-4 font-medium">{stat.type_culte}</td>
+                        {/* Fidèles Adultes */}
                         <td className="text-center py-3 px-4">
                           {isEditing ? (
                             <input
@@ -772,26 +773,7 @@ const CulteStatsPage = () => {
                             stat.nombre_adultes || 0
                           )}
                         </td>
-                        <td className="text-center py-3 px-4">
-                          {isEditing ? (
-                            <input
-                              type="number"
-                              value={editEnfants}
-                              onChange={(e) => setEditEnfants(e.target.value)}
-                              className="w-20 px-2 py-1 border rounded text-center"
-                              min="0"
-                            />
-                          ) : (
-                            stat.nombre_enfants || 0
-                          )}
-                        </td>
-                        <td className="text-center py-3 px-4 font-medium text-blue-600">
-                          {isEditing ? (
-                            parseInt(editAdultes || 0) + parseInt(editEnfants || 0)
-                          ) : (
-                            (stat.nombre_adultes || 0) + (stat.nombre_enfants || 0)
-                          )}
-                        </td>
+                        {/* STARS */}
                         <td className="text-center py-3 px-4 text-yellow-600">
                           {isEditing ? (
                             <input
@@ -805,11 +787,34 @@ const CulteStatsPage = () => {
                             stat.nombre_stars
                           )}
                         </td>
+                        {/* Total Adultes = Fidèles Adultes + STARS */}
+                        <td className="text-center py-3 px-4 font-medium text-blue-600">
+                          {isEditing ? (
+                            parseInt(editAdultes || 0) + parseInt(editStars || 0)
+                          ) : (
+                            (stat.nombre_adultes || 0) + stat.nombre_stars
+                          )}
+                        </td>
+                        {/* Enfants */}
+                        <td className="text-center py-3 px-4">
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editEnfants}
+                              onChange={(e) => setEditEnfants(e.target.value)}
+                              className="w-20 px-2 py-1 border rounded text-center"
+                              min="0"
+                            />
+                          ) : (
+                            stat.nombre_enfants || 0
+                          )}
+                        </td>
+                        {/* Total Général = Total Adultes + Enfants */}
                         <td className="text-center py-3 px-4 font-bold text-green-600">
                           {isEditing ? (
-                            parseInt(editAdultes || 0) + parseInt(editEnfants || 0) + parseInt(editStars || 0)
+                            parseInt(editAdultes || 0) + parseInt(editStars || 0) + parseInt(editEnfants || 0)
                           ) : (
-                            (stat.nombre_adultes || 0) + (stat.nombre_enfants || 0) + stat.nombre_stars
+                            (stat.nombre_adultes || 0) + stat.nombre_stars + (stat.nombre_enfants || 0)
                           )}
                         </td>
                         <td className="py-3 px-4 text-sm text-gray-600 max-w-xs">
