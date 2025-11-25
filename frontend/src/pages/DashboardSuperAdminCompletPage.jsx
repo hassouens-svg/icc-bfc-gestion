@@ -1027,7 +1027,7 @@ const DashboardSuperAdminCompletPage = () => {
             {/* Actions Rapides Promotions */}
             {canEdit && (
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Button onClick={() => navigate('/visitors')} variant="outline" className="h-20">
+                <Button onClick={() => navigate(`/visitors${selectedCity !== 'all' ? `?city=${selectedCity}` : ''}`)} variant="outline" className="h-20">
                   <div className="text-center">
                     <Users className="h-6 w-6 mx-auto mb-2" />
                     <p>Gérer Visiteurs</p>
