@@ -280,7 +280,25 @@ const VisitorsPage = () => {
           {/* Filters */}
           <Card>
             <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* City Filter - Only for super_admin and pasteur */}
+                {['super_admin', 'pasteur'].includes(user?.role) && (
+                  <div className="space-y-2">
+                    <Label>Ville</Label>
+                    <Select value={filterCity} onValueChange={setFilterCity}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Toutes les villes" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toutes les villes</SelectItem>
+                        <SelectItem value="Dijon">Dijon</SelectItem>
+                        <SelectItem value="Rome">Rome</SelectItem>
+                        <SelectItem value="Chalon-sur-Saone">Chalon-sur-Saone</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                
                 {/* Search */}
                 <div className="space-y-2">
                   <Label>Recherche</Label>
