@@ -2655,10 +2655,10 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         expected_dimanche = total * num_sundays
         expected_jeudi = total * num_thursdays
         
-        # Fidélisation pondérée: 60% dimanche + 40% jeudi
-        fidelisation_dimanche = (total_presences_dimanche / expected_dimanche * 100) if expected_dimanche > 0 else 0
-        fidelisation_jeudi = (total_presences_jeudi / expected_jeudi * 100) if expected_jeudi > 0 else 0
-        fidelisation = (fidelisation_dimanche * 0.6) + (fidelisation_jeudi * 0.4)
+        # Fidélisation: ((Présences Dim / Attendues Dim) × 2 + (Présences Jeu / Attendues Jeu) × 1) / 2
+        taux_dimanche = (total_presences_dimanche / expected_dimanche) if expected_dimanche > 0 else 0
+        taux_jeudi = (total_presences_jeudi / expected_jeudi) if expected_jeudi > 0 else 0
+        fidelisation = ((taux_dimanche * 2) + (taux_jeudi * 1)) / 2 * 100
         
         # CORRECTION: Pers. Suivies = Pers. Reçues (total_all) - Suivis Arrêtés
         nbre_pers_suivis = data["total_visitors_all"] - len(data["suivis_arretes"])
