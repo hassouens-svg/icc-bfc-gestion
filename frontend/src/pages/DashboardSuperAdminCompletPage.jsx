@@ -1427,17 +1427,13 @@ const DashboardSuperAdminCompletPage = () => {
 
         {/* PRESENCES DIMANCHE VIEW - SUPPRIMÉE (pas pertinent) */}
 
-        {/* CULTE STATISTICS VIEW */}
+        {/* CULTE STATISTICS VIEW - Redirection automatique vers /culte-stats */}
         {selectedView === 'cultes' && (
-          <>
-            <DepartmentAlert view="Statistiques des Cultes" />
-            
-            {/* Formulaire de création de statistiques */}
-            <CulteStatsFormSection 
-              user={user} 
-              selectedCity={selectedCity}
-              onStatsAdded={loadCulteStatsData}
-            />
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+            <p className="text-gray-600">Redirection vers la gestion des statistiques...</p>
+          </div>
+        )}
             {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card>
