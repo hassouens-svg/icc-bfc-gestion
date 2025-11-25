@@ -840,8 +840,8 @@ const DashboardSuperAdminCompletPage = () => {
                         <th className="text-center py-3 px-4">dont NC</th>
                         <th className="text-center py-3 px-4">Suivis Arrêtés</th>
                         <th className="text-center py-3 px-4">Pers. Suivies</th>
-                        <th className="text-center py-3 px-4">Présences Dim (60%)</th>
-                        <th className="text-center py-3 px-4">Présences Jeu (40%)</th>
+                        <th className="text-center py-3 px-4">Présences Dimanche (*2)</th>
+                        <th className="text-center py-3 px-4">Présences Jeudi (*1)</th>
                         <th className="text-center py-3 px-4">Fidélisation</th>
                       </tr>
                     </thead>
