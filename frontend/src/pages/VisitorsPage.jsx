@@ -15,11 +15,14 @@ import { toast } from 'sonner';
 
 const VisitorsPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const cityParam = searchParams.get('city');
   const user = getUser();
   const [visitors, setVisitors] = useState([]);
   const [filteredVisitors, setFilteredVisitors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDate, setFilterDate] = useState('');
+  const [filterCity, setFilterCity] = useState(cityParam || (user?.city || ''));
   const [filterStatus, setFilterStatus] = useState('actif');
   const [sortOrder, setSortOrder] = useState('date_arrivee'); // 'date_arrivee' ou 'date_creation'
   const [loading, setLoading] = useState(true);
