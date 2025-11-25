@@ -790,7 +790,11 @@ async def get_stopped_visitors(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/visitors/{visitor_id}")
 async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_user)):
-    visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]}, {"_id": 0})
+    # Super admin and pasteur can view visitors from all cities
+    if current_user["role"] in ["super_admin", "pasteur"]:
+        visitor = await db.visitors.find_one({"id": visitor_id}, {"_id": 0})
+    else:
+        visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]}, {"_id": 0})
     
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
