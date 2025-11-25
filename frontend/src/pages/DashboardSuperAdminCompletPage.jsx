@@ -202,7 +202,7 @@ const DashboardSuperAdminCompletPage = () => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedView, selectedCity, selectedMonth, selectedYear]); // FIXED: Removed loadData to break circular dependency
+  }, [selectedView, selectedCity, selectedMonth, selectedYear, startDate, endDate]); // FIXED: Removed loadData to break circular dependency
 
   const loadPromotionsData = async () => {
     try {
