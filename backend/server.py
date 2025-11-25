@@ -3141,12 +3141,12 @@ async def update_culte_stats(
     if not stat:
         raise HTTPException(status_code=404, detail="Stat not found")
     
-    # Accueil can only update their city
-    if current_user["role"] == "accueil" and stat["ville"] != current_user["city"]:
+    # Accueil and Responsable Église can only update their city
+    if current_user["role"] in ["accueil", "responsable_eglise"] and stat["ville"] != current_user["city"]:
         raise HTTPException(status_code=403, detail="Can only update stats for your city")
     
-    # Only accueil, pasteur and super_admin can update
-    if current_user["role"] not in ["accueil", "super_admin", "pasteur"]:
+    # Only accueil, pasteur, responsable_eglise and super_admin can update
+    if current_user["role"] not in ["accueil", "super_admin", "pasteur", "responsable_eglise"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
     update_dict = {k: v for k, v in updates.dict(exclude_unset=True).items() if v is not None}
