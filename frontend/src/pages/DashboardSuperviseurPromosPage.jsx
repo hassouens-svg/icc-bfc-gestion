@@ -61,46 +61,48 @@ const DashboardSuperviseurPromosPage = () => {
       return months[monthNum] || monthNum;
     };
     
-    // Create a map of assigned_month to promo_name and responsable
+    // Create a map of month number to promo_name
     const monthToPromo = {};
     resposPromo.forEach(respo => {
       if (respo.assigned_month) {
-        // Extract month part (MM from YYYY-MM)
         const monthPart = respo.assigned_month.split('-')[1];
         const monthName = getMonthName(monthPart);
-        monthToPromo[monthPart] = {
-          promo_name: respo.promo_name || respo.assigned_month,
-          month_name: monthName,
-          responsable: respo.username,
-          assigned_month: respo.assigned_month
-        };
+        if (!monthToPromo[monthPart]) {
+          monthToPromo[monthPart] = {
+            promo_name: respo.promo_name || `Promo ${monthName}`,
+            month_name: monthName,
+            month_num: monthPart
+          };
+        }
       }
     });
     
-    // Group visitors by promo name AND year
+    // Group visitors by month ONLY (not by year)
     const promoGroups = {};
     
     visitorsData.forEach(visitor => {
       if (!visitor.assigned_month) return;
       
-      // Extract month and year parts from visitor's assigned_month
+      // Extract month and year parts
       const [year, monthPart] = visitor.assigned_month.split('-');
       const promoInfo = monthToPromo[monthPart];
+      const monthName = getMonthName(monthPart);
       
-      // Create promo key with month name: "Promo Pasteure Mode-Août"
-      let promoBaseName = promoInfo?.promo_name || visitor.assigned_month;
-      if (promoInfo && promoInfo.month_name && !promoBaseName.includes(promoInfo.month_name)) {
-        promoBaseName = `${promoBaseName}-${promoInfo.month_name}`;
-      }
-      
-      // Create unique key by promo name + year
-      const promoKey = `${promoBaseName}_${year}`;
+      // Use month as key (not month+year)
+      const promoKey = monthPart;
       
       if (!promoGroups[promoKey]) {
         promoGroups[promoKey] = {
-          promo_name: promoBaseName,
-          year: year,
-          responsable: promoInfo ? promoInfo.responsable : 'Non assigné',
+          promo_name: promoInfo?.promo_name || `Promo ${monthName}`,
+          month_name: monthName,
+          month_num: monthPart,
+          years: {} // Store data by year
+        };
+      }
+      
+      // Initialize year if not exists
+      if (!promoGroups[promoKey].years[year]) {
+        promoGroups[promoKey].years[year] = {
           nouveaux_arrivants: 0,
           nouveaux_convertis: 0,
           en_cours: 0,
@@ -108,27 +110,26 @@ const DashboardSuperviseurPromosPage = () => {
         };
       }
       
-      // Count NA and NC
+      // Count stats for this year
       if (visitor.types?.includes('Nouveau Arrivant')) {
-        promoGroups[promoKey].nouveaux_arrivants++;
+        promoGroups[promoKey].years[year].nouveaux_arrivants++;
       }
       if (visitor.types?.includes('Nouveau Converti')) {
-        promoGroups[promoKey].nouveaux_convertis++;
+        promoGroups[promoKey].years[year].nouveaux_convertis++;
       }
       
-      // Count suivi status
       if (visitor.tracking_stopped) {
-        promoGroups[promoKey].suivi_arrete++;
+        promoGroups[promoKey].years[year].suivi_arrete++;
       } else {
-        promoGroups[promoKey].en_cours++;
+        promoGroups[promoKey].years[year].en_cours++;
       }
     });
 
-    // Convert to array and sort by year (desc) then promo name
+    // Convert to array and sort by month number
     const stats = Object.values(promoGroups).sort((a, b) => {
-      if (b.year !== a.year) return b.year - a.year; // Plus récent en premier
-      return a.promo_name.localeCompare(b.promo_name);
+      return a.month_num.localeCompare(b.month_num);
     });
+    
     setPromoStats(stats);
   };
   
