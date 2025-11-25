@@ -1434,7 +1434,21 @@ const DashboardSuperAdminCompletPage = () => {
             <p className="text-gray-600">Redirection vers la gestion des statistiques...</p>
           </div>
         )}
- 
+
+        {/* Vue Évangélisation */}
+        {selectedView === 'evangelisation' && (
+          <>
+            <DepartmentAlert view="Évangélisation" />
+            <Card className="bg-gradient-to-br from-red-50 to-pink-100">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-900">
+                  <Heart className="h-6 w-6" />
+                  Statistiques d'Évangélisation
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
                     <h3 className="text-lg font-bold text-purple-900 mb-4">Évangélisation Familles d'Impact</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="text-center p-3 bg-purple-50 rounded">
