@@ -51,34 +51,55 @@ const DashboardSuperviseurPromosPage = () => {
   };
 
   const calculatePromoStats = (visitorsData, resposPromo) => {
+    // Fonction pour convertir le mois numérique en nom
+    const getMonthName = (monthNum) => {
+      const months = {
+        '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
+        '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
+        '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
+      };
+      return months[monthNum] || monthNum;
+    };
+    
     // Create a map of assigned_month to promo_name and responsable
     const monthToPromo = {};
     resposPromo.forEach(respo => {
       if (respo.assigned_month) {
         // Extract month part (MM from YYYY-MM)
         const monthPart = respo.assigned_month.split('-')[1];
+        const monthName = getMonthName(monthPart);
         monthToPromo[monthPart] = {
           promo_name: respo.promo_name || respo.assigned_month,
+          month_name: monthName,
           responsable: respo.username,
           assigned_month: respo.assigned_month
         };
       }
     });
     
-    // Group visitors by their month
+    // Group visitors by promo name AND year
     const promoGroups = {};
     
     visitorsData.forEach(visitor => {
       if (!visitor.assigned_month) return;
       
-      // Extract month part from visitor's assigned_month
-      const monthPart = visitor.assigned_month.split('-')[1];
+      // Extract month and year parts from visitor's assigned_month
+      const [year, monthPart] = visitor.assigned_month.split('-');
       const promoInfo = monthToPromo[monthPart];
-      const promoKey = promoInfo ? promoInfo.promo_name : visitor.assigned_month;
+      
+      // Create promo key with month name: "Promo Pasteure Mode-Août"
+      let promoBaseName = promoInfo?.promo_name || visitor.assigned_month;
+      if (promoInfo && promoInfo.month_name && !promoBaseName.includes(promoInfo.month_name)) {
+        promoBaseName = `${promoBaseName}-${promoInfo.month_name}`;
+      }
+      
+      // Create unique key by promo name + year
+      const promoKey = `${promoBaseName}_${year}`;
       
       if (!promoGroups[promoKey]) {
         promoGroups[promoKey] = {
-          promo_name: promoKey,
+          promo_name: promoBaseName,
+          year: year,
           responsable: promoInfo ? promoInfo.responsable : 'Non assigné',
           nouveaux_arrivants: 0,
           nouveaux_convertis: 0,
@@ -103,7 +124,11 @@ const DashboardSuperviseurPromosPage = () => {
       }
     });
 
-    const stats = Object.values(promoGroups);
+    // Convert to array and sort by year (desc) then promo name
+    const stats = Object.values(promoGroups).sort((a, b) => {
+      if (b.year !== a.year) return b.year - a.year; // Plus récent en premier
+      return a.promo_name.localeCompare(b.promo_name);
+    });
     setPromoStats(stats);
   };
   
