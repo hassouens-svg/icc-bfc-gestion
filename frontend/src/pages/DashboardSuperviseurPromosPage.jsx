@@ -242,6 +242,7 @@ const DashboardSuperviseurPromosPage = () => {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Nom de la Promo</th>
+                    <th className="text-center py-3 px-4">Année</th>
                     <th className="text-center py-3 px-4">Nouveaux Arrivants (NA)</th>
                     <th className="text-center py-3 px-4">Nouveaux Convertis (NC)</th>
                     <th className="text-center py-3 px-4">En Cours de Suivi</th>
@@ -253,6 +254,11 @@ const DashboardSuperviseurPromosPage = () => {
                     promoStats.map((stat, index) => (
                       <tr key={index} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4 font-medium">{stat.promo_name}</td>
+                        <td className="text-center py-3 px-4">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
+                            {stat.year}
+                          </span>
+                        </td>
                         <td className="text-center py-3 px-4">{stat.nouveaux_arrivants}</td>
                         <td className="text-center py-3 px-4">{stat.nouveaux_convertis}</td>
                         <td className="text-center py-3 px-4">
