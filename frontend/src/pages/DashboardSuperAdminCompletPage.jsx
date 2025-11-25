@@ -1434,53 +1434,7 @@ const DashboardSuperAdminCompletPage = () => {
             <p className="text-gray-600">Redirection vers la gestion des statistiques...</p>
           </div>
         )}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Dimanches</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{culteStatsData.global_stats.total_dimanches}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Moy. Fidèles/Dimanche</CardTitle>
-                  <Users className="h-4 w-4 text-indigo-500" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-indigo-600">
-                    {culteStatsData.global_stats.avg_fideles_per_dimanche}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Moy. STARS/Dimanche</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-yellow-500" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {culteStatsData.global_stats.avg_stars_per_dimanche}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Moyen</CardTitle>
-                  <BarChart3 className="h-4 w-4 text-green-500" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">
-                    {culteStatsData.global_stats.avg_total_per_dimanche}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+ 
 
             {/* Filters for Charts */}
             <Card>
