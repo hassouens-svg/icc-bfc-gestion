@@ -1425,9 +1425,16 @@ const DashboardSuperAdminCompletPage = () => {
         {/* PRESENCES DIMANCHE VIEW - SUPPRIMÉE (pas pertinent) */}
 
         {/* CULTE STATISTICS VIEW */}
-        {selectedView === 'cultes' && culteStatsData && (
+        {selectedView === 'cultes' && (
           <>
             <DepartmentAlert view="Statistiques des Cultes" />
+            
+            {/* Formulaire de création de statistiques */}
+            <CulteStatsFormSection 
+              user={user} 
+              selectedCity={selectedCity}
+              onStatsAdded={loadCulteStatsData}
+            />
             {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card>
