@@ -720,7 +720,7 @@ const DashboardSuperAdminCompletPage = () => {
                   <div className="text-2xl font-bold text-indigo-600">
                     {promosData.summary.avg_fidelisation || 0}%
                   </div>
-                  <p className="text-xs text-muted-foreground">60% dim + 40% jeu</p>
+                  <p className="text-xs text-muted-foreground">Dimanche (*2) + Jeudi (*1)</p>
                 </CardContent>
               </Card>
             </div>
