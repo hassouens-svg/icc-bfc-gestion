@@ -460,6 +460,14 @@ backend:
     stuck_count: 3
     priority: "high"
     needs_retesting: false
+
+  - task: "Column Headers Update - Présences Dimanche (*2) and Présences Jeudi (*1)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/DashboardSuperAdminCompletPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
