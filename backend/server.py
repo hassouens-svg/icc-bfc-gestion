@@ -3087,8 +3087,8 @@ async def get_culte_stats(
     # Build query based on role
     query = {}
     
-    # Accueil can only see their city
-    if current_user["role"] == "accueil":
+    # Accueil and Responsable Église can only see their city
+    if current_user["role"] in ["accueil", "responsable_eglise"]:
         query["ville"] = current_user["city"]
     # Pasteur and Super Admin can see all cities
     elif current_user["role"] in ["pasteur", "super_admin"]:
