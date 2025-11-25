@@ -370,13 +370,6 @@ async def login(user_login: UserLogin):
         "city": user_login.city
     }, {"_id": 0})
     
-    logging.info(f"🔍 DEBUG LOGIN: user={user_login.username}, city={user_login.city}")
-    logging.info(f"🔍 DEBUG: user found={user is not None}")
-    if user:
-        logging.info(f"🔍 DEBUG: stored hash={user['password'][:30]}...")
-        pwd_match = verify_password(user_login.password, user["password"])
-        logging.info(f"🔍 DEBUG: password match={pwd_match}")
-    
     if not user or not verify_password(user_login.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
