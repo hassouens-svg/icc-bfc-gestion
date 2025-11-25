@@ -600,7 +600,9 @@ const VisitorsTablePage = () => {
                             </>
                           )}
                           <td className="px-4 py-3 text-sm">
-                            {presenceInfo.commentaire}
+                            <span className={presenceInfo.commentaire !== '-' ? 'text-gray-700 italic' : 'text-gray-400'}>
+                              {presenceInfo.commentaire}
+                            </span>
                           </td>
                           <td className="px-4 py-3 text-center">
                             <div className="flex justify-center space-x-2">
