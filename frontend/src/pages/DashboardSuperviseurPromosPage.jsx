@@ -243,7 +243,6 @@ const DashboardSuperviseurPromosPage = () => {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Nom de la Promo</th>
-                    <th className="text-center py-3 px-4">Année</th>
                     <th className="text-center py-3 px-4">Nouveaux Arrivants (NA)</th>
                     <th className="text-center py-3 px-4">Nouveaux Convertis (NC)</th>
                     <th className="text-center py-3 px-4">En Cours de Suivi</th>
@@ -252,28 +251,68 @@ const DashboardSuperviseurPromosPage = () => {
                 </thead>
                 <tbody>
                   {promoStats.length > 0 ? (
-                    promoStats.map((stat, index) => (
-                      <tr key={index} className="border-b hover:bg-gray-50">
-                        <td className="py-3 px-4 font-medium">{stat.promo_name}</td>
-                        <td className="text-center py-3 px-4">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
-                            {stat.year}
-                          </span>
-                        </td>
-                        <td className="text-center py-3 px-4">{stat.nouveaux_arrivants}</td>
-                        <td className="text-center py-3 px-4">{stat.nouveaux_convertis}</td>
-                        <td className="text-center py-3 px-4">
-                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-medium">
-                            {stat.en_cours}
-                          </span>
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm font-medium">
-                            {stat.suivi_arrete}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
+                    promoStats.map((stat, index) => {
+                      // Sort years in descending order (most recent first)
+                      const sortedYears = Object.keys(stat.years).sort((a, b) => b - a);
+                      
+                      return (
+                        <tr key={index} className="border-b hover:bg-gray-50">
+                          <td className="py-3 px-4 font-medium">{stat.promo_name}</td>
+                          
+                          {/* Nouveaux Arrivants with years */}
+                          <td className="text-center py-3 px-4">
+                            <div className="flex flex-col gap-1">
+                              {sortedYears.map(year => (
+                                <div key={year} className="text-sm">
+                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="font-semibold">{stat.years[year].nouveaux_arrivants}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          
+                          {/* Nouveaux Convertis with years */}
+                          <td className="text-center py-3 px-4">
+                            <div className="flex flex-col gap-1">
+                              {sortedYears.map(year => (
+                                <div key={year} className="text-sm">
+                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="font-semibold">{stat.years[year].nouveaux_convertis}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          
+                          {/* En Cours with years */}
+                          <td className="text-center py-3 px-4">
+                            <div className="flex flex-col gap-1">
+                              {sortedYears.map(year => (
+                                <div key={year} className="text-sm">
+                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">
+                                    {stat.years[year].en_cours}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          
+                          {/* Suivi Arrêté with years */}
+                          <td className="text-center py-3 px-4">
+                            <div className="flex flex-col gap-1">
+                              {sortedYears.map(year => (
+                                <div key={year} className="text-sm">
+                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-medium">
+                                    {stat.years[year].suivi_arrete}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
                       <td colSpan="5" className="text-center py-8 text-gray-500">
