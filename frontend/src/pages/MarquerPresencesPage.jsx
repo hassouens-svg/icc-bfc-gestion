@@ -132,11 +132,17 @@ const MarquerPresencesPage = () => {
       
       console.log(`📅 Date: ${selectedDate}, Jour de semaine: ${dayOfWeek}, Type attribué: ${type}`);
       
-      const promises = Object.entries(presences).map(([visitorId, isPresent]) => {
+      // Collecter tous les visiteurs avec soit présence cochée, soit commentaire
+      const visitorIdsToSave = new Set([
+        ...Object.keys(presences),
+        ...Object.keys(comments).filter(id => comments[id]?.trim())
+      ]);
+
+      const promises = Array.from(visitorIdsToSave).map(visitorId => {
         return addPresence(
           visitorId,
           selectedDate,
-          isPresent,
+          presences[visitorId] !== undefined ? presences[visitorId] : null, // null si pas de présence cochée
           type,
           comments[visitorId] || null
         );
@@ -144,7 +150,7 @@ const MarquerPresencesPage = () => {
 
       await Promise.all(promises);
       const dayName = type === 'dimanche' ? 'Dimanche' : 'Jeudi';
-      toast.success(`${Object.keys(presences).length} présences ${dayName} enregistrées pour le ${selectedDate}`);
+      toast.success(`${visitorIdsToSave.size} présences ${dayName} enregistrées pour le ${selectedDate}`);
       
       // Recharger les visiteurs pour rafraîchir les données
       await loadVisitors();
