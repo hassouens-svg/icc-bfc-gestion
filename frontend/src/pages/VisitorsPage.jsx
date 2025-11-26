@@ -73,6 +73,11 @@ const VisitorsPage = () => {
       filtered = filtered.filter(v => v.city === filterCity);
     }
     
+    // Filter by promo (assigned_month)
+    if (filterPromo && filterPromo !== 'all') {
+      filtered = filtered.filter(v => v.assigned_month === filterPromo);
+    }
+    
     if (searchTerm) {
       filtered = filtered.filter(v =>
         (v.firstname && v.firstname.toLowerCase().includes(searchTerm.toLowerCase())) ||
