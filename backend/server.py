@@ -215,7 +215,7 @@ class CommentAdd(BaseModel):
 
 class PresenceAdd(BaseModel):
     date: str
-    present: bool
+    present: Optional[bool] = None  # Optionnel: peut être null si seulement commentaire
     type: str  # "dimanche" or "jeudi"
     commentaire: Optional[str] = None
 
