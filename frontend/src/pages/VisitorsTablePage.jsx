@@ -209,7 +209,8 @@ const VisitorsTablePage = () => {
         const presenceOnDate = allPresences.find(p => p.date === filters.date);
         
         if (filters.presence === 'present') {
-          return presenceOnDate && presenceOnDate.present ? v : null;
+          // Inclure si présent coché OU si commentaire existe (même sans cocher)
+          return presenceOnDate && (presenceOnDate.present === true || (presenceOnDate.commentaire && presenceOnDate.present === null)) ? v : null;
         } else if (filters.presence === 'absent') {
           return presenceOnDate && presenceOnDate.present === false ? v : null;
         }
