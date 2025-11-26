@@ -817,18 +817,19 @@ test_plan:
   current_focus: 
     - "Trouver ma FI - Map Popup Time Fields Display (heure_debut and heure_fin)"
   stuck_tasks: 
-    - "ICC BFC-ITALIE Nouvelles Fonctionnalités - 8 Features Testing"
     - "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
   test_all: false
   test_priority: "high_first"
   completed_tests:
+    - "Promo Filter on Visitors Page - New Feature Implementation"
+    - "Comment-Only Presence Save - New Feature Implementation"
+    - "VisitorsTablePage Comment Display - Supporting Feature"
     - "Corrections Critiques - Super Admin Multi-City Access & Culte Stats Reload"
     - "CulteStatsPage - Statistics display after save"
     - "Super Admin Visitors Filter - Multi-city access"
     - "VisitorsPage - Remove Voir button, keep trash icon only"
     - "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
     - "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
-    - "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
 
 agent_communication:
   - agent: "main"
