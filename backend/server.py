@@ -145,7 +145,7 @@ class CulteStatsUpdate(BaseModel):
 
 class PresenceEntry(BaseModel):
     date: str
-    present: bool
+    present: Optional[bool] = None  # Optionnel: peut être null si seulement commentaire
     commentaire: Optional[str] = None
 
 class CommentEntry(BaseModel):
