@@ -320,6 +320,33 @@ const VisitorsPage = () => {
                   </div>
                 </div>
 
+                {/* Promo Filter - Show for roles that can see multiple promos */}
+                {['super_admin', 'pasteur', 'superviseur_promos', 'responsable_eglise'].includes(user?.role) && (
+                  <div className="space-y-2">
+                    <Label>Promo</Label>
+                    <Select value={filterPromo} onValueChange={setFilterPromo}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Toutes les promos" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toutes les promos</SelectItem>
+                        {Array.from(new Set(visitors.map(v => v.assigned_month).filter(Boolean)))
+                          .sort((a, b) => b.localeCompare(a))
+                          .map(month => {
+                            const [year, monthNum] = month.split('-');
+                            const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                            const monthName = monthNames[parseInt(monthNum) - 1];
+                            return (
+                              <SelectItem key={month} value={month}>
+                                {monthName} {year}
+                              </SelectItem>
+                            );
+                          })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 {/* Date Filter */}
                 <div className="space-y-2">
                   <Label>Date d'arrivée</Label>
