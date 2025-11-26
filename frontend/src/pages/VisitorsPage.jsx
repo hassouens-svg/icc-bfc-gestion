@@ -24,6 +24,7 @@ const VisitorsPage = () => {
   const [filterDate, setFilterDate] = useState('');
   const [filterCity, setFilterCity] = useState(cityParam || (user?.city || ''));
   const [filterStatus, setFilterStatus] = useState('actif');
+  const [filterPromo, setFilterPromo] = useState('all');
   const [sortOrder, setSortOrder] = useState('date_arrivee'); // 'date_arrivee' ou 'date_creation'
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
