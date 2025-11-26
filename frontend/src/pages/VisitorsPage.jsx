@@ -118,7 +118,7 @@ const VisitorsPage = () => {
     }
     
     setFilteredVisitors(filtered);
-  }, [searchTerm, filterDate, filterCity, filterStatus, visitors, sortOrder]);
+  }, [searchTerm, filterDate, filterCity, filterStatus, filterPromo, visitors, sortOrder]);
 
   const loadVisitors = async () => {
     try {
