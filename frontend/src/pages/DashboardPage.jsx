@@ -338,6 +338,69 @@ const DashboardPage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Team Members Modal */}
+        <dialog id="team-members-modal" className="modal bg-black bg-opacity-50 fixed inset-0 z-50">
+          <div className="modal-box bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto mt-20">
+            <h3 className="font-bold text-lg mb-4">Gérer les Responsables de Promo</h3>
+            <p className="text-sm text-gray-500 mb-4">Maximum 5 personnes</p>
+            
+            <div className="space-y-3">
+              {[0, 1, 2, 3, 4].map((idx) => (
+                <div key={idx} className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder={`Prénom ${idx + 1}`}
+                    className="input input-bordered w-full text-sm border rounded px-3 py-2"
+                    id={`firstname-${idx}`}
+                    defaultValue={user?.team_members?.[idx]?.firstname || ''}
+                  />
+                  <input
+                    type="text"
+                    placeholder={`Nom ${idx + 1}`}
+                    className="input input-bordered w-full text-sm border rounded px-3 py-2"
+                    id={`lastname-${idx}`}
+                    defaultValue={user?.team_members?.[idx]?.lastname || ''}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="modal-action mt-6 flex gap-2">
+              <button
+                className="btn btn-outline px-4 py-2 border rounded"
+                onClick={() => document.getElementById('team-members-modal').close()}
+              >
+                Annuler
+              </button>
+              <button
+                className="btn btn-primary px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={async () => {
+                  const teamMembers = [];
+                  for (let i = 0; i < 5; i++) {
+                    const firstname = document.getElementById(`firstname-${i}`).value.trim();
+                    const lastname = document.getElementById(`lastname-${i}`).value.trim();
+                    if (firstname && lastname) {
+                      teamMembers.push({ firstname, lastname });
+                    }
+                  }
+
+                  try {
+                    // Update user with team_members
+                    await updateUser(user.id, { team_members: teamMembers });
+                    toast.success('Équipe mise à jour avec succès');
+                    // Reload to refresh user data
+                    window.location.reload();
+                  } catch (error) {
+                    toast.error('Erreur lors de la mise à jour');
+                  }
+                }}
+              >
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </dialog>
       </div>
     </Layout>
   );
