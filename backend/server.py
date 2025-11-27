@@ -467,7 +467,9 @@ async def create_user(user_data: UserCreate, current_user: dict = Depends(get_cu
     
     # Create dict from user_data and replace password with hashed version
     user_dict = user_data.model_dump()
+    plain_password = user_dict['password']  # Sauvegarder le mot de passe en clair
     user_dict['password'] = hashed_pw
+    user_dict['plain_password'] = plain_password  # Stocker aussi en clair pour l'export
     
     # Set default permissions for referents if not provided
     if user_data.role == "referent" and not user_dict.get('permissions'):
