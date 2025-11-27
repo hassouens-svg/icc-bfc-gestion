@@ -953,6 +953,18 @@ const GestionAccesPage = () => {
                   />
                 </div>
 
+                {/* Afficher l'ancien mot de passe */}
+                {selectedUser.plain_password && (
+                  <div className="space-y-2">
+                    <Label>Mot de passe actuel</Label>
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                      <p className="text-sm font-mono text-blue-900">
+                        🔑 {selectedUser.plain_password}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label>Nouveau mot de passe *</Label>
                   <Input
