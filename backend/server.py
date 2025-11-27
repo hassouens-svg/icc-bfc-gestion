@@ -761,6 +761,9 @@ async def get_visitors(
     
     # superviseur_promos sees ALL visitors from their city (no month filter)
     
+    # Exclure les visiteurs supprimés (sauf pour super_admin qui peut les voir avec endpoint dédié)
+    query["deleted"] = {"$ne": True}
+    
     visitors = await db.visitors.find(query, {"_id": 0}).to_list(10000)
     
     # For "accueil" role, return limited info (just for consultation)
