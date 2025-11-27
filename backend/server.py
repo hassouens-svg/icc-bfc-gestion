@@ -861,6 +861,19 @@ async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_us
     
     return {"message": "Visitor updated successfully"}
 
+@api_router.get("/visitors/deleted/all")
+async def get_deleted_visitors(current_user: dict = Depends(get_current_user)):
+    """Get all deleted visitors (super_admin only)"""
+    if current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Only super_admin can view deleted visitors")
+    
+    deleted_visitors = await db.visitors.find(
+        {"deleted": True}, 
+        {"_id": 0}
+    ).to_list(10000)
+    
+    return deleted_visitors
+
 @api_router.delete("/visitors/{visitor_id}")
 async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a visitor (soft delete - mark as deleted)"""
