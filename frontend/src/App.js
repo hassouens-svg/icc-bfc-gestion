@@ -14,6 +14,7 @@ import ReferentsPage from './pages/ReferentsPage';
 import CitiesPage from './pages/CitiesPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
+import DeletedVisitorsPage from './pages/DeletedVisitorsPage';
 import EvangelisationPage from './pages/EvangelisationPage';
 import SecteursPage from './pages/SecteursPage';
 import GererFIPage from './pages/GererFIPage';
