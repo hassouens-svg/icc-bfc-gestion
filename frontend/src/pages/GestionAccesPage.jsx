@@ -284,30 +284,59 @@ const GestionAccesPage = () => {
           </div>
           <div className="flex gap-2">
             {user?.role === 'super_admin' && (
-              <Button
-                onClick={async () => {
-                  try {
-                    toast.loading('Génération du fichier...', { id: 'export-creds' });
-                    const blob = await exportCredentials();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `credentials_${new Date().toISOString().split('T')[0]}.xlsx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                    toast.success('Export réussi!', { id: 'export-creds' });
-                  } catch (error) {
-                    toast.error('Erreur lors de l\'export', { id: 'export-creds' });
-                  }
-                }}
-                variant="outline"
-                className="bg-green-50 hover:bg-green-100 border-green-200"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export Identifiants
-              </Button>
+              <>
+                <Button
+                  onClick={async () => {
+                    if (!window.confirm('⚠️ ATTENTION : Ceci va générer de NOUVEAUX mots de passe pour tous les utilisateurs qui n\'ont pas de mot de passe visible. Les utilisateurs devront utiliser ces nouveaux mots de passe. Continuer ?')) {
+                      return;
+                    }
+                    try {
+                      toast.loading('Génération des mots de passe...', { id: 'generate-pwd' });
+                      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/generate-missing-passwords`, {
+                        method: 'POST',
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                          'Content-Type': 'application/json'
+                        }
+                      });
+                      const data = await response.json();
+                      toast.success(`${data.updated_count} mots de passe générés!`, { id: 'generate-pwd' });
+                      loadData(); // Recharger la liste
+                    } catch (error) {
+                      toast.error('Erreur lors de la génération', { id: 'generate-pwd' });
+                    }
+                  }}
+                  variant="outline"
+                  className="bg-orange-50 hover:bg-orange-100 border-orange-200"
+                >
+                  <Key className="h-4 w-4 mr-2" />
+                  Générer Mots de Passe Manquants
+                </Button>
+                <Button
+                  onClick={async () => {
+                    try {
+                      toast.loading('Génération du fichier...', { id: 'export-creds' });
+                      const blob = await exportCredentials();
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `credentials_${new Date().toISOString().split('T')[0]}.xlsx`;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                      window.URL.revokeObjectURL(url);
+                      toast.success('Export réussi!', { id: 'export-creds' });
+                    } catch (error) {
+                      toast.error('Erreur lors de l\'export', { id: 'export-creds' });
+                    }
+                  }}
+                  variant="outline"
+                  className="bg-green-50 hover:bg-green-100 border-green-200"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Identifiants
+                </Button>
+              </>
             )}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
