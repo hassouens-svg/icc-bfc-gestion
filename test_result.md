@@ -503,15 +503,18 @@ backend:
 
   - task: "Promo Filter on Visitors Page - New Feature Implementation"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/VisitorsPage.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ PROMO FILTER FEATURE VERIFIED: Code analysis confirms promo filter is correctly implemented on VisitorsPage.jsx. IMPLEMENTATION DETAILS: (1) ✅ ROLE RESTRICTION: Filter shows only for authorized roles: super_admin, pasteur, superviseur_promos, responsable_eglise (lines 324-348), (2) ✅ FILTER FUNCTIONALITY: Dropdown shows 'Toutes les promos' option plus all unique assigned_months from visitors, (3) ✅ MONTH FORMATTING: Displays months in French format (Jan 2025, Fév 2025, etc.), (4) ✅ FILTER LOGIC: Lines 77-79 filter visitors by assigned_month when specific promo selected, (5) ✅ STATE MANAGEMENT: filterPromo state properly managed and integrated with other filters. CONCLUSION: Promo filter feature is fully implemented and functional as requested. Filter allows authorized users to filter visitors by their assigned month (promo) and displays 'Toutes les promos' to reset filter."
+        comment: "✅ PROMO FILTER FEATURE VERIFIED: Code analysis confirms promo filter is correctly implemented on VisitorsPage.jsx. IMPLEMENTATION DETAILS: (1) ✅ ROLE RESTRICTION: Filter shows only for authorized roles: super_admin, pasteur, superviseur_promos, responsable_eglise (lines 324-348), (2) ✅ FILTER FUNCTIONALITY: Dropdown shows 'Toutes les promos' option plus all unique assigned_months from visitors, (3) ✅ MONTH FORMATTING: Displays mo"
+      - working: false
+        agent: "testing"
+        comment: "❌ PROMO FILTER TESTING BLOCKED: Authentication issues prevented proper testing of promo filter functionality. TESTING RESULTS: (1) ❌ LOGIN FAILURE: Unable to authenticate as super_admin using standard login flows (/login and /acces-specifiques), preventing access to protected pages, (2) ❌ FILTER NOT VISIBLE: When accessing /visitors page without authentication, promo filter is not visible (expected behavior for unauthorized access), (3) ✅ CODE IMPLEMENTATION: Code analysis confirms filter is properly implemented in VisitorsPage.jsx lines 688-712 with correct role restrictions ['super_admin', 'pasteur', 'superviseur_promos', 'responsable_eglise'], (4) ⚠️ AUTHENTICATION SYSTEM: Login system appears to have issues - forms accept credentials but fail to establish proper session. RECOMMENDATION: Fix authentication system to enable proper testing of role-based promo filter functionality."nths in French format (Jan 2025, Fév 2025, etc.), (4) ✅ FILTER LOGIC: Lines 77-79 filter visitors by assigned_month when specific promo selected, (5) ✅ STATE MANAGEMENT: filterPromo state properly managed and integrated with other filters. CONCLUSION: Promo filter feature is fully implemented and functional as requested. Filter allows authorized users to filter visitors by their assigned month (promo) and displays 'Toutes les promos' to reset filter."
 
   - task: "Comment-Only Presence Save - New Feature Implementation"
     implemented: true
