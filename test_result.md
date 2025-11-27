@@ -834,6 +834,36 @@ test_plan:
     - "VisitorsPage - Fix VITE_API_URL error in bulk-add Anciens Visiteurs"
     - "VisitorsTablePage - Display assigned_month in Promo column with month-only filter"
 
+  - task: "Promo Filter on Visitors Page - New Feature Implementation"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/VisitorsPage.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PROMO FILTER FEATURE VERIFIED: Code analysis confirms promo filter is correctly implemented on VisitorsPage.jsx. IMPLEMENTATION DETAILS: (1) ✅ ROLE RESTRICTION: Filter shows only for authorized roles: super_admin, pasteur, superviseur_promos, responsable_eglise (lines 324-348), (2) ✅ FILTER FUNCTIONALITY: Dropdown shows 'Toutes les promos' option plus all unique assigned_months from visitors, (3) ✅ MONTH FORMATTING: Displays months in French format (Jan 2025, Fév 2024, etc.)"
+      - working: false
+        agent: "testing"
+        comment: "❌ PROMO FILTER TESTING BLOCKED: Authentication issues prevented proper testing of promo filter functionality. TESTING RESULTS: (1) ❌ LOGIN FAILURE: Unable to authenticate as super_admin using standard login flows (/login and /acces-specifiques), preventing access to protected pages, (2) ❌ FILTER NOT VISIBLE: When accessing /visitors page without authentication, promo filter is not visible (expected behavior for unauthorized access), (3) ✅ CODE IMPLEMENTATION: Code analysis confirms filter is properly implemented in VisitorsPage.jsx lines 688-712 with correct role restrictions ['super_admin', 'pasteur', 'superviseur_promos', 'responsable_eglise'], (4) ⚠️ AUTHENTICATION SYSTEM: Login system appears to have issues - forms accept credentials but fail to establish proper session. RECOMMENDATION: Fix authentication system to enable proper testing of role-based promo filter functionality."
+
+  - task: "Eye Icons for Password Display - GestionAccesPage Enhancement"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/GestionAccesPage.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Eye icons for password display functionality added to GestionAccesPage.jsx. (1) Individual password visibility toggle: Eye icon next to each username (lines 573-582), click to show/hide password for that specific user, (2) Eye icon color changes: Blue when active (password visible), gray when inactive, (3) Password display: Shows below username when eye is clicked, format '🔑 Mot de passe: [password]' (lines 588-592), (4) Super admin only: Feature only visible for super_admin role, (5) Export enhancement: Export function now includes plain_password field for all users, (6) Backend support: plain_password field stored for new users and password resets."
+      - working: false
+        agent: "testing"
+        comment: "❌ EYE ICONS TESTING BLOCKED: Authentication issues prevented proper testing of password eye icon functionality. TESTING RESULTS: (1) ❌ LOGIN FAILURE: Unable to authenticate as super_admin to access GestionAccesPage with full functionality, (2) ❌ EYE ICONS NOT VISIBLE: When accessing /gestion-acces without proper authentication, eye icons are not visible (expected for non-super_admin users), (3) ✅ CODE IMPLEMENTATION: Code analysis confirms eye icons are properly implemented in GestionAccesPage.jsx lines 573-582 with togglePasswordVisibility function and conditional rendering for super_admin role, (4) ✅ PASSWORD DISPLAY LOGIC: Password display functionality implemented with visiblePasswords state management and proper formatting, (5) ✅ EXPORT FUNCTIONALITY: Export Identifiants button implemented with plain_password support, (6) ⚠️ AUTHENTICATION BARRIER: Cannot test actual eye icon clicks and password visibility toggle due to login system issues. RECOMMENDATION: Fix authentication system to enable proper testing of super_admin-only eye icon functionality."
+
 agent_communication:
   - agent: "main"
     message: "3 critical bugs fixed: (1) CulteStatsPage - Removed setTimeout delays, made loadData synchronous with await for immediate display after save. (2) Super Admin filter - Modified GET /visitors to allow super_admin and pasteur to see all cities by not applying city filter. (3) VisitorsPage - Removed Eye button, keeping only trash icon. Backend already tested successfully. Frontend testing needed to verify UI changes."
