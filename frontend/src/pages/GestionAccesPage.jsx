@@ -94,6 +94,13 @@ const GestionAccesPage = () => {
     }
   };
 
+  const togglePasswordVisibility = (userId) => {
+    setVisiblePasswords(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
+  };
+
   const handleCreateUser = async (e) => {
     e.preventDefault();
     
