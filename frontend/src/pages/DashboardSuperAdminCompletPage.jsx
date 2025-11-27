@@ -35,7 +35,8 @@ import {
   Filter,
   Download,
   UserCheck,
-  UserX
+  UserX,
+  Trash2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import DepartmentAlert from '../components/DepartmentAlert';
