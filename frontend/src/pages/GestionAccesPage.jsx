@@ -29,6 +29,7 @@ const GestionAccesPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [newPassword, setNewPassword] = useState('');
   const [showPasswords, setShowPasswords] = useState(false);
+  const [visiblePasswords, setVisiblePasswords] = useState({}); // Pour gérer l'affichage individuel
   const [newUser, setNewUser] = useState({
     username: '',
     password: '',
