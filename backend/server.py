@@ -71,6 +71,7 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str
     password: str  # hashed
+    plain_password: Optional[str] = None  # Mot de passe en clair pour export (super_admin only)
     city: str
     role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin, responsable_eglise
     telephone: Optional[str] = None  # Phone number (especially for pilote_fi)
