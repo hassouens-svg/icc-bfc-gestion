@@ -143,6 +143,11 @@ export const deleteVisitor = async (id) => {
   return response.data;
 };
 
+export const getDeletedVisitors = async () => {
+  const response = await apiClient.get('/visitors/deleted/all');
+  return response.data;
+};
+
 export const getStoppedVisitors = async () => {
   const response = await apiClient.get('/visitors/stopped');
   return response.data;
