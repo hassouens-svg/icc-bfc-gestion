@@ -863,7 +863,7 @@ async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_us
 
 @api_router.delete("/visitors/{visitor_id}")
 async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_current_user)):
-    """Delete a visitor"""
+    """Delete a visitor (soft delete - mark as deleted)"""
     visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
     
     if not visitor:
@@ -879,7 +879,15 @@ async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_curre
         if visitor["assigned_month"] != current_user.get("assigned_month"):
             raise HTTPException(status_code=403, detail="Vous ne pouvez supprimer que vos visiteurs assignés")
     
-    await db.visitors.delete_one({"id": visitor_id})
+    # Soft delete: marquer comme supprimé au lieu de supprimer physiquement
+    await db.visitors.update_one(
+        {"id": visitor_id},
+        {"$set": {
+            "deleted": True,
+            "deleted_at": datetime.now(timezone.utc).isoformat(),
+            "deleted_by": current_user["username"]
+        }}
+    )
     return {"message": "Visitor deleted successfully"}
 
 @api_router.post("/visitors/{visitor_id}/comment")
