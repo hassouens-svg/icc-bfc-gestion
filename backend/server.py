@@ -83,6 +83,7 @@ class User(BaseModel):
     permissions: Optional[Dict[str, bool]] = None  # For referents permissions
     dashboard_permissions: Optional[Dict[str, bool]] = None  # What user can see in their dashboard (controlled by super_admin)
     is_blocked: bool = False  # For blocking users
+    team_members: Optional[List[Dict[str, str]]] = []  # For responsable_promo - list of team members with firstname/lastname
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
