@@ -653,7 +653,13 @@ async def reset_user_password(user_id: str, password_data: PasswordReset, curren
     
     # Hash new password
     hashed_password = hash_password(password_data.new_password)
-    await db.users.update_one({"id": user_id}, {"$set": {"password": hashed_password}})
+    await db.users.update_one(
+        {"id": user_id}, 
+        {"$set": {
+            "password": hashed_password,
+            "plain_password": password_data.new_password  # Stocker aussi en clair
+        }}
+    )
     return {"message": "Password reset successfully"}
 
 
