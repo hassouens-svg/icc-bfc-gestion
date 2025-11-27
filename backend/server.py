@@ -105,6 +105,7 @@ class UserUpdate(BaseModel):
     assigned_fi_ids: Optional[List[str]] = None  # Multiple FIs for pilote_fi
     assigned_secteur_id: Optional[str] = None
     permissions: Optional[Dict[str, bool]] = None
+    team_members: Optional[List[Dict[str, str]]] = None  # For responsable_promo team
     dashboard_permissions: Optional[Dict[str, bool]] = None
 
 class UserLogin(BaseModel):
