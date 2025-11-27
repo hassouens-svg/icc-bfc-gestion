@@ -3506,6 +3506,59 @@ async def get_arrival_channel_distribution(
     
     return result
 
+@api_router.post("/admin/generate-missing-passwords")
+async def generate_missing_passwords(current_user: dict = Depends(get_current_user)):
+    """
+    Generate new passwords for all users who don't have plain_password stored
+    Accessible only to super_admin
+    """
+    if current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Only super_admin can generate passwords")
+    
+    try:
+        import random
+        import string
+        
+        # Get all users without plain_password
+        users = await db.users.find({
+            "$or": [
+                {"plain_password": {"$exists": False}},
+                {"plain_password": None},
+                {"plain_password": ""}
+            ]
+        }).to_list(10000)
+        
+        updated_count = 0
+        
+        for user in users:
+            # Générer un mot de passe : Prenom + 3 chiffres aléatoires
+            firstname = user.get('username', 'User')
+            # Prendre les 4 premiers caractères du username et capitaliser
+            base = firstname[:4].capitalize()
+            # Ajouter 3 chiffres aléatoires
+            random_digits = ''.join(random.choices(string.digits, k=3))
+            new_password = f"{base}{random_digits}"
+            
+            # Hash le nouveau mot de passe
+            hashed_pwd = hash_password(new_password)
+            
+            # Mettre à jour l'utilisateur
+            await db.users.update_one(
+                {"id": user["id"]},
+                {"$set": {
+                    "password": hashed_pwd,
+                    "plain_password": new_password
+                }}
+            )
+            updated_count += 1
+        
+        return {
+            "message": f"Passwords generated for {updated_count} users",
+            "updated_count": updated_count
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating passwords: {str(e)}")
+
 @api_router.get("/admin/export-credentials")
 async def export_credentials(current_user: dict = Depends(get_current_user)):
     """
