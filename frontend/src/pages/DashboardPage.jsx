@@ -149,10 +149,40 @@ const DashboardPage = () => {
               <UserPlus className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold" data-testid="total-referents">
-                {stats?.total_referents || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">Membres de l'équipe</p>
+              {user?.role === 'responsable_promo' || user?.role === 'referent' ? (
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center mb-3">
+                    <p className="text-sm font-medium text-gray-700">Saisir les responsables (max 5)</p>
+                    <button
+                      onClick={() => {
+                        const modal = document.getElementById('team-members-modal');
+                        if (modal) modal.showModal();
+                      }}
+                      className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                    >
+                      Gérer
+                    </button>
+                  </div>
+                  <div className="text-sm space-y-1">
+                    {user?.team_members && user.team_members.length > 0 ? (
+                      user.team_members.map((member, idx) => (
+                        <div key={idx} className="text-gray-700">
+                          {idx + 1}. {member.firstname} {member.lastname}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-xs text-gray-500 italic">Aucun responsable ajouté</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="text-2xl font-bold" data-testid="total-referents">
+                    {stats?.total_referents || 0}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Membres de l'équipe</p>
+                </>
+              )}
             </CardContent>
           </Card>
 
