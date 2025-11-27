@@ -562,6 +562,9 @@ async def update_user(user_id: str, update_data: UserUpdate, current_user: dict 
     if update_data.permissions is not None:
         update_dict["permissions"] = update_data.permissions
     
+    if update_data.team_members is not None:
+        update_dict["team_members"] = update_data.team_members
+    
     if update_dict:
         await db.users.update_one({"id": user_id}, {"$set": update_dict})
     
