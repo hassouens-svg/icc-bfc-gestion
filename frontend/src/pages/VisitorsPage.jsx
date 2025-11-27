@@ -665,17 +665,72 @@ const VisitorsPage = () => {
           )}
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Rechercher par nom..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-            data-testid="search-input"
-          />
-        </div>
+        {/* Filters */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Search */}
+              <div className="space-y-2">
+                <Label>Recherche</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Nom ou prénom..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                    data-testid="search-input"
+                  />
+                </div>
+              </div>
+
+              {/* Promo Filter - Show for roles that can see multiple promos */}
+              {['super_admin', 'pasteur', 'superviseur_promos', 'responsable_eglise'].includes(user?.role) && (
+                <div className="space-y-2">
+                  <Label>Promo</Label>
+                  <Select value={filterPromo} onValueChange={setFilterPromo}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Toutes les promos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes les promos</SelectItem>
+                      {Array.from(new Set(visitors.map(v => v.assigned_month).filter(Boolean)))
+                        .sort((a, b) => b.localeCompare(a))
+                        .map(month => {
+                          const [year, monthNum] = month.split('-');
+                          const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                          const monthName = monthNames[parseInt(monthNum) - 1];
+                          return (
+                            <SelectItem key={month} value={month}>
+                              {monthName} {year}
+                            </SelectItem>
+                          );
+                        })}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* City Filter - Only for super_admin and pasteur */}
+              {['super_admin', 'pasteur'].includes(user?.role) && (
+                <div className="space-y-2">
+                  <Label>Ville</Label>
+                  <Select value={filterCity} onValueChange={setFilterCity}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Toutes les villes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes les villes</SelectItem>
+                      <SelectItem value="Dijon">Dijon</SelectItem>
+                      <SelectItem value="Rome">Rome</SelectItem>
+                      <SelectItem value="Chalon-sur-Saone">Chalon-sur-Saone</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Visitors List */}
         <Card>
