@@ -566,15 +566,28 @@ const GestionAccesPage = () => {
                     key={user.id}
                     className={`flex justify-between items-center p-4 border rounded-lg ${user.is_blocked ? 'bg-red-50 border-red-200' : 'hover:bg-gray-50'}`}
                   >
-                    <div>
-                      <p className="font-medium">{user.username}</p>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium">{user.username}</p>
+                        {currentUser.role === 'super_admin' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => togglePasswordVisibility(user.id)}
+                            className="h-6 w-6 p-0"
+                            title={visiblePasswords[user.id] ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                          >
+                            <Eye className={`h-4 w-4 ${visiblePasswords[user.id] ? 'text-blue-600' : 'text-gray-400'}`} />
+                          </Button>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-500">
                         {getRoleLabel(user.role)} - {user.city}
                         {user.assigned_month && ` - ${user.assigned_month}`}
                       </p>
-                      {currentUser.role === 'super_admin' && user.plain_password && (
-                        <p className="text-xs text-blue-600 font-mono">
-                          🔑 Mot de passe: {showPasswords ? user.plain_password : '********'}
+                      {currentUser.role === 'super_admin' && visiblePasswords[user.id] && user.plain_password && (
+                        <p className="text-xs text-blue-600 font-mono mt-1">
+                          🔑 Mot de passe: {user.plain_password}
                         </p>
                       )}
                       {user.is_blocked && (
