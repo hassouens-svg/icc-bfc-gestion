@@ -661,7 +661,7 @@ const DashboardSuperAdminCompletPage = () => {
           <>
             <DepartmentAlert view="Promotions" />
             {/* Global KPIs - 5 cartes (NA et NC supprimées car peuvent être mêmes personnes) */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
               {/* 1. Total Personnes Reçues (toutes sont NA) */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
