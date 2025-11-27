@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { getDeletedVisitors } from '../utils/api';
+import { getDeletedVisitors, getUser } from '../utils/api';
 import { Trash2, Calendar, User, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DeletedVisitorsPage = () => {
-  const { user } = useAuth();
+  const user = getUser();
   const [deletedVisitors, setDeletedVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
 
