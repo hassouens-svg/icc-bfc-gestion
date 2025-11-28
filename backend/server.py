@@ -4163,8 +4163,12 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             
             # Ajouter l'image de la campagne EN BAS du texte si présente
             image_html = ""
-            if campagne.get("image_url"):
-                image_html = f'<div style="text-align: center; margin-top: 20px;"><img src="{campagne["image_url"]}" style="max-width: 100%; border-radius: 8px;" /></div>'
+            if campagne.get("image_url") and campagne["image_url"].strip():
+                image_html = f'''
+                <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                    <img src="{campagne["image_url"]}" alt="Affiche" style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto;" />
+                </div>
+                '''
             
             # Ajouter UN SEUL lien RSVP si activé
             rsvp_html = ""
