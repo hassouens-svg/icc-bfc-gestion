@@ -413,6 +413,7 @@ class CampagneCommunication(BaseModel):
     titre: str
     type: str  # "email", "sms", "both"
     message: str
+    image_url: Optional[str] = None  # URL de l'image/affiche jointe
     destinataires: List[Dict[str, str]]  # [{"prenom": "...", "nom": "...", "email": "...", "telephone": "..."}]
     statut: str = "brouillon"  # brouillon, planifie, envoye
     date_envoi: Optional[str] = None  # Pour envoi planifié
@@ -426,6 +427,7 @@ class CampagneCommunicationCreate(BaseModel):
     titre: str
     type: str
     message: str
+    image_url: Optional[str] = None
     destinataires: List[Dict[str, str]]
     date_envoi: Optional[str] = None
     projet_id: Optional[str] = None
