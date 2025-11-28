@@ -16,6 +16,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
 import DeletedVisitorsPage from './pages/DeletedVisitorsPage';
 import EventsManagementPage from './pages/EventsManagementPage';
+import EventsLoginPage from './pages/EventsLoginPage';
 import ProjetsList from './pages/ProjetsList';
 import ProjetDetailPage from './pages/ProjetDetailPage';
 import CommunicationPage from './pages/CommunicationPage';
@@ -72,6 +73,7 @@ function App() {
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/stopped-visitors" element={<StoppedVisitorsPage />} />
           <Route path="/deleted-visitors" element={<DeletedVisitorsPage />} />
+          <Route path="/events-login" element={<EventsLoginPage />} />
           <Route path="/events-management" element={<EventsManagementPage />} />
           <Route path="/events/projets" element={<ProjetsList />} />
           <Route path="/events/projets/:id" element={<ProjetDetailPage />} />
