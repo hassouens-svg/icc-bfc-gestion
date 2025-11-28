@@ -30,9 +30,14 @@ const EventsLayout = ({ children }) => {
       icon: List 
     },
     { 
-      path: '/events/communication', 
-      label: 'Communication', 
+      path: '/events/email', 
+      label: '📧 Email', 
       icon: Mail 
+    },
+    { 
+      path: '/events/sms', 
+      label: '📱 SMS', 
+      icon: MessageSquare 
     },
     { 
       path: '/events/stats', 
