@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EventsLayout from '@/components/EventsLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { MessageSquare, Send, Info, ExternalLink } from 'lucide-react';
+import { MessageSquare, Send, Info, ExternalLink, FolderOpen } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import * as XLSX from 'xlsx';
 import {
   Alert,
@@ -337,20 +345,49 @@ const CommunicationSMSPage = () => {
             </div>
 
             <div>
-              <Label>Destinataires *</Label>
+              <div className="flex justify-between items-center mb-2">
+                <Label>Destinataires * (Maximum 300 numéros)</Label>
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  onClick={() => navigate('/events/contact-groups-sms')}
+                  className="text-green-600"
+                >
+                  <FolderOpen className="w-4 h-4 mr-1" />
+                  Gérer mes Boxes SMS
+                </Button>
+              </div>
+
+              {/* Sélecteur de Box SMS */}
+              {contactGroups.length > 0 && (
+                <div className="mb-3 p-3 bg-green-50 rounded-lg">
+                  <Label className="text-sm mb-2 block">📦 Sélectionner une Box SMS existante</Label>
+                  <Select value={selectedGroup} onValueChange={(value) => {
+                    setSelectedGroup(value);
+                    handleSelectGroup(value);
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir une box de numéros..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {contactGroups.map((group) => (
+                        <SelectItem key={group.id} value={group.id}>
+                          📦 {group.name} ({group.contacts?.length || 0} contacts)
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               
               <div className="flex gap-2 mb-3">
-                <Input
-                  type="file"
-                  accept=".xlsx,.xls,.csv"
-                  onChange={handleFileUpload}
-                />
                 {contacts.length > 0 ? (
-                  <Button type="button" variant="outline" disabled>
+                  <Button type="button" variant="outline" disabled className="flex-1">
                     {contacts.length} contact(s)
                   </Button>
                 ) : (
-                  <Button type="button" variant="outline" onClick={handleAddTestContact}>
+                  <Button type="button" variant="outline" onClick={handleAddTestContact} className="flex-1">
                     + Contact test
                   </Button>
                 )}
