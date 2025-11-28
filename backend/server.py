@@ -4515,7 +4515,7 @@ class PlanningActivite(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     nom: str
     date: str
-    ministeres: List[str]
+    ministeres: str  # Texte libre au lieu de List[str]
     statut: str  # "À venir", "Reporté", "Annulé", "Fait"
     commentaire: str = ""
     ville: str
