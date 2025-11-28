@@ -322,6 +322,121 @@ class NotificationCreate(BaseModel):
     message: str
     data: Optional[Dict[str, Any]] = None
 
+# ==================== EVENTS & PROJECTS MODELS ====================
+
+class Projet(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    titre: str
+    description: Optional[str] = None
+    statut: str = "planifie"  # planifie, en_cours, termine, annule
+    date_debut: Optional[str] = None  # Format: "2025-01-15"
+    date_fin: Optional[str] = None
+    budget_prevu: Optional[float] = 0.0
+    budget_reel: Optional[float] = 0.0
+    ville: str
+    created_by: str  # username
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ProjetCreate(BaseModel):
+    titre: str
+    description: Optional[str] = None
+    statut: str = "planifie"
+    date_debut: Optional[str] = None
+    date_fin: Optional[str] = None
+    budget_prevu: Optional[float] = 0.0
+    ville: str
+
+class ProjetUpdate(BaseModel):
+    titre: Optional[str] = None
+    description: Optional[str] = None
+    statut: Optional[str] = None
+    date_debut: Optional[str] = None
+    date_fin: Optional[str] = None
+    budget_prevu: Optional[float] = None
+    budget_reel: Optional[float] = None
+
+class Tache(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    projet_id: str
+    titre: str
+    description: Optional[str] = None
+    assigne_a: Optional[str] = None  # username
+    statut: str = "a_faire"  # a_faire, en_cours, termine
+    deadline: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class TacheCreate(BaseModel):
+    projet_id: str
+    titre: str
+    description: Optional[str] = None
+    assigne_a: Optional[str] = None
+    deadline: Optional[str] = None
+
+class TacheUpdate(BaseModel):
+    titre: Optional[str] = None
+    description: Optional[str] = None
+    assigne_a: Optional[str] = None
+    statut: Optional[str] = None
+    deadline: Optional[str] = None
+
+class CommentaireProjet(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    projet_id: str
+    user: str  # username
+    texte: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CommentaireProjetCreate(BaseModel):
+    projet_id: str
+    texte: str
+
+class FichierProjet(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    projet_id: str
+    nom: str
+    url: str
+    type: str  # "document", "image", "autre"
+    uploaded_by: str  # username
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CampagneCommunication(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    titre: str
+    type: str  # "email", "sms", "both"
+    message: str
+    destinataires: List[Dict[str, str]]  # [{"prenom": "...", "nom": "...", "email": "...", "telephone": "..."}]
+    statut: str = "brouillon"  # brouillon, planifie, envoye
+    date_envoi: Optional[str] = None  # Pour envoi planifié
+    projet_id: Optional[str] = None  # Lier à un projet si besoin
+    created_by: str  # username
+    enable_rsvp: bool = False  # Activer les réponses Oui/Non/Peut-être
+    stats: Optional[Dict[str, int]] = {"envoyes": 0, "oui": 0, "non": 0, "peut_etre": 0}
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CampagneCommunicationCreate(BaseModel):
+    titre: str
+    type: str
+    message: str
+    destinataires: List[Dict[str, str]]
+    date_envoi: Optional[str] = None
+    projet_id: Optional[str] = None
+    enable_rsvp: bool = False
+
+class RSVP(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    campagne_id: str
+    contact_email: Optional[str] = None
+    contact_telephone: Optional[str] = None
+    reponse: str  # "oui", "non", "peut_etre"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # ==================== AUTH HELPERS ====================
 
 def hash_password(password: str) -> str:
