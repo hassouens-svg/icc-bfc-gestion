@@ -472,37 +472,13 @@ const PlanningActivitesPage = () => {
                       
                       <TableCell>
                         {isEditing ? (
-                          <div className="space-y-2">
-                            <Select onValueChange={(v) => handleMinisteresChange(v, true)}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Ajouter ministère" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {ministeres.map((m) => (
-                                  <SelectItem key={m} value={m}>{m}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <div className="flex flex-wrap gap-1">
-                              {(data.ministeres || []).map((m) => (
-                                <span
-                                  key={m}
-                                  className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded cursor-pointer"
-                                  onClick={() => handleMinisteresChange(m, false)}
-                                >
-                                  {m} ×
-                                </span>
-                              ))}
-                            </div>
-                          </div>
+                          <Input
+                            value={data.ministeres || ''}
+                            onChange={(e) => setEditData({ ...data, ministeres: e.target.value })}
+                            placeholder="Ex: Jeunesse, Musique"
+                          />
                         ) : (
-                          <div className="flex flex-wrap gap-1">
-                            {(activite.ministeres || []).map((m) => (
-                              <span key={m} className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-                                {m}
-                              </span>
-                            ))}
-                          </div>
+                          <span className="text-sm">{activite.ministeres || '-'}</span>
                         )}
                       </TableCell>
                       
