@@ -247,12 +247,18 @@ const CommunicationPage = () => {
                         accept=".xlsx,.xls,.csv"
                         onChange={handleFileUpload}
                       />
-                      <Button type="button" variant="outline" size="sm">
-                        <Upload className="h-4 w-4" />
-                      </Button>
+                      {contacts.length > 0 ? (
+                        <Button type="button" variant="outline" disabled>
+                          {contacts.length} contact(s)
+                        </Button>
+                      ) : (
+                        <Button type="button" variant="outline" onClick={handleAddTestContact}>
+                          + Contact test
+                        </Button>
+                      )}
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      Format requis: colonnes "prenom", "nom", "email", "telephone"
+                      Format Excel: colonnes "prenom", "nom", "email", "telephone" OU cliquez "+ Contact test"
                     </p>
                     {contacts.length > 0 && (
                       <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm text-green-800">
