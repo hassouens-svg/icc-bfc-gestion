@@ -6,13 +6,14 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Mail, MessageSquare, Upload, Send, Calendar, Users } from 'lucide-react';
+import { Checkbox } from '../components/ui/checkbox';
+import { ArrowLeft, Upload, Send } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getUser } from '../utils/api';
 import * as XLSX from 'xlsx';
 
 const CommunicationPage = () => {
-  const user = getUser();
+  const navigate = useNavigate();
   const [campagnes, setCampagnes] = useState([]);
   const [newCampagne, setNewCampagne] = useState({
     titre: '',
@@ -35,10 +36,12 @@ const CommunicationPage = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      const data = await response.json();
-      setCampagnes(data);
+      if (response.ok) {
+        const data = await response.json();
+        setCampagnes(data);
+      }
     } catch (error) {
-      toast.error('Erreur chargement');
+      console.error('Erreur chargement:', error);
     }
   };
 
@@ -54,7 +57,6 @@ const CommunicationPage = () => {
         const sheet = workbook.Sheets[sheetName];
         const data = XLSX.utils.sheet_to_json(sheet);
         
-        // Map columns: prenom, nom, email, telephone
         const formattedContacts = data.map(row => ({
           prenom: row.prenom || row.Prenom || row.Prénom || '',
           nom: row.nom || row.Nom || '',
@@ -114,9 +116,10 @@ const CommunicationPage = () => {
       // Envoyer immédiatement si pas de date planifiée
       if (!newCampagne.date_envoi) {
         await handleEnvoyer(data.id);
+      } else {
+        await loadCampagnes();
       }
       
-      loadCampagnes();
       setNewCampagne({ titre: '', type: 'email', message: '', image_url: '', destinataires: [], date_envoi: '', enable_rsvp: false });
       setContacts([]);
     } catch (error) {
@@ -131,8 +134,6 @@ const CommunicationPage = () => {
 
     setUploadingImage(true);
     try {
-      // For testing purposes, we'll just create a mock URL
-      // In production, this would upload to a cloud service
       const mockUrl = URL.createObjectURL(file);
       setNewCampagne({...newCampagne, image_url: mockUrl});
       toast.success('Image ajoutée');
@@ -158,7 +159,7 @@ const CommunicationPage = () => {
       }
       
       toast.success(`${data.count} message(s) envoyé(s)`);
-      loadCampagnes();
+      await loadCampagnes();
     } catch (error) {
       console.error('Erreur envoi:', error);
       toast.error(`Erreur: ${error.message}`);
@@ -174,16 +175,22 @@ const CommunicationPage = () => {
   return (
     <EventsLayout>
       <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Communication en Masse</h1>
-          <p className="text-gray-500">Envoyez des emails et SMS avec suivi RSVP</p>
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => navigate('/events-management')}>
+            <ArrowLeft className="h-4 w-4 mr-2" /> Retour
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">Communication en Masse</h1>
+            <p className="text-gray-500">Envoyez des emails et SMS à vos membres</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Form */}
           <div className="lg:col-span-2">
             <Card>
-              <CardHeader><CardTitle>Nouvelle Campagne</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>Nouvelle campagne</CardTitle>
+              </CardHeader>
               <CardContent>
                 <form onSubmit={handleCreateCampagne} className="space-y-4">
                   <div>
@@ -199,7 +206,9 @@ const CommunicationPage = () => {
                   <div>
                     <Label>Type de communication *</Label>
                     <Select value={newCampagne.type} onValueChange={(val) => setNewCampagne({...newCampagne, type: val})}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="email">📧 Email uniquement</SelectItem>
                         <SelectItem value="sms">📱 SMS uniquement</SelectItem>
@@ -268,65 +277,47 @@ const CommunicationPage = () => {
                     <p className="text-xs text-gray-500 mt-1">
                       Format Excel: colonnes "prenom", "nom", "email", "telephone" OU cliquez "+ Contact test"
                     </p>
-                    {contacts.length > 0 && (
-                      <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm text-green-800">
-                        ✓ {contacts.length} contacts importés
-                      </div>
-                    )}
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       id="rsvp"
                       checked={newCampagne.enable_rsvp}
-                      onChange={(e) => setNewCampagne({...newCampagne, enable_rsvp: e.target.checked})}
+                      onCheckedChange={(checked) => setNewCampagne({...newCampagne, enable_rsvp: checked})}
                     />
-                    <Label htmlFor="rsvp">Activer les réponses RSVP (Oui/Non/Peut-être)</Label>
-                  </div>
-
-                  <div>
-                    <Label>Envoyer plus tard (optionnel)</Label>
-                    <Input
-                      type="datetime-local"
-                      value={newCampagne.date_envoi}
-                      onChange={(e) => setNewCampagne({...newCampagne, date_envoi: e.target.value})}
-                    />
+                    <Label htmlFor="rsvp" className="cursor-pointer">
+                      Activer les réponses RSVP (Oui/Non/Peut-être)
+                    </Label>
                   </div>
 
                   <Button type="submit" className="w-full">
                     <Send className="h-4 w-4 mr-2" />
-                    {newCampagne.date_envoi ? 'Planifier l\'envoi' : 'Envoyer maintenant'}
+                    Créer et Envoyer
                   </Button>
                 </form>
               </CardContent>
             </Card>
           </div>
 
-          {/* Campagnes récentes */}
           <div>
             <Card>
-              <CardHeader><CardTitle>Campagnes récentes</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>Campagnes récentes</CardTitle>
+              </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {campagnes.slice(0, 5).map((camp) => (
-                    <div key={camp.id} className="border rounded p-3">
-                      <div className="font-semibold text-sm">{camp.titre}</div>
+                    <div key={camp.id} className="p-3 border rounded text-sm">
+                      <div className="font-semibold">{camp.titre}</div>
                       <div className="text-xs text-gray-500">
-                        {camp.type === 'email' ? '📧' : camp.type === 'sms' ? '📱' : '📧📱'} {camp.statut}
+                        {camp.type === 'email' ? '📧' : camp.type === 'sms' ? '📱' : '📧📱'} •{' '}
+                        {camp.statut === 'envoye' ? '✅ Envoyé' : '📝 Brouillon'}
                       </div>
-                      {camp.statut === 'envoye' && (
-                        <div className="text-xs mt-1">
-                          Envoyés: {camp.stats?.envoyes || 0} • Oui: {camp.stats?.oui || 0} • Non: {camp.stats?.non || 0}
-                        </div>
-                      )}
-                      {camp.statut === 'brouillon' && (
-                        <Button size="sm" onClick={() => handleEnvoyer(camp.id)} className="mt-2 w-full">
-                          Envoyer
-                        </Button>
-                      )}
                     </div>
                   ))}
+                  {campagnes.length === 0 && (
+                    <p className="text-center text-gray-500 py-4">Aucune campagne</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
