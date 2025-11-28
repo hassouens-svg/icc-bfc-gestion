@@ -73,7 +73,7 @@ class User(BaseModel):
     password: str  # hashed
     plain_password: Optional[str] = None  # Mot de passe en clair pour export (super_admin only)
     city: str
-    role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin, responsable_eglise
+    role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin, responsable_eglise, gestion_projet
     telephone: Optional[str] = None  # Phone number (especially for pilote_fi)
     assigned_month: Optional[str] = None  # For referents: "2025-01"
     promo_name: Optional[str] = None  # Custom name for promo (instead of "2025-01")
