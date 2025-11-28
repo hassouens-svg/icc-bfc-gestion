@@ -16,7 +16,7 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 import io
 import pandas as pd
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 import base64
 import mimetypes
 
