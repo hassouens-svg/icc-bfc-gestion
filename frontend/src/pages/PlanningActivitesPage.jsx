@@ -27,8 +27,9 @@ const PlanningActivitesPage = () => {
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [villeSelectionnee, setVilleSelectionnee] = useState('');
+  const [villes, setVilles] = useState([]);
+  const [user, setUser] = useState(null);
   
-  const villes = ['Dijon', 'Rome', 'Besançon', 'Autre'];
   const ministeres = [
     'Jeunesse',
     'Évangélisation',
@@ -45,12 +46,58 @@ const PlanningActivitesPage = () => {
   const statuts = ['À venir', 'Reporté', 'Annulé', 'Fait'];
 
   useEffect(() => {
-    const ville = localStorage.getItem('selected_ville_planning');
-    if (ville) {
-      setVilleSelectionnee(ville);
-      loadActivites(ville);
+    // Charger l'utilisateur
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    setUser(userData);
+    
+    // Charger les villes disponibles
+    loadVilles(userData);
+    
+    // Déterminer la ville à afficher
+    const canSeeAllCities = ['super_admin', 'pasteur'].includes(userData.role);
+    
+    if (canSeeAllCities) {
+      // Super admin et pasteur : voir sélection de ville
+      const ville = localStorage.getItem('selected_ville_planning');
+      if (ville) {
+        setVilleSelectionnee(ville);
+        loadActivites(ville);
+      }
+    } else {
+      // Responsable d'église ou gestion_projet : voir seulement leur ville
+      const userCity = userData.city;
+      if (userCity) {
+        setVilleSelectionnee(userCity);
+        loadActivites(userCity);
+      }
     }
   }, []);
+
+  const loadVilles = async (userData) => {
+    try {
+      // Charger les villes depuis la collection cities
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/cities`,
+        {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }
+      );
+      
+      if (!response.ok) {
+        // Fallback si pas d'accès à l'API cities
+        setVilles(['Dijon', 'Rome', 'Besançon']);
+        return;
+      }
+      
+      const data = await response.json();
+      const cityNames = data.map(city => city.name).sort();
+      setVilles(cityNames);
+    } catch (error) {
+      console.error('Erreur chargement villes:', error);
+      // Fallback
+      setVilles(['Dijon', 'Rome', 'Besançon']);
+    }
+  };
 
   const loadActivites = async (ville) => {
     try {
@@ -245,15 +292,18 @@ const PlanningActivitesPage = () => {
     return 'bg-white'; // Blanc pour à venir
   };
 
-  // Si pas de ville sélectionnée, afficher la sélection
-  if (!villeSelectionnee) {
+  // Vérifier si l'utilisateur peut changer de ville
+  const canChangeCity = user && ['super_admin', 'pasteur'].includes(user.role);
+
+  // Si pas de ville sélectionnée ET peut changer de ville, afficher la sélection
+  if (!villeSelectionnee && canChangeCity) {
     return (
       <EventsLayout>
         <div className="max-w-4xl mx-auto p-6">
           <div className="text-center mb-8">
             <Calendar className="w-16 h-16 mx-auto mb-4 text-purple-600" />
             <h1 className="text-3xl font-bold mb-2">Planning des Activités</h1>
-            <p className="text-gray-600">Sélectionnez votre ville pour commencer</p>
+            <p className="text-gray-600">Sélectionnez une ville pour commencer</p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -272,6 +322,20 @@ const PlanningActivitesPage = () => {
       </EventsLayout>
     );
   }
+  
+  // Si pas de ville sélectionnée et ne peut pas changer (responsable), message d'erreur
+  if (!villeSelectionnee) {
+    return (
+      <EventsLayout>
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600">Erreur</h1>
+            <p className="text-gray-600 mt-2">Aucune ville assignée à votre compte.</p>
+          </div>
+        </div>
+      </EventsLayout>
+    );
+  }
 
   return (
     <EventsLayout>
@@ -282,12 +346,14 @@ const PlanningActivitesPage = () => {
             <p className="text-gray-600">Ville: {villeSelectionnee}</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => {
-              setVilleSelectionnee('');
-              localStorage.removeItem('selected_ville_planning');
-            }}>
-              Changer de ville
-            </Button>
+            {canChangeCity && (
+              <Button variant="outline" onClick={() => {
+                setVilleSelectionnee('');
+                localStorage.removeItem('selected_ville_planning');
+              }}>
+                Changer de ville
+              </Button>
+            )}
             <Button onClick={handleAddActivite}>
               <Plus className="w-4 h-4 mr-2" />
               Nouvelle activité
