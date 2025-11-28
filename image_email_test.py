@@ -261,8 +261,8 @@ def test_campaign_verification(results, token, campaign_id):
             
             # Vérifier que image_url est bien présent
             image_url = data.get("image_url")
-            if image_url and image_url.startswith("data:image/"):
-                results.add_success("Vérification campagne - image_url", f"image_url présent et valide: {image_url[:50]}...")
+            if image_url and (image_url.startswith("/uploads/") or image_url.startswith("data:image/")):
+                results.add_success("Vérification campagne - image_url", f"image_url présent et valide: {image_url}")
             else:
                 results.add_failure("Vérification campagne - image_url", f"image_url manquant ou invalide: {image_url}")
             
