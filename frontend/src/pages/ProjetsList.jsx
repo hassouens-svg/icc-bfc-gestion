@@ -139,10 +139,13 @@ const ProjetsList = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {projets.map((projet) => (
-              <Card key={projet.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card key={projet.id} className={`hover:shadow-lg transition-shadow cursor-pointer ${projet.archived ? 'opacity-75' : ''}`}>
                 <CardHeader>
                   <CardTitle className="flex justify-between items-start">
-                    <span className="text-lg">{projet.titre}</span>
+                    <span className="text-lg">
+                      {projet.titre}
+                      {projet.archived && <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Archivé</span>}
+                    </span>
                     <span className={`px-2 py-1 rounded text-xs ${getStatutColor(projet.statut)}`}>
                       {getStatutLabel(projet.statut)}
                     </span>
