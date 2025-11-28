@@ -44,9 +44,10 @@ const ProjetDetailPage = () => {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         })
       ]);
-      const projetData = await projetRes.json();
-      const tachesData = await tachesRes.json();
-      const commentsData = await commentsRes.json();
+      // Clone responses to avoid "body stream already read" error
+      const projetData = await projetRes.clone().json();
+      const tachesData = await tachesRes.clone().json();
+      const commentsData = await commentsRes.clone().json();
       setProjet(projetData);
       setEditData(projetData);
       setTaches(tachesData);
