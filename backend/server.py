@@ -4218,6 +4218,27 @@ async def enregistrer_rsvp(campagne_id: str, reponse: str, contact: str):
             }}
         )
     
+
+@api_router.post("/events/upload-image")
+async def upload_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+    """Upload an image and return base64 data URL"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Check file type
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="Le fichier doit \u00eatre une image")
+    
+    # Read file content
+    contents = await file.read()
+    
+    # Convert to base64
+    base64_encoded = base64.b64encode(contents).decode('utf-8')
+    data_url = f"data:{file.content_type};base64,{base64_encoded}"
+    
+    return {"image_url": data_url}
+
     return {"message": "Réponse enregistrée"}
 
 @api_router.get("/events/campagnes/{campagne_id}/rsvp")
