@@ -4343,6 +4343,69 @@ async def get_rsvp_stats(campagne_id: str, current_user: dict = Depends(get_curr
         "rsvps": rsvps
     }
 
+# ==================== PLANNING DES ACTIVITÉS ====================
+
+class PlanningActivite(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nom: str
+    date: str
+    ministeres: List[str]
+    statut: str  # "À venir", "Reporté", "Annulé", "Fait"
+    commentaire: str = ""
+    ville: str
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+@api_router.get("/planning/activites")
+async def get_activites_planning(ville: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Récupérer toutes les activités pour une ville"""
+    try:
+        verify_token(credentials.credentials)
+        activites = await db.planning_activites.find(
+            {"ville": ville}, 
+            {"_id": 0}
+        ).sort("date", 1).to_list(1000)
+        return activites
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/planning/activites")
+async def create_activite(activite: PlanningActivite, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Créer une nouvelle activité"""
+    try:
+        user = verify_token(credentials.credentials)
+        activite_dict = activite.model_dump()
+        activite_dict["created_by"] = user["username"]
+        await db.planning_activites.insert_one(activite_dict)
+        return {"message": "Activité créée", "id": activite.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/planning/activites/{activite_id}")
+async def update_activite(activite_id: str, activite: PlanningActivite, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Modifier une activité existante"""
+    try:
+        verify_token(credentials.credentials)
+        activite_dict = activite.model_dump()
+        activite_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db.planning_activites.update_one(
+            {"id": activite_id},
+            {"$set": activite_dict}
+        )
+        return {"message": "Activité mise à jour"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/planning/activites/{activite_id}")
+async def delete_activite(activite_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Supprimer une activité"""
+    try:
+        verify_token(credentials.credentials)
+        await db.planning_activites.delete_one({"id": activite_id})
+        return {"message": "Activité supprimée"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
