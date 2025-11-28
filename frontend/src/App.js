@@ -25,6 +25,7 @@ import EventsStatsPage from './pages/EventsStatsPage';
 import PlanningActivitesPage from './pages/PlanningActivitesPage';
 import CommunicationEmailPage from './pages/CommunicationEmailPage';
 import CommunicationSMSPage from './pages/CommunicationSMSPage';
+import RSVPPage from './pages/RSVPPage';
 import EvangelisationPage from './pages/EvangelisationPage';
 import SecteursPage from './pages/SecteursPage';
 import GererFIPage from './pages/GererFIPage';
@@ -85,6 +86,9 @@ function App() {
           <Route path="/events/email" element={<CommunicationEmailPage />} />
           <Route path="/events/sms" element={<CommunicationSMSPage />} />
           <Route path="/events/stats" element={<EventsStatsPage />} />
+          
+          {/* RSVP Page (public - no auth) */}
+          <Route path="/rsvp/:campagneId" element={<RSVPPage />} />
           <Route path="/rsvp/:campagneId/:reponse" element={<RSVPPublicPage />} />
           <Route path="/evangelisation" element={<EvangelisationPage />} />
           
