@@ -36,8 +36,8 @@ const CommunicationPage = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         setCampagnes(data);
       }
     } catch (error) {
@@ -115,13 +115,17 @@ const CommunicationPage = () => {
       
       // Envoyer immédiatement si pas de date planifiée
       if (!newCampagne.date_envoi) {
-        await handleEnvoyer(data.id);
+        const sendResult = await handleEnvoyer(data.id);
+        if (sendResult) {
+          // Réinitialiser seulement si envoi réussi
+          setNewCampagne({ titre: '', type: 'email', message: '', image_url: '', destinataires: [], date_envoi: '', enable_rsvp: false });
+          setContacts([]);
+        }
       } else {
         await loadCampagnes();
+        setNewCampagne({ titre: '', type: 'email', message: '', image_url: '', destinataires: [], date_envoi: '', enable_rsvp: false });
+        setContacts([]);
       }
-      
-      setNewCampagne({ titre: '', type: 'email', message: '', image_url: '', destinataires: [], date_envoi: '', enable_rsvp: false });
-      setContacts([]);
     } catch (error) {
       console.error('Erreur complète:', error);
       toast.error(`Erreur: ${error.message}`);
@@ -155,14 +159,16 @@ const CommunicationPage = () => {
       
       if (!response.ok) {
         toast.error(`Erreur envoi: ${data.detail || 'Échec'}`);
-        return;
+        return false;
       }
       
       toast.success(`${data.count} message(s) envoyé(s)`);
       await loadCampagnes();
+      return true;
     } catch (error) {
       console.error('Erreur envoi:', error);
       toast.error(`Erreur: ${error.message}`);
+      return false;
     }
   };
 
