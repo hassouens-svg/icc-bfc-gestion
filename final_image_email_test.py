@@ -13,7 +13,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://church-campaign-hub.preview.emergentagent.com/api"
+BASE_URL = "https://ministry-hub-32.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 def main():

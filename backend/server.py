@@ -4207,7 +4207,7 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             # Ajouter UN SEUL lien RSVP si activé
             rsvp_html = ""
             if rsvp_enabled:
-                base_url = os.getenv('FRONTEND_URL', 'https://church-campaign-hub.preview.emergentagent.com')
+                base_url = os.getenv('FRONTEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
                 contact_identifier = destinataire.get("email")
                 rsvp_link = f"{base_url}/rsvp/{campagne_id}?contact={contact_identifier}"
                 rsvp_html = f'''
@@ -4412,7 +4412,7 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
         f.write(contents)
     
     # Return full public URL
-    base_url = os.getenv('FRONTEND_URL', 'https://church-campaign-hub.preview.emergentagent.com')
+    base_url = os.getenv('FRONTEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
     public_url = f"{base_url}/uploads/{new_filename}"
     
     return {"image_url": public_url}

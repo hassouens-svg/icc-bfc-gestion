@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://church-campaign-hub.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 def log(message, level="INFO"):
