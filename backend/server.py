@@ -4207,7 +4207,10 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             # Ajouter UN SEUL lien RSVP si activé
             rsvp_html = ""
             if rsvp_enabled:
-                base_url = os.getenv('FRONTEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
+                # Utiliser l'URL depuis REACT_APP_BACKEND_URL mais en remplaçant par le frontend
+                backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
+                # L'URL frontend est la même que le backend (le backend est accessible via /api)
+                base_url = backend_url
                 contact_identifier = destinataire.get("email")
                 rsvp_link = f"{base_url}/rsvp/{campagne_id}?contact={contact_identifier}"
                 rsvp_html = f'''
