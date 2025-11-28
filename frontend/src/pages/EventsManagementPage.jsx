@@ -11,7 +11,7 @@ const EventsManagementPage = () => {
   const navigate = useNavigate();
 
   // Check access
-  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
+  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet', 'responsable_promo', 'referent', 'promotions', 'superviseur_promos'];
   if (!allowedRoles.includes(user?.role)) {
     return (
       <Layout>
