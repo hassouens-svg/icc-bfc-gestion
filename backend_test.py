@@ -12,7 +12,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://impact-dashboard-4.preview.emergentagent.com/api"
+BASE_URL = "https://church-event-hub.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 # Test accounts
