@@ -4178,8 +4178,11 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             try:
                 api_instance.send_transac_email(send_smtp_email)
                 envois_reussis += 1
+                print(f"✅ Email envoyé à {destinataire.get('email')}")
             except ApiException as e:
-                print(f"Erreur envoi email: {e}")
+                print(f"❌ Erreur envoi email à {destinataire.get('email')}: {str(e)}")
+                import traceback
+                traceback.print_exc()
     
     # SMS via Twilio
     if campagne["type"] in ["sms", "both"]:
