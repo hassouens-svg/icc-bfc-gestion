@@ -513,6 +513,32 @@ async def get_referents(current_user: dict = Depends(get_current_user)):
 @api_router.put("/users/{user_id}")
 async def update_user(user_id: str, update_data: UserUpdate, current_user: dict = Depends(get_current_user)):
     """Update user information"""
+    
+    # Cas spécial : permettre aux users de mettre à jour leur propre team_members
+    is_self_update = (user_id == current_user["id"])
+    is_team_members_only = (
+        update_data.team_members is not None and
+        update_data.username is None and
+        update_data.city is None and
+        update_data.role is None and
+        update_data.assigned_month is None and
+        update_data.promo_name is None and
+        update_data.assigned_fi_id is None and
+        update_data.assigned_fi_ids is None and
+        update_data.assigned_secteur_id is None and
+        update_data.permissions is None
+    )
+    
+    # Si c'est une mise à jour de team_members par soi-même, autoriser
+    if is_self_update and is_team_members_only:
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        # Mettre à jour uniquement team_members
+        await db.users.update_one({"id": user_id}, {"$set": {"team_members": update_data.team_members}})
+        return {"message": "Team members updated successfully"}
+    
+    # Sinon, vérifier les permissions normales
     if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin", "superviseur_fi", "responsable_secteur"]:
         raise HTTPException(status_code=403, detail="Only admin can update users")
     
