@@ -109,12 +109,6 @@ const ProjetsList = () => {
     }
   };
 
-      'termine': 'bg-green-100 text-green-800',
-      'annule': 'bg-red-100 text-red-800'
-    };
-    return colors[statut] || 'bg-gray-100 text-gray-800';
-  };
-
   const getStatutLabel = (statut) => {
     const labels = {
       'planifie': 'Planifié',
