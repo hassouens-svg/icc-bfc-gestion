@@ -485,7 +485,7 @@ const CommunicationSMSPage = () => {
               {campagnes.slice(0, 10).map((campagne) => (
                 <div key={campagne.id} className="border rounded-lg p-4 hover:bg-gray-50">
                   <div className="flex justify-between items-start">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-semibold">{campagne.titre}</h3>
                       <p className="text-sm text-gray-600">
                         {campagne.destinataires?.length || 0} destinataire(s)
@@ -493,14 +493,96 @@ const CommunicationSMSPage = () => {
                       <p className="text-sm text-gray-500 mt-1">
                         {campagne.message?.substring(0, 50)}...
                       </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {new Date(campagne.created_at).toLocaleDateString('fr-FR')}
+                      </p>
                     </div>
-                    <span className={`px-3 py-1 rounded text-sm ${
-                      campagne.statut === 'envoye' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {campagne.statut === 'envoye' ? '✅ Envoyé' : '⏳ En attente'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-3 py-1 rounded text-sm ${
+                        campagne.statut === 'envoye' 
+                          ? 'bg-green-100 text-green-800' 
+                          : campagne.archived
+                          ? 'bg-gray-100 text-gray-600'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {campagne.archived ? '📦 Archivé' : campagne.statut === 'envoye' ? '✅ Envoyé' : '⏳ En attente'}
+                      </span>
+                      
+                      {/* Actions */}
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setNewSMS({
+                              titre: campagne.titre + ' (copie)',
+                              message: campagne.message,
+                              destinataires: campagne.destinataires || [],
+                              enable_rsvp: campagne.enable_rsvp || false
+                            });
+                            setContacts(campagne.destinataires || []);
+                            toast.success('Campagne SMS réutilisée');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          title="Réutiliser"
+                        >
+                          🔄
+                        </Button>
+                        
+                        {!campagne.archived && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={async () => {
+                              try {
+                                const response = await fetch(
+                                  `${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes/${campagne.id}/archive`,
+                                  {
+                                    method: 'PUT',
+                                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                                  }
+                                );
+                                if (response.ok) {
+                                  toast.success('Campagne SMS archivée');
+                                  loadCampagnes();
+                                }
+                              } catch (error) {
+                                toast.error('Erreur archivage');
+                              }
+                            }}
+                            title="Archiver"
+                          >
+                            📦
+                          </Button>
+                        )}
+                        
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={async () => {
+                            if (!confirm('Supprimer cette campagne SMS ?')) return;
+                            try {
+                              const response = await fetch(
+                                `${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes/${campagne.id}`,
+                                {
+                                  method: 'DELETE',
+                                  headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                                }
+                              );
+                              if (response.ok) {
+                                toast.success('Campagne SMS supprimée');
+                                loadCampagnes();
+                              }
+                            } catch (error) {
+                              toast.error('Erreur suppression');
+                            }
+                          }}
+                          title="Supprimer"
+                        >
+                          🗑️
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
