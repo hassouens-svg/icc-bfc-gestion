@@ -472,6 +472,18 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ COLUMN HEADERS UPDATE VERIFIED WORKING! Comprehensive testing completed of the column headers update in DashboardSuperAdminCompletPage.jsx. RESULTS: (1) ✅ Successfully accessed Super Admin dashboard using superadmin/superadmin123 credentials, (2) ✅ Located 'Fidélisation par Promo (Mois)' table successfully, (3) ✅ Verified 'Présences Dimanche (*2)' header correctly updated from previous 'Présences Dim (60%)', (4) ✅ Verified 'Présences Jeudi (*1)' header correctly updated from previous 'Présences Jeu (40%)', (5) ✅ Confirmed KPI description updated to 'Dimanche (*2) + Jeudi (*1)' from previous '60% dim + 40% jeu'. Screenshots captured clearly showing the updated column headers in the table. All requested changes are implemented correctly and functioning as expected. The table displays the new multiplier notation (*2) and (*1) instead of the percentage notation (60%) and (40%). Ready for production use."
+
+  - task: "Email Campaign Real Sending Test - My Events Church Communication Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/CommunicationPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "user"
+        comment: "Test d'envoi RÉEL via le bouton 'Créer et Envoyer' de My Events Church. URL: http://localhost:3000/events-login. OBJECTIF: Envoyer un email RÉEL à hassouens@gmail.com en utilisant le bouton de l'interface. ÉTAPES: 1) Connexion superadmin/superadmin123 → /events-management, 2) Navigation Communication, 3) Remplir formulaire (Titre: Test Logo ICC Email, Type: Email uniquement, Message: Bonjour Hassoun, ceci est un test d'envoi depuis My Events Church avec le nouveau template ICC.), 4) Ajouter destinataire RÉEL (+ Contact test → hassouens@gmail.com), 5) ENVOYER VIA LE BOUTON 'Créer et Envoyer', 6) Vérifier toasts 'Campagne créée' puis '1 message(s) envoyé(s)', 7) Vérification post-envoi: formulaire réinitialisé, campagne dans 'Campagnes récentes' avec statut 'Envoyé'. IMPORTANT: Utiliser le bouton de l'interface, pas l'API. Vérifier que l'email arrive vraiment à hassouens@gmail.com."
     status_history:
       - working: "NA"
         agent: "testing"
