@@ -4172,7 +4172,7 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                 to=[{"email": destinataire.get("email"), "name": f"{destinataire.get('prenom', '')} {destinataire.get('nom', '')}"}],
                 subject=campagne["titre"],
                 html_content=html_content,
-                sender={"name": "Impact Centre Chrétien BFC-Italie", "email": "noreply@icc-bfc-italie.com"}
+                sender={"name": "Impact Centre Chrétien BFC-Italie", "email": "hassouens@gmail.com"}
             )
             
             try:

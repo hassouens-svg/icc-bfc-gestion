@@ -16,8 +16,8 @@ import { toast } from 'sonner';
 
 const GestionAccesPage = () => {
   const navigate = useNavigate();
-  const currentUser = getUser();
-  const [user, setUser] = useState(currentUser);
+  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
   const { cities } = useCities(); // Use shared cities from Context
   const [secteurs, setSecteurs] = useState([]);
@@ -44,7 +44,11 @@ const GestionAccesPage = () => {
   });
 
   useEffect(() => {
-    if (!currentUser || !['super_admin', 'pasteur', 'responsable_eglise', 'superviseur_promos', 'superviseur_fi', 'responsable_secteur'].includes(currentUser.role)) {
+    const loggedUser = getUser();
+    setCurrentUser(loggedUser);
+    setUser(loggedUser);
+    
+    if (!loggedUser || !['super_admin', 'pasteur', 'responsable_eglise', 'superviseur_promos', 'superviseur_fi', 'responsable_secteur'].includes(loggedUser.role)) {
       navigate('/dashboard');
       return;
     }
@@ -55,8 +59,8 @@ const GestionAccesPage = () => {
       try {
         const [usersData, secteursData, fisData] = await Promise.all([
           getUsers(),
-          currentUser?.role === 'super_admin' || currentUser?.role === 'superviseur_fi' || currentUser?.role === 'responsable_secteur' ? getSecteurs() : Promise.resolve([]),
-          currentUser?.role === 'super_admin' || currentUser?.role === 'superviseur_fi' || currentUser?.role === 'responsable_secteur' ? getFamillesImpact() : Promise.resolve([])
+          loggedUser?.role === 'super_admin' || loggedUser?.role === 'superviseur_fi' || loggedUser?.role === 'responsable_secteur' ? getSecteurs() : Promise.resolve([]),
+          loggedUser?.role === 'super_admin' || loggedUser?.role === 'superviseur_fi' || loggedUser?.role === 'responsable_secteur' ? getFamillesImpact() : Promise.resolve([])
         ]);
         setUsers(usersData);
         setSecteurs(secteursData);
@@ -69,7 +73,7 @@ const GestionAccesPage = () => {
       }
     };
     fetchData();
-  }, [currentUser, navigate]);
+  }, [navigate]);
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
