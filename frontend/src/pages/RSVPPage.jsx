@@ -32,6 +32,18 @@ const RSVPPage = () => {
     }
   };
 
+  // Fonction pour obtenir l'URL complète de l'image
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return null;
+    // Si c'est déjà une URL complète
+    if (imageUrl.startsWith('http')) return imageUrl;
+    // Si c'est un chemin relatif
+    if (imageUrl.startsWith('/')) {
+      return `${window.location.protocol}//${window.location.host}${imageUrl}`;
+    }
+    return imageUrl;
+  };
+
   const handleResponse = async (reponse) => {
     setLoading(true);
     try {
@@ -116,6 +128,18 @@ const RSVPPage = () => {
             </p>
           )}
         </div>
+
+        {/* Image de la campagne si présente */}
+        {campagne && campagne.image_url && (
+          <div className="mb-6 text-center">
+            <img 
+              src={getImageUrl(campagne.image_url)} 
+              alt="Affiche événement" 
+              className="max-w-full h-auto rounded-lg shadow-lg mx-auto"
+              style={{ maxHeight: '400px' }}
+            />
+          </div>
+        )}
 
         {/* Message */}
         <div className="bg-purple-50 rounded-lg p-6 mb-8">
