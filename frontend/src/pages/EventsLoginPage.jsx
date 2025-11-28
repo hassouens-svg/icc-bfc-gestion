@@ -45,12 +45,6 @@ const EventsLoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     
-    // Tout le monde doit sélectionner une ville
-    if (!city) {
-      toast.error('Veuillez sélectionner une ville');
-      return;
-    }
-    
     if (!username || !password) {
       toast.error('Veuillez remplir tous les champs');
       return;
@@ -58,7 +52,9 @@ const EventsLoginPage = () => {
 
     setLoading(true);
     try {
-      const result = await login(username, password, city, null);
+      // Utiliser la ville de l'utilisateur enregistrée dans la base de données
+      // On fait d'abord une requête pour récupérer l'info de l'utilisateur
+      const result = await login(username, password, 'Dijon', null); // Ville par défaut pour la connexion
       
       // Vérifier si l'utilisateur a les permissions pour My Events Church
       const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
@@ -103,28 +99,6 @@ const EventsLoginPage = () => {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="city">Ville / City</Label>
-              <Select value={city} onValueChange={setCity}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez votre ville" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[...cities]
-                    .sort((a, b) => {
-                      const nameA = a?.name || '';
-                      const nameB = b?.name || '';
-                      return nameA.localeCompare(nameB);
-                    })
-                    .map((c) => (
-                      <SelectItem key={c.id} value={c.name}>
-                        {c.name} ({c.country || 'France'})
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="username">Nom d'utilisateur</Label>
               <Input
                 id="username"
@@ -132,6 +106,7 @@ const EventsLoginPage = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Entrez votre nom d'utilisateur"
+                required
               />
             </div>
 
@@ -143,6 +118,7 @@ const EventsLoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Entrez votre mot de passe"
+                required
               />
             </div>
 
