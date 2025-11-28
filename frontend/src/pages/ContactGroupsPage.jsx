@@ -132,8 +132,13 @@ const ContactGroupsPage = () => {
       <div className="p-6 max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold">📦 Boxes de Contacts</h1>
-            <p className="text-gray-600">Créez des groupes de contacts réutilisables pour vos envois</p>
+            <div className="flex items-center gap-3 mb-2">
+              <Button variant="outline" onClick={() => window.history.back()}>
+                ← Retour
+              </Button>
+              <h1 className="text-3xl font-bold">📦 Boxes Email</h1>
+            </div>
+            <p className="text-gray-600">Créez des groupes de contacts email réutilisables</p>
           </div>
           <Button onClick={() => setShowCreate(!showCreate)}>
             <Plus className="w-4 h-4 mr-2" />
