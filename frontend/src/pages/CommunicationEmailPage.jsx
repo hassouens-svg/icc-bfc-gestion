@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EventsLayout from '@/components/EventsLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Mail, Upload, Send } from 'lucide-react';
+import { Mail, Upload, Send, FolderOpen } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import * as XLSX from 'xlsx';
 
 const CommunicationEmailPage = () => {
@@ -306,7 +314,41 @@ const CommunicationEmailPage = () => {
 
             {/* Import contacts */}
             <div>
-              <Label>Destinataires * (Maximum 300 emails)</Label>
+              <div className="flex justify-between items-center mb-2">
+                <Label>Destinataires * (Maximum 300 emails)</Label>
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  onClick={() => navigate('/events/contact-groups')}
+                  className="text-purple-600"
+                >
+                  <FolderOpen className="w-4 h-4 mr-1" />
+                  Gérer mes Boxes
+                </Button>
+              </div>
+
+              {/* Sélecteur de Box */}
+              {contactGroups.length > 0 && (
+                <div className="mb-3 p-3 bg-purple-50 rounded-lg">
+                  <Label className="text-sm mb-2 block">📦 Sélectionner une Box existante</Label>
+                  <Select value={selectedGroup} onValueChange={(value) => {
+                    setSelectedGroup(value);
+                    handleSelectGroup(value);
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir une box de contacts..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {contactGroups.map((group) => (
+                        <SelectItem key={group.id} value={group.id}>
+                          📦 {group.name} ({group.contacts?.length || 0} contacts)
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               
               {/* Bouton Contact Test */}
               <div className="mb-3">
