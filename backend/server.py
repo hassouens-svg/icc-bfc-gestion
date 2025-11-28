@@ -4381,8 +4381,9 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
     with open(file_path, "wb") as f:
         f.write(contents)
     
-    # Return public URL (relative to frontend)
-    public_url = f"/uploads/{new_filename}"
+    # Return full public URL
+    base_url = os.getenv('FRONTEND_URL', 'https://church-campaign-hub.preview.emergentagent.com')
+    public_url = f"{base_url}/uploads/{new_filename}"
     
     return {"image_url": public_url}
 
