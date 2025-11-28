@@ -38,7 +38,8 @@ const ProjetsList = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      const data = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const data = await response.clone().json();
       setProjets(data);
     } catch (error) {
       toast.error('Erreur lors du chargement');

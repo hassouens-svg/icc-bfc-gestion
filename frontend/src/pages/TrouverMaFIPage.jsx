@@ -32,7 +32,8 @@ const TrouverMaFIPage = () => {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
       );
-      const data = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const data = await response.clone().json();
       
       if (data && data.length > 0) {
         return {
@@ -84,7 +85,8 @@ const TrouverMaFIPage = () => {
       // 2. Récupérer toutes les FI avec adresses
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backendUrl}/api/public/fi/all`);
-      const fis = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const fis = await response.clone().json();
       
       if (fis.length === 0) {
         toast.warning('Aucune Famille d\'Impact trouvée avec adresse');

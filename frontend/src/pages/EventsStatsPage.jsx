@@ -24,7 +24,8 @@ const EventsStatsPage = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      const data = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const data = await response.clone().json();
       // Filter only sent campaigns
       const sentCampagnes = data.filter(c => c.statut === 'envoye');
       setCampagnes(sentCampagnes);
@@ -40,7 +41,8 @@ const EventsStatsPage = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes/${campagneId}/rsvp`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      const data = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const data = await response.clone().json();
       setRsvpDetails(data.rsvps || []);
       setSelectedCampagne(data.campagne);
     } catch (error) {
