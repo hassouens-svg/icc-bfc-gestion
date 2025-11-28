@@ -4276,6 +4276,20 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
     return {"message": "Campagne envoyée", "count": envois_reussis}
 
 # RSVP PUBLIC (sans authentification)
+@api_router.get("/public/campagne/{campagne_id}")
+async def get_public_campagne(campagne_id: str):
+    """Récupérer les détails d'une campagne (public)"""
+    try:
+        campagne = await db.communication_campaigns.find_one(
+            {"id": campagne_id},
+            {"_id": 0, "titre": 1, "message": 1, "date_envoi": 1}
+        )
+        if not campagne:
+            raise HTTPException(status_code=404, detail="Campagne non trouvée")
+        return campagne
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/public/rsvp/{campagne_id}")
 async def enregistrer_rsvp(campagne_id: str, reponse: str, contact: str):
     """Record RSVP response (public endpoint)"""
