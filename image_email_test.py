@@ -314,9 +314,9 @@ def main():
     if image_url:
         campaign_id = test_email_with_image(results, token, image_url)
     else:
-        # Utiliser une image base64 par défaut pour le test
-        default_image_url = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
-        campaign_id = test_email_with_image(results, token, default_image_url)
+        # Skip email test if image upload failed
+        results.add_failure("Email avec image", "Skipped due to image upload failure")
+        campaign_id = None
     
     # Test 3: Vérifier logs backend
     check_backend_logs(results)
