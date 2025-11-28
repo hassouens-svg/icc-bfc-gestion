@@ -4163,7 +4163,7 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             
             # Ajouter l'image de la campagne EN BAS du texte si présente
             image_html = ""
-            image_url = campagne.get("image_url", "").strip()
+            image_url = (campagne.get("image_url") or "").strip()
             if image_url:
                 print(f"DEBUG: Ajout image dans email - URL: {image_url[:100]}...")
                 image_html = f'''
