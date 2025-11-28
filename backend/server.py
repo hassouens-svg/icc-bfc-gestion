@@ -4203,18 +4203,20 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                 import traceback
                 traceback.print_exc()
     
-    # SMS via Twilio
+    # SMS via Brevo
     if campagne["type"] in ["sms", "both"]:
-        from twilio.rest import Client
+        import sib_api_v3_sdk
+        from sib_api_v3_sdk.rest import ApiException
         
-        twilio_account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-        twilio_auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-        twilio_phone = os.environ.get('TWILIO_PHONE_NUMBER')
+        brevo_api_key = os.environ.get('BREVO_API_KEY')
+        brevo_sender = os.environ.get('BREVO_SMS_SENDER', '0646989818')
         
-        if not all([twilio_account_sid, twilio_auth_token, twilio_phone]):
-            print("Twilio non configuré - SMS ignorés")
+        if not brevo_api_key:
+            print("Brevo non configuré - SMS ignorés")
         else:
-            client = Client(twilio_account_sid, twilio_auth_token)
+            configuration = sib_api_v3_sdk.Configuration()
+            configuration.api_key['api-key'] = brevo_api_key
+            api_instance = sib_api_v3_sdk.TransactionalSMSApi(sib_api_v3_sdk.ApiClient(configuration))
             
             for destinataire in campagne["destinataires"]:
                 if not destinataire.get("telephone"):
@@ -4230,7 +4232,7 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                     rsvp_base = f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/rsvp/{campagne_id}"
                     message += f"\n\nRépondez: {rsvp_base}/oui (Oui) | {rsvp_base}/non (Non) | {rsvp_base}/peut_etre (Peut-être)"
                 
-                # Format phone number (add +33 if starts with 0)
+                # Format phone number (Brevo format: +33XXXXXXXXX)
                 phone = destinataire.get("telephone", "").strip()
                 if phone.startswith("0"):
                     phone = "+33" + phone[1:]
@@ -4238,12 +4240,16 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                     phone = "+33" + phone
                 
                 try:
-                    client.messages.create(
-                        body=message,
-                        from_=twilio_phone,
-                        to=phone
+                    send_sms = sib_api_v3_sdk.SendTransacSms(
+                        sender=brevo_sender,
+                        recipient=phone,
+                        content=message,
+                        type="transactional"
                     )
+                    api_instance.send_transac_sms(send_sms)
                     envois_reussis += 1
+                except ApiException as e:
+                    print(f"Erreur envoi SMS Brevo à {phone}: {e}")
                 except Exception as e:
                     print(f"Erreur envoi SMS à {phone}: {e}")
     
