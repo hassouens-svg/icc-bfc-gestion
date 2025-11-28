@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Plus, Calendar, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Calendar, Edit, Trash2, Eye, Archive, ArchiveRestore, Filter } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { getUser } from '../utils/api';
@@ -17,6 +17,7 @@ const ProjetsList = () => {
   const [projets, setProjets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
   const [newProjet, setNewProjet] = useState({
     titre: '',
     description: '',
