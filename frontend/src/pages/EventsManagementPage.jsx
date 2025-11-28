@@ -82,7 +82,28 @@ const EventsManagementPage = () => {
         </div>
 
         {/* Quick Actions Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Planning des Activités */}
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => navigate('/events/planning')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-orange-500" />
+                Planning des Activités
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">
+                Planifier et suivre vos activités par ville avec statuts et commentaires
+              </p>
+              <Button className="mt-4 w-full" variant="outline">
+                Accéder au Planning →
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Projets/Événements */}
           <Card 
             className="cursor-pointer hover:shadow-lg transition-shadow"
