@@ -122,12 +122,12 @@ const CitiesPage = () => {
         }
       });
       
+      const stats = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || 'Erreur de chargement');
+        throw new Error(stats.detail || 'Erreur de chargement');
       }
       
-      const stats = await response.json();
       setCityStats(stats);
     } catch (error) {
       console.error('Error loading city stats:', error);
