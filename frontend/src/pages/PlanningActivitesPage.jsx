@@ -417,33 +417,6 @@ const PlanningActivitesPage = () => {
           </div>
         </div>
 
-        {/* Légende des couleurs */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <h3 className="text-sm font-semibold mb-2">Légende des couleurs :</h3>
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-white border rounded"></div>
-              <span>À venir</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-green-50 border rounded"></div>
-              <span>✅ Fait</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-red-50 border rounded"></div>
-              <span>⚠️ En retard</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-yellow-50 border rounded"></div>
-              <span>Reporté</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-gray-100 border rounded"></div>
-              <span>Annulé</span>
-            </div>
-          </div>
-        </div>
-
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <Table>
             <TableHeader>
