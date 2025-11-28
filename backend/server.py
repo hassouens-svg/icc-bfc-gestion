@@ -4385,14 +4385,14 @@ async def enregistrer_rsvp(data: dict):
 
 @api_router.post("/events/upload-image")
 async def upload_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
-    """Upload an image and save it to public folder"""
+    """Upload an image and save it to backend uploads folder"""
     allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
     # Check file type
     if not file.content_type.startswith('image/'):
-        raise HTTPException(status_code=400, detail="Le fichier doit \u00eatre une image")
+        raise HTTPException(status_code=400, detail="Le fichier doit être une image")
     
     # Generate unique filename
     import hashlib
@@ -4401,8 +4401,8 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
     extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
     new_filename = f"campaign_{timestamp}_{file_hash}.{extension}"
     
-    # Save to frontend public folder
-    upload_dir = "/app/frontend/public/uploads"
+    # Save to backend uploads folder (accessible via API)
+    upload_dir = "/app/backend/uploads"
     os.makedirs(upload_dir, exist_ok=True)
     file_path = os.path.join(upload_dir, new_filename)
     
@@ -4411,11 +4411,26 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
     with open(file_path, "wb") as f:
         f.write(contents)
     
-    # Return full public URL
-    base_url = os.getenv('FRONTEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
-    public_url = f"{base_url}/uploads/{new_filename}"
+    # Return API URL (served by backend, accessible publicly)
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
+    public_url = f"{backend_url}/api/uploads/{new_filename}"
     
     return {"image_url": public_url}
+
+@api_router.get("/uploads/{filename}")
+async def get_uploaded_image(filename: str):
+    """Serve uploaded images publicly (no authentication required)"""
+    file_path = f"/app/backend/uploads/{filename}"
+    
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    # Detect MIME type
+    mime_type, _ = mimetypes.guess_type(file_path)
+    if not mime_type:
+        mime_type = "image/jpeg"
+    
+    return FileResponse(file_path, media_type=mime_type)
 
     return {"message": "Réponse enregistrée"}
 
