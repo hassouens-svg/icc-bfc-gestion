@@ -115,75 +115,78 @@ const RSVPPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-6">
-      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Calendar className="w-16 h-16 mx-auto text-purple-600 mb-4" />
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Confirmation de Présence
-          </h1>
-          {campagne && (
-            <p className="text-gray-600 text-lg">
-              {campagne.titre}
-            </p>
-          )}
-        </div>
-
-        {/* Image de la campagne si présente */}
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* Image de la campagne EN HAUT si présente */}
         {campagne && campagne.image_url && (
-          <div className="mb-6 text-center">
+          <div className="w-full">
             <img 
               src={getImageUrl(campagne.image_url)} 
               alt="Affiche événement" 
-              className="max-w-full h-auto rounded-lg shadow-lg mx-auto"
-              style={{ maxHeight: '400px' }}
+              className="w-full h-auto object-cover"
+              style={{ maxHeight: '500px' }}
             />
           </div>
         )}
 
-        {/* Message */}
-        <div className="bg-purple-50 rounded-lg p-6 mb-8">
-          <p className="text-gray-700 text-center text-lg">
-            📋 Merci de confirmer votre présence en cliquant sur l'un des boutons ci-dessous
-          </p>
-        </div>
+        {/* Contenu */}
+        <div className="p-8">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <Calendar className="w-12 h-12 mx-auto text-purple-600 mb-3" />
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              Confirmation de Présence
+            </h1>
+            {campagne && (
+              <p className="text-gray-600 text-base font-medium">
+                {campagne.titre}
+              </p>
+            )}
+          </div>
 
-        {/* Buttons */}
-        <div className="space-y-4">
-          <Button
-            onClick={() => handleResponse('oui')}
-            disabled={loading}
-            className="w-full h-16 text-lg bg-green-500 hover:bg-green-600"
-          >
-            <CheckCircle className="w-6 h-6 mr-3" />
-            ✅ Oui, je serai présent(e)
-          </Button>
+          {/* Message */}
+          <div className="bg-purple-50 rounded-lg p-4 mb-6">
+            <p className="text-gray-700 text-center text-base">
+              📋 Merci de confirmer votre présence en cliquant sur l'un des boutons ci-dessous
+            </p>
+          </div>
 
-          <Button
-            onClick={() => handleResponse('non')}
-            disabled={loading}
-            variant="destructive"
-            className="w-full h-16 text-lg"
-          >
-            <XCircle className="w-6 h-6 mr-3" />
-            ❌ Non, je ne pourrai pas venir
-          </Button>
+          {/* Buttons EN BAS */}
+          <div className="space-y-3">
+            <Button
+              onClick={() => handleResponse('oui')}
+              disabled={loading}
+              className="w-full h-14 text-base bg-green-500 hover:bg-green-600"
+            >
+              <CheckCircle className="w-5 h-5 mr-2" />
+              ✅ Oui, je serai présent(e)
+            </Button>
 
-          <Button
-            onClick={() => handleResponse('peut_etre')}
-            disabled={loading}
-            variant="outline"
-            className="w-full h-16 text-lg border-2 border-yellow-400 text-yellow-700 hover:bg-yellow-50"
-          >
-            <HelpCircle className="w-6 h-6 mr-3" />
-            🤔 Je ne sais pas encore
-          </Button>
-        </div>
+            <Button
+              onClick={() => handleResponse('non')}
+              disabled={loading}
+              variant="destructive"
+              className="w-full h-14 text-base"
+            >
+              <XCircle className="w-5 h-5 mr-2" />
+              ❌ Non, je ne pourrai pas venir
+            </Button>
 
-        {/* Footer */}
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>Impact Centre Chrétien BFC-Italie</p>
-          <p>My Events Church</p>
+            <Button
+              onClick={() => handleResponse('peut_etre')}
+              disabled={loading}
+              variant="outline"
+              className="w-full h-14 text-base border-2 border-yellow-400 text-yellow-700 hover:bg-yellow-50"
+            >
+              <HelpCircle className="w-5 h-5 mr-2" />
+              🤔 Je ne sais pas encore
+            </Button>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-6 text-center text-xs text-gray-500">
+            <p>Impact Centre Chrétien BFC-Italie</p>
+            <p>My Events Church</p>
+          </div>
         </div>
       </div>
     </div>
