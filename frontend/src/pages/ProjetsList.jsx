@@ -125,7 +125,7 @@ const ProjetsList = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Projets & Événements</h1>
-            <p className="text-gray-500">Gérez vos projets d'église</p>
+            <p className="text-gray-500">Gérez vos projets d&apos;église</p>
           </div>
           <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
