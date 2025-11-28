@@ -48,152 +48,92 @@ const GestionAccesPage = () => {
       navigate('/dashboard');
       return;
     }
-    setUser(currentUser);
-    
-    // Fixer automatiquement la ville et le rôle selon le user connecté
-    if (currentUser.role === 'responsable_eglise' || currentUser.role === 'superviseur_promos') {
-      setNewUser(prev => ({ 
-        ...prev, 
-        city: currentUser.city,
-        role: currentUser.role === 'superviseur_promos' ? 'referent' : 'referent' // superviseur_promos ne peut créer que referent
-      }));
-    } else if (currentUser.role === 'superviseur_fi') {
-      setNewUser(prev => ({ 
-        ...prev, 
-        city: currentUser.city,
-        role: 'pilote_fi' // Par défaut pilote_fi, mais peut créer aussi responsable_secteur
-      }));
-    } else if (currentUser.role === 'responsable_secteur') {
-      setNewUser(prev => ({ 
-        ...prev, 
-        city: currentUser.city,
-        role: 'pilote_fi' // responsable_secteur ne peut créer que pilote_fi
-      }));
-    }
-    
-    loadData();
-    // eslint-disable-next-line
-  }, []);
 
-  const loadData = async () => {
-    try {
-      // Cities now loaded from Context - only load users, secteurs, and FI
-      const results = await Promise.allSettled([
-        getUsers(),
-        getSecteurs(),
-        getFamillesImpact()
-      ]);
-      
-      setUsers(results[0].status === 'fulfilled' ? results[0].value : []);
-      setSecteurs(results[1].status === 'fulfilled' ? results[1].value : []);
-      setFamillesImpact(results[2].status === 'fulfilled' ? results[2].value : []);
-    } catch (error) {
-      toast.error('Erreur lors du chargement');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const togglePasswordVisibility = (userId) => {
-    setVisiblePasswords(prev => ({
-      ...prev,
-      [userId]: !prev[userId]
-    }));
-  };
+    // Récupérer les utilisateurs, villes et secteurs/FI
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [usersData, secteursData, fisData] = await Promise.all([
+          getUsers(),
+          user?.role === 'super_admin' || user?.role === 'superviseur_fi' || user?.role === 'responsable_secteur' ? getSecteurs() : Promise.resolve([]),
+          user?.role === 'super_admin' || user?.role === 'superviseur_fi' || user?.role === 'responsable_secteur' ? getFamillesImpact() : Promise.resolve([])
+        ]);
+        setUsers(usersData);
+        setSecteurs(secteursData);
+        setFamillesImpact(fisData);
+      } catch (error) {
+        toast.error('Erreur lors du chargement des données');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [currentUser, navigate]);
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    
-    if (!newUser.username || !newUser.password || !newUser.city || !newUser.role) {
-      toast.error('Veuillez remplir tous les champs obligatoires');
-      return;
-    }
-
-    // Vérifier que pour referent, au moins un mois est sélectionné
-    if (newUser.role === 'referent' && (!Array.isArray(newUser.assigned_month) || newUser.assigned_month.length === 0)) {
-      toast.error('Veuillez sélectionner au moins un mois pour le Responsable de Promos');
-      return;
-    }
-
     try {
-      // Convertir le tableau de mois en string séparé par des virgules
-      const userData = {...newUser};
-      if (Array.isArray(userData.assigned_month)) {
-        userData.assigned_month = userData.assigned_month.join(',');
+      // Si c'est un referent avec plusieurs mois, on crée avec assigned_month en tableau
+      if (newUser.role === 'referent' && Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 1) {
+        await createUser(newUser);
+      } else {
+        // Sinon on envoie le premier mois (comportement legacy pour autres rôles)
+        const dataToSend = {
+          ...newUser,
+          assigned_month: Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 0 ? newUser.assigned_month[0] : newUser.assigned_month
+        };
+        await createUser(dataToSend);
       }
-      
-      await createUser(userData);
+
       toast.success('Utilisateur créé avec succès!');
       setIsDialogOpen(false);
       setNewUser({ username: '', password: '', city: '', role: 'referent', promo_name: '', assigned_month: [], assigned_fi_id: null, assigned_fi_ids: [], assigned_secteur_id: null });
-      loadData();
+      // Rechargez la liste
+      const usersData = await getUsers();
+      setUsers(usersData);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la création');
     }
   };
 
-  const handleBlockUser = async (userId) => {
+  const handleEditUser = async (e) => {
+    e.preventDefault();
     try {
-      await blockUser(userId);
-      toast.success('Utilisateur bloqué');
-      loadData();
+      await updateUser(selectedUser.id, selectedUser);
+      toast.success('Utilisateur mis à jour!');
+      setIsEditDialogOpen(false);
+      const usersData = await getUsers();
+      setUsers(usersData);
     } catch (error) {
-      toast.error('Erreur lors du blocage');
-    }
-  };
-
-  const handleUnblockUser = async (userId) => {
-    try {
-      await unblockUser(userId);
-      toast.success('Utilisateur débloqué');
-      loadData();
-    } catch (error) {
-      toast.error('Erreur lors du déblocage');
+      toast.error(error.response?.data?.detail || 'Erreur lors de la mise à jour');
     }
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-      return;
-    }
-    
     try {
       await deleteUser(userId);
-      toast.success('Utilisateur supprimé');
-      loadData();
+      toast.success('Utilisateur supprimé!');
+      const usersData = await getUsers();
+      setUsers(usersData);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
     }
   };
 
-  const handleEditUser = async (e) => {
-    e.preventDefault();
-    
-    if (!selectedUser) return;
-
+  const handleBlockUser = async (userId) => {
     try {
-      const updateData = {
-        username: selectedUser.username,
-        assigned_month: selectedUser.assigned_month,
-        promo_name: selectedUser.promo_name || null,
-        assigned_fi_id: selectedUser.assigned_fi_id,
-        assigned_fi_ids: selectedUser.assigned_fi_ids || [],
-        assigned_secteur_id: selectedUser.assigned_secteur_id
-      };
-      
-      // Si super_admin, permettre de modifier ville et rôle
-      if (user?.role === 'super_admin') {
-        updateData.city = selectedUser.city;
-        updateData.role = selectedUser.role;
+      const userToBlock = users.find(u => u.id === userId);
+      if (userToBlock?.is_blocked) {
+        await unblockUser(userId);
+        toast.success('Utilisateur débloqué!');
+      } else {
+        await blockUser(userId);
+        toast.success('Utilisateur bloqué!');
       }
-      
-      await updateUser(selectedUser.id, updateData);
-      toast.success('Utilisateur modifié avec succès!');
-      setIsEditDialogOpen(false);
-      setSelectedUser(null);
-      loadData();
+      const usersData = await getUsers();
+      setUsers(usersData);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Erreur lors de la modification');
+      toast.error(error.response?.data?.detail || 'Erreur');
     }
   };
 
@@ -227,7 +167,8 @@ const GestionAccesPage = () => {
       'promotions': 'Promotions',
       'pasteur': 'Pasteur',
       'super_admin': 'Super Administrateur',
-      'responsable_eglise': 'Responsable d\'Église'
+      'responsable_eglise': 'Responsable d\'Église',
+      'gestion_projet': 'Gestion de Projet'
     };
     return labels[role] || role;
   };
@@ -279,84 +220,62 @@ const GestionAccesPage = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Gestion des Accès</h2>
-            <p className="text-gray-500 mt-1">Créez et gérez tous les accès utilisateurs</p>
+            <h1 className="text-3xl font-bold">Gestion des Accès</h1>
+            <p className="text-gray-500">Gérer les utilisateurs et leurs permissions</p>
           </div>
           <div className="flex gap-2">
+            {/* Bouton pour voir/cacher tous les mots de passe (super_admin uniquement) */}
             {user?.role === 'super_admin' && (
-              <>
-                <Button
-                  onClick={async () => {
-                    if (!window.confirm('⚠️ ATTENTION : Ceci va générer de NOUVEAUX mots de passe pour tous les utilisateurs qui n\'ont pas de mot de passe visible. Les utilisateurs devront utiliser ces nouveaux mots de passe. Continuer ?')) {
-                      return;
-                    }
-                    try {
-                      toast.loading('Génération des mots de passe...', { id: 'generate-pwd' });
-                      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/generate-missing-passwords`, {
-                        method: 'POST',
-                        headers: {
-                          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                          'Content-Type': 'application/json'
-                        }
-                      });
-                      const data = await response.json();
-                      toast.success(`${data.updated_count} mots de passe générés!`, { id: 'generate-pwd' });
-                      loadData(); // Recharger la liste
-                    } catch (error) {
-                      toast.error('Erreur lors de la génération', { id: 'generate-pwd' });
-                    }
-                  }}
-                  variant="outline"
-                  className="bg-orange-50 hover:bg-orange-100 border-orange-200"
-                >
-                  <Key className="h-4 w-4 mr-2" />
-                  Générer Mots de Passe Manquants
-                </Button>
-                <Button
-                  onClick={async () => {
-                    try {
-                      toast.loading('Génération du fichier...', { id: 'export-creds' });
-                      const blob = await exportCredentials();
-                      const url = window.URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url;
-                      a.download = `credentials_${new Date().toISOString().split('T')[0]}.xlsx`;
-                      document.body.appendChild(a);
-                      a.click();
-                      document.body.removeChild(a);
-                      window.URL.revokeObjectURL(url);
-                      toast.success('Export réussi!', { id: 'export-creds' });
-                    } catch (error) {
-                      toast.error('Erreur lors de l\'export', { id: 'export-creds' });
-                    }
-                  }}
-                  variant="outline"
-                  className="bg-green-50 hover:bg-green-100 border-green-200"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Identifiants
-                </Button>
-              </>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowPasswords(!showPasswords)}
+                className="flex items-center gap-2"
+              >
+                <Eye className="h-4 w-4" />
+                {showPasswords ? 'Masquer les mots de passe' : 'Voir les mots de passe'}
+              </Button>
+            )}
+            {user?.role === 'super_admin' && (
+              <Button 
+                variant="outline" 
+                onClick={async () => {
+                  try {
+                    const blob = await exportCredentials();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `credentials_${new Date().toISOString().split('T')[0]}.xlsx`;
+                    a.click();
+                    toast.success('Export réussi!');
+                  } catch (error) {
+                    toast.error('Erreur lors de l\'export');
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Exporter les identifiants
+              </Button>
             )}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nouvel Utilisateur
-                </Button>
-              </DialogTrigger>
-            <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Nouvel Utilisateur
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleCreateUser} className="flex flex-col flex-1 overflow-hidden">
-                <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+              <form onSubmit={handleCreateUser} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Nom d'utilisateur *</Label>
                   <Input
                     value={newUser.username}
                     onChange={(e) => setNewUser({...newUser, username: e.target.value})}
-                    placeholder="Nom d'utilisateur"
+                    required
                   />
                 </div>
 
@@ -366,58 +285,27 @@ const GestionAccesPage = () => {
                     type="password"
                     value={newUser.password}
                     onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                    placeholder="Mot de passe"
+                    required
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Téléphone {newUser.role === 'pilote_fi' && '*'}</Label>
-                  <Input
-                    type="tel"
-                    value={newUser.telephone}
-                    onChange={(e) => setNewUser({...newUser, telephone: e.target.value})}
-                    placeholder="+33 6 12 34 56 78"
-                  />
-                  {newUser.role === 'pilote_fi' && (
-                    <p className="text-xs text-gray-500">
-                      Requis pour les pilotes FI (affiché sur la carte de localisation)
-                    </p>
-                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Ville *</Label>
-                  {user?.role === 'responsable_eglise' ? (
-                    <div className="px-3 py-2 border rounded-md bg-gray-50">
-                      <p className="text-sm font-medium text-gray-700">{newUser.city}</p>
-                      <p className="text-xs text-gray-500">Votre ville assignée (fixe)</p>
-                    </div>
-                  ) : (
-                    <Select 
-                      value={newUser.city} 
-                      onValueChange={(value) => setNewUser({...newUser, city: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez une ville" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city.id} value={city.name}>
-                            {city.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select value={newUser.city} onValueChange={(val) => setNewUser({...newUser, city: val})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionnez une ville" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[...cities].sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
+                        <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Rôle *</Label>
-                  <Select 
-                    value={newUser.role} 
-                    onValueChange={(value) => setNewUser({...newUser, role: value})}
-                    disabled={user?.role === 'superviseur_promos' || user?.role === 'responsable_secteur'}
-                  >
+                  <Select value={newUser.role} onValueChange={(val) => setNewUser({...newUser, role: val})}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -444,6 +332,7 @@ const GestionAccesPage = () => {
                             <>
                               <SelectItem value="promotions">Promotions</SelectItem>
                               <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
+                              <SelectItem value="gestion_projet">Gestion de Projet</SelectItem>
                             </>
                           )}
                         </>
@@ -528,503 +417,146 @@ const GestionAccesPage = () => {
                 {users.filter(u => u.role === 'pilote_fi').length === 0 ? (
                   <p className="text-center text-gray-500 py-8">Aucun pilote créé. Utilisez le bouton "+ Nouvel Utilisateur" pour créer votre premier pilote.</p>
                 ) : (
-                  users.filter(u => u.role === 'pilote_fi').map((user) => (
-                  <div
-                    key={user.id}
-                    className={`flex justify-between items-center p-4 border rounded-lg ${user.is_blocked ? 'bg-red-50 border-red-200' : 'hover:bg-gray-50'}`}
-                  >
-                    <div>
-                      <p className="font-medium">{user.username}</p>
-                      <p className="text-sm text-gray-500">
-                        Pilote FI - {user.city}
-                      </p>
-                      {user.is_blocked && (
-                        <p className="text-xs text-red-600 font-semibold">BLOQUÉ</p>
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={async () => {
-                          if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${user.username} ?`)) {
-                            try {
-                              await deleteUser(user.id);
-                              toast.success('Pilote supprimé');
-                              loadUsers();
-                            } catch (error) {
-                              toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
-                            }
-                          }
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="grid gap-3">
+                    {users.filter(u => u.role === 'pilote_fi').map((pilote) => (
+                      <div key={pilote.id} className="border rounded-lg p-4 flex justify-between items-center hover:shadow-md transition-shadow">
+                        <div>
+                          <div className="font-medium">{pilote.username}</div>
+                          <div className="text-sm text-gray-500">{pilote.city}</div>
+                          {pilote.assigned_fi_ids && pilote.assigned_fi_ids.length > 0 && (
+                            <div className="text-xs text-gray-400">FI assignées: {pilote.assigned_fi_ids.length}</div>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" onClick={() => { setSelectedUser(pilote); setIsEditDialogOpen(true); }}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  ))
                 )}
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Ne pas afficher la liste complète pour superviseur_fi */}
-        {!['superviseur_fi', 'responsable_secteur'].includes(currentUser.role) && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Liste des utilisateurs ({users.length})</CardTitle>
-              {currentUser.role === 'super_admin' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowPasswords(!showPasswords)}
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  {showPasswords ? 'Masquer' : 'Afficher'} mots de passe
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {users.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">Aucun utilisateur</p>
-                ) : (
-                  users.map((user) => (
-                  <div
-                    key={user.id}
-                    className={`flex justify-between items-center p-4 border rounded-lg ${user.is_blocked ? 'bg-red-50 border-red-200' : 'hover:bg-gray-50'}`}
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium">{user.username}</p>
-                        {currentUser.role === 'super_admin' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => togglePasswordVisibility(user.id)}
-                            className="h-6 w-6 p-0"
-                            title={visiblePasswords[user.id] ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-                          >
-                            <Eye className={`h-4 w-4 ${visiblePasswords[user.id] ? 'text-blue-600' : 'text-gray-400'}`} />
-                          </Button>
+        {/* Liste des utilisateurs */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Utilisateurs ({users.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">Utilisateur</th>
+                    <th className="text-left p-2">Ville</th>
+                    <th className="text-left p-2">Rôle</th>
+                    {user?.role === 'super_admin' && (
+                      <th className="text-left p-2">Mot de passe</th>
+                    )}
+                    <th className="text-left p-2">Statut</th>
+                    <th className="text-right p-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u.id} className="border-b hover:bg-gray-50">
+                      <td className="p-2 font-medium">{u.username}</td>
+                      <td className="p-2">{u.city}</td>
+                      <td className="p-2">
+                        <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">
+                          {getRoleLabel(u.role)}
+                        </span>
+                      </td>
+                      {user?.role === 'super_admin' && (
+                        <td className="p-2">
+                          {showPasswords ? (
+                            <code className="text-xs bg-gray-100 px-2 py-1 rounded">{u.plain_password || '***'}</code>
+                          ) : (
+                            <span className="text-gray-400 text-xs">•••••••</span>
+                          )}
+                        </td>
+                      )}
+                      <td className="p-2">
+                        {u.is_blocked ? (
+                          <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Bloqué</span>
+                        ) : (
+                          <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Actif</span>
                         )}
-                      </div>
-                      <p className="text-sm text-gray-500">
-                        {getRoleLabel(user.role)} - {user.city}
-                        {user.assigned_month && ` - ${user.assigned_month}`}
-                      </p>
-                      {currentUser.role === 'super_admin' && visiblePasswords[user.id] && user.plain_password && (
-                        <p className="text-xs text-blue-600 font-mono mt-1">
-                          🔑 Mot de passe: {user.plain_password}
-                        </p>
-                      )}
-                      {user.is_blocked && (
-                        <p className="text-xs text-red-600 font-semibold">BLOQUÉ</p>
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button 
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setIsEditDialogOpen(true);
-                        }}
-                        variant="outline"
-                        size="sm"
-                        title="Modifier"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setIsResetPasswordDialogOpen(true);
-                        }}
-                        variant="outline"
-                        size="sm"
-                        title="Réinitialiser le mot de passe"
-                      >
-                        <Key className="h-4 w-4" />
-                      </Button>
-                      {user.is_blocked ? (
-                        <Button 
-                          onClick={() => handleUnblockUser(user.id)}
-                          variant="outline"
-                          size="sm"
-                          title="Débloquer"
-                        >
-                          <Unlock className="h-4 w-4" />
-                        </Button>
-                      ) : (
-                        <Button 
-                          onClick={() => handleBlockUser(user.id)}
-                          variant="outline"
-                          size="sm"
-                          title="Bloquer"
-                        >
-                          <Lock className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button 
-                        onClick={() => handleDeleteUser(user.id)}
-                        variant="destructive"
-                        size="sm"
-                        title="Supprimer"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))
-              )}
+                      </td>
+                      <td className="p-2 text-right">
+                        <div className="flex gap-1 justify-end">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => { setSelectedUser(u); setIsEditDialogOpen(true); }}
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => { setSelectedUser(u); setIsResetPasswordDialogOpen(true); }}
+                          >
+                            <Key className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleBlockUser(u.id)}
+                          >
+                            {u.is_blocked ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+                          </Button>
+                          {user?.role === 'super_admin' && (
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => {
+                                if (window.confirm(`Supprimer ${u.username} ?`)) {
+                                  handleDeleteUser(u.id);
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </CardContent>
         </Card>
-        )}
 
-        {/* Liste des pilotes pour superviseur_fi */}
-        {currentUser.role === 'superviseur_fi' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Pilotes FI ({users.filter(u => u.role === 'pilote_fi').length})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {users.filter(u => u.role === 'pilote_fi').length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">Aucun pilote créé</p>
-                ) : (
-                  users.filter(u => u.role === 'pilote_fi').map((user) => (
-                    <div
-                      key={user.id}
-                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50"
-                    >
-                      <div>
-                        <p className="font-medium">{user.username}</p>
-                        <p className="text-sm text-gray-500">Pilote FI - {user.city}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Liste des responsables de secteur pour superviseur_fi */}
-        {currentUser.role === 'superviseur_fi' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Responsables de Secteur ({users.filter(u => u.role === 'responsable_secteur').length})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {users.filter(u => u.role === 'responsable_secteur').length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">Aucun responsable créé</p>
-                ) : (
-                  users.filter(u => u.role === 'responsable_secteur').map((user) => (
-                    <div
-                      key={user.id}
-                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50"
-                    >
-                      <div>
-                        <p className="font-medium">{user.username}</p>
-                        <p className="text-sm text-gray-500">Responsable de Secteur - {user.city}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Message pour responsable_secteur */}
-        {currentUser.role === 'responsable_secteur' && (
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center py-8">
-                <p className="text-gray-600 mb-2">
-                  Vous pouvez créer des comptes Pilote en utilisant le bouton "+ Nouvel utilisateur" ci-dessus.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Edit User Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Modifier l'utilisateur</DialogTitle>
-            </DialogHeader>
-            {selectedUser && (
-              <form onSubmit={handleEditUser} className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Nom d'utilisateur</Label>
-                  <Input
-                    value={selectedUser.username}
-                    onChange={(e) => setSelectedUser({...selectedUser, username: e.target.value})}
-                    placeholder="Nom d'utilisateur"
-                  />
-                </div>
-
-                {user?.role === 'super_admin' ? (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Rôle</Label>
-                      <Select 
-                        value={selectedUser.role} 
-                        onValueChange={(value) => setSelectedUser({...selectedUser, role: value})}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
-                          <SelectItem value="superviseur_fi">Superviseur Familles d'Impact</SelectItem>
-                          <SelectItem value="referent">Responsable de Promos</SelectItem>
-                          <SelectItem value="pilote_fi">Pilote FI</SelectItem>
-                          <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
-                          <SelectItem value="accueil">Accueil et Intégration</SelectItem>
-                          <SelectItem value="promotions">Promotions</SelectItem>
-                          <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Ville</Label>
-                      <Select 
-                        value={selectedUser.city} 
-                        onValueChange={(value) => setSelectedUser({...selectedUser, city: value})}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {cities.map((city) => (
-                            <SelectItem key={city.id} value={city.name}>
-                              {city.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Rôle</Label>
-                      <Input
-                        value={getRoleLabel(selectedUser.role)}
-                        disabled
-                        className="bg-gray-100"
-                      />
-                      <p className="text-xs text-gray-500">Le rôle ne peut pas être modifié.</p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Ville</Label>
-                      <Input
-                        value={selectedUser.city}
-                        disabled
-                        className="bg-gray-100"
-                      />
-                      <p className="text-xs text-gray-500">La ville ne peut pas être modifiée.</p>
-                    </div>
-                  </>
-                )}
-
-                {selectedUser.role === 'referent' && (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Mois assignés</Label>
-                      <Input
-                        value={selectedUser.assigned_month || ''}
-                        onChange={(e) => setSelectedUser({...selectedUser, assigned_month: e.target.value})}
-                        placeholder="2024-01,2024-02,2024-03"
-                      />
-                      <p className="text-xs text-gray-500">Format: YYYY-MM, séparés par des virgules</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Nom personnalisé de la promo (optionnel)</Label>
-                      <Input
-                        value={selectedUser.promo_name || ''}
-                        onChange={(e) => setSelectedUser({...selectedUser, promo_name: e.target.value})}
-                        placeholder="Ex: Promo Excellence, Novembre 2024..."
-                      />
-                      <p className="text-xs text-gray-500">Remplace l'affichage du mois (ex: "2024-11")</p>
-                    </div>
-                  </>
-                )}
-
-                {selectedUser.role === 'promotions' && (
-                  <div className="space-y-2">
-                    <Label>Nom personnalisé de la promo (optionnel)</Label>
-                    <Input
-                      value={selectedUser.promo_name || ''}
-                      onChange={(e) => setSelectedUser({...selectedUser, promo_name: e.target.value})}
-                      placeholder="Ex: Promo Excellence, Novembre 2024..."
-                    />
-                    <p className="text-xs text-gray-500">Remplace l'affichage du mois assigné</p>
-                  </div>
-                )}
-
-                {selectedUser.role === 'responsable_secteur' && (
-                  <div className="space-y-2">
-                    <Label>Secteur assigné</Label>
-                    <Select 
-                      value={selectedUser.assigned_secteur_id || ''} 
-                      onValueChange={(value) => setSelectedUser({...selectedUser, assigned_secteur_id: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez un secteur" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {secteurs
-                          .filter(s => s.city === selectedUser.city)
-                          .map((secteur) => (
-                            <SelectItem key={secteur.id} value={secteur.id}>
-                              {secteur.name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {selectedUser.role === 'pilote_fi' && (
-                  <div className="space-y-2">
-                    <Label>Familles d'Impact assignées (plusieurs possibles)</Label>
-                    <div className="border rounded-md p-4 space-y-2 max-h-48 overflow-y-auto">
-                      {famillesImpact
-                        .filter(fi => fi.ville === selectedUser.city)
-                        .map((fi) => (
-                          <div key={fi.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`fi-${fi.id}`}
-                              checked={(selectedUser.assigned_fi_ids || []).includes(fi.id)}
-                              onCheckedChange={(checked) => {
-                                const currentFIs = selectedUser.assigned_fi_ids || [];
-                                const newFIs = checked 
-                                  ? [...currentFIs, fi.id]
-                                  : currentFIs.filter(id => id !== fi.id);
-                                setSelectedUser({...selectedUser, assigned_fi_ids: newFIs});
-                              }}
-                            />
-                            <label htmlFor={`fi-${fi.id}`} className="text-sm cursor-pointer">
-                              {fi.nom} ({fi.ville})
-                            </label>
-                          </div>
-                        ))}
-                      {famillesImpact.filter(fi => fi.ville === selectedUser.city).length === 0 && (
-                        <p className="text-sm text-gray-500">Aucune FI disponible pour cette ville</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex space-x-2">
-                  <Button type="submit" className="flex-1">
-                    Enregistrer
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => {
-                      setIsEditDialogOpen(false);
-                      setSelectedUser(null);
-                    }}
-                    className="flex-1"
-                  >
-                    Annuler
-                  </Button>
-                </div>
-              </form>
-            )}
-          </DialogContent>
-        </Dialog>
-
-        {/* Reset Password Dialog */}
+        {/* Dialog Reset Password */}
         <Dialog open={isResetPasswordDialogOpen} onOpenChange={setIsResetPasswordDialogOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Réinitialiser le mot de passe</DialogTitle>
             </DialogHeader>
-            {selectedUser && (
-              <form onSubmit={handleResetPassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Utilisateur</Label>
-                  <Input
-                    value={selectedUser.username}
-                    disabled
-                    className="bg-gray-100"
-                  />
-                </div>
-
-                {/* Afficher l'ancien mot de passe */}
-                {selectedUser.plain_password && (
-                  <div className="space-y-2">
-                    <Label>Mot de passe actuel</Label>
-                    <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-                      <p className="text-sm font-mono text-blue-900">
-                        🔑 {selectedUser.plain_password}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <Label>Nouveau mot de passe *</Label>
-                  <Input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Entrez le nouveau mot de passe"
-                    required
-                  />
-                  <p className="text-xs text-gray-500">Minimum 6 caractères recommandés</p>
-                </div>
-
-                <div className="flex space-x-2">
-                  <Button type="submit" className="flex-1">
-                    Réinitialiser
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => {
-                      setIsResetPasswordDialogOpen(false);
-                      setSelectedUser(null);
-                      setNewPassword('');
-                    }}
-                    className="flex-1"
-                  >
-                    Annuler
-                  </Button>
-                </div>
-              </form>
-            )}
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <p className="text-sm text-gray-600">Utilisateur: <strong>{selectedUser?.username}</strong></p>
+              <div>
+                <Label>Nouveau mot de passe</Label>
+                <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={() => setIsResetPasswordDialogOpen(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit">Réinitialiser</Button>
+              </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
