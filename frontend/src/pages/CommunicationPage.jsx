@@ -93,6 +93,54 @@ const CommunicationPage = () => {
     toast.success('Contact test ajouté');
   };
 
+  const handlePasteContacts = (pastedText) => {
+    if (!pastedText || !pastedText.trim()) {
+      toast.error('Aucun texte à coller');
+      return;
+    }
+
+    const lines = pastedText.split('\n').filter(line => line.trim());
+    const newContacts = [];
+
+    lines.forEach((line, index) => {
+      line = line.trim();
+      
+      // Détection email
+      if (line.includes('@')) {
+        const emailMatch = line.match(/[\w.-]+@[\w.-]+\.\w+/);
+        if (emailMatch) {
+          newContacts.push({
+            prenom: `Contact`,
+            nom: `${index + 1}`,
+            email: emailMatch[0],
+            telephone: ''
+          });
+        }
+      }
+      // Détection numéro de téléphone (formats français et internationaux)
+      else if (line.match(/[\d\s+()-]{8,}/)) {
+        const phoneClean = line.replace(/[^\d+]/g, '');
+        if (phoneClean.length >= 8) {
+          newContacts.push({
+            prenom: `Contact`,
+            nom: `${index + 1}`,
+            email: '',
+            telephone: phoneClean
+          });
+        }
+      }
+    });
+
+    if (newContacts.length > 0) {
+      const updatedContacts = [...contacts, ...newContacts];
+      setContacts(updatedContacts);
+      setNewCampagne({...newCampagne, destinataires: updatedContacts});
+      toast.success(`${newContacts.length} contact(s) ajouté(s) par copier-coller`);
+    } else {
+      toast.error('Aucun email ou téléphone valide détecté');
+    }
+  };
+
   const handleCreateCampagne = async (e) => {
     e.preventDefault();
     if (newCampagne.destinataires.length === 0) {
