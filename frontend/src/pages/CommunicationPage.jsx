@@ -18,11 +18,13 @@ const CommunicationPage = () => {
     titre: '',
     type: 'email',
     message: '',
+    image_url: '',
     destinataires: [],
     date_envoi: '',
     enable_rsvp: false
   });
   const [contacts, setContacts] = useState([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     loadCampagnes();
@@ -95,7 +97,7 @@ const CommunicationPage = () => {
       }
       
       loadCampagnes();
-      setNewCampagne({ titre: '', type: 'email', message: '', destinataires: [], date_envoi: '', enable_rsvp: false });
+      setNewCampagne({ titre: '', type: 'email', message: '', image_url: '', destinataires: [], date_envoi: '', enable_rsvp: false });
       setContacts([]);
     } catch (error) {
       toast.error('Erreur création');
