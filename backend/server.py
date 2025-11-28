@@ -4118,6 +4118,36 @@ async def create_campagne(campagne: CampagneCommunicationCreate, current_user: d
     await db.campagnes_communication.insert_one(campagne_dict)
     return {"message": "Campagne créée", "id": campagne_dict["id"]}
 
+@api_router.put("/events/campagnes/{campagne_id}/archive")
+async def archive_campagne(campagne_id: str, current_user: dict = Depends(get_current_user)):
+    """Archiver/désarchiver une campagne"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    campagne = await db.campagnes_communication.find_one({"id": campagne_id})
+    if not campagne:
+        raise HTTPException(status_code=404, detail="Campagne non trouvée")
+    
+    # Toggle archived status
+    new_status = not campagne.get("archived", False)
+    await db.campagnes_communication.update_one(
+        {"id": campagne_id},
+        {"$set": {"archived": new_status}}
+    )
+    
+    return {"message": "Campagne archivée" if new_status else "Campagne désarchivée"}
+
+@api_router.delete("/events/campagnes/{campagne_id}")
+async def delete_campagne(campagne_id: str, current_user: dict = Depends(get_current_user)):
+    """Supprimer une campagne"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    await db.campagnes_communication.delete_one({"id": campagne_id})
+    return {"message": "Campagne supprimée"}
+
 @api_router.post("/events/campagnes/{campagne_id}/envoyer")
 async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_current_user)):
     """Send a communication campaign"""
