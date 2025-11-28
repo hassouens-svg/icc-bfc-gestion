@@ -4008,6 +4008,45 @@ async def create_tache(tache: TacheCreate, current_user: dict = Depends(get_curr
     """Create a task"""
     allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
     if current_user["role"] not in allowed_roles:
+
+@api_router.delete("/events/projets/{projet_id}")
+async def delete_projet(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a project"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Delete related tasks and comments first
+    await db.taches_projet.delete_many({"projet_id": projet_id})
+    await db.commentaires_projet.delete_many({"projet_id": projet_id})
+    
+    # Delete the project
+    result = await db.projets.delete_one({"id": projet_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    return {"message": "Projet supprimé"}
+
+@api_router.put("/events/projets/{projet_id}/archive")
+async def archive_projet(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Archive/Unarchive a project"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    projet = await db.projets.find_one({"id": projet_id})
+    if not projet:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    # Toggle archive status
+    is_archived = projet.get("archived", False)
+    await db.projets.update_one(
+        {"id": projet_id},
+        {"$set": {"archived": not is_archived, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Projet archivé" if not is_archived else "Projet désarchivé"}
+
         raise HTTPException(status_code=403, detail="Access denied")
     
     tache_dict = tache.model_dump()
