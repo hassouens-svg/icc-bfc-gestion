@@ -76,6 +76,7 @@ function App() {
           <Route path="/deleted-visitors" element={<DeletedVisitorsPage />} />
           <Route path="/events-login" element={<EventsLoginPage />} />
           <Route path="/events-management" element={<EventsManagementPage />} />
+          <Route path="/events/planning" element={<PlanningActivitesPage />} />
           <Route path="/events/projets" element={<ProjetsList />} />
           <Route path="/events/projets/:id" element={<ProjetDetailPage />} />
           <Route path="/events/communication" element={<CommunicationPage />} />
