@@ -4163,10 +4163,29 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                 message += f"❌ NON: {base_url}/rsvp/{campagne_id}/non?contact={contact_identifier}\n"
                 message += f"🤔 PEUT-ÊTRE: {base_url}/rsvp/{campagne_id}/peut_etre?contact={contact_identifier}\n"
             
-            # Ajouter l'image si présente
-            html_content = message.replace('\n', '<br>')
+            # Créer un email HTML avec le logo ICC
+            logo_url = "https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png"
+            
+            html_content = f'''
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <img src="{logo_url}" alt="ICC BFC-Italie" style="width: 120px; height: 120px; border-radius: 60px; border: 4px solid white;" />
+                    <h2 style="color: white; margin-top: 10px;">Impact Centre Chrétien BFC-Italie</h2>
+                </div>
+                <div style="padding: 30px; background-color: #f9fafb;">
+                    {message.replace(chr(10), '<br>')}
+                </div>
+                <div style="padding: 20px; text-align: center; background-color: #667eea; color: white; font-size: 12px;">
+                    <p>© {datetime.now().year} Impact Centre Chrétien BFC-Italie</p>
+                    <p>My Events Church - Gestion d'Événements</p>
+                </div>
+            </div>
+            '''
+            
+            # Ajouter l'image de la campagne si présente
             if campagne.get("image_url"):
-                html_content = f'<img src="{campagne["image_url"]}" style="max-width: 600px; margin-bottom: 20px;" /><br>{html_content}'
+                html_content = html_content.replace('<div style="padding: 30px;', 
+                    f'<div style="padding: 30px;"><img src="{campagne["image_url"]}" style="max-width: 100%; margin-bottom: 20px; border-radius: 8px;" />')
             
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": destinataire.get("email"), "name": f"{destinataire.get('prenom', '')} {destinataire.get('nom', '')}"}],
