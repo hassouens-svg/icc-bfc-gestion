@@ -102,13 +102,13 @@ const CommunicationPage = () => {
         body: JSON.stringify(newCampagne)
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(`Erreur: ${errorData.detail || 'Création échouée'}`);
+        toast.error(`Erreur: ${data.detail || 'Création échouée'}`);
         return;
       }
       
-      const data = await response.json();
       toast.success('Campagne créée');
       
       // Envoyer immédiatement si pas de date planifiée
@@ -121,7 +121,7 @@ const CommunicationPage = () => {
       setContacts([]);
     } catch (error) {
       console.error('Erreur complète:', error);
-      toast.error(`Erreur création: ${error.message}`);
+      toast.error(`Erreur: ${error.message}`);
     }
   };
 
