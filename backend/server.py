@@ -4148,23 +4148,38 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             if not destinataire.get("email"):
                 continue
             
-            # Personnaliser le message
+            # Personnaliser le message AVANT de créer le HTML
             message = campagne["message"]
-            message = message.replace("{prenom}", destinataire.get("prenom", ""))
-            message = message.replace("{nom}", destinataire.get("nom", ""))
-            
-            # Ajouter liens RSVP si activé
-            if rsvp_enabled:
-                base_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-                contact_identifier = destinataire.get("email")
-                message += f"\n\n---\n"
-                message += f"Votre réponse:\n"
-                message += f"✅ OUI: {base_url}/rsvp/{campagne_id}/oui?contact={contact_identifier}\n"
-                message += f"❌ NON: {base_url}/rsvp/{campagne_id}/non?contact={contact_identifier}\n"
-                message += f"🤔 PEUT-ÊTRE: {base_url}/rsvp/{campagne_id}/peut_etre?contact={contact_identifier}\n"
+            prenom = destinataire.get("prenom", "")
+            nom = destinataire.get("nom", "")
+            message = message.replace("{prenom}", prenom)
+            message = message.replace("{nom}", nom)
             
             # Créer un email HTML avec le logo ICC
             logo_url = "https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png"
+            
+            # Construire le contenu du message avec l'image en bas
+            message_html = message.replace('\n', '<br>')
+            
+            # Ajouter l'image de la campagne EN BAS du texte si présente
+            image_html = ""
+            if campagne.get("image_url"):
+                image_html = f'<div style="text-align: center; margin-top: 20px;"><img src="{campagne["image_url"]}" style="max-width: 100%; border-radius: 8px;" /></div>'
+            
+            # Ajouter UN SEUL lien RSVP si activé
+            rsvp_html = ""
+            if rsvp_enabled:
+                base_url = os.getenv('FRONTEND_URL', 'https://church-campaign-hub.preview.emergentagent.com')
+                contact_identifier = destinataire.get("email")
+                rsvp_link = f"{base_url}/rsvp/{campagne_id}?contact={contact_identifier}"
+                rsvp_html = f'''
+                <div style="text-align: center; margin-top: 30px; padding: 20px; background-color: #e0e7ff; border-radius: 8px;">
+                    <p style="color: #1e40af; font-weight: bold; margin-bottom: 15px;">📋 Merci de confirmer votre présence</p>
+                    <a href="{rsvp_link}" style="display: inline-block; padding: 12px 30px; background-color: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                        Répondre maintenant
+                    </a>
+                </div>
+                '''
             
             html_content = f'''
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -4173,7 +4188,9 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                     <h2 style="color: white; margin-top: 10px;">Impact Centre Chrétien BFC-Italie</h2>
                 </div>
                 <div style="padding: 30px; background-color: #f9fafb;">
-                    {message.replace(chr(10), '<br>')}
+                    {message_html}
+                    {image_html}
+                    {rsvp_html}
                 </div>
                 <div style="padding: 20px; text-align: center; background-color: #667eea; color: white; font-size: 12px;">
                     <p>© {datetime.now().year} Impact Centre Chrétien BFC-Italie</p>
@@ -4181,11 +4198,6 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                 </div>
             </div>
             '''
-            
-            # Ajouter l'image de la campagne si présente
-            if campagne.get("image_url"):
-                html_content = html_content.replace('<div style="padding: 30px;', 
-                    f'<div style="padding: 30px;"><img src="{campagne["image_url"]}" style="max-width: 100%; margin-bottom: 20px; border-radius: 8px;" />')
             
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": destinataire.get("email"), "name": f"{destinataire.get('prenom', '')} {destinataire.get('nom', '')}"}],
