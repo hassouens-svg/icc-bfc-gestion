@@ -172,6 +172,33 @@ const HomePage = () => {
           </Button>
         </div>
 
+        {/* My Events Church Section */}
+        <div className="mt-12 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
+          <Card className="bg-gradient-to-br from-purple-600 to-indigo-700 border-0 shadow-2xl">
+            <CardContent className="p-8 text-center">
+              <div className="flex items-center justify-center mb-4">
+                <div className="text-5xl">📅</div>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                My Events Church
+              </h3>
+              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+                Gérez vos projets d'église, organisez des événements et communiquez avec votre communauté via email et SMS en masse.
+              </p>
+              <Button
+                onClick={() => navigate('/events-management')}
+                size="lg"
+                className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8 py-6 text-lg shadow-lg"
+              >
+                Accéder à My Events Church →
+              </Button>
+              <p className="text-xs text-white/70 mt-4">
+                Accès réservé : Pasteur, Super Admin, Responsable d'Église, Gestion Projet
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Footer Copyright */}
         <footer className="mt-20 pb-8 text-center animate-fade-in border-t border-white/10 pt-8" style={{animationDelay: '0.6s'}}>
           <div className="max-w-3xl mx-auto space-y-4">
