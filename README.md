@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://church-event-hub.preview.emergentagent.com/login
-- **Inscription Publique**: https://church-event-hub.preview.emergentagent.com/register
+- **Connexion**: https://church-campaign-hub.preview.emergentagent.com/login
+- **Inscription Publique**: https://church-campaign-hub.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**
