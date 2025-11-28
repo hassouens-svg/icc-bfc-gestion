@@ -4163,12 +4163,16 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             
             # Ajouter l'image de la campagne EN BAS du texte si présente
             image_html = ""
-            if campagne.get("image_url") and campagne["image_url"].strip():
+            image_url = campagne.get("image_url", "").strip()
+            if image_url:
+                print(f"DEBUG: Ajout image dans email - URL: {image_url[:100]}...")
                 image_html = f'''
                 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-                    <img src="{campagne["image_url"]}" alt="Affiche" style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto;" />
+                    <img src="{image_url}" alt="Affiche" style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto;" />
                 </div>
                 '''
+            else:
+                print("DEBUG: Pas d'image_url dans la campagne")
             
             # Ajouter UN SEUL lien RSVP si activé
             rsvp_html = ""
