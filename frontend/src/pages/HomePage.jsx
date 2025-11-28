@@ -186,7 +186,7 @@ const HomePage = () => {
                 Gérez vos projets d'église, organisez des événements et communiquez avec votre communauté via email et SMS en masse.
               </p>
               <Button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/events-management')}
                 size="lg"
                 className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8 py-6 text-lg shadow-lg"
               >

@@ -2,13 +2,22 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Plus, Calendar, List, Mail, MessageSquare } from 'lucide-react';
+import { Plus, Calendar, List, Mail, MessageSquare, LogOut } from 'lucide-react';
 import { getUser } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 const EventsManagementPage = () => {
   const user = getUser();
   const navigate = useNavigate();
+
+  // Check if user is logged in
+  if (!user) {
+    // Not logged in - redirect to login
+    useEffect(() => {
+      navigate('/login');
+    }, [navigate]);
+    return null;
+  }
 
   // Check access - ONLY super_admin, pasteur, responsable_eglise, gestion_projet
   const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
@@ -19,17 +28,43 @@ const EventsManagementPage = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
-                <div className="text-6xl">🚫</div>
-                <h2 className="text-2xl font-bold text-gray-800">Accès refusé</h2>
+                <div className="text-6xl">🔒</div>
+                <h2 className="text-2xl font-bold text-gray-800">Accès réservé</h2>
                 <p className="text-gray-600">
-                  Vous n'avez pas les permissions nécessaires pour accéder à ce module.
+                  Vous êtes actuellement connecté en tant que <strong>{user.role}</strong>.
                 </p>
-                <p className="text-sm text-gray-500">
-                  Accès réservé aux rôles : Pasteur, Super Admin, Responsable d'Église, Gestion Projet
+                <p className="text-gray-600">
+                  Ce module est réservé aux rôles suivants :
                 </p>
-                <Button onClick={() => navigate('/dashboard')} className="mt-4">
-                  Retour au tableau de bord
-                </Button>
+                <div className="bg-blue-50 p-4 rounded-lg inline-block">
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>✓ Pasteur</li>
+                    <li>✓ Super Admin</li>
+                    <li>✓ Responsable d'Église</li>
+                    <li>✓ Gestion Projet</li>
+                  </ul>
+                </div>
+                <p className="text-sm text-gray-500 mt-4">
+                  Veuillez vous déconnecter et vous reconnecter avec un compte autorisé.
+                </p>
+                <div className="flex gap-3 justify-center mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    Retour au tableau de bord
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      localStorage.clear();
+                      navigate('/login');
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Se déconnecter
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
