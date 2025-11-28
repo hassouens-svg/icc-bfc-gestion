@@ -4181,7 +4181,49 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             except ApiException as e:
                 print(f"Erreur envoi email: {e}")
     
-    # TODO: Ajouter Twilio pour SMS
+    # SMS via Twilio
+    if campagne["type"] in ["sms", "both"]:
+        from twilio.rest import Client
+        
+        twilio_account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+        twilio_auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+        twilio_phone = os.environ.get('TWILIO_PHONE_NUMBER')
+        
+        if not all([twilio_account_sid, twilio_auth_token, twilio_phone]):
+            print("Twilio non configuré - SMS ignorés")
+        else:
+            client = Client(twilio_account_sid, twilio_auth_token)
+            
+            for destinataire in campagne["destinataires"]:
+                if not destinataire.get("telephone"):
+                    continue
+                
+                # Personnaliser le message
+                message = campagne["message"]
+                message = message.replace('{prenom}', destinataire.get('prenom', ''))
+                message = message.replace('{nom}', destinataire.get('nom', ''))
+                
+                # Ajouter lien RSVP si activé
+                if campagne.get("enable_rsvp"):
+                    rsvp_base = f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/rsvp/{campagne_id}"
+                    message += f"\n\nRépondez: {rsvp_base}/oui (Oui) | {rsvp_base}/non (Non) | {rsvp_base}/peut_etre (Peut-être)"
+                
+                # Format phone number (add +33 if starts with 0)
+                phone = destinataire.get("telephone", "").strip()
+                if phone.startswith("0"):
+                    phone = "+33" + phone[1:]
+                elif not phone.startswith("+"):
+                    phone = "+33" + phone
+                
+                try:
+                    client.messages.create(
+                        body=message,
+                        from_=twilio_phone,
+                        to=phone
+                    )
+                    envois_reussis += 1
+                except Exception as e:
+                    print(f"Erreur envoi SMS à {phone}: {e}")
     
     await db.campagnes_communication.update_one(
         {"id": campagne_id},
