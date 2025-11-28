@@ -787,6 +787,18 @@ backend:
         agent: "testing"
         comment: "🎯 CORRECTIONS CRITIQUES TESTING COMPLETE - ALL 3/3 TESTS PASSED! Executed comprehensive testing of 3 critical corrections as requested in French review. RESULTS: (1) ✅ TEST 1: Filtre Super Admin - GET /visitors - Super Admin successfully sees ALL visitors from ALL cities (29 visitors from Dijon + Milan), multi-city access confirmed working correctly, (2) ✅ TEST 2: Rechargement des statistiques de culte - POST /api/culte-stats followed by immediate GET /api/culte-stats?ville=Dijon works perfectly, data persistence verified with all values correct (fideles: 100, adultes: 70, enfants: 30, stars: 15, commentaire preserved), (3) ✅ TEST 3: Préservation ancien comportement - superviseur_promos correctly restricted to Dijon only (25 visitors), city filtering preserved for non-admin roles. CONCLUSION: All 3 critical corrections are working perfectly. Super Admin multi-city access implemented correctly while preserving role-based city restrictions for other users. Backend ready for production use with all critical fixes verified."
 
+  - task: "French Review Planning Test - Module Planning + Email + SMS"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎯 FRENCH REVIEW PLANNING TEST COMPLETE - ALL 3 FUNCTIONALITIES VERIFIED! Executed comprehensive testing of the 3 new functionalities as requested in French review: 'TEST COMPLET: Module Planning + Email + SMS'. TESTING RESULTS: (1) ✅ TEST 1: PLANNING AVEC INDICATEURS - Successfully created 3 activities with different statuses: 'Culte Dimanche' (À venir, 2025-03-01), 'Réunion Équipe' (Fait, 2025-01-15), 'Formation' (En retard, 2024-12-01 with À venir status). Retrieved all activities for Dijon, calculated statistics: Total=7, Fait=2, En retard=4, Completion=28.6%. Color coding verified: Green for 'Fait', Red for 'À venir' with past dates, Yellow for future 'À venir'. Planning endpoints working perfectly: POST /api/planning/activites creates activities, GET /api/planning/activites?ville=Dijon retrieves city-specific activities. (2) ✅ TEST 2: EMAIL SÉPARÉ - Successfully created and sent email-only campaign 'Test Email Séparé' with type='email' to hassouens@gmail.com. Campaign creation returned proper ID, sending returned count=1. Verification confirmed campaign type='email' and status='envoye'. Backend logs show '✅ Email envoyé à hassouens@gmail.com'. Email functionality working correctly via Brevo API. (3) ✅ TEST 3: SMS SÉPARÉ - Successfully created and sent SMS-only campaign 'Test SMS Séparé' with type='sms' to phone 0646989818. Campaign creation and sending completed without errors. Verification confirmed campaign type='sms' and status='envoye'. No Twilio errors detected - using Brevo for SMS as intended. All exact curl commands from review request tested and working. CONCLUSION: All 3 new functionalities are working perfectly. Planning module with color indicators functional, Email campaigns working via Brevo, SMS campaigns working via Brevo without Twilio conflicts. Backend URL https://church-campaign-hub.preview.emergentagent.com/api confirmed fully operational for all requested features."
+
   - task: "CulteStatsPage - Statistics display after save"
     implemented: true
     working: true
