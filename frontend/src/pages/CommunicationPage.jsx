@@ -319,8 +319,10 @@ const CommunicationPage = () => {
                   </div>
 
                   <div>
-                    <Label>Importer contacts (Excel/CSV) *</Label>
-                    <div className="flex gap-2">
+                    <Label>Importer contacts *</Label>
+                    
+                    {/* Option 1: Fichier Excel */}
+                    <div className="flex gap-2 mb-3">
                       <Input
                         type="file"
                         accept=".xlsx,.xls,.csv"
@@ -336,8 +338,27 @@ const CommunicationPage = () => {
                         </Button>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Format Excel: colonnes "prenom", "nom", "email", "telephone" OU cliquez "+ Contact test"
+                    
+                    {/* Option 2: Copier-coller liste */}
+                    <div className="border rounded-lg p-3 bg-gray-50">
+                      <Label className="text-sm font-medium mb-2 block">📋 Ou coller une liste d'emails/téléphones</Label>
+                      <Textarea
+                        placeholder="Collez vos emails ou numéros ici (un par ligne):&#10;exemple@email.com&#10;+33612345678&#10;autre@email.com"
+                        rows={4}
+                        className="mb-2 bg-white"
+                        onPaste={(e) => {
+                          e.preventDefault();
+                          const pastedText = e.clipboardData.getData('text');
+                          handlePasteContacts(pastedText);
+                        }}
+                      />
+                      <p className="text-xs text-gray-500">
+                        Collez (Ctrl+V) une liste d'emails ou de numéros (un par ligne). La détection est automatique !
+                      </p>
+                    </div>
+                    
+                    <p className="text-xs text-gray-500 mt-2">
+                      Format Excel: colonnes "prenom", "nom", "email", "telephone"
                     </p>
                   </div>
 
