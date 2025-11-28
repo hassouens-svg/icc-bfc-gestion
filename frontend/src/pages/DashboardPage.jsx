@@ -389,8 +389,14 @@ const DashboardPage = () => {
                     // Update user with team_members
                     console.log('Updating user:', user.id, 'with team_members:', teamMembers);
                     await updateUser(user.id, { team_members: teamMembers });
+                    
+                    // Mettre à jour le localStorage avec les nouvelles données
+                    const updatedUser = { ...user, team_members: teamMembers };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    
                     toast.success('Équipe mise à jour avec succès');
                     document.getElementById('team-members-modal').close();
+                    
                     // Reload to refresh user data
                     setTimeout(() => window.location.reload(), 500);
                   } catch (error) {
