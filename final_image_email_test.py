@@ -69,8 +69,8 @@ def main():
             data = response.json()
             image_url = data.get("image_url")
             
-            if image_url and image_url.startswith("data:image/png;base64,"):
-                print(f"✅ Upload réussi: {image_url[:50]}...")
+            if image_url and image_url.startswith("/uploads/"):
+                print(f"✅ Upload réussi: {image_url}")
             else:
                 print(f"❌ Format réponse incorrect: {data}")
                 return 1
