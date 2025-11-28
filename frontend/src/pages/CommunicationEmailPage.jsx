@@ -9,6 +9,7 @@ import { Mail, Upload, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 const CommunicationEmailPage = () => {
+  const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [newEmail, setNewEmail] = useState({
     titre: '',
@@ -20,10 +21,38 @@ const CommunicationEmailPage = () => {
   });
   const [campagnes, setCampagnes] = useState([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [contactGroups, setContactGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState('');
 
   useEffect(() => {
     loadCampagnes();
+    loadContactGroups();
   }, []);
+
+  const loadContactGroups = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/contact-groups`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setContactGroups(data);
+      }
+    } catch (error) {
+      console.error('Erreur chargement boxes:', error);
+    }
+  };
+
+  const handleSelectGroup = (groupId) => {
+    const group = contactGroups.find(g => g.id === groupId);
+    if (group) {
+      setContacts(group.contacts);
+      setNewEmail({...newEmail, destinataires: group.contacts});
+      toast.success(`Box "${group.name}" sélectionnée (${group.contacts.length} contacts)`);
+    }
+  };
 
   const loadCampagnes = async () => {
     try {
