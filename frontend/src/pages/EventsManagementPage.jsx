@@ -10,15 +10,27 @@ const EventsManagementPage = () => {
   const user = getUser();
   const navigate = useNavigate();
 
-  // Check access
-  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet', 'responsable_promo', 'referent', 'promotions', 'superviseur_promos'];
+  // Check access - ONLY super_admin, pasteur, responsable_eglise, gestion_projet
+  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
   if (!allowedRoles.includes(user?.role)) {
     return (
       <Layout>
         <div className="p-6">
           <Card>
             <CardContent className="pt-6">
-              <p className="text-center text-gray-500">Accès refusé - Rôle non autorisé</p>
+              <div className="text-center space-y-4">
+                <div className="text-6xl">🚫</div>
+                <h2 className="text-2xl font-bold text-gray-800">Accès refusé</h2>
+                <p className="text-gray-600">
+                  Vous n'avez pas les permissions nécessaires pour accéder à ce module.
+                </p>
+                <p className="text-sm text-gray-500">
+                  Accès réservé aux rôles : Pasteur, Super Admin, Responsable d'Église, Gestion Projet
+                </p>
+                <Button onClick={() => navigate('/dashboard')} className="mt-4">
+                  Retour au tableau de bord
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
