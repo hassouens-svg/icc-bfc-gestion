@@ -36,10 +36,14 @@ const CommunicationPage = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      const data = await response.json();
-      if (response.ok) {
-        setCampagnes(data);
+      
+      if (!response.ok) {
+        console.error('Erreur chargement campagnes');
+        return;
       }
+      
+      const data = await response.json();
+      setCampagnes(data);
     } catch (error) {
       console.error('Erreur chargement:', error);
     }
