@@ -184,20 +184,20 @@ const LoginPage = () => {
                 Nouveau nouveaux arrivants et nouveaux convertis? S'inscrire ici
               </a>
               
-              {/* Bouton My Events Church */}
+              {/* Info My Events Church */}
               <div className="mt-4 pt-4 border-t">
-                <Button
-                  type="button"
-                  onClick={() => navigate('/events-management')}
-                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    📅 My Events Church - Gestion de Projets
-                  </span>
-                </Button>
-                <p className="text-xs text-center text-gray-500 mt-2">
-                  Accès réservé : Pasteur, Admin, Resp. Église, Gestion Projet
-                </p>
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <span className="text-2xl">📅</span>
+                    <h4 className="font-semibold text-gray-800">My Events Church</h4>
+                  </div>
+                  <p className="text-xs text-center text-gray-600">
+                    Connectez-vous pour accéder à la gestion de projets et communication
+                  </p>
+                  <p className="text-xs text-center text-gray-500 mt-1">
+                    Accès réservé : Pasteur, Super Admin, Resp. Église, Gestion Projet
+                  </p>
+                </div>
               </div>
             </div>
           </form>
