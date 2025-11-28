@@ -537,10 +537,10 @@ const ProjetDetailPage = () => {
               <div><Label>Description</Label><textarea className="w-full border rounded p-2" rows={2} value={newTache.description} onChange={(e) => setNewTache({...newTache, description: e.target.value})} /></div>
               <div>
                 <Label>Assigner à</Label>
-                <Select value={newTache.assigne_a} onValueChange={(val) => setNewTache({...newTache, assigne_a: val})}>
+                <Select value={newTache.assigne_a || "non_assigne"} onValueChange={(val) => setNewTache({...newTache, assigne_a: val === "non_assigne" ? "" : val})}>
                   <SelectTrigger><SelectValue placeholder="Sélectionner un membre" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Non assignée</SelectItem>
+                    <SelectItem value="non_assigne">Non assignée</SelectItem>
                     {(projet.team_members || []).map((member, idx) => (
                       <SelectItem key={idx} value={member.email}>{member.nom}</SelectItem>
                     ))}
