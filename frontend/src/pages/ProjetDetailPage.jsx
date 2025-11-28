@@ -405,7 +405,7 @@ const ProjetDetailPage = () => {
                   <div className="flex-1">
                     <div className={tache.statut === 'termine' ? 'line-through text-gray-400' : 'font-medium'}>{tache.titre}</div>
                     {tache.assigne_a && (
-                      <div className="text-xs text-gray-500">Assignée à: {tache.assigne_a}</div>
+                      <div className="text-xs text-gray-500">Assignée à : {tache.assigne_a}</div>
                     )}
                     {tache.deadline && <div className="text-xs text-gray-500">Deadline: {new Date(tache.deadline).toLocaleDateString('fr-FR')}</div>}
                   </div>
@@ -460,7 +460,7 @@ const ProjetDetailPage = () => {
               <div className="space-y-2">
                 <h3 className="font-semibold">Membres actuels</h3>
                 {(projet.team_members || []).length === 0 ? (
-                  <p className="text-gray-500 text-sm">Aucun membre dans l'équipe</p>
+                  <p className="text-gray-500 text-sm">Aucun membre dans l&apos;équipe</p>
                 ) : (
                   <div className="space-y-2">
                     {(projet.team_members || []).map((member, idx) => (
