@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert";
 
 const CommunicationSMSPage = () => {
+  const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [newSMS, setNewSMS] = useState({
     titre: '',
@@ -23,10 +24,38 @@ const CommunicationSMSPage = () => {
   });
   const [campagnes, setCampagnes] = useState([]);
   const [showGuide, setShowGuide] = useState(false);
+  const [contactGroups, setContactGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState('');
 
   useEffect(() => {
     loadCampagnes();
+    loadContactGroups();
   }, []);
+
+  const loadContactGroups = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/contact-groups-sms`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setContactGroups(data);
+      }
+    } catch (error) {
+      console.error('Erreur chargement boxes SMS:', error);
+    }
+  };
+
+  const handleSelectGroup = (groupId) => {
+    const group = contactGroups.find(g => g.id === groupId);
+    if (group) {
+      setContacts(group.contacts);
+      setNewSMS({...newSMS, destinataires: group.contacts});
+      toast.success(`Box "${group.name}" sélectionnée (${group.contacts.length} contacts)`);
+    }
+  };
 
   const loadCampagnes = async () => {
     try {
