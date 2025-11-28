@@ -4099,17 +4099,64 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
     if not campagne:
         raise HTTPException(status_code=404, detail="Campagne non trouvée")
     
-    # TODO: Implémenter l'envoi via Brevo/Twilio
-    # Pour l'instant, on marque comme envoyé
+    # Envoi via Brevo (Email) et/ou Twilio (SMS)
+    import sib_api_v3_sdk
+    from sib_api_v3_sdk.rest import ApiException
+    
+    envois_reussis = 0
+    
+    # Configuration Brevo
+    brevo_api_key = os.getenv('BREVO_API_KEY')
+    rsvp_enabled = campagne.get('enable_rsvp', False)
+    
+    if campagne["type"] in ["email", "both"] and brevo_api_key:
+        configuration = sib_api_v3_sdk.Configuration()
+        configuration.api_key['api-key'] = brevo_api_key
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+        
+        for destinataire in campagne["destinataires"]:
+            if not destinataire.get("email"):
+                continue
+            
+            # Personnaliser le message
+            message = campagne["message"]
+            message = message.replace("{prenom}", destinataire.get("prenom", ""))
+            message = message.replace("{nom}", destinataire.get("nom", ""))
+            
+            # Ajouter liens RSVP si activé
+            if rsvp_enabled:
+                base_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+                contact_identifier = destinataire.get("email")
+                message += f"\n\n---\n"
+                message += f"Votre réponse:\n"
+                message += f"✅ OUI: {base_url}/rsvp/{campagne_id}/oui?contact={contact_identifier}\n"
+                message += f"❌ NON: {base_url}/rsvp/{campagne_id}/non?contact={contact_identifier}\n"
+                message += f"🤔 PEUT-ÊTRE: {base_url}/rsvp/{campagne_id}/peut_etre?contact={contact_identifier}\n"
+            
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=[{"email": destinataire.get("email"), "name": f"{destinataire.get('prenom', '')} {destinataire.get('nom', '')}"}],
+                subject=campagne["titre"],
+                text_content=message,
+                sender={"name": "My Events Church", "email": "noreply@myeventschurch.com"}
+            )
+            
+            try:
+                api_instance.send_transac_email(send_smtp_email)
+                envois_reussis += 1
+            except ApiException as e:
+                print(f"Erreur envoi email: {e}")
+    
+    # TODO: Ajouter Twilio pour SMS
+    
     await db.campagnes_communication.update_one(
         {"id": campagne_id},
         {"$set": {
             "statut": "envoye",
-            "stats.envoyes": len(campagne["destinataires"])
+            "stats.envoyes": envois_reussis
         }}
     )
     
-    return {"message": "Campagne envoyée", "count": len(campagne["destinataires"])}
+    return {"message": "Campagne envoyée", "count": envois_reussis}
 
 # RSVP PUBLIC (sans authentification)
 @api_router.post("/public/rsvp/{campagne_id}")
