@@ -30,19 +30,6 @@ const PlanningActivitesPage = () => {
   const [villes, setVilles] = useState([]);
   const [user, setUser] = useState(null);
   
-  const ministeres = [
-    'Jeunesse',
-    'Évangélisation',
-    'Musique',
-    'Prière',
-    'Enseignement',
-    'Accueil',
-    'Enfance',
-    'Femmes',
-    'Hommes',
-    'Média',
-    'Diaconie'
-  ];
   const statuts = ['À venir', 'Reporté', 'Annulé', 'Fait'];
 
   useEffect(() => {
