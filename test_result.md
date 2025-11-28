@@ -836,7 +836,7 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Trouver ma FI - Map Popup Time Fields Display (heure_debut and heure_fin)"
+    - "Email Campaign Real Sending Test - My Events Church Communication Page"
   stuck_tasks: 
     - "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
   test_all: false
