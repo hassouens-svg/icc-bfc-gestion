@@ -88,6 +88,13 @@ const CommunicationPage = () => {
         },
         body: JSON.stringify(newCampagne)
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(`Erreur: ${errorData.detail || 'Création échouée'}`);
+        return;
+      }
+      
       const data = await response.json();
       toast.success('Campagne créée');
       
@@ -100,7 +107,8 @@ const CommunicationPage = () => {
       setNewCampagne({ titre: '', type: 'email', message: '', image_url: '', destinataires: [], date_envoi: '', enable_rsvp: false });
       setContacts([]);
     } catch (error) {
-      toast.error('Erreur création');
+      console.error('Erreur complète:', error);
+      toast.error(`Erreur création: ${error.message}`);
     }
   };
 
