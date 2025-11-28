@@ -75,6 +75,7 @@ function App() {
           <Route path="/events/projets" element={<ProjetsList />} />
           <Route path="/events/projets/:id" element={<ProjetDetailPage />} />
           <Route path="/events/communication" element={<CommunicationPage />} />
+          <Route path="/rsvp/:campagneId/:reponse" element={<RSVPPublicPage />} />
           <Route path="/evangelisation" element={<EvangelisationPage />} />
           
           {/* Familles d'Impact Routes */}
