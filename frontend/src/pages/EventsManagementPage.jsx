@@ -125,23 +125,44 @@ const EventsManagementPage = () => {
             </CardContent>
           </Card>
 
-          {/* Communication */}
+          {/* Email */}
           <Card 
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => navigate('/events/communication')}
+            onClick={() => navigate('/events/email')}
           >
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5 text-green-500" />
-                Communication en Masse
+                <Mail className="h-5 w-5 text-blue-500" />
+                📧 Emails en Masse
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-600">
-                Envoyer des emails et SMS en masse avec suivi des réponses RSVP
+                Envoyer des emails personnalisés avec images et RSVP
               </p>
               <Button className="mt-4 w-full" variant="outline">
-                Envoyer des Messages →
+                Envoyer des Emails →
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* SMS */}
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => navigate('/events/sms')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5 text-green-500" />
+                📱 SMS en Masse
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">
+                Envoyer des SMS personnalisés via Brevo avec RSVP
+              </p>
+              <Button className="mt-4 w-full" variant="outline">
+                Envoyer des SMS →
               </Button>
             </CardContent>
           </Card>
