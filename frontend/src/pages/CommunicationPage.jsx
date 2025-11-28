@@ -37,12 +37,14 @@ const CommunicationPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       
+      // Clone response to avoid "body stream already read" error
+      const data = await response.clone().json();
+      
       if (!response.ok) {
-        console.error('Erreur chargement campagnes');
+        console.error('Erreur chargement campagnes:', data);
         return;
       }
       
-      const data = await response.json();
       setCampagnes(data);
     } catch (error) {
       console.error('Erreur chargement:', error);
@@ -108,7 +110,8 @@ const CommunicationPage = () => {
         body: JSON.stringify(newCampagne)
       });
       
-      const data = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const data = await response.clone().json();
       
       if (!response.ok) {
         toast.error(`Erreur: ${data.detail || 'Création échouée'}`);
@@ -159,7 +162,8 @@ const CommunicationPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       
-      const data = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const data = await response.clone().json();
       
       if (!response.ok) {
         toast.error(`Erreur envoi: ${data.detail || 'Échec'}`);
