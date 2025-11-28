@@ -261,6 +261,9 @@ const PlanningActivitesPage = () => {
   const calculateStats = () => {
     const total = activites.length;
     const fait = activites.filter(a => a.statut === 'Fait').length;
+    const aVenir = activites.filter(a => a.statut === 'À venir').length;
+    const reporte = activites.filter(a => a.statut === 'Reporté').length;
+    const annule = activites.filter(a => a.statut === 'Annulé').length;
     const pourcentage = total > 0 ? Math.round((fait / total) * 100) : 0;
     
     // Activités en retard (date passée et pas fait)
@@ -270,10 +273,10 @@ const PlanningActivitesPage = () => {
       return dateActivite < today && a.statut !== 'Fait';
     }).length;
     
-    return { total, fait, pourcentage, enRetard };
+    return { total, fait, aVenir, reporte, annule, pourcentage, enRetard };
   };
 
-  const stats = villeSelectionnee ? calculateStats() : { total: 0, fait: 0, pourcentage: 0, enRetard: 0 };
+  const stats = villeSelectionnee ? calculateStats() : { total: 0, fait: 0, aVenir: 0, reporte: 0, annule: 0, pourcentage: 0, enRetard: 0 };
 
   // Fonction pour déterminer la couleur de la ligne
   const getRowColor = (activite) => {
@@ -364,42 +367,42 @@ const PlanningActivitesPage = () => {
         {/* Indicateur d'avancement */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">📊 Avancement du Planning</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {/* Total */}
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <div className="text-3xl font-bold text-blue-600">{stats.total}</div>
-              <div className="text-sm text-gray-600">Total activités</div>
+              <div className="text-sm text-gray-600">Total</div>
             </div>
             
             {/* Fait */}
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <div className="text-3xl font-bold text-green-600">{stats.fait}</div>
-              <div className="text-sm text-gray-600">Activités faites</div>
+              <div className="text-sm text-gray-600">Fait</div>
             </div>
             
-            {/* Pourcentage */}
-            <div className={`text-center p-4 rounded-lg ${
-              stats.pourcentage >= 80 ? 'bg-green-100' :
-              stats.pourcentage >= 50 ? 'bg-yellow-100' :
-              'bg-red-100'
-            }`}>
-              <div className={`text-3xl font-bold ${
-                stats.pourcentage >= 80 ? 'text-green-700' :
-                stats.pourcentage >= 50 ? 'text-yellow-700' :
-                'text-red-700'
-              }`}>
-                {stats.pourcentage}%
-              </div>
-              <div className="text-sm text-gray-600">Progression</div>
+            {/* À venir */}
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-3xl font-bold text-gray-600">{stats.aVenir}</div>
+              <div className="text-sm text-gray-600">À venir</div>
+            </div>
+            
+            {/* Reporté */}
+            <div className="text-center p-4 bg-yellow-50 rounded-lg">
+              <div className="text-3xl font-bold text-yellow-600">{stats.reporte}</div>
+              <div className="text-sm text-gray-600">Reporté</div>
+            </div>
+            
+            {/* Annulé */}
+            <div className="text-center p-4 bg-gray-100 rounded-lg">
+              <div className="text-3xl font-bold text-gray-500">{stats.annule}</div>
+              <div className="text-sm text-gray-600">Annulé</div>
             </div>
             
             {/* En retard */}
-            {stats.enRetard > 0 && (
-              <div className="text-center p-4 bg-red-100 rounded-lg">
-                <div className="text-3xl font-bold text-red-700">⚠️ {stats.enRetard}</div>
-                <div className="text-sm text-gray-600">En retard</div>
-              </div>
-            )}
+            <div className="text-center p-4 bg-red-100 rounded-lg">
+              <div className="text-3xl font-bold text-red-700">{stats.enRetard}</div>
+              <div className="text-sm text-gray-600">En retard</div>
+            </div>
           </div>
           
           {/* Barre de progression */}
