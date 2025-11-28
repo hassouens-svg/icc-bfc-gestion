@@ -73,6 +73,36 @@ const ProjetsList = () => {
     const colors = {
       'planifie': 'bg-blue-100 text-blue-800',
       'en_cours': 'bg-yellow-100 text-yellow-800',
+
+  const handleArchiveProjet = async (projetId) => {
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/projets/${projetId}/archive`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      toast.success('Projet archivé');
+      loadProjets();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+  const handleDeleteProjet = async (projetId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.')) {
+      return;
+    }
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/projets/${projetId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      toast.success('Projet supprimé');
+      loadProjets();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
       'termine': 'bg-green-100 text-green-800',
       'annule': 'bg-red-100 text-red-800'
     };
