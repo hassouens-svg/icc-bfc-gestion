@@ -1915,10 +1915,17 @@ async def get_familles_impact(
     current_user: dict = Depends(get_current_user)
 ):
     query = {}
+    
+    # Super admin peut voir toutes les villes, autres utilisateurs seulement leur ville
+    if current_user["role"] == "super_admin":
+        if ville:
+            query["ville"] = ville
+    else:
+        # Forcer la ville de l'utilisateur connecté
+        query["ville"] = current_user["city"]
+    
     if secteur_id:
         query["secteur_id"] = secteur_id
-    if ville:
-        query["ville"] = ville
     
     # Filter based on role
     if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id"):
