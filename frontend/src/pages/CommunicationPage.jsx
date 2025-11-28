@@ -37,13 +37,12 @@ const CommunicationPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       
-      const data = await response.json();
-      
       if (!response.ok) {
-        console.error('Erreur chargement campagnes:', data);
+        console.error('Erreur chargement campagnes');
         return;
       }
       
+      const data = await response.json();
       setCampagnes(data);
     } catch (error) {
       console.error('Erreur chargement:', error);
@@ -157,13 +156,13 @@ const CommunicationPage = () => {
         body: JSON.stringify(newCampagne)
       });
       
-      const data = await response.json();
-      
       if (!response.ok) {
-        toast.error(`Erreur: ${data.detail || 'Création échouée'}`);
+        const errorData = await response.json().catch(() => ({ detail: 'Création échouée' }));
+        toast.error(`Erreur: ${errorData.detail || 'Création échouée'}`);
         return;
       }
       
+      const data = await response.json();
       toast.success('Campagne créée');
       
       // Envoyer immédiatement si pas de date planifiée
@@ -208,13 +207,13 @@ const CommunicationPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       
-      const data = await response.json();
-      
       if (!response.ok) {
-        toast.error(`Erreur envoi: ${data.detail || 'Échec'}`);
+        const errorData = await response.json().catch(() => ({ detail: 'Échec' }));
+        toast.error(`Erreur envoi: ${errorData.detail || 'Échec'}`);
         return false;
       }
       
+      const data = await response.json();
       toast.success(`✅ ${data.count} message(s) envoyé(s)`);
       await loadCampagnes();
       return true;
