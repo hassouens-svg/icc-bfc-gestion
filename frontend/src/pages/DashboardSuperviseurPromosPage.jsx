@@ -36,7 +36,8 @@ const DashboardSuperviseurPromosPage = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      const visitorsData = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const visitorsData = await response.clone().json();
       const cityVisitors = visitorsData.filter(v => v.city === user.city);
       setVisitors(cityVisitors);
       
