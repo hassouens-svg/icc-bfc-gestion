@@ -4290,26 +4290,33 @@ async def get_public_campagne(campagne_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.post("/public/rsvp/{campagne_id}")
-async def enregistrer_rsvp(campagne_id: str, reponse: str, contact: str):
-    """Record RSVP response (public endpoint)"""
+@api_router.post("/public/rsvp")
+async def enregistrer_rsvp(data: dict):
+    """Enregistrer une réponse RSVP (endpoint public)"""
+    campagne_id = data.get("campagne_id")
+    contact = data.get("contact")
+    reponse = data.get("reponse")
+    
+    if not campagne_id or not contact or not reponse:
+        raise HTTPException(status_code=400, detail="Données manquantes")
+    
     if reponse not in ["oui", "non", "peut_etre"]:
         raise HTTPException(status_code=400, detail="Réponse invalide")
     
-    # Check if RSVP already exists
+    # Vérifier si RSVP existe déjà
     existing = await db.rsvp.find_one({"campagne_id": campagne_id, "$or": [
         {"contact_email": contact},
         {"contact_telephone": contact}
     ]})
     
     if existing:
-        # Update existing RSVP
+        # Mettre à jour RSVP existant
         await db.rsvp.update_one(
             {"id": existing["id"]},
-            {"$set": {"reponse": reponse}}
+            {"$set": {"reponse": reponse, "updated_at": datetime.now(timezone.utc).isoformat()}}
         )
     else:
-        # Create new RSVP
+        # Créer nouveau RSVP
         rsvp = {
             "id": str(uuid.uuid4()),
             "campagne_id": campagne_id,
