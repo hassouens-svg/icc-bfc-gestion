@@ -104,6 +104,24 @@ const CommunicationPage = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      // For testing purposes, we'll just create a mock URL
+      // In production, this would upload to a cloud service
+      const mockUrl = URL.createObjectURL(file);
+      setNewCampagne({...newCampagne, image_url: mockUrl});
+      toast.success('Image ajoutée');
+    } catch (error) {
+      toast.error('Erreur upload image');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleEnvoyer = async (campagneId) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes/${campagneId}/envoyer`, {
