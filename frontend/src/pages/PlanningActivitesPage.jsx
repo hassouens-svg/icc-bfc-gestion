@@ -210,6 +210,41 @@ const PlanningActivitesPage = () => {
     }
   };
 
+  // Calculer les statistiques d'avancement
+  const calculateStats = () => {
+    const total = activites.length;
+    const fait = activites.filter(a => a.statut === 'Fait').length;
+    const pourcentage = total > 0 ? Math.round((fait / total) * 100) : 0;
+    
+    // Activités en retard (date passée et pas fait)
+    const today = new Date();
+    const enRetard = activites.filter(a => {
+      const dateActivite = new Date(a.date);
+      return dateActivite < today && a.statut !== 'Fait';
+    }).length;
+    
+    return { total, fait, pourcentage, enRetard };
+  };
+
+  const stats = villeSelectionnee ? calculateStats() : { total: 0, fait: 0, pourcentage: 0, enRetard: 0 };
+
+  // Fonction pour déterminer la couleur de la ligne
+  const getRowColor = (activite) => {
+    const today = new Date();
+    const dateActivite = new Date(activite.date);
+    
+    if (activite.statut === 'Fait') {
+      return 'bg-green-50'; // Vert pour fait
+    } else if (dateActivite < today) {
+      return 'bg-red-50'; // Rouge pour en retard
+    } else if (activite.statut === 'Reporté') {
+      return 'bg-yellow-50'; // Jaune pour reporté
+    } else if (activite.statut === 'Annulé') {
+      return 'bg-gray-100'; // Gris pour annulé
+    }
+    return 'bg-white'; // Blanc pour à venir
+  };
+
   // Si pas de ville sélectionnée, afficher la sélection
   if (!villeSelectionnee) {
     return (
@@ -260,6 +295,89 @@ const PlanningActivitesPage = () => {
           </div>
         </div>
 
+        {/* Indicateur d'avancement */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4">📊 Avancement du Planning</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Total */}
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-3xl font-bold text-blue-600">{stats.total}</div>
+              <div className="text-sm text-gray-600">Total activités</div>
+            </div>
+            
+            {/* Fait */}
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <div className="text-3xl font-bold text-green-600">{stats.fait}</div>
+              <div className="text-sm text-gray-600">Activités faites</div>
+            </div>
+            
+            {/* Pourcentage */}
+            <div className={`text-center p-4 rounded-lg ${
+              stats.pourcentage >= 80 ? 'bg-green-100' :
+              stats.pourcentage >= 50 ? 'bg-yellow-100' :
+              'bg-red-100'
+            }`}>
+              <div className={`text-3xl font-bold ${
+                stats.pourcentage >= 80 ? 'text-green-700' :
+                stats.pourcentage >= 50 ? 'text-yellow-700' :
+                'text-red-700'
+              }`}>
+                {stats.pourcentage}%
+              </div>
+              <div className="text-sm text-gray-600">Progression</div>
+            </div>
+            
+            {/* En retard */}
+            {stats.enRetard > 0 && (
+              <div className="text-center p-4 bg-red-100 rounded-lg">
+                <div className="text-3xl font-bold text-red-700">⚠️ {stats.enRetard}</div>
+                <div className="text-sm text-gray-600">En retard</div>
+              </div>
+            )}
+          </div>
+          
+          {/* Barre de progression */}
+          <div className="mt-4">
+            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+              <div 
+                className={`h-4 transition-all duration-500 ${
+                  stats.pourcentage >= 80 ? 'bg-green-500' :
+                  stats.pourcentage >= 50 ? 'bg-yellow-500' :
+                  'bg-red-500'
+                }`}
+                style={{ width: `${stats.pourcentage}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Légende des couleurs */}
+        <div className="bg-white rounded-lg shadow p-4 mb-6">
+          <h3 className="text-sm font-semibold mb-2">Légende des couleurs :</h3>
+          <div className="flex flex-wrap gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-white border rounded"></div>
+              <span>À venir</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-green-50 border rounded"></div>
+              <span>✅ Fait</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-red-50 border rounded"></div>
+              <span>⚠️ En retard</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-yellow-50 border rounded"></div>
+              <span>Reporté</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gray-100 border rounded"></div>
+              <span>Annulé</span>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <Table>
             <TableHeader>
@@ -285,7 +403,7 @@ const PlanningActivitesPage = () => {
                   const data = isEditing ? editData : activite;
                   
                   return (
-                    <TableRow key={activite.id}>
+                    <TableRow key={activite.id} className={getRowColor(activite)}>
                       <TableCell>
                         {isEditing ? (
                           <Input
