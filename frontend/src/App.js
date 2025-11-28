@@ -72,6 +72,8 @@ function App() {
           <Route path="/deleted-visitors" element={<DeletedVisitorsPage />} />
           <Route path="/events-management" element={<EventsManagementPage />} />
           <Route path="/events/projets" element={<ProjetsList />} />
+          <Route path="/events/projets/:id" element={<ProjetDetailPage />} />
+          <Route path="/events/communication" element={<CommunicationPage />} />
           <Route path="/evangelisation" element={<EvangelisationPage />} />
           
           {/* Familles d'Impact Routes */}
