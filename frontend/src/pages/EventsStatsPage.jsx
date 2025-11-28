@@ -25,7 +25,7 @@ const EventsStatsPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       // Clone response to avoid "body stream already read" error
-      const data = await response.clone().json();
+      const data = await response.json();
       // Filter only sent campaigns
       const sentCampagnes = data.filter(c => c.statut === 'envoye');
       setCampagnes(sentCampagnes);
@@ -42,7 +42,7 @@ const EventsStatsPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       // Clone response to avoid "body stream already read" error
-      const data = await response.clone().json();
+      const data = await response.json();
       setRsvpDetails(data.rsvps || []);
       setSelectedCampagne(data.campagne);
     } catch (error) {

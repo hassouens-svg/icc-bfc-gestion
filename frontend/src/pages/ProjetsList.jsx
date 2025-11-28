@@ -39,7 +39,7 @@ const ProjetsList = () => {
         }
       });
       // Clone response to avoid "body stream already read" error
-      const data = await response.clone().json();
+      const data = await response.json();
       setProjets(data);
     } catch (error) {
       toast.error('Erreur lors du chargement');

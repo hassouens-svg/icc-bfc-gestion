@@ -37,7 +37,7 @@ const DashboardSuperviseurPromosPage = () => {
         }
       });
       // Clone response to avoid "body stream already read" error
-      const visitorsData = await response.clone().json();
+      const visitorsData = await response.json();
       const cityVisitors = visitorsData.filter(v => v.city === user.city);
       setVisitors(cityVisitors);
       
