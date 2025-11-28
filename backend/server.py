@@ -2026,12 +2026,24 @@ async def create_membre_fi(membre_data: MembreFICreate, current_user: dict = Dep
 @api_router.get("/fi/membres")
 async def get_membres_fi(fi_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     query = {}
-    if fi_id:
-        query["fi_id"] = fi_id
     
     # Filter for pilote
     if current_user["role"] == "pilote_fi" and current_user.get("assigned_fi_id"):
         query["fi_id"] = current_user["assigned_fi_id"]
+    elif fi_id:
+        query["fi_id"] = fi_id
+    else:
+        # Si pas de fi_id spécifique, filtrer par ville (sauf super_admin)
+        if current_user["role"] != "super_admin":
+            # Récupérer les FI de la ville de l'utilisateur
+            fi_query = {"ville": current_user["city"]}
+            fis = await db.familles_impact.find(fi_query, {"_id": 0, "id": 1}).to_list(length=None)
+            fi_ids = [fi["id"] for fi in fis]
+            if fi_ids:
+                query["fi_id"] = {"$in": fi_ids}
+            else:
+                # Aucune FI dans cette ville, retourner vide
+                return []
     
     membres = await db.membres_fi.find(query, {"_id": 0}).to_list(length=None)
     return membres
