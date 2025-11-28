@@ -149,11 +149,19 @@ const CommunicationPage = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
+      
       const data = await response.json();
-      toast.success(`${data.count} messages envoyés`);
+      
+      if (!response.ok) {
+        toast.error(`Erreur envoi: ${data.detail || 'Échec'}`);
+        return;
+      }
+      
+      toast.success(`${data.count} message(s) envoyé(s)`);
       loadCampagnes();
     } catch (error) {
-      toast.error('Erreur envoi');
+      console.error('Erreur envoi:', error);
+      toast.error(`Erreur: ${error.message}`);
     }
   };
 
