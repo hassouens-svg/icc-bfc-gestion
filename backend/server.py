@@ -336,6 +336,7 @@ class Projet(BaseModel):
     budget_reel: Optional[float] = 0.0
     ville: str
     created_by: str  # username
+    team_members: Optional[List[Dict[str, str]]] = []  # [{"nom": "Jean Dupont", "email": "jean@email.com"}]
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -347,6 +348,7 @@ class ProjetCreate(BaseModel):
     date_fin: Optional[str] = None
     budget_prevu: Optional[float] = 0.0
     ville: str
+    team_members: Optional[List[Dict[str, str]]] = []
 
 class ProjetUpdate(BaseModel):
     titre: Optional[str] = None
@@ -356,6 +358,7 @@ class ProjetUpdate(BaseModel):
     date_fin: Optional[str] = None
     budget_prevu: Optional[float] = None
     budget_reel: Optional[float] = None
+    team_members: Optional[List[Dict[str, str]]] = None
 
 class Tache(BaseModel):
     model_config = ConfigDict(extra="ignore")
