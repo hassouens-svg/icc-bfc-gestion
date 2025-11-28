@@ -122,7 +122,8 @@ const CitiesPage = () => {
         }
       });
       
-      const stats = await response.json();
+      // Clone response to avoid "body stream already read" error
+      const stats = await response.clone().json();
       
       if (!response.ok) {
         throw new Error(stats.detail || 'Erreur de chargement');
@@ -327,8 +328,10 @@ const CitiesPage = () => {
                         }
                       });
                       
+                      // Clone response to avoid "body stream already read" error
+                      const stats = await response.clone().json();
+                      
                       if (response.ok) {
-                        const stats = await response.json();
                         setCityStats(stats);
                       }
                     } catch (error) {
@@ -367,8 +370,10 @@ const CitiesPage = () => {
                         }
                       });
                       
+                      // Clone response to avoid "body stream already read" error
+                      const stats = await response.clone().json();
+                      
                       if (response.ok) {
-                        const stats = await response.json();
                         setCityStats(stats);
                       }
                     } catch (error) {
