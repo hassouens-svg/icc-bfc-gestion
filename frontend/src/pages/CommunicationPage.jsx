@@ -72,10 +72,23 @@ const CommunicationPage = () => {
     reader.readAsBinaryString(file);
   };
 
+  const handleAddTestContact = () => {
+    const testContact = {
+      prenom: 'Test',
+      nom: 'Utilisateur',
+      email: 'test@example.com',
+      telephone: ''
+    };
+    const updatedContacts = [...contacts, testContact];
+    setContacts(updatedContacts);
+    setNewCampagne({...newCampagne, destinataires: updatedContacts});
+    toast.success('Contact test ajouté');
+  };
+
   const handleCreateCampagne = async (e) => {
     e.preventDefault();
     if (newCampagne.destinataires.length === 0) {
-      toast.error('Veuillez importer des contacts');
+      toast.error('Veuillez importer des contacts via Excel ou ajouter un contact test');
       return;
     }
 
