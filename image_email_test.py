@@ -116,7 +116,7 @@ def test_image_upload(results, token):
             data = response.json()
             image_url = data.get("image_url")
             
-            if image_url and image_url.startswith("/uploads/"):
+            if image_url and image_url.startswith("https://") and "/uploads/" in image_url:
                 results.add_success("Upload image", f"Image uploadée avec succès, URL: {image_url}")
                 return image_url
             else:
