@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
+import EventsLayout from '../components/EventsLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -123,7 +123,7 @@ const CommunicationPage = () => {
   };
 
   return (
-    <Layout>
+    <EventsLayout>
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Communication en Masse</h1>
@@ -253,7 +253,7 @@ const CommunicationPage = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </EventsLayout>
   );
 };
 

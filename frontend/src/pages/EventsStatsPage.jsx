@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
+import EventsLayout from '../components/EventsLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { ArrowLeft, Users, CheckCircle, XCircle, HelpCircle, Mail, Calendar } from 'lucide-react';
@@ -61,16 +61,16 @@ const EventsStatsPage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <EventsLayout>
         <div className="p-6">
           <p>Chargement...</p>
         </div>
-      </Layout>
+      </EventsLayout>
     );
   }
 
   return (
-    <Layout>
+    <EventsLayout>
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={() => navigate('/events-management')}>
@@ -255,7 +255,7 @@ const EventsStatsPage = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </EventsLayout>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
+import EventsLayout from '../components/EventsLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -130,11 +130,11 @@ const ProjetDetailPage = () => {
     }
   };
 
-  if (loading) return <Layout><div className="p-6">Chargement...</div></Layout>;
-  if (!projet) return <Layout><div className="p-6">Projet non trouvé</div></Layout>;
+  if (loading) return <EventsLayout><div className="p-6">Chargement...</div></EventsLayout>;
+  if (!projet) return <EventsLayout><div className="p-6">Projet non trouvé</div></EventsLayout>;
 
   return (
-    <Layout>
+    <EventsLayout>
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={() => navigate('/events/projets')}>
@@ -283,7 +283,7 @@ const ProjetDetailPage = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </Layout>
+    </EventsLayout>
   );
 };
 
