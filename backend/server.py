@@ -3886,6 +3886,296 @@ async def migrate_presences(current_user: dict = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur lors de la migration: {str(e)}")
 
+# ==================== EVENTS & PROJECTS ENDPOINTS ====================
+
+@api_router.get("/events/projets")
+async def get_projets(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    """Get all projects - filtered by city for non-super_admin"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    query = {}
+    # Super admin can see all, others only their city
+    if current_user["role"] != "super_admin":
+        query["ville"] = current_user["city"]
+    elif ville:
+        query["ville"] = ville
+    
+    projets = await db.projets.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return projets
+
+@api_router.post("/events/projets")
+async def create_projet(projet: ProjetCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new project"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    projet_dict = projet.model_dump()
+    projet_dict["id"] = str(uuid.uuid4())
+    projet_dict["created_by"] = current_user["username"]
+    projet_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    projet_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.projets.insert_one(projet_dict)
+    return {"message": "Projet créé avec succès", "id": projet_dict["id"]}
+
+@api_router.get("/events/projets/{projet_id}")
+async def get_projet(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Get project details"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    projet = await db.projets.find_one({"id": projet_id}, {"_id": 0})
+    if not projet:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    # Check city access for non-super_admin
+    if current_user["role"] != "super_admin" and projet["ville"] != current_user["city"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    return projet
+
+@api_router.put("/events/projets/{projet_id}")
+async def update_projet(projet_id: str, updates: ProjetUpdate, current_user: dict = Depends(get_current_user)):
+    """Update a project"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    projet = await db.projets.find_one({"id": projet_id})
+    if not projet:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    # Check city access
+    if current_user["role"] != "super_admin" and projet["ville"] != current_user["city"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    update_dict = {k: v for k, v in updates.model_dump().items() if v is not None}
+    update_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.projets.update_one({"id": projet_id}, {"$set": update_dict})
+    return {"message": "Projet mis à jour"}
+
+@api_router.delete("/events/projets/{projet_id}")
+async def delete_projet(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a project"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    projet = await db.projets.find_one({"id": projet_id})
+    if not projet:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    if current_user["role"] != "super_admin" and projet["ville"] != current_user["city"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Delete related data
+    await db.taches.delete_many({"projet_id": projet_id})
+    await db.commentaires_projet.delete_many({"projet_id": projet_id})
+    await db.fichiers_projet.delete_many({"projet_id": projet_id})
+    await db.projets.delete_one({"id": projet_id})
+    
+    return {"message": "Projet supprimé"}
+
+# TÂCHES
+@api_router.get("/events/taches")
+async def get_taches(projet_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    """Get tasks"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    query = {}
+    if projet_id:
+        query["projet_id"] = projet_id
+    
+    taches = await db.taches.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return taches
+
+@api_router.post("/events/taches")
+async def create_tache(tache: TacheCreate, current_user: dict = Depends(get_current_user)):
+    """Create a task"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    tache_dict = tache.model_dump()
+    tache_dict["id"] = str(uuid.uuid4())
+    tache_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.taches.insert_one(tache_dict)
+    return {"message": "Tâche créée", "id": tache_dict["id"]}
+
+@api_router.put("/events/taches/{tache_id}")
+async def update_tache(tache_id: str, updates: TacheUpdate, current_user: dict = Depends(get_current_user)):
+    """Update a task"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    update_dict = {k: v for k, v in updates.model_dump().items() if v is not None}
+    await db.taches.update_one({"id": tache_id}, {"$set": update_dict})
+    return {"message": "Tâche mise à jour"}
+
+@api_router.delete("/events/taches/{tache_id}")
+async def delete_tache(tache_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a task"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    await db.taches.delete_one({"id": tache_id})
+    return {"message": "Tâche supprimée"}
+
+# COMMENTAIRES
+@api_router.get("/events/commentaires")
+async def get_commentaires(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Get project comments"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    commentaires = await db.commentaires_projet.find(
+        {"projet_id": projet_id}, 
+        {"_id": 0}
+    ).sort("created_at", 1).to_list(1000)
+    return commentaires
+
+@api_router.post("/events/commentaires")
+async def create_commentaire(commentaire: CommentaireProjetCreate, current_user: dict = Depends(get_current_user)):
+    """Add a comment"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    commentaire_dict = commentaire.model_dump()
+    commentaire_dict["id"] = str(uuid.uuid4())
+    commentaire_dict["user"] = current_user["username"]
+    commentaire_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.commentaires_projet.insert_one(commentaire_dict)
+    return {"message": "Commentaire ajouté", "id": commentaire_dict["id"]}
+
+# CAMPAGNES COMMUNICATION
+@api_router.get("/events/campagnes")
+async def get_campagnes(current_user: dict = Depends(get_current_user)):
+    """Get communication campaigns"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    campagnes = await db.campagnes_communication.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return campagnes
+
+@api_router.post("/events/campagnes")
+async def create_campagne(campagne: CampagneCommunicationCreate, current_user: dict = Depends(get_current_user)):
+    """Create a communication campaign"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    campagne_dict = campagne.model_dump()
+    campagne_dict["id"] = str(uuid.uuid4())
+    campagne_dict["created_by"] = current_user["username"]
+    campagne_dict["statut"] = "brouillon"
+    campagne_dict["stats"] = {"envoyes": 0, "oui": 0, "non": 0, "peut_etre": 0}
+    campagne_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.campagnes_communication.insert_one(campagne_dict)
+    return {"message": "Campagne créée", "id": campagne_dict["id"]}
+
+@api_router.post("/events/campagnes/{campagne_id}/envoyer")
+async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_current_user)):
+    """Send a communication campaign"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    campagne = await db.campagnes_communication.find_one({"id": campagne_id})
+    if not campagne:
+        raise HTTPException(status_code=404, detail="Campagne non trouvée")
+    
+    # TODO: Implémenter l'envoi via Brevo/Twilio
+    # Pour l'instant, on marque comme envoyé
+    await db.campagnes_communication.update_one(
+        {"id": campagne_id},
+        {"$set": {
+            "statut": "envoye",
+            "stats.envoyes": len(campagne["destinataires"])
+        }}
+    )
+    
+    return {"message": "Campagne envoyée", "count": len(campagne["destinataires"])}
+
+# RSVP PUBLIC (sans authentification)
+@api_router.post("/public/rsvp/{campagne_id}")
+async def enregistrer_rsvp(campagne_id: str, reponse: str, contact: str):
+    """Record RSVP response (public endpoint)"""
+    if reponse not in ["oui", "non", "peut_etre"]:
+        raise HTTPException(status_code=400, detail="Réponse invalide")
+    
+    # Check if RSVP already exists
+    existing = await db.rsvp.find_one({"campagne_id": campagne_id, "$or": [
+        {"contact_email": contact},
+        {"contact_telephone": contact}
+    ]})
+    
+    if existing:
+        # Update existing RSVP
+        await db.rsvp.update_one(
+            {"id": existing["id"]},
+            {"$set": {"reponse": reponse}}
+        )
+    else:
+        # Create new RSVP
+        rsvp = {
+            "id": str(uuid.uuid4()),
+            "campagne_id": campagne_id,
+            "contact_email": contact if "@" in contact else None,
+            "contact_telephone": contact if "@" not in contact else None,
+            "reponse": reponse,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.rsvp.insert_one(rsvp)
+    
+    # Update campaign stats
+    campagne = await db.campagnes_communication.find_one({"id": campagne_id})
+    if campagne:
+        # Recount all RSVPs
+        oui_count = await db.rsvp.count_documents({"campagne_id": campagne_id, "reponse": "oui"})
+        non_count = await db.rsvp.count_documents({"campagne_id": campagne_id, "reponse": "non"})
+        peut_etre_count = await db.rsvp.count_documents({"campagne_id": campagne_id, "reponse": "peut_etre"})
+        
+        await db.campagnes_communication.update_one(
+            {"id": campagne_id},
+            {"$set": {
+                "stats.oui": oui_count,
+                "stats.non": non_count,
+                "stats.peut_etre": peut_etre_count
+            }}
+        )
+    
+    return {"message": "Réponse enregistrée"}
+
+@api_router.get("/events/campagnes/{campagne_id}/rsvp")
+async def get_rsvp_stats(campagne_id: str, current_user: dict = Depends(get_current_user)):
+    """Get RSVP statistics for a campaign"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    rsvps = await db.rsvp.find({"campagne_id": campagne_id}, {"_id": 0}).to_list(1000)
+    campagne = await db.campagnes_communication.find_one({"id": campagne_id}, {"_id": 0})
+    
+    return {
+        "campagne": campagne,
+        "rsvps": rsvps
+    }
+
 # Include the router in the main app
 app.include_router(api_router)
 
