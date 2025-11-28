@@ -1851,8 +1851,14 @@ async def create_secteur(secteur_data: SecteurCreate, current_user: dict = Depen
 @api_router.get("/fi/secteurs")
 async def get_secteurs(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     query = {}
-    if ville:
-        query["ville"] = ville
+    
+    # Super admin peut voir toutes les villes, autres utilisateurs seulement leur ville
+    if current_user["role"] == "super_admin":
+        if ville:
+            query["ville"] = ville
+    else:
+        # Forcer la ville de l'utilisateur connecté
+        query["ville"] = current_user["city"]
     
     secteurs = await db.secteurs.find(query, {"_id": 0}).to_list(length=None)
     return secteurs
