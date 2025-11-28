@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
+import EventsLayout from '../components/EventsLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Plus, Calendar, List, Mail, MessageSquare, LogOut } from 'lucide-react';
@@ -23,7 +23,7 @@ const EventsManagementPage = () => {
   const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
   if (!allowedRoles.includes(user?.role)) {
     return (
-      <Layout>
+      <EventsLayout>
         <div className="p-6">
           <Card>
             <CardContent className="pt-6">
@@ -49,15 +49,9 @@ const EventsManagementPage = () => {
                 </p>
                 <div className="flex gap-3 justify-center mt-6">
                   <Button 
-                    variant="outline" 
-                    onClick={() => navigate('/dashboard')}
-                  >
-                    Retour au tableau de bord
-                  </Button>
-                  <Button 
                     onClick={() => {
                       localStorage.clear();
-                      navigate('/login');
+                      navigate('/events-login');
                     }}
                     className="flex items-center gap-2"
                   >
@@ -69,12 +63,12 @@ const EventsManagementPage = () => {
             </CardContent>
           </Card>
         </div>
-      </Layout>
+      </EventsLayout>
     );
   }
 
   return (
-    <Layout>
+    <EventsLayout>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -177,7 +171,7 @@ const EventsManagementPage = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </EventsLayout>
   );
 };
 
