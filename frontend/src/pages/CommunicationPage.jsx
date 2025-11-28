@@ -78,7 +78,7 @@ const CommunicationPage = () => {
     const testContact = {
       prenom: 'Test',
       nom: 'Utilisateur',
-      email: 'test@example.com',
+      email: 'hassouens@gmail.com',
       telephone: ''
     };
     const updatedContacts = [...contacts, testContact];
