@@ -116,8 +116,8 @@ def test_image_upload(results, token):
             data = response.json()
             image_url = data.get("image_url")
             
-            if image_url and image_url.startswith("data:image/png;base64,"):
-                results.add_success("Upload image", f"Image uploadée avec succès, URL: {image_url[:50]}...")
+            if image_url and image_url.startswith("/uploads/"):
+                results.add_success("Upload image", f"Image uploadée avec succès, URL: {image_url}")
                 return image_url
             else:
                 results.add_failure("Upload image", f"Format de réponse incorrect: {data}")
