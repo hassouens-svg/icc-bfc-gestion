@@ -172,6 +172,18 @@ const ProjetsList = () => {
                       <Eye className="h-3 w-3 mr-1" />
                       Voir
                     </Button>
+                    {projet.archived ? (
+                      <Button size="sm" variant="outline" onClick={() => handleArchiveProjet(projet.id)} title="Désarchiver">
+                        <ArchiveRestore className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button size="sm" variant="outline" onClick={() => handleArchiveProjet(projet.id)} title="Archiver">
+                        <Archive className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button size="sm" variant="destructive" onClick={() => handleDeleteProjet(projet.id)} title="Supprimer">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
