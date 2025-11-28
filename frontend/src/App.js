@@ -17,6 +17,8 @@ import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
 import DeletedVisitorsPage from './pages/DeletedVisitorsPage';
 import EventsManagementPage from './pages/EventsManagementPage';
 import ProjetsList from './pages/ProjetsList';
+import ProjetDetailPage from './pages/ProjetDetailPage';
+import CommunicationPage from './pages/CommunicationPage';
 import EvangelisationPage from './pages/EvangelisationPage';
 import SecteursPage from './pages/SecteursPage';
 import GererFIPage from './pages/GererFIPage';
