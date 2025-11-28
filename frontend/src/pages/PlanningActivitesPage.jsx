@@ -131,7 +131,7 @@ const PlanningActivitesPage = () => {
       id: `temp-${Date.now()}`,
       nom: '',
       date: new Date().toISOString().split('T')[0],
-      ministeres: [],
+      ministeres: '',
       statut: 'À venir',
       commentaire: '',
       ville: villeSelectionnee,
