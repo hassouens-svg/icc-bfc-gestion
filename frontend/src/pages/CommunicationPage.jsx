@@ -104,13 +104,13 @@ const CommunicationPage = () => {
         body: JSON.stringify(newCampagne)
       });
       
-      const data = await response.json();
-      
       if (!response.ok) {
-        toast.error(`Erreur: ${data.detail || 'Création échouée'}`);
+        const errorData = await response.json();
+        toast.error(`Erreur: ${errorData.detail || 'Création échouée'}`);
         return;
       }
       
+      const data = await response.json();
       toast.success('Campagne créée');
       
       // Envoyer immédiatement si pas de date planifiée
@@ -155,14 +155,14 @@ const CommunicationPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       
-      const data = await response.json();
-      
       if (!response.ok) {
-        toast.error(`Erreur envoi: ${data.detail || 'Échec'}`);
+        const errorData = await response.json();
+        toast.error(`Erreur envoi: ${errorData.detail || 'Échec'}`);
         return false;
       }
       
-      toast.success(`${data.count} message(s) envoyé(s)`);
+      const data = await response.json();
+      toast.success(`✅ ${data.count} message(s) envoyé(s) à hassouens@gmail.com`);
       await loadCampagnes();
       return true;
     } catch (error) {
