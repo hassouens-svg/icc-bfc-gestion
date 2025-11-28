@@ -897,12 +897,14 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Email Campaign Real Sending Test - My Events Church Communication Page"
+    - "Module Planning des Activités - Complete CRUD Operations"
+    - "Migration SMS Brevo - Replace Twilio with Brevo API"
   stuck_tasks: 
     - "Nouveau Système de Fidélisation - Vue Tableau avec filtres de date"
   test_all: false
   test_priority: "high_first"
   completed_tests:
+    - "Email Campaign Real Sending Test - My Events Church Communication Page"
     - "Promo Filter on Visitors Page - New Feature Implementation"
     - "Comment-Only Presence Save - New Feature Implementation"
     - "VisitorsTablePage Comment Display - Supporting Feature"
