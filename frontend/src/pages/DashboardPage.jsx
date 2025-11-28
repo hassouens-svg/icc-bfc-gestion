@@ -387,12 +387,15 @@ const DashboardPage = () => {
 
                   try {
                     // Update user with team_members
+                    console.log('Updating user:', user.id, 'with team_members:', teamMembers);
                     await updateUser(user.id, { team_members: teamMembers });
                     toast.success('Équipe mise à jour avec succès');
+                    document.getElementById('team-members-modal').close();
                     // Reload to refresh user data
-                    window.location.reload();
+                    setTimeout(() => window.location.reload(), 500);
                   } catch (error) {
-                    toast.error('Erreur lors de la mise à jour');
+                    console.error('Error updating team members:', error);
+                    toast.error(`Erreur: ${error.response?.data?.detail || error.message || 'Mise à jour échouée'}`);
                   }
                 }}
               >
