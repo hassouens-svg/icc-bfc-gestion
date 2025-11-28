@@ -15,7 +15,8 @@ const CommunicationEmailPage = () => {
     message: '',
     image_url: '',
     destinataires: [],
-    date_envoi: ''
+    date_envoi: '',
+    enable_rsvp: false
   });
   const [campagnes, setCampagnes] = useState([]);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -172,8 +173,7 @@ const CommunicationEmailPage = () => {
           },
           body: JSON.stringify({
             ...newEmail,
-            type: 'email',
-            enable_rsvp: false
+            type: 'email'
           })
         }
       );
@@ -206,7 +206,7 @@ const CommunicationEmailPage = () => {
       toast.success(`✅ ${sendData.count} email(s) envoyé(s)`);
       
       // Réinitialiser
-      setNewEmail({ titre: '', message: '', image_url: '', destinataires: [], date_envoi: '' });
+      setNewEmail({ titre: '', message: '', image_url: '', destinataires: [], date_envoi: '', enable_rsvp: false });
       setContacts([]);
       await loadCampagnes();
       
@@ -294,10 +294,10 @@ const CommunicationEmailPage = () => {
               {/* Zone copier-coller emails */}
               <div className="border rounded-lg p-3 bg-gray-50">
                 <Label className="text-sm font-medium mb-2 block">
-                  📋 Coller vos emails ici (un par ligne)
+                  📋 Coller vos contacts ici (un par ligne)
                 </Label>
                 <Textarea
-                  placeholder="Collez vos emails ici (un par ligne):&#10;exemple@email.com&#10;contact@church.org&#10;autre@domain.com&#10;...&#10;Maximum 300 emails"
+                  placeholder="Format accepté (un contact par ligne):&#10;&#10;Prénom Nom email@example.com&#10;Jean Dupont jean@church.org&#10;Marie Martin marie@domain.com&#10;&#10;OU juste les emails:&#10;simple@email.com&#10;&#10;Maximum 300 contacts"
                   rows={8}
                   className="bg-white font-mono text-sm"
                   onChange={(e) => {
@@ -305,18 +305,36 @@ const CommunicationEmailPage = () => {
                     const lines = text.split('\n').filter(line => line.trim());
                     
                     if (lines.length > 300) {
-                      toast.error('Maximum 300 emails autorisés');
+                      toast.error('Maximum 300 contacts autorisés');
                       return;
                     }
                     
                     const newContacts = [];
                     lines.forEach((line, index) => {
-                      const emailMatch = line.trim().match(/[\w.-]+@[\w.-]+\.\w+/);
+                      line = line.trim();
+                      const emailMatch = line.match(/[\w.-]+@[\w.-]+\.\w+/);
+                      
                       if (emailMatch) {
+                        const email = emailMatch[0];
+                        // Extraire prénom et nom si présents
+                        const beforeEmail = line.substring(0, line.indexOf(email)).trim();
+                        const parts = beforeEmail.split(/\s+/);
+                        
+                        let prenom = 'Contact';
+                        let nom = `${index + 1}`;
+                        
+                        if (parts.length >= 2) {
+                          prenom = parts[0];
+                          nom = parts.slice(1).join(' ');
+                        } else if (parts.length === 1 && parts[0]) {
+                          prenom = parts[0];
+                          nom = '';
+                        }
+                        
                         newContacts.push({
-                          prenom: `Contact`,
-                          nom: `${index + 1}`,
-                          email: emailMatch[0],
+                          prenom: prenom,
+                          nom: nom,
+                          email: email,
                           telephone: ''
                         });
                       }
@@ -327,10 +345,24 @@ const CommunicationEmailPage = () => {
                   }}
                 />
                 <p className="text-xs text-gray-500 mt-2">
-                  {contacts.length}/300 emails détectés
+                  {contacts.length}/300 contacts détectés
                   {contacts.length >= 300 && <span className="text-red-600 ml-2">⚠️ Limite atteinte</span>}
                 </p>
               </div>
+            </div>
+
+            {/* Case RSVP */}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="enable_rsvp"
+                checked={newEmail.enable_rsvp || false}
+                onChange={(e) => setNewEmail({...newEmail, enable_rsvp: e.target.checked})}
+                className="w-4 h-4 text-blue-600 rounded"
+              />
+              <Label htmlFor="enable_rsvp" className="cursor-pointer">
+                ✅ Ajouter lien RSVP (Oui / Non / Peut-être)
+              </Label>
             </div>
 
             {/* Bouton envoi */}
