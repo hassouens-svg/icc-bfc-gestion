@@ -37,8 +37,7 @@ const CommunicationPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       
-      // Clone response to avoid "body stream already read" error
-      const data = await response.clone().json();
+      const data = await response.json();
       
       if (!response.ok) {
         console.error('Erreur chargement campagnes:', data);
@@ -158,8 +157,7 @@ const CommunicationPage = () => {
         body: JSON.stringify(newCampagne)
       });
       
-      // Clone response to avoid "body stream already read" error
-      const data = await response.clone().json();
+      const data = await response.json();
       
       if (!response.ok) {
         toast.error(`Erreur: ${data.detail || 'Création échouée'}`);
@@ -210,15 +208,14 @@ const CommunicationPage = () => {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       
-      // Clone response to avoid "body stream already read" error
-      const data = await response.clone().json();
+      const data = await response.json();
       
       if (!response.ok) {
         toast.error(`Erreur envoi: ${data.detail || 'Échec'}`);
         return false;
       }
       
-      toast.success(`✅ ${data.count} message(s) envoyé(s) à hassouens@gmail.com`);
+      toast.success(`✅ ${data.count} message(s) envoyé(s)`);
       await loadCampagnes();
       return true;
     } catch (error) {
