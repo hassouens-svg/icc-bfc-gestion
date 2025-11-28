@@ -4138,11 +4138,16 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
                 message += f"❌ NON: {base_url}/rsvp/{campagne_id}/non?contact={contact_identifier}\n"
                 message += f"🤔 PEUT-ÊTRE: {base_url}/rsvp/{campagne_id}/peut_etre?contact={contact_identifier}\n"
             
+            # Ajouter l'image si présente
+            html_content = message.replace('\n', '<br>')
+            if campagne.get("image_url"):
+                html_content = f'<img src="{campagne["image_url"]}" style="max-width: 600px; margin-bottom: 20px;" /><br>{html_content}'
+            
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": destinataire.get("email"), "name": f"{destinataire.get('prenom', '')} {destinataire.get('nom', '')}"}],
                 subject=campagne["titre"],
-                text_content=message,
-                sender={"name": "My Events Church", "email": "noreply@myeventschurch.com"}
+                html_content=html_content,
+                sender={"name": "Impact Centre Chrétien BFC-Italie", "email": "noreply@icc-bfc-italie.com"}
             )
             
             try:
