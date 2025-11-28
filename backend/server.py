@@ -4434,6 +4434,47 @@ async def get_rsvp_stats(campagne_id: str, current_user: dict = Depends(get_curr
         "rsvps": rsvps
     }
 
+# ==================== CONTACT GROUPS (BOXES) ====================
+
+class ContactGroup(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    contacts: List[Dict[str, str]]
+    created_by: str = ""
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+@api_router.get("/contact-groups")
+async def get_contact_groups(user: dict = Depends(get_current_user)):
+    """Récupérer toutes les boxes de contacts"""
+    try:
+        groups = await db.contact_groups.find(
+            {}, 
+            {"_id": 0}
+        ).to_list(1000)
+        return groups
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/contact-groups")
+async def create_contact_group(group: ContactGroup, user: dict = Depends(get_current_user)):
+    """Créer une nouvelle box de contacts"""
+    try:
+        group_dict = group.model_dump()
+        group_dict["created_by"] = user["username"]
+        await db.contact_groups.insert_one(group_dict)
+        return {"message": "Box créée", "id": group.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/contact-groups/{group_id}")
+async def delete_contact_group(group_id: str, user: dict = Depends(get_current_user)):
+    """Supprimer une box de contacts"""
+    try:
+        await db.contact_groups.delete_one({"id": group_id})
+        return {"message": "Box supprimée"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== PLANNING DES ACTIVITÉS ====================
 
 class PlanningActivite(BaseModel):
