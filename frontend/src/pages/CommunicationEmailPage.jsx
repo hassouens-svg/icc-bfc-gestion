@@ -144,7 +144,7 @@ const CommunicationEmailPage = () => {
         throw new Error(data.detail || 'Upload échoué');
       }
 
-      setNewEmail({...newEmail, image_url: data.url});
+      setNewEmail({...newEmail, image_url: data.image_url});
       toast.success('Image uploadée');
     } catch (error) {
       toast.error('Erreur upload image');
