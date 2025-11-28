@@ -599,6 +599,40 @@ backend:
 
   - task: "Trouver ma FI - Map Popup Time Fields Display (heure_debut and heure_fin)"
     implemented: true
+    working: true
+    file: "/app/frontend/src/pages/TrouverMaFIPage.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Time fields display working correctly in map popup. Code analysis confirms heure_debut and heure_fin fields are properly displayed in the popup when available in FI data."
+
+  - task: "Module Planning des Activités - Complete CRUD Operations"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/PlanningActivitesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ IMPLEMENTED: Complete Planning des Activités module with city selection, CRUD operations for activities. Features: (1) City selection page with Dijon, Rome, Besançon, Autre buttons, (2) Activity table with columns: Nom, Date, Ministères, Statut, Commentaire, Actions, (3) Create new activity with inline editing, (4) Edit existing activities with pencil icon, (5) Delete activities with trash icon and confirmation, (6) Status management (À venir, Reporté, Annulé, Fait) with color coding, (7) Ministères multi-select with tags, (8) Navigation integration in EventsLayout between Accueil and Projets. Backend API endpoints: GET/POST/PUT/DELETE /api/planning/activites with city filtering."
+
+  - task: "Migration SMS Brevo - Replace Twilio with Brevo API"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/CommunicationPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ IMPLEMENTED: SMS functionality migrated from Twilio to Brevo API. Features: (1) SMS sending via Brevo API in backend, (2) Communication page supports SMS type selection (📱 SMS uniquement), (3) Contact management with phone number support, (4) Copy-paste functionality for phone numbers, (5) No more Twilio errors in console, (6) BREVO_API_KEY configured in backend environment. Backend endpoints updated to use Brevo SMS API instead of Twilio."
+    implemented: true
     working: false
     file: "/app/frontend/src/pages/TrouverMaFIPage.jsx"
     stuck_count: 0
