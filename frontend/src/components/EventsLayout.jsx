@@ -20,6 +20,11 @@ const EventsLayout = ({ children }) => {
       icon: Home 
     },
     { 
+      path: '/events/planning', 
+      label: 'Planning', 
+      icon: Calendar 
+    },
+    { 
       path: '/events/projets', 
       label: 'Projets', 
       icon: List 
