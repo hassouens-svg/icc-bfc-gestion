@@ -55,14 +55,15 @@ const GestionAccesPage = () => {
       try {
         const [usersData, secteursData, fisData] = await Promise.all([
           getUsers(),
-          user?.role === 'super_admin' || user?.role === 'superviseur_fi' || user?.role === 'responsable_secteur' ? getSecteurs() : Promise.resolve([]),
-          user?.role === 'super_admin' || user?.role === 'superviseur_fi' || user?.role === 'responsable_secteur' ? getFamillesImpact() : Promise.resolve([])
+          currentUser?.role === 'super_admin' || currentUser?.role === 'superviseur_fi' || currentUser?.role === 'responsable_secteur' ? getSecteurs() : Promise.resolve([]),
+          currentUser?.role === 'super_admin' || currentUser?.role === 'superviseur_fi' || currentUser?.role === 'responsable_secteur' ? getFamillesImpact() : Promise.resolve([])
         ]);
         setUsers(usersData);
         setSecteurs(secteursData);
         setFamillesImpact(fisData);
       } catch (error) {
         toast.error('Erreur lors du chargement des données');
+        console.error('Error details:', error);
       } finally {
         setLoading(false);
       }
