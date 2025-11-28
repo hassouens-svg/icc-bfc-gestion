@@ -162,6 +162,31 @@ const CommunicationPage = () => {
                   </div>
 
                   <div>
+                    <Label>Ajouter une image/affiche (optionnel)</Label>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                    />
+                    {uploadingImage && <p className="text-xs text-gray-500 mt-1">Chargement...</p>}
+                    {newCampagne.image_url && (
+                      <div className="mt-2 relative inline-block">
+                        <img src={newCampagne.image_url} alt="Preview" className="max-w-full h-32 object-contain border rounded" />
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-1 right-1"
+                          onClick={() => setNewCampagne({...newCampagne, image_url: ''})}
+                        >
+                          X
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
                     <Label>Message * (utilisez {'{prenom}'} et {'{nom}'} pour personnaliser)</Label>
                     <Textarea
                       rows={6}
