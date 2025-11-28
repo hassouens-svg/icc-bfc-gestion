@@ -277,41 +277,59 @@ const CommunicationEmailPage = () => {
 
             {/* Import contacts */}
             <div>
-              <Label>Destinataires *</Label>
+              <Label>Destinataires * (Maximum 300 emails)</Label>
               
-              {/* Option 1: Fichier Excel */}
-              <div className="flex gap-2 mb-3">
-                <Input
-                  type="file"
-                  accept=".xlsx,.xls,.csv"
-                  onChange={handleFileUpload}
-                />
-                {contacts.length > 0 ? (
-                  <Button type="button" variant="outline" disabled>
-                    {contacts.length} contact(s)
-                  </Button>
-                ) : (
-                  <Button type="button" variant="outline" onClick={handleAddTestContact}>
-                    + Contact test
-                  </Button>
-                )}
+              {/* Bouton Contact Test */}
+              <div className="mb-3">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleAddTestContact}
+                  className="w-full"
+                >
+                  + Ajouter Contact Test (hassouens@gmail.com)
+                </Button>
               </div>
               
-              {/* Option 2: Copier-coller */}
+              {/* Zone copier-coller emails */}
               <div className="border rounded-lg p-3 bg-gray-50">
                 <Label className="text-sm font-medium mb-2 block">
-                  📋 Ou coller une liste d'emails
+                  📋 Coller vos emails ici (un par ligne)
                 </Label>
                 <Textarea
-                  placeholder="Collez vos emails ici (un par ligne):&#10;exemple@email.com&#10;contact@church.org"
-                  rows={4}
-                  className="bg-white"
-                  onPaste={(e) => {
-                    e.preventDefault();
-                    const pastedText = e.clipboardData.getData('text');
-                    handlePasteEmails(pastedText);
+                  placeholder="Collez vos emails ici (un par ligne):&#10;exemple@email.com&#10;contact@church.org&#10;autre@domain.com&#10;...&#10;Maximum 300 emails"
+                  rows={8}
+                  className="bg-white font-mono text-sm"
+                  onChange={(e) => {
+                    const text = e.target.value;
+                    const lines = text.split('\n').filter(line => line.trim());
+                    
+                    if (lines.length > 300) {
+                      toast.error('Maximum 300 emails autorisés');
+                      return;
+                    }
+                    
+                    const newContacts = [];
+                    lines.forEach((line, index) => {
+                      const emailMatch = line.trim().match(/[\w.-]+@[\w.-]+\.\w+/);
+                      if (emailMatch) {
+                        newContacts.push({
+                          prenom: `Contact`,
+                          nom: `${index + 1}`,
+                          email: emailMatch[0],
+                          telephone: ''
+                        });
+                      }
+                    });
+                    
+                    setContacts(newContacts);
+                    setNewEmail({...newEmail, destinataires: newContacts});
                   }}
                 />
+                <p className="text-xs text-gray-500 mt-2">
+                  {contacts.length}/300 emails détectés
+                  {contacts.length >= 300 && <span className="text-red-600 ml-2">⚠️ Limite atteinte</span>}
+                </p>
               </div>
             </div>
 
