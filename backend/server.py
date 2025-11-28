@@ -339,6 +339,7 @@ class Projet(BaseModel):
     ville: str
     created_by: str  # username
     team_members: Optional[List[Dict[str, str]]] = []  # [{"nom": "Jean Dupont", "email": "jean@email.com"}]
+    archived: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
