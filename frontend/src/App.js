@@ -19,6 +19,7 @@ import EventsManagementPage from './pages/EventsManagementPage';
 import ProjetsList from './pages/ProjetsList';
 import ProjetDetailPage from './pages/ProjetDetailPage';
 import CommunicationPage from './pages/CommunicationPage';
+import RSVPPublicPage from './pages/RSVPPublicPage';
 import EvangelisationPage from './pages/EvangelisationPage';
 import SecteursPage from './pages/SecteursPage';
 import GererFIPage from './pages/GererFIPage';
