@@ -4355,7 +4355,7 @@ async def enregistrer_rsvp(data: dict):
 
 @api_router.post("/events/upload-image")
 async def upload_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
-    """Upload an image and return base64 data URL"""
+    """Upload an image and save it to public folder"""
     allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
@@ -4364,14 +4364,27 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
     if not file.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail="Le fichier doit \u00eatre une image")
     
-    # Read file content
+    # Generate unique filename
+    import hashlib
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_hash = hashlib.md5(file.filename.encode()).hexdigest()[:8]
+    extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    new_filename = f"campaign_{timestamp}_{file_hash}.{extension}"
+    
+    # Save to frontend public folder
+    upload_dir = "/app/frontend/public/uploads"
+    os.makedirs(upload_dir, exist_ok=True)
+    file_path = os.path.join(upload_dir, new_filename)
+    
+    # Write file
     contents = await file.read()
+    with open(file_path, "wb") as f:
+        f.write(contents)
     
-    # Convert to base64
-    base64_encoded = base64.b64encode(contents).decode('utf-8')
-    data_url = f"data:{file.content_type};base64,{base64_encoded}"
+    # Return public URL (relative to frontend)
+    public_url = f"/uploads/{new_filename}"
     
-    return {"image_url": data_url}
+    return {"image_url": public_url}
 
     return {"message": "Réponse enregistrée"}
 
