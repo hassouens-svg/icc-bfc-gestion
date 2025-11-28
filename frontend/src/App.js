@@ -20,6 +20,7 @@ import ProjetsList from './pages/ProjetsList';
 import ProjetDetailPage from './pages/ProjetDetailPage';
 import CommunicationPage from './pages/CommunicationPage';
 import RSVPPublicPage from './pages/RSVPPublicPage';
+import EventsStatsPage from './pages/EventsStatsPage';
 import EvangelisationPage from './pages/EvangelisationPage';
 import SecteursPage from './pages/SecteursPage';
 import GererFIPage from './pages/GererFIPage';
@@ -75,6 +76,7 @@ function App() {
           <Route path="/events/projets" element={<ProjetsList />} />
           <Route path="/events/projets/:id" element={<ProjetDetailPage />} />
           <Route path="/events/communication" element={<CommunicationPage />} />
+          <Route path="/events/stats" element={<EventsStatsPage />} />
           <Route path="/rsvp/:campagneId/:reponse" element={<RSVPPublicPage />} />
           <Route path="/evangelisation" element={<EvangelisationPage />} />
           
