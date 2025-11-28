@@ -4475,6 +4475,40 @@ async def delete_contact_group(group_id: str, user: dict = Depends(get_current_u
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== CONTACT GROUPS SMS ====================
+
+@api_router.get("/contact-groups-sms")
+async def get_contact_groups_sms(user: dict = Depends(get_current_user)):
+    """Récupérer toutes les boxes SMS"""
+    try:
+        groups = await db.contact_groups_sms.find(
+            {}, 
+            {"_id": 0}
+        ).to_list(1000)
+        return groups
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/contact-groups-sms")
+async def create_contact_group_sms(group: ContactGroup, user: dict = Depends(get_current_user)):
+    """Créer une nouvelle box SMS"""
+    try:
+        group_dict = group.model_dump()
+        group_dict["created_by"] = user["username"]
+        await db.contact_groups_sms.insert_one(group_dict)
+        return {"message": "Box SMS créée", "id": group.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/contact-groups-sms/{group_id}")
+async def delete_contact_group_sms(group_id: str, user: dict = Depends(get_current_user)):
+    """Supprimer une box SMS"""
+    try:
+        await db.contact_groups_sms.delete_one({"id": group_id})
+        return {"message": "Box SMS supprimée"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== PLANNING DES ACTIVITÉS ====================
 
 class PlanningActivite(BaseModel):
