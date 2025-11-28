@@ -18,7 +18,8 @@ const CommunicationSMSPage = () => {
   const [newSMS, setNewSMS] = useState({
     titre: '',
     message: '',
-    destinataires: []
+    destinataires: [],
+    enable_rsvp: false
   });
   const [campagnes, setCampagnes] = useState([]);
   const [showGuide, setShowGuide] = useState(false);
@@ -142,7 +143,6 @@ const CommunicationSMSPage = () => {
           body: JSON.stringify({
             ...newSMS,
             type: 'sms',
-            enable_rsvp: false,
             image_url: '',
             date_envoi: ''
           })
@@ -175,7 +175,7 @@ const CommunicationSMSPage = () => {
 
       toast.success(`✅ ${sendData.count} SMS envoyé(s)`);
       
-      setNewSMS({ titre: '', message: '', destinataires: [] });
+      setNewSMS({ titre: '', message: '', destinataires: [], enable_rsvp: false });
       setContacts([]);
       await loadCampagnes();
       
@@ -329,22 +329,77 @@ const CommunicationSMSPage = () => {
               
               <div className="border rounded-lg p-3 bg-gray-50">
                 <Label className="text-sm font-medium mb-2 block">
-                  📋 Ou coller une liste de numéros
+                  📋 Coller vos contacts ici (un par ligne)
                 </Label>
                 <Textarea
-                  placeholder="Collez vos numéros ici (un par ligne):&#10;0612345678&#10;+33687654321"
-                  rows={4}
-                  className="bg-white"
-                  onPaste={(e) => {
-                    e.preventDefault();
-                    const pastedText = e.clipboardData.getData('text');
-                    handlePastePhones(pastedText);
+                  placeholder="Format accepté (un contact par ligne):&#10;&#10;Prénom Nom 0612345678&#10;Jean Dupont +33687654321&#10;Marie Martin 0698765432&#10;&#10;OU juste les numéros:&#10;0612345678&#10;&#10;Maximum 300 contacts"
+                  rows={8}
+                  className="bg-white font-mono text-sm"
+                  onChange={(e) => {
+                    const text = e.target.value;
+                    const lines = text.split('\n').filter(line => line.trim());
+                    
+                    if (lines.length > 300) {
+                      toast.error('Maximum 300 contacts autorisés');
+                      return;
+                    }
+                    
+                    const newContacts = [];
+                    lines.forEach((line, index) => {
+                      line = line.trim();
+                      const phoneMatch = line.match(/[\d\s+()-]{8,}/);
+                      
+                      if (phoneMatch) {
+                        const phoneClean = phoneMatch[0].replace(/[^\d+]/g, '');
+                        if (phoneClean.length >= 8) {
+                          // Extraire prénom et nom si présents
+                          const beforePhone = line.substring(0, line.indexOf(phoneMatch[0])).trim();
+                          const parts = beforePhone.split(/\s+/);
+                          
+                          let prenom = 'Contact';
+                          let nom = `${index + 1}`;
+                          
+                          if (parts.length >= 2) {
+                            prenom = parts[0];
+                            nom = parts.slice(1).join(' ');
+                          } else if (parts.length === 1 && parts[0]) {
+                            prenom = parts[0];
+                            nom = '';
+                          }
+                          
+                          newContacts.push({
+                            prenom: prenom,
+                            nom: nom,
+                            email: '',
+                            telephone: phoneClean
+                          });
+                        }
+                      }
+                    });
+                    
+                    setContacts(newContacts);
+                    setNewSMS({...newSMS, destinataires: newContacts});
                   }}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Formats acceptés : 0612345678 ou +33612345678
+                <p className="text-xs text-gray-500 mt-2">
+                  {contacts.length}/300 contacts détectés • Formats : 0612345678 ou +33612345678
+                  {contacts.length >= 300 && <span className="text-red-600 ml-2">⚠️ Limite atteinte</span>}
                 </p>
               </div>
+            </div>
+
+            {/* Case RSVP */}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="enable_rsvp_sms"
+                checked={newSMS.enable_rsvp || false}
+                onChange={(e) => setNewSMS({...newSMS, enable_rsvp: e.target.checked})}
+                className="w-4 h-4 text-blue-600 rounded"
+              />
+              <Label htmlFor="enable_rsvp_sms" className="cursor-pointer">
+                ✅ Ajouter lien RSVP (Oui / Non / Peut-être)
+              </Label>
             </div>
 
             <Button type="submit" className="w-full" size="lg">
