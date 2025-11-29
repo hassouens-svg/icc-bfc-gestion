@@ -168,6 +168,7 @@ class Visitor(BaseModel):
     phone: str  # Required now
     email: Optional[EmailStr] = None
     address: Optional[str] = None  # New field
+    photo_url: Optional[str] = None  # Photo du visiteur
     arrival_channel: str  # Comment ils ont connu ICC
     age_range: Optional[str] = None  # "13-18 ans", "18-25 ans", etc.
     visit_date: str
