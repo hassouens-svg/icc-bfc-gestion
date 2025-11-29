@@ -86,17 +86,27 @@ const GestionAccesPage = () => {
     }
     
     try {
-      // Si c'est un referent avec plusieurs mois, on crée avec assigned_month en tableau
-      if (newUser.role === 'referent' && Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 1) {
-        await createUser(newUser);
-      } else {
-        // Sinon on envoie le premier mois (comportement legacy pour autres rôles)
-        const dataToSend = {
-          ...newUser,
-          assigned_month: Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 0 ? newUser.assigned_month[0] : newUser.assigned_month
-        };
-        await createUser(dataToSend);
+      // Préparer les données en nettoyant les champs vides
+      const dataToSend = {
+        username: newUser.username,
+        password: newUser.password,
+        city: newUser.city,
+        role: newUser.role,
+      };
+      
+      // Ajouter uniquement les champs non vides
+      if (newUser.telephone) {
+        dataToSend.telephone = newUser.telephone;
       }
+      
+      // Gérer assigned_month pour les referents
+      if (newUser.role === 'referent' && Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 0) {
+        dataToSend.assigned_month = newUser.assigned_month.length > 1 
+          ? newUser.assigned_month 
+          : newUser.assigned_month[0];
+      }
+      
+      await createUser(dataToSend);
 
       toast.success('Utilisateur créé avec succès!');
       setIsDialogOpen(false);
