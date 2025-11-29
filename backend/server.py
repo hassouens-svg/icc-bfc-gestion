@@ -2080,22 +2080,42 @@ async def get_all_fi_public(ville: Optional[str] = None):
     
     fis = await db.familles_impact.find(
         query, 
-        {"_id": 0, "id": 1, "nom": 1, "ville": 1, "adresse": 1, "secteur_id": 1, "pilote_id": 1, "heure_debut": 1, "heure_fin": 1}
+        {"_id": 0, "id": 1, "nom": 1, "ville": 1, "adresse": 1, "secteur_id": 1, "pilote_id": 1, "pilote_ids": 1, "heure_debut": 1, "heure_fin": 1, "photos": 1}
     ).to_list(length=None)
     
     # Only return FIs with addresses
     fis_with_address = [fi for fi in fis if fi.get("adresse")]
     
-    # Enrichir avec les infos du pilote
+    # Enrichir avec les infos du/des pilote(s)
     for fi in fis_with_address:
+        pilotes_info = []
+        
+        # Handle both old (pilote_id) and new (pilote_ids) format
+        pilote_ids = fi.get("pilote_ids", [])
         if fi.get("pilote_id"):
+            pilote_ids.append(fi["pilote_id"])
+        
+        # Get info for all pilots
+        for pilote_id in pilote_ids:
             pilote = await db.users.find_one(
-                {"id": fi["pilote_id"]}, 
+                {"id": pilote_id}, 
                 {"_id": 0, "username": 1, "telephone": 1}
             )
             if pilote:
-                fi["pilote_nom"] = pilote.get("username")
-                fi["pilote_telephone"] = pilote.get("telephone")
+                pilotes_info.append({
+                    "nom": pilote.get("username"),
+                    "telephone": pilote.get("telephone")
+                })
+        
+        fi["pilotes"] = pilotes_info
+        # Keep backward compatibility
+        if pilotes_info:
+            fi["pilote_nom"] = pilotes_info[0]["nom"]
+            fi["pilote_telephone"] = pilotes_info[0]["telephone"]
+        
+        # Ensure photos is an array
+        if "photos" not in fi:
+            fi["photos"] = []
     
     return fis_with_address
 
