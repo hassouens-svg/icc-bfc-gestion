@@ -560,21 +560,30 @@ const CommunicationSMSPage = () => {
                           size="sm"
                           variant="destructive"
                           onClick={async () => {
-                            if (!confirm('Supprimer cette campagne SMS ?')) return;
+                            if (!window.confirm('Supprimer définitivement cette campagne SMS ?')) return;
                             try {
                               const response = await fetch(
                                 `${process.env.REACT_APP_BACKEND_URL}/api/events/campagnes/${campagne.id}`,
                                 {
                                   method: 'DELETE',
-                                  headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                                  headers: { 
+                                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                                    'Content-Type': 'application/json'
+                                  }
                                 }
                               );
-                              if (response.ok) {
-                                toast.success('Campagne SMS supprimée');
-                                loadCampagnes();
+                              
+                              if (!response.ok) {
+                                const error = await response.text();
+                                console.error('Erreur suppression:', error);
+                                throw new Error('Suppression échouée');
                               }
+                              
+                              toast.success('Campagne SMS supprimée avec succès');
+                              await loadCampagnes();
                             } catch (error) {
-                              toast.error('Erreur suppression');
+                              console.error('Erreur:', error);
+                              toast.error('Erreur lors de la suppression');
                             }
                           }}
                           title="Supprimer"
