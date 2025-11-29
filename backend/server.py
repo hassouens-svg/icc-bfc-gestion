@@ -253,6 +253,8 @@ class FamilleImpact(BaseModel):
     secteur_id: str
     ville: str
     adresse: Optional[str] = None
+    latitude: Optional[float] = None  # NOUVEAU: Latitude pour la carte
+    longitude: Optional[float] = None  # NOUVEAU: Longitude pour la carte
     pilote_id: Optional[str] = None  # DEPRECATED: Use pilote_ids
     pilote_ids: Optional[List[str]] = []  # Multiple pilotes per FI
     heure_debut: Optional[str] = None  # NOUVEAU: Heure de début de la FI (format HH:MM)
@@ -266,6 +268,8 @@ class FamilleImpactCreate(BaseModel):
     secteur_id: str
     ville: str
     adresse: Optional[str] = None
+    latitude: Optional[float] = None  # Latitude (auto-géocodé si adresse fournie)
+    longitude: Optional[float] = None  # Longitude (auto-géocodé si adresse fournie)
     pilote_id: Optional[str] = None  # DEPRECATED
     pilote_ids: Optional[List[str]] = []  # Multiple pilotes
     heure_debut: Optional[str] = None  # Heure de début (HH:MM)
