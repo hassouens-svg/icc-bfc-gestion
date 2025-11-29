@@ -11,7 +11,6 @@ import { Label } from '../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
-import FIPhotosManager from '../components/FIPhotosManager';
 
 const DashboardPiloteFIPage = () => {
   const navigate = useNavigate();
