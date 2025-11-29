@@ -150,12 +150,31 @@ const RSVPPage = () => {
       <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
         {/* Image de la campagne EN HAUT si présente */}
         {campagne && campagne.image_url && (
-          <div className="w-full">
+          <div className="w-full bg-gray-100 relative" style={{ minHeight: '300px' }}>
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-gray-400 text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                  <p className="text-sm">Chargement de l'affiche...</p>
+                </div>
+              </div>
+            )}
+            {imageError && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-gray-400 text-center p-4">
+                  <HelpCircle className="w-16 h-16 mx-auto mb-2" />
+                  <p className="text-sm">Affiche non disponible</p>
+                </div>
+              </div>
+            )}
             <img 
               src={getImageUrl(campagne.image_url)} 
               alt="Affiche événement" 
-              className="w-full h-auto object-cover"
+              className={`w-full h-auto object-cover ${imageLoaded ? 'block' : 'hidden'}`}
               style={{ maxHeight: '500px' }}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              loading="eager"
             />
           </div>
         )}
