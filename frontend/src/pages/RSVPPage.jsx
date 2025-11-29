@@ -32,16 +32,48 @@ const RSVPPage = () => {
     }
   };
 
+  // État pour le chargement de l'image
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
   // Fonction pour obtenir l'URL complète de l'image
   const getImageUrl = (imageUrl) => {
     if (!imageUrl) return null;
-    // Si c'est déjà une URL complète
-    if (imageUrl.startsWith('http')) return imageUrl;
-    // Si c'est un chemin relatif
-    if (imageUrl.startsWith('/')) {
-      return `${window.location.protocol}//${window.location.host}${imageUrl}`;
+    
+    // Si l'URL contient déjà /api/uploads/, on la retourne telle quelle
+    if (imageUrl.includes('/api/uploads/')) {
+      return imageUrl;
     }
+    
+    // Si c'est déjà une URL complète
+    if (imageUrl.startsWith('http')) {
+      // Si l'URL ne contient pas /api/uploads/, on la transforme
+      if (imageUrl.includes('/uploads/')) {
+        const filename = imageUrl.split('/uploads/').pop();
+        return `${process.env.REACT_APP_BACKEND_URL}/api/uploads/${filename}`;
+      }
+      return imageUrl;
+    }
+    
+    // Si c'est un chemin relatif
+    if (imageUrl.startsWith('/uploads/')) {
+      const filename = imageUrl.split('/uploads/').pop();
+      return `${process.env.REACT_APP_BACKEND_URL}/api/uploads/${filename}`;
+    }
+    
     return imageUrl;
+  };
+
+  // Forcer le rechargement de l'image si elle ne se charge pas
+  const handleImageError = () => {
+    console.error('Erreur chargement image:', campagne?.image_url);
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    console.log('Image chargée avec succès');
+    setImageLoaded(true);
+    setImageError(false);
   };
 
   const handleResponse = async (reponse) => {
