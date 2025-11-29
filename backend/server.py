@@ -265,13 +265,10 @@ class FamilleImpactCreate(BaseModel):
     secteur_id: str
     ville: str
     adresse: Optional[str] = None
-    latitude: Optional[float] = None  # Latitude (auto-géocodé si adresse fournie)
-    longitude: Optional[float] = None  # Longitude (auto-géocodé si adresse fournie)
     pilote_id: Optional[str] = None  # DEPRECATED
     pilote_ids: Optional[List[str]] = []  # Multiple pilotes
     heure_debut: Optional[str] = None  # Heure de début (HH:MM)
     heure_fin: Optional[str] = None  # Heure de fin (HH:MM)
-    photos: Optional[List[str]] = []  # URLs des photos
 
 class MembreFI(BaseModel):
     model_config = ConfigDict(extra="ignore")
