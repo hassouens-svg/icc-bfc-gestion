@@ -511,7 +511,7 @@ const GestionAccesPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.filter(u => !filtreVille || u.city === filtreVille).map((u) => (
+                  {users.filter(u => filtreVille === 'all' || u.city === filtreVille).map((u) => (
                     <tr key={u.id} className="border-b hover:bg-gray-50">
                       <td className="p-2 font-medium">{u.username}</td>
                       <td className="p-2">{u.city}</td>
