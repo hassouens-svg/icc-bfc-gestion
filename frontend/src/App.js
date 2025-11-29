@@ -88,6 +88,7 @@ function App() {
           <Route path="/events/communication" element={<CommunicationPage />} />
           <Route path="/events/email" element={<CommunicationEmailPage />} />
           <Route path="/events/sms" element={<CommunicationSMSPage />} />
+          <Route path="/events/rsvp-management" element={<RSVPManagementPage />} />
           <Route path="/events/contact-groups" element={<ContactGroupsPage />} />
           <Route path="/events/contact-groups-sms" element={<ContactGroupsSMSPage />} />
           <Route path="/events/stats" element={<EventsStatsPage />} />
