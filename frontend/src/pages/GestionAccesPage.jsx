@@ -105,7 +105,14 @@ const GestionAccesPage = () => {
       const usersData = await getUsers();
       setUsers(usersData);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Erreur lors de la création');
+      const errorMsg = error.response?.data?.detail;
+      // Si detail est un objet (erreur de validation), extraire le message
+      const displayMsg = typeof errorMsg === 'string' 
+        ? errorMsg 
+        : Array.isArray(errorMsg) 
+          ? errorMsg.map(e => e.msg).join(', ')
+          : 'Erreur lors de la création';
+      toast.error(displayMsg);
     }
   };
 
