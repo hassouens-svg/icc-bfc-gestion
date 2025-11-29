@@ -468,6 +468,24 @@ const PlanningActivitesPage = () => {
                   
                   return (
                     <TableRow key={activite.id} className={getRowColor(activite)}>
+                      {/* Semestre */}
+                      <TableCell>
+                        {isEditing ? (
+                          <Select value={data.semestre?.toString() || '1'} onValueChange={(v) => setEditData({ ...data, semestre: parseInt(v) })}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">Semestre 1</SelectItem>
+                              <SelectItem value="2">Semestre 2</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <span className="font-bold text-purple-600">S{activite.semestre || 1}</span>
+                        )}
+                      </TableCell>
+
+                      {/* Nom activité */}
                       <TableCell>
                         {isEditing ? (
                           <Input
@@ -480,12 +498,26 @@ const PlanningActivitesPage = () => {
                         )}
                       </TableCell>
                       
+                      {/* Date début */}
                       <TableCell>
                         {isEditing ? (
                           <Input
                             type="date"
-                            value={data.date}
-                            onChange={(e) => setEditData({ ...data, date: e.target.value })}
+                            value={data.date_debut}
+                            onChange={(e) => setEditData({ ...data, date_debut: e.target.value })}
+                          />
+                        ) : (
+                          new Date(activite.date_debut).toLocaleDateString('fr-FR')
+                        )}
+                      </TableCell>
+
+                      {/* Date fin */}
+                      <TableCell>
+                        {isEditing ? (
+                          <Input
+                            type="date"
+                            value={data.date_fin}
+                            onChange={(e) => setEditData({ ...data, date_fin: e.target.value })}
                           />
                         ) : (
                           new Date(activite.date).toLocaleDateString('fr-FR')
