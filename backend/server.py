@@ -4439,18 +4439,31 @@ async def get_uploaded_image(filename: str):
 
 @api_router.get("/events/campagnes/{campagne_id}/rsvp")
 async def get_rsvp_stats(campagne_id: str, current_user: dict = Depends(get_current_user)):
-    """Get RSVP statistics for a campaign"""
+    """Get RSVP responses for a campaign"""
     allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    rsvps = await db.rsvp.find({"campagne_id": campagne_id}, {"_id": 0}).to_list(1000)
-    campagne = await db.campagnes_communication.find_one({"id": campagne_id}, {"_id": 0})
+    responses = await db.rsvp.find(
+        {"campagne_id": campagne_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(1000)
     
-    return {
-        "campagne": campagne,
-        "rsvps": rsvps
-    }
+    return responses
+
+@api_router.delete("/events/rsvp/{reponse_id}")
+async def delete_rsvp_response(reponse_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete an RSVP response"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    result = await db.rsvp.delete_one({"id": reponse_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Réponse non trouvée")
+    
+    return {"message": "Réponse RSVP supprimée"}
 
 # ==================== CONTACT GROUPS (BOXES) ====================
 
