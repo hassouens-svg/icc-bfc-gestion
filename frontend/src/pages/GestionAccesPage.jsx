@@ -295,6 +295,22 @@ const GestionAccesPage = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>
+                    Téléphone {newUser.role === 'pilote_fi' && <span className="text-red-500">*</span>}
+                  </Label>
+                  <Input
+                    type="tel"
+                    value={newUser.telephone || ''}
+                    onChange={(e) => setNewUser({...newUser, telephone: e.target.value})}
+                    placeholder="0612345678"
+                    required={newUser.role === 'pilote_fi'}
+                  />
+                  {newUser.role === 'pilote_fi' && !newUser.telephone && (
+                    <p className="text-xs text-red-500">Le numéro de téléphone est obligatoire pour les pilotes</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
                   <Label>Ville *</Label>
                   <Select value={newUser.city} onValueChange={(val) => setNewUser({...newUser, city: val})}>
                     <SelectTrigger>
