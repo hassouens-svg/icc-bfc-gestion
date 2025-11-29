@@ -255,8 +255,10 @@ class FamilleImpact(BaseModel):
     adresse: Optional[str] = None
     pilote_id: Optional[str] = None  # DEPRECATED: Use pilote_ids
     pilote_ids: Optional[List[str]] = []  # Multiple pilotes per FI
+    pilote_phone: str  # OBLIGATOIRE: Numéro du pilote
     heure_debut: Optional[str] = None  # NOUVEAU: Heure de début de la FI (format HH:MM)
     heure_fin: Optional[str] = None  # NOUVEAU: Heure de fin de la FI (format HH:MM)
+    photos: Optional[List[str]] = []  # NOUVEAU: URLs des photos de la FI (max 3)
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
