@@ -123,7 +123,6 @@ const PlanningActivitesPage = () => {
       loadActivites(villeSelectionnee, parseInt(annee));
     }
   };
-  };
 
   const handleAddActivite = () => {
     const today = new Date().toISOString().split('T')[0];
