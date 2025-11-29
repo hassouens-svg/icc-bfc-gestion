@@ -444,8 +444,10 @@ const PlanningActivitesPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[100px]">Semestre</TableHead>
                 <TableHead className="w-[250px]">Nom de l'activité</TableHead>
-                <TableHead className="w-[150px]">Date</TableHead>
+                <TableHead className="w-[130px]">Date début</TableHead>
+                <TableHead className="w-[130px]">Date fin</TableHead>
                 <TableHead className="w-[200px]">Ministères</TableHead>
                 <TableHead className="w-[130px]">Statut</TableHead>
                 <TableHead>Commentaire</TableHead>
