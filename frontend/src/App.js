@@ -25,6 +25,7 @@ import EventsStatsPage from './pages/EventsStatsPage';
 import PlanningActivitesPage from './pages/PlanningActivitesPage';
 import CommunicationEmailPage from './pages/CommunicationEmailPage';
 import CommunicationSMSPage from './pages/CommunicationSMSPage';
+import RSVPManagementPage from './pages/RSVPManagementPage';
 import ContactGroupsPage from './pages/ContactGroupsPage';
 import ContactGroupsSMSPage from './pages/ContactGroupsSMSPage';
 import RSVPPage from './pages/RSVPPage';
