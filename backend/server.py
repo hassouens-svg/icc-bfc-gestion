@@ -4429,6 +4429,66 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
     
     return {"image_url": public_url}
 
+@api_router.post("/visitors/upload-photo")
+async def upload_visitor_photo(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+    """Upload photo for a visitor"""
+    # Check file type
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="Le fichier doit être une image")
+    
+    # Generate unique filename
+    import hashlib
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_hash = hashlib.md5(file.filename.encode()).hexdigest()[:8]
+    extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    new_filename = f"visitor_{timestamp}_{file_hash}.{extension}"
+    
+    # Save to backend uploads folder
+    upload_dir = "/app/backend/uploads"
+    os.makedirs(upload_dir, exist_ok=True)
+    file_path = os.path.join(upload_dir, new_filename)
+    
+    # Write file
+    contents = await file.read()
+    with open(file_path, "wb") as f:
+        f.write(contents)
+    
+    # Return API URL
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
+    public_url = f"{backend_url}/api/uploads/{new_filename}"
+    
+    return {"photo_url": public_url}
+
+@api_router.post("/fi/upload-photo")
+async def upload_fi_photo(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+    """Upload photo for a FI (max 3 photos per FI)"""
+    # Check file type
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="Le fichier doit être une image")
+    
+    # Generate unique filename
+    import hashlib
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_hash = hashlib.md5(file.filename.encode()).hexdigest()[:8]
+    extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    new_filename = f"fi_{timestamp}_{file_hash}.{extension}"
+    
+    # Save to backend uploads folder
+    upload_dir = "/app/backend/uploads"
+    os.makedirs(upload_dir, exist_ok=True)
+    file_path = os.path.join(upload_dir, new_filename)
+    
+    # Write file
+    contents = await file.read()
+    with open(file_path, "wb") as f:
+        f.write(contents)
+    
+    # Return API URL
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://ministry-hub-32.preview.emergentagent.com')
+    public_url = f"{backend_url}/api/uploads/{new_filename}"
+    
+    return {"photo_url": public_url}
+
 @api_router.get("/uploads/{filename}")
 async def get_uploaded_image(filename: str):
     """Serve uploaded images publicly (no authentication required)"""
