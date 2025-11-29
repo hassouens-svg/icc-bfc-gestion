@@ -190,7 +190,13 @@ const GestionAccesPage = () => {
       setSelectedUser(null);
       setNewPassword('');
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Erreur lors de la réinitialisation');
+      const errorMsg = error.response?.data?.detail;
+      const displayMsg = typeof errorMsg === 'string' 
+        ? errorMsg 
+        : Array.isArray(errorMsg) 
+          ? errorMsg.map(e => e.msg).join(', ')
+          : 'Erreur lors de la réinitialisation';
+      toast.error(displayMsg);
     }
   };
 
