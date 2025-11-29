@@ -2084,7 +2084,7 @@ async def get_all_fi_public(ville: Optional[str] = None):
     
     fis = await db.familles_impact.find(
         query, 
-        {"_id": 0, "id": 1, "nom": 1, "ville": 1, "adresse": 1, "secteur_id": 1, "pilote_id": 1, "pilote_ids": 1, "heure_debut": 1, "heure_fin": 1, "photos": 1}
+        {"_id": 0, "id": 1, "nom": 1, "ville": 1, "adresse": 1, "latitude": 1, "longitude": 1, "secteur_id": 1, "pilote_id": 1, "pilote_ids": 1, "heure_debut": 1, "heure_fin": 1, "photos": 1}
     ).to_list(length=None)
     
     # Only return FIs with addresses
