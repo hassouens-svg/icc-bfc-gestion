@@ -178,7 +178,7 @@ const RegisterPage = () => {
                   <SelectValue placeholder="Sélectionnez votre ville" />
                 </SelectTrigger>
                 <SelectContent>
-                  {cities.map((c) => (
+                  {cities.filter(c => c.name && c.name.trim() !== '').map((c) => (
                     <SelectItem key={c.id} value={c.name}>
                       {c.name}
                     </SelectItem>
