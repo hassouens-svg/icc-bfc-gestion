@@ -72,6 +72,10 @@ const FIPhotosManager = ({ fiId, initialPhotos = [] }) => {
 
   const updatePhotos = async (newPhotos) => {
     try {
+      if (!fiId) {
+        throw new Error('Aucune FI assignée');
+      }
+      
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/fi/familles-impact/${fiId}/photos`,
         {
@@ -87,9 +91,10 @@ const FIPhotosManager = ({ fiId, initialPhotos = [] }) => {
       if (!response.ok) {
         const error = await response.text();
         console.error('Erreur mise à jour:', error);
-        throw new Error('Mise à jour échouée');
+        throw new Error(`Mise à jour échouée: ${error}`);
       }
     } catch (error) {
+      console.error('Erreur updatePhotos:', error);
       throw error;
     }
   };
