@@ -29,16 +29,23 @@ const TrouverMaFIPage = () => {
   // Fonction pour géocoder une adresse avec Nominatim
   const geocodeAddress = async (address) => {
     try {
+      // Ajouter countrycodes=fr pour améliorer la recherche en France
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=fr&limit=5`,
+        {
+          headers: {
+            'User-Agent': 'ChurchApp/1.0'
+          }
+        }
       );
-      // Clone response to avoid "body stream already read" error
       const data = await response.json();
       
       if (data && data.length > 0) {
+        // Prendre le premier résultat qui correspond le mieux
         return {
           lat: parseFloat(data[0].lat),
-          lon: parseFloat(data[0].lon)
+          lon: parseFloat(data[0].lon),
+          display_name: data[0].display_name
         };
       }
       return null;
