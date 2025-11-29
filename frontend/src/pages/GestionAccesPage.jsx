@@ -20,6 +20,7 @@ const GestionAccesPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
   const { cities } = useCities(); // Use shared cities from Context
+  const [filtreVille, setFiltreVille] = useState('');
   const [secteurs, setSecteurs] = useState([]);
   const [famillesImpact, setFamillesImpact] = useState([]);
   const [loading, setLoading] = useState(true);
