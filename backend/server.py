@@ -2132,31 +2132,6 @@ async def update_famille_impact(fi_id: str, fi_data: FamilleImpactCreate, curren
     
     return {"message": "Famille d'Impact updated"}
 
-@api_router.put("/fi/familles-impact/{fi_id}/photos")
-async def update_fi_photos(fi_id: str, photos: List[str], current_user: dict = Depends(get_current_user)):
-    """Update photos for a FI - Pilote can update their own FI"""
-    # Check if user is pilote of this FI
-    if current_user["role"] == "pilote_fi":
-        assigned_fis = current_user.get("assigned_fi_ids", [])
-        if fi_id not in assigned_fis:
-            raise HTTPException(status_code=403, detail="Can only update photos of your FI")
-    elif current_user["role"] not in ["super_admin", "superviseur_fi", "responsable_secteur"]:
-        raise HTTPException(status_code=403, detail="Permission denied")
-    
-    # Limit to 3 photos
-    if len(photos) > 3:
-        raise HTTPException(status_code=400, detail="Maximum 3 photos allowed")
-    
-    result = await db.familles_impact.update_one(
-        {"id": fi_id},
-        {"$set": {"photos": photos}}
-    )
-    
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Famille d'Impact not found")
-    
-    return {"message": "Photos updated", "photos": photos}
-
 @api_router.delete("/fi/familles-impact/{fi_id}")
 async def delete_famille_impact(fi_id: str, current_user: dict = Depends(get_current_user)):
     if current_user["role"] not in ["superviseur_promos", "super_admin", "superviseur_fi", "responsable_secteur"] and not is_super_admin(current_user):
