@@ -487,8 +487,8 @@ const GestionAccesPage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Toutes les villes</SelectItem>
-                      {cities.filter(city => city && city.trim() !== '').map((city) => (
-                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      {cities.filter(city => city.name && city.name.trim() !== '').map((city) => (
+                        <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
