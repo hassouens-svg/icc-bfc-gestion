@@ -64,7 +64,7 @@ const Layout = ({ children }) => {
     { path: '/familles-impact/presences-table', label: 'Vue Tableau Présences', icon: Table, roles: ['pilote_fi'], department: 'familles-impact' },
     { path: '/familles-impact/dashboard-responsable-secteur', label: 'Dashboard Secteur', icon: Home, roles: ['responsable_secteur'], department: 'familles-impact' },
     { path: '/familles-impact/dashboard-superviseur', label: 'Dashboard Superviseur FI', icon: BarChart3, roles: ['superviseur_fi'], department: 'familles-impact' },
-    { path: '/familles-impact/carte-interactive', label: 'Carte Interactive FI', icon: MapPin, roles: ['superviseur_fi', 'responsable_secteur', 'super_admin', 'pasteur', 'responsable_eglise'], department: 'familles-impact' },
+    { path: '/familles-impact/carte-interactive', label: 'Carte Interactive FI', icon: MapPin, roles: ['superviseur_fi', 'super_admin', 'pasteur'], department: 'familles-impact' },
     { path: '/familles-impact', label: 'Familles d\'Impact', icon: Heart, roles: ['superviseur_fi', 'responsable_secteur'], department: 'familles-impact' },
     { path: '/familles-impact/affectation', label: 'Affectation FI', icon: UserPlus, roles: ['superviseur_fi'], department: 'familles-impact' },
     { path: '/familles-impact/secteurs', label: 'Gérer Secteurs', icon: MapPin, roles: ['superviseur_fi'], department: 'familles-impact' },
