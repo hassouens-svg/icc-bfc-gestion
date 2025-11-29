@@ -84,7 +84,6 @@ const CarteInteractiveFIPage = () => {
       
       if (fis.length === 0) {
         toast.warning('Aucune Famille d\'Impact trouvée avec adresse');
-        setLoading(false);
         return;
       }
 
@@ -93,7 +92,7 @@ const CarteInteractiveFIPage = () => {
       setCities(uniqueCities);
       
       // Filter FIs that have coordinates (geocoded in backend)
-      const fisWithCoords = fis.filter(fi => fi.latitude && fi.longitude).map(fi => ({
+      let fisWithCoords = fis.filter(fi => fi.latitude && fi.longitude).map(fi => ({
         ...fi,
         lat: fi.latitude,
         lon: fi.longitude
@@ -122,8 +121,9 @@ const CarteInteractiveFIPage = () => {
         toast.error('Impossible de géolocaliser les FI');
       } else {
         toast.success(`${fisWithCoords.length} Famille(s) d'Impact chargée(s)!`);
-        setFisWithCoords(fisWithCoords);
       }
+      
+      setFisWithCoords(fisWithCoords);
     } catch (error) {
       console.error('Erreur:', error);
       toast.error('Erreur lors du chargement des FI');
