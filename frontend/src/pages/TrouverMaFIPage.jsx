@@ -79,10 +79,18 @@ const TrouverMaFIPage = () => {
     try {
       // 1. Géocoder l'adresse utilisateur
       toast.info('Recherche de votre position...');
-      const userGeo = await geocodeAddress(userAddress);
+      
+      // Essayer d'abord l'adresse telle quelle
+      let userGeo = await geocodeAddress(userAddress);
+      
+      // Si pas trouvé et semble être juste code postal + ville, essayer avec ", France"
+      if (!userGeo && /^\d{5}\s+\w+/.test(userAddress.trim())) {
+        console.log('Tentative avec France ajouté...');
+        userGeo = await geocodeAddress(userAddress + ', France');
+      }
       
       if (!userGeo) {
-        toast.error('Adresse introuvable. Vérifiez votre saisie.');
+        toast.error('Adresse introuvable. Veuillez entrer une adresse complète (numéro + rue + code postal + ville)');
         setLoading(false);
         return;
       }
