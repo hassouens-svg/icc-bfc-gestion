@@ -125,7 +125,13 @@ const GestionAccesPage = () => {
       const usersData = await getUsers();
       setUsers(usersData);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Erreur lors de la mise à jour');
+      const errorMsg = error.response?.data?.detail;
+      const displayMsg = typeof errorMsg === 'string' 
+        ? errorMsg 
+        : Array.isArray(errorMsg) 
+          ? errorMsg.map(e => e.msg).join(', ')
+          : 'Erreur lors de la mise à jour';
+      toast.error(displayMsg);
     }
   };
 
