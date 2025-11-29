@@ -419,16 +419,18 @@ const PlanningActivitesPage = () => {
           </div>
           
           {/* Barre de progression */}
-          <div className="mt-4">
-            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+          <div className="mt-4 relative">
+            <div className="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
               <div 
-                className={`h-4 transition-all duration-500 ${
+                className={`h-6 transition-all duration-500 flex items-center justify-end pr-2 ${
                   stats.pourcentage >= 80 ? 'bg-green-500' :
                   stats.pourcentage >= 50 ? 'bg-yellow-500' :
                   'bg-red-500'
                 }`}
                 style={{ width: `${stats.pourcentage}%` }}
-              />
+              >
+                <span className="text-white font-bold text-sm">{stats.pourcentage}%</span>
+              </div>
             </div>
           </div>
         </div>
