@@ -520,7 +520,7 @@ const PlanningActivitesPage = () => {
                             onChange={(e) => setEditData({ ...data, date_fin: e.target.value })}
                           />
                         ) : (
-                          new Date(activite.date).toLocaleDateString('fr-FR')
+                          new Date(activite.date_fin).toLocaleDateString('fr-FR')
                         )}
                       </TableCell>
                       
