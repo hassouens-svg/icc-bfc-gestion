@@ -58,6 +58,7 @@ import SelectVillePage from './pages/SelectVillePage';
 import AdminDataPage from './pages/AdminDataPage';
 import AffectationPilotesFIPage from './pages/AffectationPilotesFIPage';
 import AffectationResponsablesSecteurPage from './pages/AffectationResponsablesSecteurPage';
+import CarteInteractiveFIPage from './pages/CarteInteractiveFIPage';
 
 function App() {
   return (
