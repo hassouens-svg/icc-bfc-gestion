@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Plus, Save, Trash2, Calendar } from 'lucide-react';
 
 const PlanningActivitesPage = () => {
