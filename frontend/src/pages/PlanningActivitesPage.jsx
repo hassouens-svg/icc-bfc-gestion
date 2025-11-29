@@ -284,16 +284,18 @@ const PlanningActivitesPage = () => {
   // Fonction pour déterminer la couleur de la ligne
   const getRowColor = (activite) => {
     const today = new Date();
-    const dateActivite = new Date(activite.date);
+    today.setHours(0, 0, 0, 0);
+    const dateFin = new Date(activite.date_fin || activite.date);
+    dateFin.setHours(0, 0, 0, 0);
     
     if (activite.statut === 'Fait') {
       return 'bg-green-50'; // Vert pour fait
-    } else if (dateActivite < today) {
-      return 'bg-red-50'; // Rouge pour en retard
-    } else if (activite.statut === 'Reporté') {
-      return 'bg-yellow-50'; // Jaune pour reporté
     } else if (activite.statut === 'Annulé') {
       return 'bg-gray-100'; // Gris pour annulé
+    } else if (activite.statut === 'Reporté') {
+      return 'bg-yellow-50'; // Jaune pour reporté
+    } else if (dateFin < today && activite.statut !== 'Fait') {
+      return 'bg-red-50'; // Rouge pour en retard
     }
     return 'bg-white'; // Blanc pour à venir
   };
