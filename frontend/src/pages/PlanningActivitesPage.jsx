@@ -125,10 +125,15 @@ const PlanningActivitesPage = () => {
   };
 
   const handleAddActivite = () => {
+    const today = new Date().toISOString().split('T')[0];
     const nouvelleActivite = {
       id: `temp-${Date.now()}`,
       nom: '',
-      date: new Date().toISOString().split('T')[0],
+      annee: anneeSelectionnee,
+      semestre: 1,
+      date_debut: today,
+      date_fin: today,
+      date: today, // Pour compatibilité
       ministeres: '',
       statut: 'À venir',
       commentaire: '',
