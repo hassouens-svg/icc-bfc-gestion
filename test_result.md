@@ -3,6 +3,26 @@
 ## Current Testing Phase
 Testing the FI Photo Upload and Interactive Map functionality
 
+## Test Results Summary
+
+### ✅ WORKING FEATURES:
+1. **User Authentication**: Both pilote1 and superviseur_fi users login successfully
+2. **Pilote Dashboard**: FI Photos Manager interface is present and functional
+3. **Photo Upload Interface**: File input and upload section visible (0/3 photos)
+4. **Navigation**: "Carte Interactive FI" link available in superviseur navigation
+5. **Backend Data**: FI République and FI Darcy exist with correct addresses
+6. **API Endpoints**: Login, FI data, and user creation APIs working
+
+### ⚠️ ISSUES IDENTIFIED:
+1. **Map Geocoding Timeout**: Geocoding process takes >60 seconds, may timeout
+2. **Navigation Redirect**: superviseur_fi redirects to Promotions dashboard instead of FI dashboard
+3. **Map Loading**: Interactive map shows loading state but geocoding doesn't complete in reasonable time
+
+### 🔧 FIXES APPLIED:
+1. **Frontend Build Error**: Fixed missing Label import in PlanningActivitesPage.jsx
+2. **User Creation**: Created missing superviseur_fi user in database
+3. **Authentication**: Confirmed login requires city field (Dijon)
+
 ## Test Scenarios
 
 ### Scenario 1: Pilote uploads photos to their FI
