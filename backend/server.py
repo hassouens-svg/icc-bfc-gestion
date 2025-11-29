@@ -253,13 +253,10 @@ class FamilleImpact(BaseModel):
     secteur_id: str
     ville: str
     adresse: Optional[str] = None
-    latitude: Optional[float] = None  # NOUVEAU: Latitude pour la carte
-    longitude: Optional[float] = None  # NOUVEAU: Longitude pour la carte
     pilote_id: Optional[str] = None  # DEPRECATED: Use pilote_ids
     pilote_ids: Optional[List[str]] = []  # Multiple pilotes per FI
-    heure_debut: Optional[str] = None  # NOUVEAU: Heure de début de la FI (format HH:MM)
-    heure_fin: Optional[str] = None  # NOUVEAU: Heure de fin de la FI (format HH:MM)
-    photos: Optional[List[str]] = []  # NOUVEAU: URLs des photos de la FI (max 3)
+    heure_debut: Optional[str] = None  # Heure de début de la FI (format HH:MM)
+    heure_fin: Optional[str] = None  # Heure de fin de la FI (format HH:MM)
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
