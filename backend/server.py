@@ -268,7 +268,6 @@ class FamilleImpactCreate(BaseModel):
     adresse: Optional[str] = None
     pilote_id: Optional[str] = None  # DEPRECATED
     pilote_ids: Optional[List[str]] = []  # Multiple pilotes
-    pilote_phone: str  # OBLIGATOIRE: Numéro du pilote
     heure_debut: Optional[str] = None  # Heure de début (HH:MM)
     heure_fin: Optional[str] = None  # Heure de fin (HH:MM)
     photos: Optional[List[str]] = []  # URLs des photos
