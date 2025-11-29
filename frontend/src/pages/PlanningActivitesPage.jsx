@@ -29,8 +29,10 @@ const PlanningActivitesPage = () => {
   const [villeSelectionnee, setVilleSelectionnee] = useState('');
   const [villes, setVilles] = useState([]);
   const [user, setUser] = useState(null);
+  const [anneeSelectionnee, setAnneeSelectionnee] = useState(new Date().getFullYear());
   
   const statuts = ['À venir', 'Reporté', 'Annulé', 'Fait'];
+  const annees = Array.from({ length: 11 }, (_, i) => 2025 + i); // 2025-2035
 
   useEffect(() => {
     // Charger l'utilisateur
