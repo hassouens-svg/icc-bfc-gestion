@@ -88,10 +88,11 @@ const PlanningActivitesPage = () => {
     }
   };
 
-  const loadActivites = async (ville) => {
+  const loadActivites = async (ville, annee = null) => {
     try {
+      const year = annee || anneeSelectionnee;
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/planning/activites?ville=${ville}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/planning/activites?ville=${ville}&annee=${year}`,
         {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         }
@@ -112,7 +113,15 @@ const PlanningActivitesPage = () => {
   const handleVilleSelection = (ville) => {
     setVilleSelectionnee(ville);
     localStorage.setItem('selected_ville_planning', ville);
-    loadActivites(ville);
+    loadActivites(ville, anneeSelectionnee);
+  };
+
+  const handleAnneeSelection = (annee) => {
+    setAnneeSelectionnee(parseInt(annee));
+    if (villeSelectionnee) {
+      loadActivites(villeSelectionnee, parseInt(annee));
+    }
+  };
   };
 
   const handleAddActivite = () => {
