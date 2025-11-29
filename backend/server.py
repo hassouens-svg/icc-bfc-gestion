@@ -4650,13 +4650,17 @@ class PlanningActivite(BaseModel):
     updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 @api_router.get("/planning/activites")
-async def get_activites_planning(ville: str, user: dict = Depends(get_current_user)):
-    """Récupérer toutes les activités pour une ville"""
+async def get_activites_planning(ville: str, annee: Optional[int] = None, user: dict = Depends(get_current_user)):
+    """Récupérer toutes les activités pour une ville et une année"""
     try:
+        query = {"ville": ville}
+        if annee:
+            query["annee"] = annee
+        
         activites = await db.planning_activites.find(
-            {"ville": ville}, 
+            query, 
             {"_id": 0}
-        ).sort("date", 1).to_list(1000)
+        ).sort([("semestre", 1), ("date_debut", 1)]).to_list(1000)
         return activites
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
