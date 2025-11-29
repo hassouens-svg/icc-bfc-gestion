@@ -325,7 +325,7 @@ const GestionAccesPage = () => {
                       <SelectValue placeholder="Sélectionnez une ville" />
                     </SelectTrigger>
                     <SelectContent>
-                      {[...cities].sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
+                      {[...cities].filter(c => c.name && c.name.trim() !== '').sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
                         <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
                       ))}
                     </SelectContent>
