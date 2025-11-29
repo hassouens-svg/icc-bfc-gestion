@@ -77,6 +77,13 @@ const GestionAccesPage = () => {
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
+    
+    // Validation pour pilote
+    if (newUser.role === 'pilote_fi' && !newUser.telephone) {
+      toast.error('Le numéro de téléphone est obligatoire pour les pilotes');
+      return;
+    }
+    
     try {
       // Si c'est un referent avec plusieurs mois, on crée avec assigned_month en tableau
       if (newUser.role === 'referent' && Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 1) {
@@ -92,7 +99,7 @@ const GestionAccesPage = () => {
 
       toast.success('Utilisateur créé avec succès!');
       setIsDialogOpen(false);
-      setNewUser({ username: '', password: '', city: '', role: 'referent', promo_name: '', assigned_month: [], assigned_fi_id: null, assigned_fi_ids: [], assigned_secteur_id: null });
+      setNewUser({ username: '', password: '', city: '', role: 'referent', telephone: '', promo_name: '', assigned_month: [], assigned_fi_id: null, assigned_fi_ids: [], assigned_secteur_id: null });
       // Rechargez la liste
       const usersData = await getUsers();
       setUsers(usersData);
