@@ -4240,11 +4240,15 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             </div>
             '''
             
+            # Configuration expéditeur depuis .env ou valeurs par défaut
+            sender_email = os.environ.get('SENDER_EMAIL', 'hassouens@gmail.com')
+            sender_name = os.environ.get('SENDER_NAME', 'Impact Centre Chrétien BFC-Italie')
+            
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": destinataire.get("email"), "name": f"{destinataire.get('prenom', '')} {destinataire.get('nom', '')}"}],
                 subject=campagne["titre"],
                 html_content=html_content,
-                sender={"name": "Impact Centre Chrétien BFC-Italie", "email": "hassouens@gmail.com"}
+                sender={"name": sender_name, "email": sender_email}
             )
             
             try:
