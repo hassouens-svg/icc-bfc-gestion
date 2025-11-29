@@ -92,29 +92,37 @@ const CarteInteractiveFIPage = () => {
       const uniqueCities = [...new Set(fis.map(fi => fi.ville))].sort();
       setCities(uniqueCities);
       
-      // Géocoder toutes les adresses des FI
-      toast.info(`Géolocalisation de ${fis.length} Familles d'Impact...`);
-      const fisWithGeo = [];
+      // Filter FIs that have coordinates (geocoded in backend)
+      const fisWithCoords = fis.filter(fi => fi.latitude && fi.longitude).map(fi => ({
+        ...fi,
+        lat: fi.latitude,
+        lon: fi.longitude
+      }));
       
-      for (const fi of fis) {
-        // Ajouter un délai pour respecter les limites de l'API Nominatim
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      // For FIs without coordinates, geocode them on the fly (fallback)
+      const fisWithoutCoords = fis.filter(fi => !fi.latitude || !fi.longitude);
+      
+      if (fisWithoutCoords.length > 0) {
+        toast.info(`Géolocalisation de ${fisWithoutCoords.length} FI(s) en cours...`);
         
-        const coords = await geocodeAddress(fi.adresse);
-        if (coords) {
-          fisWithGeo.push({
-            ...fi,
-            lat: coords.lat,
-            lon: coords.lon
-          });
+        for (const fi of fisWithoutCoords) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const coords = await geocodeAddress(fi.adresse);
+          if (coords) {
+            fisWithCoords.push({
+              ...fi,
+              lat: coords.lat,
+              lon: coords.lon
+            });
+          }
         }
       }
       
-      if (fisWithGeo.length === 0) {
+      if (fisWithCoords.length === 0) {
         toast.error('Impossible de géolocaliser les FI');
       } else {
-        toast.success(`${fisWithGeo.length} Familles d'Impact localisées!`);
-        setFisWithCoords(fisWithGeo);
+        toast.success(`${fisWithCoords.length} Famille(s) d'Impact chargée(s)!`);
+        setFisWithCoords(fisWithCoords);
       }
     } catch (error) {
       console.error('Erreur:', error);
