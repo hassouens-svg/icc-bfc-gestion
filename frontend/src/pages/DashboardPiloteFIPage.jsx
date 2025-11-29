@@ -162,14 +162,6 @@ const DashboardPiloteFIPage = () => {
           </Card>
         </div>
 
-        {/* Gestion des photos de la FI */}
-        {stats?.fi && (
-          <FIPhotosManager 
-            fiId={stats.fi.id} 
-            initialPhotos={stats.fi.photos || []} 
-          />
-        )}
-
         {/* NOUVEAU: Tableau de présences sous les KPIs */}
         <Card>
           <CardHeader>
