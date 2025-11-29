@@ -44,7 +44,11 @@ const FIPhotosManager = ({ fiId, initialPhotos = [] }) => {
         }
       );
       
-      if (!response.ok) throw new Error('Upload échoué');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erreur upload:', errorText);
+        throw new Error('Upload échoué');
+      }
       
       const data = await response.json();
       const newPhotos = [...photos, data.photo_url];
@@ -58,8 +62,9 @@ const FIPhotosManager = ({ fiId, initialPhotos = [] }) => {
       // Reset input
       e.target.value = '';
     } catch (error) {
-      console.error('Erreur:', error);
-      toast.error('Erreur lors de l\'upload');
+      console.error('Erreur complète:', error);
+      const errorMsg = error.message || 'Erreur lors de l\'upload';
+      toast.error(errorMsg);
     } finally {
       setUploading(false);
     }
