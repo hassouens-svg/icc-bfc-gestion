@@ -88,8 +88,8 @@ const CarteInteractiveFIPage = () => {
         return;
       }
 
-      // Extract unique cities
-      const uniqueCities = [...new Set(fis.map(fi => fi.ville))].sort();
+      // Extract unique cities (filter out empty values)
+      const uniqueCities = [...new Set(fis.map(fi => fi.ville).filter(ville => ville && ville.trim() !== ''))].sort();
       setCities(uniqueCities);
       
       // Filter FIs that have coordinates (geocoded in backend)
