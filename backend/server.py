@@ -4637,7 +4637,11 @@ async def delete_contact_group_sms(group_id: str, user: dict = Depends(get_curre
 class PlanningActivite(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     nom: str
-    date: str
+    annee: int  # Année du planning (2025-2035)
+    semestre: int  # 1 ou 2
+    date_debut: str  # Date de début
+    date_fin: str  # Date de fin
+    date: Optional[str] = None  # DEPRECATED - Pour compatibilité
     ministeres: str  # Texte libre au lieu de List[str]
     statut: str  # "À venir", "Reporté", "Annulé", "Fait"
     commentaire: str = ""
