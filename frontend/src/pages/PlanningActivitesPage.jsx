@@ -362,6 +362,21 @@ const PlanningActivitesPage = () => {
           </div>
         </div>
 
+        {/* Filtre Année */}
+        <div className="bg-white rounded-lg shadow p-4 mb-6">
+          <Label>Année du planning</Label>
+          <Select value={anneeSelectionnee.toString()} onValueChange={handleAnneeSelection}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {annees.map((annee) => (
+                <SelectItem key={annee} value={annee.toString()}>{annee}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Indicateur d'avancement */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">📊 Avancement du Planning</h2>
