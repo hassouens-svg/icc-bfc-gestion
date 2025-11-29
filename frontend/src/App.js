@@ -109,7 +109,6 @@ function App() {
           <Route path="/vue-tableau-fi" element={<VueTableauFIPage />} />
           <Route path="/trouver-ma-fi" element={<TrouverMaFIPage />} />
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
-          <Route path="/familles-impact/carte-interactive" element={<CarteInteractiveFIPage />} />
           <Route path="/dashboard-superviseur-promos" element={<DashboardSuperviseurPromosPage />} />
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
