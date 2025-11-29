@@ -459,8 +459,8 @@ const PlanningActivitesPage = () => {
             <TableBody>
               {activites.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                    Aucune activité. Cliquez sur "Nouvelle activité" pour commencer.
+                  <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                    Aucune activité pour l'année {anneeSelectionnee}. Cliquez sur "Nouvelle activité" pour commencer.
                   </TableCell>
                 </TableRow>
               ) : (
