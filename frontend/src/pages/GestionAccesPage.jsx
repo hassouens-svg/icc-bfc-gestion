@@ -475,6 +475,26 @@ const GestionAccesPage = () => {
             <CardTitle>Utilisateurs ({users.length})</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Filtre ville pour superadmin et pasteur */}
+            {(user?.role === 'super_admin' || user?.role === 'pasteur') && (
+              <div className="mb-4 flex gap-4 items-end">
+                <div className="flex-1">
+                  <Label>Filtrer par ville</Label>
+                  <Select value={filtreVille} onValueChange={setFiltreVille}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Toutes les villes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Toutes les villes</SelectItem>
+                      {cities.map((city) => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
