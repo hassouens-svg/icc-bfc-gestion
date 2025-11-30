@@ -26,11 +26,15 @@ const CitiesPage = () => {
 
   const loadCities = async () => {
     setLoading(true);
-    console.log('CitiesPage: Début chargement villes...');
+    console.log('CitiesPage: Début chargement villes et stats...');
     try {
-      const data = await getCities();
-      console.log('CitiesPage: Données reçues:', data?.length, 'villes');
-      setCities(data || []);
+      const [citiesData, statsData] = await Promise.all([
+        getCities(),
+        getStatsPasteur()
+      ]);
+      console.log('CitiesPage: Données reçues:', citiesData?.length, 'villes');
+      setCities(citiesData || []);
+      setStats(statsData || null);
     } catch (error) {
       console.error('CitiesPage: Erreur lors du chargement:', error);
       toast.error('Erreur lors du chargement des villes');
