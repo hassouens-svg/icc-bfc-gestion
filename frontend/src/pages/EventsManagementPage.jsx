@@ -167,6 +167,27 @@ const EventsManagementPage = () => {
             </CardContent>
           </Card>
 
+          {/* Liens RSVP */}
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => navigate('/events/rsvp-links')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="h-5 w-5 text-pink-500" />
+                🔗 Liens RSVP
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">
+                Créer des liens RSVP partageables avec photos et voir les statistiques
+              </p>
+              <Button className="mt-4 w-full" variant="outline">
+                Créer un Lien →
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Statistiques */}
           <Card 
             className="cursor-pointer hover:shadow-lg transition-shadow"
