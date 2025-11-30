@@ -379,37 +379,40 @@ const RSVPLinksPage = () => {
       {/* Stats Dialog */}
       {selectedEvent && (
         <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Statistiques: {selectedEvent.title}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               {eventStats ? (
                 <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-gray-500">Total Réponses</p>
-                            <p className="text-3xl font-bold text-indigo-600">{eventStats.total || 0}</p>
-                          </div>
-                          <Users className="h-12 w-12 text-indigo-200" />
+                  <Card className="border-0 shadow-sm">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between gap-4 px-2">
+                        <div className="flex flex-col items-center">
+                          <p className="text-4xl font-bold text-blue-600">{eventStats.total || 0}</p>
+                          <p className="text-xs text-gray-600 mt-1">Envoyés</p>
                         </div>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-gray-500">Confirmés</p>
-                            <p className="text-3xl font-bold text-green-600">{eventStats.confirmed || 0}</p>
-                          </div>
-                          <CheckCircle className="h-12 w-12 text-green-200" />
+                        <div className="flex flex-col items-center">
+                          <p className="text-4xl font-bold text-green-600">{eventStats.confirmed || 0}</p>
+                          <p className="text-xs text-gray-600 mt-1">Oui</p>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        <div className="flex flex-col items-center">
+                          <p className="text-4xl font-bold text-red-600">{eventStats.declined || 0}</p>
+                          <p className="text-xs text-gray-600 mt-1">Non</p>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <p className="text-4xl font-bold text-orange-500">{eventStats.maybe || 0}</p>
+                          <p className="text-xs text-gray-600 mt-1">Peut-être</p>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <p className="text-4xl font-bold text-gray-400">{(eventStats.total - (eventStats.confirmed + eventStats.declined + eventStats.maybe)) || 0}</p>
+                          <p className="text-xs text-gray-600 mt-1 text-center">Sans<br/>réponse</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
                   {eventStats.responses && eventStats.responses.length > 0 && (
                     <div className="border rounded-lg overflow-hidden">
                       <table className="w-full">
