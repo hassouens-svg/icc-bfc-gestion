@@ -126,6 +126,17 @@ const PublicEventRSVPPage = () => {
               Confirmation de Présence
             </h1>
 
+            {/* Image de l'événement */}
+            {event.image_url && (
+              <div className="rounded-lg overflow-hidden">
+                <img 
+                  src={event.image_url} 
+                  alt={event.title}
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+            )}
+
             <div className="bg-gray-50 rounded-lg p-4 flex items-start gap-3">
               <div className="text-gray-400 mt-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
