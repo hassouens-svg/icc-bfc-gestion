@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Textarea } from '../components/ui/textarea';
-import { Calendar, MapPin, Clock, CheckCircle, Users } from 'lucide-react';
+import { Calendar, CheckCircle, X, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PublicEventRSVPPage = () => {
@@ -14,14 +11,6 @@ const PublicEventRSVPPage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    guests_count: 1,
-    message: '',
-    status: 'confirmed'
-  });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
