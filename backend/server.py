@@ -4564,6 +4564,157 @@ async def delete_rsvp_response(reponse_id: str, current_user: dict = Depends(get
     
     return {"message": "Réponse RSVP supprimée"}
 
+
+# ==================== RSVP LINKS - STANDALONE EVENTS ====================
+
+@api_router.post("/events")
+async def create_event(event: ChurchEventCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new event with RSVP link"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    event_data = event.dict()
+    event_data["id"] = str(uuid.uuid4())
+    event_data["created_by"] = current_user["id"]
+    event_data["created_at"] = datetime.now(timezone.utc)
+    
+    await db.church_events.insert_one(event_data)
+    
+    return event_data
+
+@api_router.get("/events")
+async def get_events(current_user: dict = Depends(get_current_user)):
+    """Get all events created by user"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    events = await db.church_events.find(
+        {"created_by": current_user["id"]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return events
+
+@api_router.get("/events/{event_id}")
+async def get_event(event_id: str):
+    """Get a specific event (public access for RSVP page)"""
+    event = await db.church_events.find_one({"id": event_id}, {"_id": 0})
+    
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    return event
+
+@api_router.delete("/events/{event_id}")
+async def delete_event(event_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete an event"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    result = await db.church_events.delete_one({"id": event_id, "created_by": current_user["id"]})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Also delete associated RSVPs
+    await db.event_rsvps.delete_many({"event_id": event_id})
+    
+    return {"message": "Event deleted"}
+
+@api_router.post("/events/{event_id}/rsvp-public")
+async def create_event_rsvp_public(event_id: str, rsvp: EventRSVPCreate):
+    """Public endpoint - Submit RSVP for an event"""
+    # Verify event exists
+    event = await db.church_events.find_one({"id": event_id})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    if not event.get("rsvp_enabled", True):
+        raise HTTPException(status_code=400, detail="RSVP not enabled for this event")
+    
+    # Check max participants
+    if event.get("max_participants"):
+        current_count = await db.event_rsvps.count_documents({
+            "event_id": event_id,
+            "status": "confirmed"
+        })
+        if current_count >= event["max_participants"]:
+            raise HTTPException(status_code=400, detail="Event is full")
+    
+    rsvp_data = rsvp.dict()
+    rsvp_data["id"] = str(uuid.uuid4())
+    rsvp_data["event_id"] = event_id
+    rsvp_data["created_at"] = datetime.now(timezone.utc)
+    
+    await db.event_rsvps.insert_one(rsvp_data)
+    
+    return {"message": "RSVP submitted", "id": rsvp_data["id"]}
+
+@api_router.get("/events/{event_id}/rsvp")
+async def get_event_rsvps(event_id: str, current_user: dict = Depends(get_current_user)):
+    """Get all RSVPs for an event with statistics"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Verify event belongs to user
+    event = await db.church_events.find_one({"id": event_id, "created_by": current_user["id"]})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    rsvps = await db.event_rsvps.find({"event_id": event_id}, {"_id": 0}).to_list(1000)
+    
+    # Calculate stats
+    total = len(rsvps)
+    confirmed = len([r for r in rsvps if r.get("status") == "confirmed"])
+    declined = len([r for r in rsvps if r.get("status") == "declined"])
+    maybe = len([r for r in rsvps if r.get("status") == "maybe"])
+    
+    return {
+        "total": total,
+        "confirmed": confirmed,
+        "declined": declined,
+        "maybe": maybe,
+        "responses": rsvps
+    }
+
+@api_router.post("/upload-event-image")
+async def upload_event_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+    """Upload an image for an event"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Check file type
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
+    # Generate unique filename
+    import hashlib
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_hash = hashlib.md5(file.filename.encode()).hexdigest()[:8]
+    extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    new_filename = f"event_{timestamp}_{file_hash}.{extension}"
+    
+    # Save to uploads folder
+    upload_dir = "/app/backend/uploads"
+    os.makedirs(upload_dir, exist_ok=True)
+    file_path = os.path.join(upload_dir, new_filename)
+    
+    # Write file
+    contents = await file.read()
+    with open(file_path, "wb") as f:
+        f.write(contents)
+    
+    # Return public URL
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://church-connect-67.preview.emergentagent.com')
+    public_url = f"{backend_url}/api/uploads/{new_filename}"
+    
+    return {"image_url": public_url}
+
 # ==================== CONTACT GROUPS (BOXES) ====================
 
 class ContactGroup(BaseModel):
