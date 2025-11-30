@@ -36,8 +36,7 @@ const PublicEventRSVPPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleResponse = async (status) => {
     setSubmitting(true);
 
     try {
@@ -46,7 +45,11 @@ const PublicEventRSVPPage = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          name: 'Anonymous',
+          status: status,
+          guests_count: 1
+        })
       });
 
       if (!response.ok) {
