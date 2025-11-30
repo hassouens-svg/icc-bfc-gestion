@@ -379,37 +379,40 @@ const RSVPLinksPage = () => {
       {/* Stats Dialog */}
       {selectedEvent && (
         <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Statistiques: {selectedEvent.title}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               {eventStats ? (
                 <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-gray-500">Total Réponses</p>
-                            <p className="text-3xl font-bold text-indigo-600">{eventStats.total || 0}</p>
-                          </div>
-                          <Users className="h-12 w-12 text-indigo-200" />
+                  <Card className="border-0 shadow-none bg-gray-50">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between gap-6">
+                        <div className="flex flex-col items-center">
+                          <p className="text-3xl font-bold text-blue-600">{eventStats.total || 0}</p>
+                          <p className="text-sm text-gray-600 mt-1">Envoyés</p>
                         </div>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-gray-500">Confirmés</p>
-                            <p className="text-3xl font-bold text-green-600">{eventStats.confirmed || 0}</p>
-                          </div>
-                          <CheckCircle className="h-12 w-12 text-green-200" />
+                        <div className="flex flex-col items-center">
+                          <p className="text-3xl font-bold text-green-600">{eventStats.confirmed || 0}</p>
+                          <p className="text-sm text-gray-600 mt-1">Oui</p>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        <div className="flex flex-col items-center">
+                          <p className="text-3xl font-bold text-red-600">{eventStats.declined || 0}</p>
+                          <p className="text-sm text-gray-600 mt-1">Non</p>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <p className="text-3xl font-bold text-orange-500">{eventStats.maybe || 0}</p>
+                          <p className="text-sm text-gray-600 mt-1">Peut-être</p>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <p className="text-3xl font-bold text-gray-400">{(eventStats.total - (eventStats.confirmed + eventStats.declined + eventStats.maybe)) || 0}</p>
+                          <p className="text-sm text-gray-600 mt-1">Sans réponse</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
                   {eventStats.responses && eventStats.responses.length > 0 && (
                     <div className="border rounded-lg overflow-hidden">
                       <table className="w-full">
@@ -426,8 +429,13 @@ const RSVPLinksPage = () => {
                               <td className="p-3">{rsvp.name}</td>
                               <td className="p-3 text-sm">{rsvp.email || rsvp.phone || '-'}</td>
                               <td className="p-3">
-                                <span className={`px-2 py-1 rounded text-xs ${rsvp.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-gray-100'}`}>
-                                  {rsvp.status}
+                                <span className={`px-2 py-1 rounded text-xs ${
+                                  rsvp.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                                  rsvp.status === 'declined' ? 'bg-red-100 text-red-800' : 
+                                  rsvp.status === 'maybe' ? 'bg-orange-100 text-orange-800' : 
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {rsvp.status === 'confirmed' ? 'Oui' : rsvp.status === 'declined' ? 'Non' : rsvp.status === 'maybe' ? 'Peut-être' : rsvp.status}
                                 </span>
                               </td>
                             </tr>
