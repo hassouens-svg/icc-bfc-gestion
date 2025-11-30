@@ -21,6 +21,8 @@ const CitiesPage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentCity, setCurrentCity] = useState({ id: '', name: '', country: 'France' });
   const [expandedCity, setExpandedCity] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [selectedMonth, setSelectedMonth] = useState('all');
   const [currentPage, setCurrentPage] = useState(0);
   const [citiesPerPage] = useState(10);
 
