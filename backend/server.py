@@ -2752,8 +2752,7 @@ async def get_stats_pasteur(
                 "moy_adultes": moy_adultes,
                 "moy_enfants": moy_enfants,
                 "moy_stars": moy_stars,
-                "total_services": total_services,
-                "fidelisation": cultes_fidelisation
+                "total_services": total_services
             },
             "evangelisation": {
                 "eglise": evangel_eglise_totals,
