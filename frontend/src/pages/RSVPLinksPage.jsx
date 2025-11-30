@@ -46,11 +46,22 @@ const RSVPLinksPage = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
+      
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          toast.error('Session expirée. Veuillez vous reconnecter.');
+          navigate('/events-login');
+          return;
+        }
+        throw new Error('Erreur de chargement');
+      }
+      
       const data = await response.json();
       setEvents(data || []);
     } catch (error) {
       console.error('Erreur:', error);
       toast.error('Erreur lors du chargement des événements');
+      setEvents([]);
     } finally {
       setLoading(false);
     }
