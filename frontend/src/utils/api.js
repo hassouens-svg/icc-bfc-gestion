@@ -393,8 +393,11 @@ export const getStatsSuperviseurFI = async (ville = null) => {
   return response.data;
 };
 
-export const getStatsPasteur = async () => {
-  const response = await apiClient.get('/fi/stats/pasteur');
+export const getStatsPasteur = async (annee = null, mois = null) => {
+  const params = {};
+  if (annee) params.annee = annee;
+  if (mois && mois !== 'all') params.mois = mois;
+  const response = await apiClient.get('/fi/stats/pasteur', { params });
   return response.data;
 };
 
