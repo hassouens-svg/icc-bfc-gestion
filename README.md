@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://church-connect-67.preview.emergentagent.com/login
-- **Inscription Publique**: https://church-connect-67.preview.emergentagent.com/register
+- **Connexion**: https://event-church.preview.emergentagent.com/login
+- **Inscription Publique**: https://event-church.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**

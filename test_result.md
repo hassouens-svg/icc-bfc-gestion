@@ -59,7 +59,7 @@ Testing the FI Photo Upload and Interactive Map functionality
 5. Test clicking on markers and viewing details
 
 ## Test Environment Details
-- Backend URL: https://church-connect-67.preview.emergentagent.com
+- Backend URL: https://event-church.preview.emergentagent.com
 - Database: test_database
 - Test users created:
   - superadmin / superadmin123 (super_admin)
