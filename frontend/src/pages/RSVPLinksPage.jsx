@@ -193,9 +193,23 @@ const RSVPLinksPage = () => {
     return `${window.location.origin}/rsvp/${eventId}`;
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success('Lien copié !');
+  const copyToClipboard = (link) => {
+    // Créer un élément temporaire avec le lien HTML
+    const textToCopy = `Répondre maintenant en cliquant ici: ${link}`;
+    
+    // Copier le texte avec le lien
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      toast.success('Texte avec lien copié !');
+    }).catch(() => {
+      // Fallback si le clipboard API ne fonctionne pas
+      const tempInput = document.createElement('input');
+      tempInput.value = textToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      toast.success('Texte avec lien copié !');
+    });
   };
 
   const shareViaWhatsApp = (event) => {
