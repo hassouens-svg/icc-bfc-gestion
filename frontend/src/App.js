@@ -17,6 +17,7 @@ import StoppedVisitorsPage from './pages/StoppedVisitorsPage';
 import DeletedVisitorsPage from './pages/DeletedVisitorsPage';
 import EventsManagementPage from './pages/EventsManagementPage';
 import EventsLoginPage from './pages/EventsLoginPage';
+import RSVPLinksPage from './pages/RSVPLinksPage';
 import ProjetsList from './pages/ProjetsList';
 import ProjetDetailPage from './pages/ProjetDetailPage';
 import CommunicationPage from './pages/CommunicationPage';
