@@ -2624,13 +2624,17 @@ async def get_stats_pasteur(current_user: dict = Depends(get_current_user)):
         max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
         fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
         
-        # Promotions stats
+        # Promotions stats with fidelisation
         promos = await db.promotions.find({"ville": ville}, {"_id": 0}).to_list(length=None)
         na_count = len([p for p in promos if p.get("statut") == "nouveau_adherent"])
         nc_count = len([p for p in promos if p.get("statut") == "non_converti"])
         dp_count = len([p for p in promos if p.get("statut") == "demarche_personnelle"])
         
-        # Cultes stats
+        # Promotions fidelisation (taux de conversion)
+        total_promos = len(promos)
+        promos_fidelisation = (na_count / total_promos * 100) if total_promos > 0 else 0
+        
+        # Cultes stats with fidelisation
         cultes = await db.cultes.find({"ville": ville}, {"_id": 0}).to_list(length=None)
         total_adultes = sum([c.get("adultes", 0) for c in cultes])
         total_enfants = sum([c.get("enfants", 0) for c in cultes])
@@ -2641,22 +2645,60 @@ async def get_stats_pasteur(current_user: dict = Depends(get_current_user)):
         moy_enfants = round(total_enfants / total_services, 1) if total_services > 0 else 0
         moy_stars = round(total_stars / total_services, 1) if total_services > 0 else 0
         
+        # Cultes fidelisation (based on presences)
+        cultes_fidelisation = round(fidelisation, 2)
+        
+        # Dynamique d'Évangélisation stats
+        evangel_eglise = await db.evangelisation.find({"ville": ville, "eglise.type": "eglise"}, {"_id": 0}).to_list(length=None)
+        evangel_fi = await db.evangelisation.find({"ville": ville, "familles_impact.type": "familles_impact"}, {"_id": 0}).to_list(length=None)
+        
+        # Aggregate evangelisation data for eglise
+        evangel_eglise_totals = {
+            "gagneurs_ame": sum([e.get("eglise", {}).get("nombre_gagneurs_ame", 0) for e in evangel_eglise]),
+            "personnes_receptives": sum([e.get("eglise", {}).get("nombre_personnes_receptives", 0) for e in evangel_eglise]),
+            "priere_salut": sum([e.get("eglise", {}).get("nombre_priere_salut", 0) for e in evangel_eglise]),
+            "contacts_pris": sum([e.get("eglise", {}).get("nombre_contacts_pris", 0) for e in evangel_eglise]),
+            "ames_invitees": sum([e.get("eglise", {}).get("nombre_ames_invitees", 0) for e in evangel_eglise]),
+            "miracles": sum([e.get("eglise", {}).get("nombre_miracles", 0) for e in evangel_eglise])
+        }
+        
+        # Aggregate evangelisation data for familles impact
+        evangel_fi_totals = {
+            "gagneurs_ame": sum([e.get("familles_impact", {}).get("nombre_gagneurs_ame", 0) for e in evangel_fi]),
+            "personnes_receptives": sum([e.get("familles_impact", {}).get("nombre_personnes_receptives", 0) for e in evangel_fi]),
+            "priere_salut": sum([e.get("familles_impact", {}).get("nombre_priere_salut", 0) for e in evangel_fi]),
+            "contacts_pris": sum([e.get("familles_impact", {}).get("nombre_contacts_pris", 0) for e in evangel_fi]),
+            "ames_invitees": sum([e.get("familles_impact", {}).get("nombre_ames_invitees", 0) for e in evangel_fi]),
+            "miracles": sum([e.get("familles_impact", {}).get("nombre_miracles", 0) for e in evangel_fi])
+        }
+        
         stats_by_city.append({
             "ville": ville,
             "nombre_secteurs": len(secteurs),
             "nombre_fi": len(fis),
             "nombre_membres": len(membres),
-            "fidelisation": round(fidelisation, 2),
             "promotions": {
                 "na": na_count,
                 "nc": nc_count,
-                "dp": dp_count
+                "dp": dp_count,
+                "fidelisation": round(promos_fidelisation, 2)
+            },
+            "familles_impact": {
+                "secteurs": len(secteurs),
+                "familles": len(fis),
+                "membres": len(membres),
+                "fidelisation": cultes_fidelisation
             },
             "cultes": {
                 "moy_adultes": moy_adultes,
                 "moy_enfants": moy_enfants,
                 "moy_stars": moy_stars,
-                "total_services": total_services
+                "total_services": total_services,
+                "fidelisation": cultes_fidelisation
+            },
+            "evangelisation": {
+                "eglise": evangel_eglise_totals,
+                "familles_impact": evangel_fi_totals
             }
         })
     
