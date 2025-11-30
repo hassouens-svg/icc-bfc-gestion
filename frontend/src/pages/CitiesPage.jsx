@@ -15,6 +15,7 @@ const CitiesPage = () => {
   const navigate = useNavigate();
   const user = getUser();
   const [cities, setCities] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
