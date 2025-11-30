@@ -2670,9 +2670,26 @@ async def get_stats_pasteur(
         # Cultes fidelisation (based on presences)
         cultes_fidelisation = round(fidelisation, 2)
         
-        # Dynamique d'Évangélisation stats
-        evangel_eglise = await db.evangelisation.find({"ville": ville, "eglise.type": "eglise"}, {"_id": 0}).to_list(length=None)
-        evangel_fi = await db.evangelisation.find({"ville": ville, "familles_impact.type": "familles_impact"}, {"_id": 0}).to_list(length=None)
+        # Dynamique d'Évangélisation stats with date filter
+        evangel_filter_eglise = {"ville": ville, "eglise.type": "eglise"}
+        evangel_filter_fi = {"ville": ville, "familles_impact.type": "familles_impact"}
+        
+        if annee:
+            if mois:
+                start_date = f"{annee}-{str(mois).zfill(2)}-01"
+                if mois == 12:
+                    end_date = f"{annee + 1}-01-01"
+                else:
+                    end_date = f"{annee}-{str(mois + 1).zfill(2)}-01"
+                date_range = {"$gte": start_date, "$lt": end_date}
+            else:
+                date_range = {"$gte": f"{annee}-01-01", "$lt": f"{annee + 1}-01-01"}
+            
+            evangel_filter_eglise["date"] = date_range
+            evangel_filter_fi["date"] = date_range
+        
+        evangel_eglise = await db.evangelisation.find(evangel_filter_eglise, {"_id": 0}).to_list(length=None)
+        evangel_fi = await db.evangelisation.find(evangel_filter_fi, {"_id": 0}).to_list(length=None)
         
         # Aggregate evangelisation data for eglise
         evangel_eglise_totals = {
