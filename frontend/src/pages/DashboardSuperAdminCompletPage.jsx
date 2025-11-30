@@ -124,6 +124,7 @@ const DashboardSuperAdminCompletPage = () => {
   const [membresTable, setMembresTable] = useState([]);
   const [presencesDimancheData, setPresencesDimancheData] = useState(null);
   const [culteStatsData, setCulteStatsData] = useState(null);
+  const [evangelisationStats, setEvangelisationStats] = useState(null);
   
   // Filters for tables
   const [visitorsFilter, setVisitorsFilter] = useState('');
