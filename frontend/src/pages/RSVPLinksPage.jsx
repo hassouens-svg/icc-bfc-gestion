@@ -144,14 +144,19 @@ const RSVPLinksPage = () => {
         body: JSON.stringify(newEvent)
       });
 
-      if (!response.ok) throw new Error('Création échouée');
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorMsg = errorData.detail || 'Création échouée';
+        throw new Error(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
+      }
 
-      toast.success('Événement créé');
+      toast.success('✅ Événement créé avec succès !');
       setIsDialogOpen(false);
       setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
       loadEvents();
     } catch (error) {
-      toast.error('Erreur création');
+      console.error('Create event error:', error);
+      toast.error(error.message || 'Erreur création');
     }
   };
 
