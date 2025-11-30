@@ -22,18 +22,6 @@ const CitiesPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [citiesPerPage] = useState(10);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    if (!['super_admin', 'pasteur'].includes(user.role)) {
-      navigate('/dashboard');
-      return;
-    }
-    loadCities();
-  }, [user, navigate]);
-
   const loadCities = async () => {
     setLoading(true);
     console.log('CitiesPage: Début chargement villes...');
@@ -49,6 +37,19 @@ const CitiesPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (!['super_admin', 'pasteur'].includes(user.role)) {
+      navigate('/dashboard');
+      return;
+    }
+    loadCities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreate = async (e) => {
     e.preventDefault();
