@@ -53,14 +53,20 @@ const RSVPLinksPage = () => {
   const loadEvents = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem('token');
+      console.log('RSVPLinksPage: Loading events with token:', token ? 'exists' : 'missing');
+      
       const response = await fetch(`${backendUrl}/api/events`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
       
+      console.log('RSVPLinksPage: Response status:', response.status);
+      
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
+          console.log('RSVPLinksPage: Not authenticated, redirecting');
           toast.error('Session expirée. Veuillez vous reconnecter.');
           navigate('/events-login');
           return;
@@ -69,9 +75,10 @@ const RSVPLinksPage = () => {
       }
       
       const data = await response.json();
-      setEvents(data || []);
+      console.log('RSVPLinksPage: Events loaded:', data.length);
+      setEvents(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('RSVPLinksPage: Error loading events:', error);
       toast.error('Erreur lors du chargement des événements');
       setEvents([]);
     } finally {
