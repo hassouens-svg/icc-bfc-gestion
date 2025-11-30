@@ -18,7 +18,7 @@ API_BASE = f"{BACKEND_URL}/api"
 TEST_USER = {
     "username": "superadmin",
     "password": "superadmin123", 
-    "city": "Paris"
+    "city": "Dijon"
 }
 
 class RSVPEventsTest:
