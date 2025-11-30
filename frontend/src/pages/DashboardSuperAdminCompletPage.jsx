@@ -1541,7 +1541,7 @@ const DashboardSuperAdminCompletPage = () => {
                   </div>
                 </div>
 
-                {(!fiStats || fiStats.length === 0 || !fiStats[0]?.evangelisation) && (
+                {(!evangelisationStats?.stats_by_city || evangelisationStats.stats_by_city.length === 0 || !evangelisationStats.stats_by_city[0]?.evangelisation) && (
                   <div className="mt-6 p-4 bg-white rounded-lg border border-red-200">
                     <p className="text-sm text-gray-600 text-center">
                       💡 Sélectionnez une ville et une période dans les filtres ci-dessus pour voir les statistiques d'évangélisation
