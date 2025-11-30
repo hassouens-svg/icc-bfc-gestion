@@ -292,7 +292,18 @@ const RSVPLinksPage = () => {
                     )}
                   </div>
 
-                  <div className="pt-3 border-t space-y-2">
+                  <div className="pt-3 border-t space-y-3">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-500 mb-1">Lien de partage:</p>
+                      <a 
+                        href={getPublicRSVPLink(event.id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-indigo-600 hover:text-indigo-800 underline break-all"
+                      >
+                        Répondre maintenant en cliquant ici
+                      </a>
+                    </div>
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" className="flex-1" onClick={() => copyToClipboard(getPublicRSVPLink(event.id))}>
                         <Copy className="h-4 w-4 mr-1" />
