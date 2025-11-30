@@ -4647,7 +4647,7 @@ async def create_event_rsvp_public(event_id: str, rsvp: EventRSVPCreate):
     rsvp_data = rsvp.model_dump()
     rsvp_data["id"] = str(uuid.uuid4())
     rsvp_data["event_id"] = event_id
-    rsvp_data["created_at"] = datetime.now(timezone.utc)
+    rsvp_data["created_at"] = datetime.now(timezone.utc).isoformat()
     
     await db.event_rsvps.insert_one(rsvp_data)
     
