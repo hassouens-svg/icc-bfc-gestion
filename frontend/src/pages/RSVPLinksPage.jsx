@@ -32,9 +32,21 @@ const RSVPLinksPage = () => {
 
   useEffect(() => {
     if (!user) {
+      console.log('RSVPLinksPage: No user, redirecting to login');
       navigate('/events-login');
       return;
     }
+    
+    // Check if user has permission
+    const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
+    if (!allowedRoles.includes(user.role)) {
+      console.log('RSVPLinksPage: User not authorized, redirecting');
+      toast.error('Accès refusé. Veuillez vous connecter avec un compte autorisé.');
+      navigate('/events-login');
+      return;
+    }
+    
+    console.log('RSVPLinksPage: User authorized, loading events');
     loadEvents();
   }, [user, navigate]);
 
