@@ -135,13 +135,22 @@ const RSVPLinksPage = () => {
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     try {
+      // Clean up empty strings to null for optional fields
+      const eventData = {
+        ...newEvent,
+        description: newEvent.description || null,
+        time: newEvent.time || null,
+        location: newEvent.location || null,
+        image_url: newEvent.image_url || null
+      };
+
       const response = await fetch(`${backendUrl}/api/events`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newEvent)
+        body: JSON.stringify(eventData)
       });
 
       if (!response.ok) {
