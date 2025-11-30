@@ -1464,42 +1464,76 @@ const DashboardSuperAdminCompletPage = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Évangélisation Familles d'Impact */}
                   <div>
                     <h3 className="text-lg font-bold text-purple-900 mb-4">Évangélisation Familles d'Impact</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="text-center p-3 bg-purple-50 rounded">
                         <p className="text-xs text-gray-600">Gagneurs d'âme</p>
-                        <p className="text-3xl font-bold text-purple-600">0</p>
+                        <p className="text-3xl font-bold text-purple-600">{fiStats[0]?.evangelisation?.familles_impact?.gagneurs_ame || 0}</p>
                       </div>
                       <div className="text-center p-3 bg-pink-50 rounded">
                         <p className="text-xs text-gray-600">Pers. réceptives</p>
-                        <p className="text-3xl font-bold text-pink-600">0</p>
+                        <p className="text-3xl font-bold text-pink-600">{fiStats[0]?.evangelisation?.familles_impact?.personnes_receptives || 0}</p>
                       </div>
                       <div className="text-center p-3 bg-green-50 rounded">
                         <p className="text-xs text-gray-600">Prières salut</p>
-                        <p className="text-3xl font-bold text-green-600">0</p>
+                        <p className="text-3xl font-bold text-green-600">{fiStats[0]?.evangelisation?.familles_impact?.priere_salut || 0}</p>
                       </div>
                       <div className="text-center p-3 bg-blue-50 rounded">
                         <p className="text-xs text-gray-600">Contacts pris</p>
-                        <p className="text-3xl font-bold text-blue-600">0</p>
+                        <p className="text-3xl font-bold text-blue-600">{fiStats[0]?.evangelisation?.familles_impact?.contacts_pris || 0}</p>
                       </div>
                       <div className="text-center p-3 bg-indigo-50 rounded">
                         <p className="text-xs text-gray-600">Âmes invitées</p>
-                        <p className="text-3xl font-bold text-indigo-600">0</p>
+                        <p className="text-3xl font-bold text-indigo-600">{fiStats[0]?.evangelisation?.familles_impact?.ames_invitees || 0}</p>
                       </div>
                       <div className="text-center p-3 bg-yellow-50 rounded">
                         <p className="text-xs text-gray-600">Miracles</p>
-                        <p className="text-3xl font-bold text-yellow-600">0</p>
+                        <p className="text-3xl font-bold text-yellow-600">{fiStats[0]?.evangelisation?.familles_impact?.miracles || 0}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Évangélisation Église */}
+                  <div>
+                    <h3 className="text-lg font-bold text-blue-900 mb-4">Évangélisation Église</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-3 bg-purple-50 rounded">
+                        <p className="text-xs text-gray-600">Gagneurs d'âme</p>
+                        <p className="text-3xl font-bold text-purple-600">{fiStats[0]?.evangelisation?.eglise?.gagneurs_ame || 0}</p>
+                      </div>
+                      <div className="text-center p-3 bg-pink-50 rounded">
+                        <p className="text-xs text-gray-600">Pers. réceptives</p>
+                        <p className="text-3xl font-bold text-pink-600">{fiStats[0]?.evangelisation?.eglise?.personnes_receptives || 0}</p>
+                      </div>
+                      <div className="text-center p-3 bg-green-50 rounded">
+                        <p className="text-xs text-gray-600">Prières salut</p>
+                        <p className="text-3xl font-bold text-green-600">{fiStats[0]?.evangelisation?.eglise?.priere_salut || 0}</p>
+                      </div>
+                      <div className="text-center p-3 bg-blue-50 rounded">
+                        <p className="text-xs text-gray-600">Contacts pris</p>
+                        <p className="text-3xl font-bold text-blue-600">{fiStats[0]?.evangelisation?.eglise?.contacts_pris || 0}</p>
+                      </div>
+                      <div className="text-center p-3 bg-indigo-50 rounded">
+                        <p className="text-xs text-gray-600">Âmes invitées</p>
+                        <p className="text-3xl font-bold text-indigo-600">{fiStats[0]?.evangelisation?.eglise?.ames_invitees || 0}</p>
+                      </div>
+                      <div className="text-center p-3 bg-yellow-50 rounded">
+                        <p className="text-xs text-gray-600">Miracles</p>
+                        <p className="text-3xl font-bold text-yellow-600">{fiStats[0]?.evangelisation?.eglise?.miracles || 0}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 bg-white rounded-lg border border-red-200">
-                  <p className="text-sm text-gray-600 text-center">
-                    💡 Sélectionnez une ville et une période dans les filtres ci-dessus pour voir les statistiques d'évangélisation
-                  </p>
-                </div>
+                {(!fiStats || fiStats.length === 0 || !fiStats[0]?.evangelisation) && (
+                  <div className="mt-6 p-4 bg-white rounded-lg border border-red-200">
+                    <p className="text-sm text-gray-600 text-center">
+                      💡 Sélectionnez une ville et une période dans les filtres ci-dessus pour voir les statistiques d'évangélisation
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </>
