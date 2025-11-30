@@ -147,7 +147,7 @@ const RSVPLinksPage = () => {
 
   const shareViaWhatsApp = (event) => {
     const link = getPublicRSVPLink(event.id);
-    const message = encodeURIComponent(`🎉 ${event.title}\n\n📅 ${event.date} ${event.time ? 'à ' + event.time : ''}\n📍 ${event.location || ''}\n\nRépondez ici: ${link}`);
+    const message = encodeURIComponent(`🎉 ${event.title}\n\n📅 ${event.date} ${event.time ? 'à ' + event.time : ''}\n📍 ${event.location || ''}\n\nRépondre maintenant en cliquant ici: ${link}`);
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
