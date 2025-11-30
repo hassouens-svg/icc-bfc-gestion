@@ -189,13 +189,18 @@ const CitiesPage = () => {
                       <CardContent className="pt-0 space-y-4">
                         {/* Promotions */}
                         <div className="border rounded-lg p-3 bg-gradient-to-br from-purple-50 to-purple-100">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <div className="p-2 bg-purple-200 rounded-lg">
-                              <svg className="h-5 w-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                              </svg>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              <div className="p-2 bg-purple-200 rounded-lg">
+                                <svg className="h-5 w-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                                </svg>
+                              </div>
+                              <h4 className="font-semibold text-gray-800">Promotions</h4>
                             </div>
-                            <h4 className="font-semibold text-gray-800">Promotions</h4>
+                            <div className="bg-purple-200 px-3 py-1 rounded-full">
+                              <p className="text-xs font-bold text-purple-800">{cityStats.promotions?.fidelisation || 0}%</p>
+                            </div>
                           </div>
                           <div className="grid grid-cols-3 gap-3 text-center">
                             <div>
@@ -215,23 +220,28 @@ const CitiesPage = () => {
 
                         {/* Familles d'Impact */}
                         <div className="border rounded-lg p-3 bg-gradient-to-br from-green-50 to-green-100">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <div className="p-2 bg-green-200 rounded-lg">
-                              <Users className="h-5 w-5 text-green-700" />
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              <div className="p-2 bg-green-200 rounded-lg">
+                                <Users className="h-5 w-5 text-green-700" />
+                              </div>
+                              <h4 className="font-semibold text-gray-800">Familles d'Impact</h4>
                             </div>
-                            <h4 className="font-semibold text-gray-800">Familles d'Impact</h4>
+                            <div className="bg-green-200 px-3 py-1 rounded-full">
+                              <p className="text-xs font-bold text-green-800">{cityStats.familles_impact?.fidelisation || 0}%</p>
+                            </div>
                           </div>
                           <div className="grid grid-cols-3 gap-3 text-center">
                             <div>
-                              <p className="text-2xl font-bold text-green-700">{cityStats.nombre_secteurs || 0}</p>
+                              <p className="text-2xl font-bold text-green-700">{cityStats.familles_impact?.secteurs || 0}</p>
                               <p className="text-xs text-gray-600">Secteurs</p>
                             </div>
                             <div>
-                              <p className="text-2xl font-bold text-green-700">{cityStats.nombre_fi || 0}</p>
+                              <p className="text-2xl font-bold text-green-700">{cityStats.familles_impact?.familles || 0}</p>
                               <p className="text-xs text-gray-600">Familles</p>
                             </div>
                             <div>
-                              <p className="text-2xl font-bold text-green-700">{cityStats.nombre_membres || 0}</p>
+                              <p className="text-2xl font-bold text-green-700">{cityStats.familles_impact?.membres || 0}</p>
                               <p className="text-xs text-gray-600">Membres</p>
                             </div>
                           </div>
@@ -239,13 +249,18 @@ const CitiesPage = () => {
 
                         {/* Statistiques Cultes */}
                         <div className="border rounded-lg p-3 bg-gradient-to-br from-blue-50 to-blue-100">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <div className="p-2 bg-blue-200 rounded-lg">
-                              <svg className="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                              </svg>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              <div className="p-2 bg-blue-200 rounded-lg">
+                                <svg className="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                              </div>
+                              <h4 className="font-semibold text-gray-800">Statistiques Cultes</h4>
                             </div>
-                            <h4 className="font-semibold text-gray-800">Statistiques Cultes</h4>
+                            <div className="bg-blue-200 px-3 py-1 rounded-full">
+                              <p className="text-xs font-bold text-blue-800">{cityStats.cultes?.fidelisation || 0}%</p>
+                            </div>
                           </div>
                           <div className="grid grid-cols-2 gap-3 text-center">
                             <div>
@@ -267,10 +282,50 @@ const CitiesPage = () => {
                           </div>
                         </div>
 
-                        {/* % Fidélisation */}
-                        <div className="border rounded-lg p-4 bg-gradient-to-br from-amber-50 to-amber-100 text-center">
-                          <p className="text-sm text-gray-600 mb-1">% Fidélisation</p>
-                          <p className="text-4xl font-bold text-amber-700">{cityStats.fidelisation || 0}%</p>
+                        {/* Dynamique d'Évangélisation */}
+                        <div className="border rounded-lg p-3 bg-gradient-to-br from-orange-50 to-orange-100">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <div className="p-2 bg-orange-200 rounded-lg">
+                              <Sparkles className="h-5 w-5 text-orange-700" />
+                            </div>
+                            <h4 className="font-semibold text-gray-800">Dynamique d'Évangélisation</h4>
+                          </div>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-xs text-gray-600 font-semibold mb-2">Église</p>
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.gagneurs_ame || 0}</p>
+                                  <p className="text-xs text-gray-600">Gagneurs</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.priere_salut || 0}</p>
+                                  <p className="text-xs text-gray-600">Prières</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.miracles || 0}</p>
+                                  <p className="text-xs text-gray-600">Miracles</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-600 font-semibold mb-2">Familles Impact</p>
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.gagneurs_ame || 0}</p>
+                                  <p className="text-xs text-gray-600">Gagneurs</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.priere_salut || 0}</p>
+                                  <p className="text-xs text-gray-600">Prières</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.miracles || 0}</p>
+                                  <p className="text-xs text-gray-600">Miracles</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </CardContent>
                     )}
