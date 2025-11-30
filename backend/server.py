@@ -2628,8 +2628,26 @@ async def get_stats_pasteur(
         max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
         fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
         
+        # Build date filter
+        date_filter = {"ville": ville}
+        if annee:
+            if mois:
+                # Filter by specific year and month
+                start_date = f"{annee}-{str(mois).zfill(2)}-01"
+                if mois == 12:
+                    end_date = f"{annee + 1}-01-01"
+                else:
+                    end_date = f"{annee}-{str(mois + 1).zfill(2)}-01"
+                date_filter["date"] = {"$gte": start_date, "$lt": end_date}
+            else:
+                # Filter by year only
+                date_filter["date"] = {
+                    "$gte": f"{annee}-01-01",
+                    "$lt": f"{annee + 1}-01-01"
+                }
+        
         # Promotions stats with fidelisation
-        promos = await db.promotions.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        promos = await db.promotions.find(date_filter, {"_id": 0}).to_list(length=None)
         na_count = len([p for p in promos if p.get("statut") == "nouveau_adherent"])
         nc_count = len([p for p in promos if p.get("statut") == "non_converti"])
         dp_count = len([p for p in promos if p.get("statut") == "demarche_personnelle"])
@@ -2639,7 +2657,7 @@ async def get_stats_pasteur(
         promos_fidelisation = (na_count / total_promos * 100) if total_promos > 0 else 0
         
         # Cultes stats with fidelisation
-        cultes = await db.cultes.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        cultes = await db.cultes.find(date_filter, {"_id": 0}).to_list(length=None)
         total_adultes = sum([c.get("adultes", 0) for c in cultes])
         total_enfants = sum([c.get("enfants", 0) for c in cultes])
         total_stars = sum([c.get("stars", 0) for c in cultes])
