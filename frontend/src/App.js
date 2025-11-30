@@ -85,6 +85,7 @@ function App() {
           <Route path="/events-login" element={<EventsLoginPage />} />
           <Route path="/events-management" element={<EventsManagementPage />} />
           <Route path="/events/rsvp-links" element={<RSVPLinksPage />} />
+          <Route path="/rsvp/:eventId" element={<PublicEventRSVPPage />} />
           <Route path="/events/planning" element={<PlanningActivitesPage />} />
           <Route path="/events/projets" element={<ProjetsList />} />
           <Route path="/events/projets/:id" element={<ProjetDetailPage />} />
