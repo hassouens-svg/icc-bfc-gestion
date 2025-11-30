@@ -133,6 +133,7 @@ const PublicEventRSVPPage = () => {
                   src={event.image_url} 
                   alt={event.title}
                   className="w-full h-48 object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; }}
                 />
               </div>
             )}
