@@ -4581,7 +4581,20 @@ async def create_event(event: ChurchEventCreate, current_user: dict = Depends(ge
     
     await db.church_events.insert_one(event_data)
     
-    return event_data
+    # Return the event data without MongoDB ObjectId
+    return {
+        "id": event_data["id"],
+        "title": event_data["title"],
+        "description": event_data.get("description"),
+        "date": event_data["date"],
+        "time": event_data.get("time"),
+        "location": event_data.get("location"),
+        "image_url": event_data.get("image_url"),
+        "created_by": event_data["created_by"],
+        "created_at": event_data["created_at"],
+        "rsvp_enabled": event_data.get("rsvp_enabled", True),
+        "max_participants": event_data.get("max_participants")
+    }
 
 @api_router.get("/events")
 async def get_events(current_user: dict = Depends(get_current_user)):
