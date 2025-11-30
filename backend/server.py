@@ -799,6 +799,54 @@ async def unblock_user(user_id: str, current_user: dict = Depends(get_current_us
 class PasswordReset(BaseModel):
     new_password: str
 
+
+# ==================== MY EVENT CHURCH MODELS ====================
+class ChurchEvent(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = None
+    date: str  # Format: YYYY-MM-DD
+    time: Optional[str] = None  # Format: HH:MM
+    location: Optional[str] = None
+    image_url: Optional[str] = None
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    rsvp_enabled: bool = True
+    max_participants: Optional[int] = None
+
+class ChurchEventCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    date: str
+    time: Optional[str] = None
+    location: Optional[str] = None
+    image_url: Optional[str] = None
+    rsvp_enabled: bool = True
+    max_participants: Optional[int] = None
+
+class EventRSVP(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    event_id: str
+    name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    status: str = "confirmed"  # confirmed, declined, maybe
+    guests_count: int = 1
+    message: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    source: Optional[str] = None  # whatsapp, email, sms, facebook, direct
+
+class EventRSVPCreate(BaseModel):
+    name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    status: str = "confirmed"
+    guests_count: int = 1
+    message: Optional[str] = None
+    source: Optional[str] = None
+
 @api_router.put("/users/{user_id}/reset-password")
 async def reset_user_password(user_id: str, password_data: PasswordReset, current_user: dict = Depends(get_current_user)):
     """Reset user password (Super Admin only)"""
