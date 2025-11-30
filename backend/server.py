@@ -2628,8 +2628,12 @@ async def get_stats_pasteur(
         max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
         fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
         
-        # Build date filter
-        date_filter = {"ville": ville}
+        # Build filters for different collections (some use 'date', others use 'date_creation' or no date)
+        
+        # Promotions - check if they have a date field, otherwise get all
+        promo_filter = {"ville": ville}
+        culte_filter = {"ville": ville}
+        
         if annee:
             if mois:
                 # Filter by specific year and month
@@ -2638,16 +2642,28 @@ async def get_stats_pasteur(
                     end_date = f"{annee + 1}-01-01"
                 else:
                     end_date = f"{annee}-{str(mois + 1).zfill(2)}-01"
-                date_filter["date"] = {"$gte": start_date, "$lt": end_date}
+                date_range = {"$gte": start_date, "$lt": end_date}
             else:
                 # Filter by year only
-                date_filter["date"] = {
-                    "$gte": f"{annee}-01-01",
-                    "$lt": f"{annee + 1}-01-01"
-                }
+                date_range = {"$gte": f"{annee}-01-01", "$lt": f"{annee + 1}-01-01"}
+            
+            # Try both 'date' and 'date_creation' fields for compatibility
+            promo_filter["$or"] = [
+                {"date": date_range},
+                {"date_creation": date_range}
+            ]
+            culte_filter["$or"] = [
+                {"date": date_range},
+                {"date_culte": date_range}
+            ]
         
         # Promotions stats with fidelisation
-        promos = await db.promotions.find(date_filter, {"_id": 0}).to_list(length=None)
+        # If no date filter works, just get all by ville
+        try:
+            promos = await db.promotions.find(promo_filter, {"_id": 0}).to_list(length=None)
+        except:
+            # Fallback: get all without date filter
+            promos = await db.promotions.find({"ville": ville}, {"_id": 0}).to_list(length=None)
         na_count = len([p for p in promos if p.get("statut") == "nouveau_adherent"])
         nc_count = len([p for p in promos if p.get("statut") == "non_converti"])
         dp_count = len([p for p in promos if p.get("statut") == "demarche_personnelle"])
