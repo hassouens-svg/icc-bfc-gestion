@@ -227,33 +227,43 @@ const CitiesPage = () => {
                     
                     {expandedCity === cityStats.ville && (
                       <CardContent className="pt-0 space-y-4">
-                        {/* Promotions */}
+                        {/* Personnes Reçues / Promotions */}
                         <div className="border rounded-lg p-3 bg-gradient-to-br from-purple-50 to-purple-100">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center space-x-2">
                               <div className="p-2 bg-purple-200 rounded-lg">
-                                <svg className="h-5 w-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                                </svg>
+                                <Users className="h-5 w-5 text-purple-700" />
                               </div>
-                              <h4 className="font-semibold text-gray-800">Promotions</h4>
+                              <h4 className="font-semibold text-gray-800">Personnes Reçues</h4>
                             </div>
                             <div className="bg-purple-200 px-3 py-1 rounded-full">
                               <p className="text-xs font-bold text-purple-800">{cityStats.promotions?.fidelisation || 0}%</p>
                             </div>
                           </div>
-                          <div className="grid grid-cols-3 gap-3 text-center">
-                            <div>
-                              <p className="text-2xl font-bold text-purple-700">{cityStats.promotions?.na || 0}</p>
-                              <p className="text-xs text-gray-600">NA</p>
+                          <div className="space-y-2">
+                            <div className="grid grid-cols-2 gap-2 text-center">
+                              <div className="bg-white bg-opacity-50 rounded p-2">
+                                <p className="text-2xl font-bold text-purple-700">{cityStats.promotions?.total_personnes || 0}</p>
+                                <p className="text-xs text-gray-600">Total</p>
+                              </div>
+                              <div className="bg-white bg-opacity-50 rounded p-2">
+                                <p className="text-2xl font-bold text-purple-700">{cityStats.promotions?.de_passage || 0}</p>
+                                <p className="text-xs text-gray-600">De passage</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-2xl font-bold text-purple-700">{cityStats.promotions?.nc || 0}</p>
-                              <p className="text-xs text-gray-600">NC</p>
-                            </div>
-                            <div>
-                              <p className="text-2xl font-bold text-purple-700">{cityStats.promotions?.dp || 0}</p>
-                              <p className="text-xs text-gray-600">DP</p>
+                            <div className="grid grid-cols-3 gap-2 text-center">
+                              <div className="bg-white bg-opacity-50 rounded p-2">
+                                <p className="text-xl font-bold text-purple-700">{cityStats.promotions?.resident || 0}</p>
+                                <p className="text-xs text-gray-600">Résident</p>
+                              </div>
+                              <div className="bg-white bg-opacity-50 rounded p-2">
+                                <p className="text-xl font-bold text-purple-700">{cityStats.promotions?.na || 0}</p>
+                                <p className="text-xs text-gray-600">NA</p>
+                              </div>
+                              <div className="bg-white bg-opacity-50 rounded p-2">
+                                <p className="text-xl font-bold text-purple-700">{cityStats.promotions?.nc || 0}</p>
+                                <p className="text-xs text-gray-600">NC</p>
+                              </div>
                             </div>
                           </div>
                         </div>
