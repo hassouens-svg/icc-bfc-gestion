@@ -283,12 +283,15 @@ const DashboardSuperAdminCompletPage = () => {
     try {
       // Filtrer par ville si une ville spécifique est sélectionnée
       const cityFilter = selectedCity !== 'all' ? selectedCity : null;
+      const yearFilter = selectedYear !== 'all' ? parseInt(selectedYear) : null;
+      const monthFilter = selectedMonth !== 'all' ? parseInt(selectedMonth) : null;
       
       console.log(`🔄 loadFIData appelé avec dateFilter: ${dateFilter}, cityFilter: ${cityFilter}`);
       
       const results = await Promise.allSettled([
         getFIDetailed(cityFilter, dateFilter || selectedDateFI),
-        getMembresTable(cityFilter)
+        getMembresTable(cityFilter),
+        getStatsPasteur(yearFilter, monthFilter)
       ]);
       
       if (results[0].status === 'fulfilled') {
@@ -305,10 +308,19 @@ const DashboardSuperAdminCompletPage = () => {
         console.error('Error loading membres:', results[1].reason);
         setMembresTable([]);
       }
+      
+      if (results[2].status === 'fulfilled') {
+        console.log('✅ Stats pasteur loaded:', results[2].value);
+        setEvangelisationStats(results[2].value);
+      } else {
+        console.error('❌ Error loading stats pasteur:', results[2].reason);
+        setEvangelisationStats(null);
+      }
     } catch (error) {
       console.error('Error loading FI:', error);
       setFiData(null);
       setMembresTable([]);
+      setEvangelisationStats(null);
     }
   };
 
