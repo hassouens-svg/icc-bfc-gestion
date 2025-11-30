@@ -60,7 +60,7 @@ const CitiesPage = () => {
     }
     loadCities();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedYear, selectedMonth]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
