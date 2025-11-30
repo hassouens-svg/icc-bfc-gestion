@@ -2750,9 +2750,11 @@ async def get_stats_pasteur(
             "nombre_fi": len(fis),
             "nombre_membres": len(membres),
             "promotions": {
+                "total_personnes": total_visitors,
+                "de_passage": de_passage_count,
+                "resident": resident_count,
                 "na": na_count,
                 "nc": nc_count,
-                "dp": dp_count,
                 "fidelisation": round(promos_fidelisation, 2)
             },
             "familles_impact": {
