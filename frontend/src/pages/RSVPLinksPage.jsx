@@ -280,9 +280,25 @@ const RSVPLinksPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => (
               <Card key={event.id} className="overflow-hidden">
-                {event.image_url && (
-                  <img src={event.image_url} alt={event.title} className="w-full h-48 object-cover" />
+                {event.image_url ? (
+                  <img 
+                    src={event.image_url} 
+                    alt={event.title} 
+                    className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextElementSibling.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                {!event.image_url && (
+                  <div className="w-full h-48 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                    <Calendar className="h-16 w-16 text-indigo-300" />
+                  </div>
                 )}
+                <div className="hidden w-full h-48 bg-gradient-to-br from-indigo-100 to-purple-100 items-center justify-center">
+                  <Calendar className="h-16 w-16 text-indigo-300" />
+                </div>
                 <CardHeader>
                   <CardTitle className="truncate">{event.title}</CardTitle>
                 </CardHeader>
