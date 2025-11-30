@@ -126,15 +126,23 @@ const PublicEventRSVPPage = () => {
               Confirmation de Présence
             </h1>
 
-            {/* Image de l'événement */}
+            {/* Image de l'événement - plus grande */}
             {event.image_url && (
-              <div className="rounded-lg overflow-hidden">
+              <div className="rounded-lg overflow-hidden mb-4">
                 <img 
                   src={event.image_url} 
                   alt={event.title}
-                  className="w-full h-48 object-cover"
-                  onError={(e) => { e.target.style.display = 'none'; }}
+                  className="w-full h-64 object-cover"
+                  onError={(e) => { 
+                    console.error('Image failed to load:', event.image_url);
+                    e.target.style.display = 'none'; 
+                  }}
                 />
+              </div>
+            )}
+            {!event.image_url && (
+              <div className="w-full h-64 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center mb-4">
+                <Calendar className="h-20 w-20 text-purple-300" />
               </div>
             )}
 
