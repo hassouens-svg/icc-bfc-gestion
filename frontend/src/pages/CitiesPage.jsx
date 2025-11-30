@@ -30,9 +30,12 @@ const CitiesPage = () => {
     setLoading(true);
     console.log('CitiesPage: Début chargement villes et stats...');
     try {
+      const yearParam = selectedYear ? parseInt(selectedYear) : null;
+      const monthParam = selectedMonth !== 'all' ? parseInt(selectedMonth) : null;
+      
       const [citiesData, statsData] = await Promise.all([
         getCities(),
-        getStatsPasteur()
+        getStatsPasteur(yearParam, monthParam)
       ]);
       console.log('CitiesPage: Données reçues:', citiesData?.length, 'villes');
       setCities(citiesData || []);
