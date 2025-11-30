@@ -336,16 +336,29 @@ const CitiesPage = () => {
                             <h4 className="font-semibold text-gray-800">Dynamique d'Évangélisation</h4>
                           </div>
                           <div className="space-y-3">
+                            {/* Église */}
                             <div>
                               <p className="text-xs text-gray-600 font-semibold mb-2">Église</p>
-                              <div className="grid grid-cols-3 gap-2 text-center">
+                              <div className="grid grid-cols-2 gap-2 text-center">
                                 <div className="bg-white bg-opacity-50 rounded p-2">
                                   <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.gagneurs_ame || 0}</p>
-                                  <p className="text-xs text-gray-600">Gagneurs</p>
+                                  <p className="text-xs text-gray-600">Gagneurs d'âme</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.personnes_receptives || 0}</p>
+                                  <p className="text-xs text-gray-600">Pers. réceptives</p>
                                 </div>
                                 <div className="bg-white bg-opacity-50 rounded p-2">
                                   <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.priere_salut || 0}</p>
-                                  <p className="text-xs text-gray-600">Prières</p>
+                                  <p className="text-xs text-gray-600">Prières salut</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.contacts_pris || 0}</p>
+                                  <p className="text-xs text-gray-600">Contacts pris</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.ames_invitees || 0}</p>
+                                  <p className="text-xs text-gray-600">Âmes invitées</p>
                                 </div>
                                 <div className="bg-white bg-opacity-50 rounded p-2">
                                   <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.eglise?.miracles || 0}</p>
@@ -353,16 +366,29 @@ const CitiesPage = () => {
                                 </div>
                               </div>
                             </div>
+                            {/* Familles Impact */}
                             <div>
                               <p className="text-xs text-gray-600 font-semibold mb-2">Familles Impact</p>
-                              <div className="grid grid-cols-3 gap-2 text-center">
+                              <div className="grid grid-cols-2 gap-2 text-center">
                                 <div className="bg-white bg-opacity-50 rounded p-2">
                                   <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.gagneurs_ame || 0}</p>
-                                  <p className="text-xs text-gray-600">Gagneurs</p>
+                                  <p className="text-xs text-gray-600">Gagneurs d'âme</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.personnes_receptives || 0}</p>
+                                  <p className="text-xs text-gray-600">Pers. réceptives</p>
                                 </div>
                                 <div className="bg-white bg-opacity-50 rounded p-2">
                                   <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.priere_salut || 0}</p>
-                                  <p className="text-xs text-gray-600">Prières</p>
+                                  <p className="text-xs text-gray-600">Prières salut</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.contacts_pris || 0}</p>
+                                  <p className="text-xs text-gray-600">Contacts pris</p>
+                                </div>
+                                <div className="bg-white bg-opacity-50 rounded p-2">
+                                  <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.ames_invitees || 0}</p>
+                                  <p className="text-xs text-gray-600">Âmes invitées</p>
                                 </div>
                                 <div className="bg-white bg-opacity-50 rounded p-2">
                                   <p className="text-lg font-bold text-orange-700">{cityStats.evangelisation?.familles_impact?.miracles || 0}</p>
