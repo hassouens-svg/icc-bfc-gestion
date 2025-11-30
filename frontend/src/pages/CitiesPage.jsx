@@ -156,50 +156,79 @@ const CitiesPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Liste des Villes ({cities.length})</CardTitle>
+            <CardTitle>Statistiques par Ville ({stats?.stats_by_city?.length || 0})</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-4">Nom</th>
-                    <th className="text-left p-4">Pays</th>
-                    <th className="text-right p-4">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentCities.map((city) => (
-                    <tr key={city.id} className="border-b hover:bg-gray-50">
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="h-4 w-4 text-indigo-600" />
-                          <span className="font-medium">{city.name}</span>
+            <div className="space-y-2">
+              {stats?.stats_by_city && stats.stats_by_city.length > 0 ? (
+                stats.stats_by_city.map((cityStats, idx) => (
+                  <div key={idx} className="border rounded-lg overflow-hidden">
+                    <div 
+                      className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setExpandedCity(expandedCity === cityStats.ville ? null : cityStats.ville)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <MapPin className="h-5 w-5 text-indigo-600" />
+                        <div>
+                          <h3 className="font-semibold text-lg">{cityStats.ville}</h3>
+                          <p className="text-sm text-gray-500">{cityStats.total_secteurs} secteurs • {cityStats.total_fi} FI</p>
                         </div>
-                      </td>
-                      <td className="p-4 text-gray-600">{city.country}</td>
-                      <td className="p-4">
-                        <div className="flex justify-end space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => openEditDialog(city)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDelete(city.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-indigo-600">{cityStats.total_membres}</p>
+                          <p className="text-xs text-gray-500">Total Membres</p>
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        {expandedCity === cityStats.ville ? (
+                          <ChevronUp className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
+                    
+                    {expandedCity === cityStats.ville && (
+                      <div className="p-4 bg-white border-t">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div className="bg-indigo-50 rounded-lg p-3">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <Building2 className="h-4 w-4 text-indigo-600" />
+                              <p className="text-xs text-gray-600">Secteurs</p>
+                            </div>
+                            <p className="text-2xl font-bold text-indigo-600">{cityStats.total_secteurs}</p>
+                          </div>
+                          <div className="bg-green-50 rounded-lg p-3">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <MapPin className="h-4 w-4 text-green-600" />
+                              <p className="text-xs text-gray-600">Familles Impact</p>
+                            </div>
+                            <p className="text-2xl font-bold text-green-600">{cityStats.total_fi}</p>
+                          </div>
+                          <div className="bg-blue-50 rounded-lg p-3">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <Users className="h-4 w-4 text-blue-600" />
+                              <p className="text-xs text-gray-600">Total Membres</p>
+                            </div>
+                            <p className="text-2xl font-bold text-blue-600">{cityStats.total_membres}</p>
+                          </div>
+                          <div className="bg-purple-50 rounded-lg p-3">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <Percent className="h-4 w-4 text-purple-600" />
+                              <p className="text-xs text-gray-600">Fidélisation</p>
+                            </div>
+                            <p className="text-2xl font-bold text-purple-600">{cityStats.fidelisation}%</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <MapPin className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                  <p>Aucune statistique disponible</p>
+                </div>
+              )}
             </div>
 
             {/* Pagination */}
