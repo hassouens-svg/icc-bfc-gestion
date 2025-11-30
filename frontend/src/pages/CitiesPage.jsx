@@ -36,13 +36,16 @@ const CitiesPage = () => {
 
   const loadCities = async () => {
     setLoading(true);
+    console.log('CitiesPage: Début chargement villes...');
     try {
       const data = await getCities();
+      console.log('CitiesPage: Données reçues:', data?.length, 'villes');
       setCities(data || []);
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('CitiesPage: Erreur lors du chargement:', error);
       toast.error('Erreur lors du chargement des villes');
     } finally {
+      console.log('CitiesPage: Fin chargement');
       setLoading(false);
     }
   };
