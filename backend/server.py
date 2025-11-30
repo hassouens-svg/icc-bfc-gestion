@@ -4574,7 +4574,7 @@ async def create_event(event: ChurchEventCreate, current_user: dict = Depends(ge
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    event_data = event.dict()
+    event_data = event.model_dump()
     event_data["id"] = str(uuid.uuid4())
     event_data["created_by"] = current_user["id"]
     event_data["created_at"] = datetime.now(timezone.utc)
