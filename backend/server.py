@@ -2717,9 +2717,10 @@ async def get_stats_pasteur(
         # Cultes fidelisation (based on presences)
         cultes_fidelisation = round(fidelisation, 2)
         
-        # Dynamique d'Évangélisation stats with date filter
-        evangel_filter_eglise = {"ville": ville, "eglise.type": "eglise"}
-        evangel_filter_fi = {"ville": ville, "familles_impact.type": "familles_impact"}
+        # Dynamique d'Évangélisation stats with flexible filtering
+        # Try different query structures to find data
+        evangel_filter_eglise = {"ville": ville}
+        evangel_filter_fi = {"ville": ville}
         
         if annee:
             if mois:
@@ -2735,8 +2736,12 @@ async def get_stats_pasteur(
             evangel_filter_eglise["date"] = date_range
             evangel_filter_fi["date"] = date_range
         
-        evangel_eglise = await db.evangelisation.find(evangel_filter_eglise, {"_id": 0}).to_list(length=None)
-        evangel_fi = await db.evangelisation.find(evangel_filter_fi, {"_id": 0}).to_list(length=None)
+        # Get all evangelisation data for the city
+        all_evangel = await db.evangelisation.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        
+        # Separate by type
+        evangel_eglise = [e for e in all_evangel if e.get("eglise") or e.get("type") == "eglise"]
+        evangel_fi = [e for e in all_evangel if e.get("familles_impact") or e.get("type") == "familles_impact"]
         
         # Aggregate evangelisation data for eglise
         evangel_eglise_totals = {
