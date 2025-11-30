@@ -2594,7 +2594,11 @@ async def get_stats_superviseur(ville: Optional[str] = None, current_user: dict 
     }
 
 @api_router.get("/fi/stats/pasteur")
-async def get_stats_pasteur(current_user: dict = Depends(get_current_user)):
+async def get_stats_pasteur(
+    annee: Optional[int] = None,
+    mois: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
     if current_user["role"] not in ["pasteur", "super_admin"] and not is_super_admin(current_user):
         raise HTTPException(status_code=403, detail="Only for pasteur or super_admin")
     
