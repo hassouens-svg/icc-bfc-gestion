@@ -2630,8 +2630,8 @@ async def get_stats_pasteur(
         
         # Build filters for different collections (some use 'date', others use 'date_creation' or no date)
         
-        # Promotions - check if they have a date field, otherwise get all
-        promo_filter = {"ville": ville}
+        # Build date filters
+        visitors_filter = {"city": ville}  # visitors use 'city' not 'ville'
         culte_filter = {"ville": ville}
         
         if annee:
@@ -2647,30 +2647,43 @@ async def get_stats_pasteur(
                 # Filter by year only
                 date_range = {"$gte": f"{annee}-01-01", "$lt": f"{annee + 1}-01-01"}
             
-            # Try both 'date' and 'date_creation' fields for compatibility
-            promo_filter["$or"] = [
-                {"date": date_range},
-                {"date_creation": date_range}
-            ]
+            # visitors use 'date_visite' field
+            visitors_filter["date_visite"] = date_range
+            
+            # Cultes use 'date' or 'date_culte'
             culte_filter["$or"] = [
                 {"date": date_range},
                 {"date_culte": date_range}
             ]
         
-        # Promotions stats with fidelisation
-        # If no date filter works, just get all by ville
+        # Get visitors (Personnes Reçues) for Promotions stats
         try:
-            promos = await db.promotions.find(promo_filter, {"_id": 0}).to_list(length=None)
+            visitors = await db.visitors.find(visitors_filter, {"_id": 0}).to_list(length=None)
         except:
-            # Fallback: get all without date filter
-            promos = await db.promotions.find({"ville": ville}, {"_id": 0}).to_list(length=None)
-        na_count = len([p for p in promos if p.get("statut") == "nouveau_adherent"])
-        nc_count = len([p for p in promos if p.get("statut") == "non_converti"])
-        dp_count = len([p for p in promos if p.get("statut") == "demarche_personnelle"])
+            # Fallback if ville field is used instead of city
+            visitors = await db.visitors.find({"ville": ville}, {"_id": 0}).to_list(length=None)
         
-        # Promotions fidelisation (taux de conversion)
-        total_promos = len(promos)
-        promos_fidelisation = (na_count / total_promos * 100) if total_promos > 0 else 0
+        # Count by status
+        total_visitors = len(visitors)
+        de_passage_count = len([v for v in visitors if v.get("statut") == "de_passage"])
+        resident_count = len([v for v in visitors if v.get("statut") == "resident"])
+        na_count = len([v for v in visitors if v.get("statut") == "nouveau_adherent" or v.get("statut") == "NA"])
+        nc_count = len([v for v in visitors if v.get("statut") == "non_converti" or v.get("statut") == "NC"])
+        
+        # Promotions fidelisation - calculate from carte fidélisation
+        # Fidélisation = (Dimanche *2 + Jeudi *1) percentage
+        # Get presences for dimanche (Sunday) and jeudi (Thursday)
+        presences = await db.presences_fi.find(
+            {"membre_fi_id": {"$in": membre_ids}},
+            {"_id": 0}
+        ).to_list(length=None) if membre_ids else []
+        
+        dimanche_count = len([p for p in presences if p.get("present") and p.get("jour") == "dimanche"])
+        jeudi_count = len([p for p in presences if p.get("present") and p.get("jour") == "jeudi"])
+        
+        # Calculate fidélisation: (Dimanche*2 + Jeudi*1) / (total possible * 3) * 100
+        total_possible_presences = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
+        promos_fidelisation = ((dimanche_count * 2 + jeudi_count * 1) / (total_possible_presences * 3) * 100) if total_possible_presences > 0 else 0
         
         # Cultes stats with fidelisation
         try:
