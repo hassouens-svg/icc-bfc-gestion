@@ -2624,12 +2624,40 @@ async def get_stats_pasteur(current_user: dict = Depends(get_current_user)):
         max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
         fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
         
+        # Promotions stats
+        promos = await db.promotions.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        na_count = len([p for p in promos if p.get("statut") == "nouveau_adherent"])
+        nc_count = len([p for p in promos if p.get("statut") == "non_converti"])
+        dp_count = len([p for p in promos if p.get("statut") == "demarche_personnelle"])
+        
+        # Cultes stats
+        cultes = await db.cultes.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        total_adultes = sum([c.get("adultes", 0) for c in cultes])
+        total_enfants = sum([c.get("enfants", 0) for c in cultes])
+        total_stars = sum([c.get("stars", 0) for c in cultes])
+        total_services = len(cultes)
+        
+        moy_adultes = round(total_adultes / total_services, 1) if total_services > 0 else 0
+        moy_enfants = round(total_enfants / total_services, 1) if total_services > 0 else 0
+        moy_stars = round(total_stars / total_services, 1) if total_services > 0 else 0
+        
         stats_by_city.append({
             "ville": ville,
             "nombre_secteurs": len(secteurs),
             "nombre_fi": len(fis),
             "nombre_membres": len(membres),
-            "fidelisation": round(fidelisation, 2)
+            "fidelisation": round(fidelisation, 2),
+            "promotions": {
+                "na": na_count,
+                "nc": nc_count,
+                "dp": dp_count
+            },
+            "cultes": {
+                "moy_adultes": moy_adultes,
+                "moy_enfants": moy_enfants,
+                "moy_stars": moy_stars,
+                "total_services": total_services
+            }
         })
     
     return {
