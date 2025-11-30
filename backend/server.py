@@ -2673,7 +2673,11 @@ async def get_stats_pasteur(
         promos_fidelisation = (na_count / total_promos * 100) if total_promos > 0 else 0
         
         # Cultes stats with fidelisation
-        cultes = await db.cultes.find(date_filter, {"_id": 0}).to_list(length=None)
+        try:
+            cultes = await db.cultes.find(culte_filter, {"_id": 0}).to_list(length=None)
+        except:
+            # Fallback: get all without date filter
+            cultes = await db.cultes.find({"ville": ville}, {"_id": 0}).to_list(length=None)
         total_adultes = sum([c.get("adultes", 0) for c in cultes])
         total_enfants = sum([c.get("enfants", 0) for c in cultes])
         total_stars = sum([c.get("stars", 0) for c in cultes])
