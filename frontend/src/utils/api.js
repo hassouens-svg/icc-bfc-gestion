@@ -194,24 +194,23 @@ export const stopTracking = async (id, reason) => {
 };
 
 // City APIs
-export const createCity = async (name) => {
-  const response = await apiClient.post('/cities', { name });
+export const createCity = async (cityData) => {
+  const response = await apiClient.post('/cities', cityData);
   return response.data;
 };
 
 export const getCities = async () => {
-  const response = await axios.get(`${API}/cities`);
+  const response = await apiClient.get('/cities');
   return response.data;
 };
 
-export const updateCity = async (cityId, name) => {
-  const response = await apiClient.put(`/cities/${cityId}`, { name });
+export const updateCity = async (cityId, cityData) => {
+  const response = await apiClient.put(`/cities/${cityId}`, cityData);
   return response.data;
 };
 
 export const deleteCity = async (cityId) => {
-  const response = await apiClient.delete(`/cities/${cityId}`);
-  return response.data;
+  await apiClient.delete(`/cities/${cityId}`);
 };
 
 export const getCityStats = async (cityId) => {
