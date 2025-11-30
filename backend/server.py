@@ -4577,7 +4577,7 @@ async def create_event(event: ChurchEventCreate, current_user: dict = Depends(ge
     event_data = event.model_dump()
     event_data["id"] = str(uuid.uuid4())
     event_data["created_by"] = current_user["id"]
-    event_data["created_at"] = datetime.now(timezone.utc)
+    event_data["created_at"] = datetime.now(timezone.utc).isoformat()
     
     await db.church_events.insert_one(event_data)
     
