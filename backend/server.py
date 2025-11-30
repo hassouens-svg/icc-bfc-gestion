@@ -4644,7 +4644,7 @@ async def create_event_rsvp_public(event_id: str, rsvp: EventRSVPCreate):
         if current_count >= event["max_participants"]:
             raise HTTPException(status_code=400, detail="Event is full")
     
-    rsvp_data = rsvp.dict()
+    rsvp_data = rsvp.model_dump()
     rsvp_data["id"] = str(uuid.uuid4())
     rsvp_data["event_id"] = event_id
     rsvp_data["created_at"] = datetime.now(timezone.utc)
