@@ -782,8 +782,7 @@ const ProjetDetailPage = () => {
                 )}
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsTeamOpen(false)}>Annuler</Button>
-                <Button onClick={handleSaveTeam}>Enregistrer</Button>
+                <Button onClick={() => setIsTeamOpen(false)}>Fermer</Button>
               </div>
             </div>
           </DialogContent>
