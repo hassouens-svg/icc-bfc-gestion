@@ -361,7 +361,7 @@ const ProjetDetailPage = () => {
           <Card className={budgetStatus.status === 'danger' ? 'border-red-500' : budgetStatus.status === 'warning' ? 'border-yellow-500' : ''}>
             <CardContent className="pt-6">
               <div className="text-center">
-                <DollarSign className="h-8 w-8 mx-auto mb-2 text-green-600" />
+                <div className="text-4xl mx-auto mb-2">💰</div>
                 <div className="text-xl font-bold">{budgetStatus.percentage}%</div>
                 <div className="text-sm text-gray-600">Budget utilisé</div>
                 <div className="mt-2 text-xs">
