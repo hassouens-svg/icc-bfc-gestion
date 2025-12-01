@@ -4365,6 +4365,76 @@ async def create_commentaire(commentaire: CommentaireProjetCreate, current_user:
     await db.commentaires_projet.insert_one(commentaire_dict)
     return {"message": "Commentaire ajouté", "id": commentaire_dict["id"]}
 
+# DÉPENSES PROJET
+@api_router.get("/events/depenses")
+async def get_depenses(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Get project expenses"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    depenses = await db.depenses_projet.find(
+        {"projet_id": projet_id}, 
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(1000)
+    return depenses
+
+@api_router.post("/events/depenses")
+async def create_depense(depense: DepenseCreate, current_user: dict = Depends(get_current_user)):
+    """Add an expense"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get current budget_reel from projet
+    projet = await db.projets.find_one({"id": depense.projet_id})
+    if not projet:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    depense_dict = depense.model_dump()
+    depense_dict["id"] = str(uuid.uuid4())
+    depense_dict["created_by"] = current_user["username"]
+    depense_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    # If no date provided, use today
+    if not depense_dict.get("date"):
+        depense_dict["date"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    await db.depenses_projet.insert_one(depense_dict)
+    
+    # Update budget_reel in projet
+    new_budget_reel = projet.get("budget_reel", 0) + depense.montant
+    await db.projets.update_one(
+        {"id": depense.projet_id},
+        {"$set": {"budget_reel": new_budget_reel, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Dépense ajoutée", "id": depense_dict["id"], "new_budget_reel": new_budget_reel}
+
+@api_router.delete("/events/depenses/{depense_id}")
+async def delete_depense(depense_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete an expense"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get depense to retrieve montant and projet_id
+    depense = await db.depenses_projet.find_one({"id": depense_id})
+    if not depense:
+        raise HTTPException(status_code=404, detail="Dépense non trouvée")
+    
+    # Get projet to update budget_reel
+    projet = await db.projets.find_one({"id": depense["projet_id"]})
+    if projet:
+        new_budget_reel = max(0, projet.get("budget_reel", 0) - depense["montant"])
+        await db.projets.update_one(
+            {"id": depense["projet_id"]},
+            {"$set": {"budget_reel": new_budget_reel, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+    
+    await db.depenses_projet.delete_one({"id": depense_id})
+    return {"message": "Dépense supprimée"}
+
 # CAMPAGNES COMMUNICATION
 @api_router.get("/events/campagnes")
 async def get_campagnes(current_user: dict = Depends(get_current_user)):
