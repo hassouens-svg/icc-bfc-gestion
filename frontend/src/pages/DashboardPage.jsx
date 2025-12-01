@@ -359,7 +359,7 @@ const DashboardPage = () => {
         {/* Team Members Modal */}
         <dialog id="team-members-modal" className="modal bg-black bg-opacity-50 fixed inset-0 z-50">
           <div className="modal-box bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto mt-20">
-            <h3 className="font-bold text-lg mb-4">Gérer les Responsables de Promo</h3>
+            <h3 className="font-bold text-lg mb-4">Gérer les Bergers</h3>
             <p className="text-sm text-gray-500 mb-4">Maximum 5 personnes</p>
             
             <div className="space-y-3">
