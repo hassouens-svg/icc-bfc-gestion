@@ -53,7 +53,8 @@ const HomePage = () => {
     },
     {
       id: 'promotions',
-      title: 'Bergerie',
+      title: 'Bergeries',
+      subtitle: '(promotions)',
       description: 'Suivi complet des nouveaux arrivants et nouveaux convertis avec les bergers',
       icon: TrendingUp,
       color: 'from-purple-400 to-purple-600'
