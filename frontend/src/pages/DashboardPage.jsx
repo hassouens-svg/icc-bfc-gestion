@@ -85,19 +85,36 @@ const DashboardPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Verset biblique pour les Bergers */}
+        {(user?.role === 'berger' || user?.role === 'referent') && (
+          <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">📖</div>
+                <div>
+                  <p className="text-sm font-semibold text-purple-800 mb-2">Jérémie 3:15</p>
+                  <p className="text-base italic text-gray-700 leading-relaxed">
+                    "Je vous donnerai des bergers selon mon cœur, qui vous paîtront avec intelligence et avec sagesse."
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
             <div className="flex items-center space-x-3">
               <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">
-                Tableau de bord - {user?.promo_name || user?.assigned_month || 'Promotions'}
+                Tableau de bord - {user?.promo_name || user?.assigned_month || 'Bergerie'}
               </h2>
               {user?.role === 'promotions' && (
                 <Button 
                   onClick={openRenameDialog} 
                   variant="outline" 
                   size="sm"
-                  title="Renommer la promo"
+                  title="Renommer la bergerie"
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
