@@ -224,7 +224,8 @@ const DashboardSuperAdminCompletPage = () => {
         getAgeDistribution(cityFilter),
         getArrivalChannelDistribution(cityFilter),
         getPromotionsDetailed(cityFilter, monthFilter, yearFilter),
-        getVisitorsTable(cityFilter)
+        getVisitorsTable(cityFilter),
+        getDeletedVisitors()
       ]);
       
       // Process results
