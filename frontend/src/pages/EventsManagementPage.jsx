@@ -167,6 +167,27 @@ const EventsManagementPage = () => {
             </CardContent>
           </Card>
 
+          {/* WhatsApp */}
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => navigate('/events/whatsapp')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5 text-emerald-500" />
+                💬 WhatsApp
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">
+                Envoyer des messages WhatsApp via Brevo avec modèles
+              </p>
+              <Button className="mt-4 w-full" variant="outline">
+                Envoyer WhatsApp →
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Liens RSVP */}
           <Card 
             className="cursor-pointer hover:shadow-lg transition-shadow"
