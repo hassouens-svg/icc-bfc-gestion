@@ -147,9 +147,14 @@ const HomePage = () => {
                     <div className={`w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${dept.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
                       <Icon className="w-12 h-12 text-white" />
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-800 mb-3">
+                    <h3 className="text-3xl font-bold text-gray-800 mb-2">
                       {dept.title}
                     </h3>
+                    {dept.subtitle && (
+                      <p className="text-sm text-gray-500 mb-3 italic">
+                        {dept.subtitle}
+                      </p>
+                    )}
                     <p className="text-base text-gray-600 leading-relaxed">
                       {dept.description}
                     </p>
