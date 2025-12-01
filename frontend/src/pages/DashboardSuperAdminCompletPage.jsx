@@ -126,6 +126,7 @@ const DashboardSuperAdminCompletPage = () => {
   const [presencesDimancheData, setPresencesDimancheData] = useState(null);
   const [culteStatsData, setCulteStatsData] = useState(null);
   const [evangelisationStats, setEvangelisationStats] = useState(null);
+  const [deletedVisitorsCount, setDeletedVisitorsCount] = useState(0);
   
   // Filters for tables
   const [visitorsFilter, setVisitorsFilter] = useState('');
