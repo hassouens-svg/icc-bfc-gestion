@@ -2640,20 +2640,9 @@ async def get_stats_pasteur(
         na_count = len([v for v in visitors if v.get("statut") == "nouveau_adherent" or v.get("statut") == "NA"])
         nc_count = len([v for v in visitors if v.get("statut") == "non_converti" or v.get("statut") == "NC"])
         
-        # Promotions fidelisation - calculate from carte fidélisation
-        # Fidélisation = (Dimanche *2 + Jeudi *1) percentage
-        # Get presences for dimanche (Sunday) and jeudi (Thursday)
-        presences = await db.presences_fi.find(
-            {"membre_fi_id": {"$in": membre_ids}},
-            {"_id": 0}
-        ).to_list(length=None) if membre_ids else []
-        
-        dimanche_count = len([p for p in presences if p.get("present") and p.get("jour") == "dimanche"])
-        jeudi_count = len([p for p in presences if p.get("present") and p.get("jour") == "jeudi"])
-        
-        # Calculate fidélisation: (Dimanche*2 + Jeudi*1) / (total possible * 3) * 100
-        total_possible_presences = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
-        promos_fidelisation = ((dimanche_count * 2 + jeudi_count * 1) / (total_possible_presences * 3) * 100) if total_possible_presences > 0 else 0
+        # Promotions fidelisation - use the SAME calculation as Promotion page (fidélisation générale)
+        # This is the general fidelisation already calculated above
+        promos_fidelisation = fidelisation  # Use the same fidelisation as FI
         
         # Cultes stats - simple approach like FI
         cultes = await db.cultes.find({"ville": ville}, {"_id": 0}).to_list(length=None)
