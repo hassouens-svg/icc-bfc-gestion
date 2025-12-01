@@ -327,8 +327,16 @@ const ProjetDetailPage = () => {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">{projet.nom}</h1>
-              <p className="text-gray-500 text-sm mt-1">{projet.description}</p>
+              <div className="flex items-center gap-4">
+                <h1 className="text-5xl font-bold">{projet.nom}</h1>
+                <div className="flex items-center gap-2">
+                  <div className="text-4xl font-bold text-blue-600">
+                    {stats.total > 0 ? Math.round((stats.termine / stats.total) * 100) : 0}%
+                  </div>
+                  <div className="text-sm text-gray-500">d'achèvement</div>
+                </div>
+              </div>
+              <p className="text-gray-500 text-base mt-2">{projet.description}</p>
             </div>
           </div>
           <div className="flex gap-2">
