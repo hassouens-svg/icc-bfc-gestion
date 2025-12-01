@@ -236,9 +236,27 @@ const ProjetDetailPage = () => {
     }
   };
 
-  const handleRemoveMember = (index) => {
-    const updatedMembers = (editData.team_members || []).filter((_, i) => i !== index);
-    setEditData({ ...editData, team_members: updatedMembers });
+  const handleRemoveMember = async (index) => {
+    const memberToRemove = editData.team_members[index];
+    if (!window.confirm(`Retirer ${memberToRemove.nom} de l'équipe ?`)) return;
+
+    try {
+      const updatedMembers = (editData.team_members || []).filter((_, i) => i !== index);
+      
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/projets/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ team_members: updatedMembers })
+      });
+      
+      toast.success(`${memberToRemove.nom} retiré de l'équipe`);
+      await loadData();
+    } catch (error) {
+      toast.error('Erreur lors de la suppression du membre');
+    }
   };
 
   const handleSaveTeam = async () => {
