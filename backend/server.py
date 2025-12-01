@@ -4266,8 +4266,8 @@ async def delete_projet(projet_id: str, current_user: dict = Depends(get_current
 
 # TÂCHES
 @api_router.get("/events/taches")
-async def get_taches(projet_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
-    """Get tasks"""
+async def get_taches(projet_id: Optional[str] = None, statut: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    """Get tasks with auto-update for overdue status"""
     allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
@@ -4277,6 +4277,24 @@ async def get_taches(projet_id: Optional[str] = None, current_user: dict = Depen
         query["projet_id"] = projet_id
     
     taches = await db.taches.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    
+    # Auto-update status to "en_retard" if deadline passed and not completed
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    for tache in taches:
+        if tache.get("deadline") and tache.get("statut") != "termine":
+            if tache["deadline"] < today:
+                # Update to "en_retard" if not already
+                if tache.get("statut") != "en_retard":
+                    await db.taches.update_one(
+                        {"id": tache["id"]},
+                        {"$set": {"statut": "en_retard"}}
+                    )
+                    tache["statut"] = "en_retard"
+    
+    # Filter by status if provided
+    if statut:
+        taches = [t for t in taches if t.get("statut") == statut]
+    
     return taches
 
 @api_router.put("/events/projets/{projet_id}/archive")
