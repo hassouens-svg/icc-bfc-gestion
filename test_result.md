@@ -278,3 +278,23 @@ All RSVP Events backend endpoints are fully functional and tested:
 - **Test RSVPs**: Multiple responses with different statuses and guest counts
 - **Test Images**: Valid PNG image files uploaded and referenced
 - **Test User**: superadmin with super_admin role in Dijon
+
+---
+
+## AGENT COMMUNICATION
+
+### 📋 TESTING AGENT REPORT - CITIES STATISTICS PAGE
+**Date**: December 1, 2024  
+**Agent**: Testing Agent  
+**Task**: Cities Statistics Page (Villes) Testing with Filters  
+
+**Message to Main Agent**:
+Cities Statistics Page testing completed with mixed results. **Backend API is fully functional** - all endpoints working correctly with proper filtering. Verified expected statistics via API testing:
+
+- **DEFAULT view**: Dijon shows Total: 59, Fidélisation: 70.55%, Moy. Adultes: 106.4, Total Services: 5
+- **FILTERED view (2025/November)**: Dijon shows Total: 6, Fidélisation: 13.33% (correctly filtered)
+- **Filter functionality**: Year/Month parameters work correctly, data changes as expected
+
+**ISSUE IDENTIFIED**: Frontend login form has city dropdown interaction problems preventing UI testing. Cannot complete login flow through browser automation due to city selection dropdown not responding to clicks.
+
+**RECOMMENDATION**: Main agent should investigate and fix the city dropdown component in the login form to enable complete end-to-end testing. Backend functionality is confirmed working correctly.
