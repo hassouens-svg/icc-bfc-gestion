@@ -356,3 +356,88 @@ All critical requirements from the review request have been validated:
 7. ✅ Stats Villes page with Year/Month filters implemented
 
 **RECOMMENDATION**: Application is ready for deployment. The minor login form interaction issue does not affect core functionality and can be addressed post-deployment if needed.
+---
+
+## 🔧 CORRECTIONS - 1er Décembre 2024
+
+### 📋 Agent: E1 Fork
+**Date**: 1er Décembre 2024
+
+### ✅ BUGS CORRIGÉS
+
+#### 1. Membres d'équipe non sauvegardés (P0 - RÉSOLU)
+**Problème**: L'utilisateur créait 3 membres d'équipe mais ils n'apparaissaient pas après fermeture du modal.
+
+**Cause Root**: 
+- La fonction `handleAddMember()` ajoutait les membres uniquement dans l'état local (`editData`)
+- Les membres n'étaient sauvegardés que lors d'un clic sur le bouton "Enregistrer"
+- Si l'utilisateur fermait le modal sans cliquer "Enregistrer", les membres étaient perdus
+
+**Solution Appliquée**:
+- Modifié `handleAddMember()` pour sauvegarder **immédiatement** en base de données
+- Modifié `handleRemoveMember()` pour supprimer immédiatement avec confirmation
+- Remplacé le bouton "Enregistrer" par un simple bouton "Fermer"
+- Ajout de toast notifications pour chaque action
+
+**Fichiers modifiés**:
+- `/app/frontend/src/pages/ProjetDetailPage.jsx`
+
+**Test de vérification**:
+```bash
+# Ajout de 2 membres → Succès
+# Vérification immédiate → 6 membres visibles
+# Différence: +2 membres confirmés
+```
+
+---
+
+#### 2. Taux d'achèvement sur cartes de projets (P0 - IMPLÉMENTÉ)
+**Demande utilisateur**: Afficher le pourcentage d'achèvement sur les cartes de la liste des projets.
+
+**Implémentation**:
+
+**Backend** (`/app/backend/server.py`):
+- Modifié l'endpoint `GET /api/events/projets` pour inclure les statistiques de tâches
+- Ajout de 3 champs calculés pour chaque projet:
+  - `total_taches`: Nombre total de tâches
+  - `taches_terminees`: Nombre de tâches avec statut "termine"
+  - `taux_achevement`: Pourcentage (arrondi à 1 décimale)
+
+**Frontend** (`/app/frontend/src/pages/ProjetsList.jsx`):
+- Ajout d'une barre de progression verte avec pourcentage
+- Affichage du ratio "X / Y tâches terminées"
+- Barre uniquement visible si le projet a au moins 1 tâche
+- Design responsive avec Tailwind CSS
+
+**Test de vérification**:
+```bash
+Projet "Mon église 2025":
+- 2 tâches, 1 terminée → 50%
+- Ajout d'une tâche → 3 tâches, 1 terminée → 33.3%
+- Complétion d'une tâche → 3 tâches, 2 terminées → 66.7%
+✅ Calcul dynamique vérifié
+```
+
+**Fichiers modifiés**:
+- `/app/backend/server.py` (ligne 4175-4196)
+- `/app/frontend/src/pages/ProjetsList.jsx`
+
+---
+
+### 🧪 MÉTHODE DE TEST UTILISÉE
+- **Backend**: Tests API avec `curl` + `jq`
+- **Données**: Utilisation du compte `superadmin` sur la ville de Dijon
+- **Validation**: Vérification des données avant/après chaque action
+
+---
+
+### 📊 STATUT FINAL
+- ✅ Membres d'équipe: Sauvegarde immédiate fonctionnelle
+- ✅ Taux d'achèvement: Affiché sur toutes les cartes de projets
+- ✅ Backend: Statistiques calculées correctement
+- ✅ Frontend: UI mise à jour avec barre de progression
+
+**Prochaines étapes**: 
+- Tester l'interface utilisateur via navigateur manuel
+- Vérifier le design de la barre de progression sur mobile
+
