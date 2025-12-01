@@ -211,14 +211,14 @@ const ProjetDetailPage = () => {
   };
 
   const handleAddMember = () => {
-    if (!newMember.nom || !newMember.email) {
-      toast.error('Nom et email requis');
+    if (!newMember.nom || !newMember.role) {
+      toast.error('Nom et rôle requis');
       return;
     }
 
     const updatedMembers = [...(projet.team_members || []), newMember];
     setEditData({ ...editData, team_members: updatedMembers });
-    setNewMember({ nom: '', email: '' });
+    setNewMember({ nom: '', telephone: '', role: '' });
   };
 
   const handleRemoveMember = (index) => {
