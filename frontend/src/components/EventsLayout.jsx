@@ -40,6 +40,11 @@ const EventsLayout = ({ children }) => {
       icon: MessageSquare 
     },
     { 
+      path: '/events/whatsapp', 
+      label: '💬 WhatsApp', 
+      icon: MessageCircle 
+    },
+    { 
       path: '/events/rsvp-management', 
       label: '✉️ RSVP', 
       icon: CheckCircle 
