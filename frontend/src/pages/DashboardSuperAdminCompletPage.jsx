@@ -16,7 +16,8 @@ import {
   getAgeDistribution,
   getArrivalChannelDistribution,
   migratePresences,
-  getStatsPasteur
+  getStatsPasteur,
+  getDeletedVisitors
 } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
