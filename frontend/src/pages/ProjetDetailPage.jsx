@@ -372,15 +372,19 @@ const ProjetDetailPage = () => {
                 <div className="text-4xl mx-auto mb-2">💰</div>
                 <div className="text-xl font-bold">{budgetStatus.percentage}%</div>
                 <div className="text-sm text-gray-600">Budget utilisé</div>
-                <div className="mt-2 text-xs">
-                  <div>{budgetStatus.reel}€ / {budgetStatus.prevu}€</div>
-                  <div className="text-green-600 font-semibold mt-1">Restant: {budgetStatus.restant}€</div>
+                <div className="mt-3">
+                  <div className="text-lg font-semibold">
+                    <span className={budgetStatus.reel > 0 ? 'text-red-600' : 'text-gray-600'}>{budgetStatus.reel}€</span>
+                    <span className="text-gray-400"> / </span>
+                    <span className="text-gray-800">{budgetStatus.prevu}€</span>
+                  </div>
+                  <div className="text-sm text-green-600 font-semibold mt-1">Restant: {budgetStatus.restant}€</div>
                 </div>
-                <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
                   <div className={`h-full ${budgetStatus.status === 'danger' ? 'bg-red-500' : budgetStatus.status === 'warning' ? 'bg-yellow-500' : 'bg-green-500'}`} style={{width: `${Math.min(budgetStatus.percentage, 100)}%`}}></div>
                 </div>
                 <Button size="sm" variant="outline" className="mt-3 w-full" onClick={() => setIsDepenseOpen(true)}>
-                  <Plus className="h-3 w-3 mr-1" /> Dépense
+                  <Plus className="h-3 w-3 mr-1" /> Ajouter dépense
                 </Button>
               </div>
             </CardContent>
