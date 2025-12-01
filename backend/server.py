@@ -2628,10 +2628,29 @@ async def get_stats_pasteur(
         max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
         fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
         
-        # Build filters for different collections (some use 'date', others use 'date_creation' or no date)
+        # Build date filters for année/mois
+        date_filter_start = None
+        date_filter_end = None
+        if annee and mois:
+            date_filter_start = f"{annee}-{str(mois).zfill(2)}-01"
+            if mois == 12:
+                date_filter_end = f"{annee + 1}-01-01"
+            else:
+                date_filter_end = f"{annee}-{str(mois + 1).zfill(2)}-01"
+        elif annee:
+            date_filter_start = f"{annee}-01-01"
+            date_filter_end = f"{annee + 1}-01-01"
         
-        # Get visitors (Personnes Reçues) - simple approach like FI
-        visitors = await db.visitors.find({"city": ville}, {"_id": 0}).to_list(length=None)
+        # Get visitors (Personnes Reçues) - FILTERED by année/mois if provided
+        visitor_query = {"city": ville}
+        if date_filter_start and date_filter_end:
+            # Filter by assigned_month (format: "2025-11")
+            if mois:
+                visitor_query["assigned_month"] = f"{annee}-{str(mois).zfill(2)}"
+            else:
+                visitor_query["assigned_month"] = {"$regex": f"^{annee}-"}
+        
+        visitors = await db.visitors.find(visitor_query, {"_id": 0}).to_list(length=None)
         
         # Count by status using "types" field (not "statut")
         total_visitors = len(visitors)
@@ -2642,17 +2661,31 @@ async def get_stats_pasteur(
         
         # Promotions fidelisation - Calculate from presences_dimanche and presences_jeudi
         # This is the SAME calculation as Promotion dashboard (fidélisation générale)
+        # FILTERED by date if provided
         total_presences_dimanche = 0
         total_presences_jeudi = 0
         for visitor in visitors:
             presences_dim = visitor.get("presences_dimanche", [])
             presences_jeu = visitor.get("presences_jeudi", [])
+            
+            # Filter presences by date if année/mois are provided
+            if date_filter_start and date_filter_end:
+                presences_dim = [p for p in presences_dim if date_filter_start <= p.get("date", "") < date_filter_end]
+                presences_jeu = [p for p in presences_jeu if date_filter_start <= p.get("date", "") < date_filter_end]
+            
             total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
             total_presences_jeudi += len([p for p in presences_jeu if p.get("present")])
         
-        # Expected presences: assume 4 sundays and 4 thursdays per month
-        num_sundays = 4
-        num_thursdays = 4
+        # Calculate number of sundays and thursdays in the period
+        if annee and mois:
+            import calendar
+            num_days = calendar.monthrange(annee, mois)[1]
+            num_sundays = sum(1 for day in range(1, num_days + 1) if datetime(annee, mois, day).weekday() == 6)
+            num_thursdays = sum(1 for day in range(1, num_days + 1) if datetime(annee, mois, day).weekday() == 3)
+        else:
+            num_sundays = 4
+            num_thursdays = 4
+        
         expected_dimanche = total_visitors * num_sundays if total_visitors > 0 else 0
         expected_jeudi = total_visitors * num_thursdays if total_visitors > 0 else 0
         
@@ -2660,8 +2693,12 @@ async def get_stats_pasteur(
         taux_jeudi = (total_presences_jeudi / expected_jeudi) if expected_jeudi > 0 else 0
         promos_fidelisation = ((taux_dimanche * 2) + (taux_jeudi * 1)) / 2 * 100
         
-        # Cultes stats - Use culte_stats collection (not cultes)
-        cultes = await db.culte_stats.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        # Cultes stats - Use culte_stats collection (not cultes) - FILTERED by année/mois
+        culte_query = {"ville": ville}
+        if date_filter_start and date_filter_end:
+            culte_query["date"] = {"$gte": date_filter_start, "$lt": date_filter_end}
+        
+        cultes = await db.culte_stats.find(culte_query, {"_id": 0}).to_list(length=None)
         total_adultes = sum([c.get("nombre_adultes", 0) for c in cultes])
         total_enfants = sum([c.get("nombre_enfants", 0) for c in cultes])
         total_stars = sum([c.get("nombre_stars", 0) for c in cultes])
