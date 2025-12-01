@@ -254,9 +254,9 @@ const ProjetDetailPage = () => {
 
   const getBudgetStatus = () => {
     const prevu = projet?.budget_prevu || 0;
-    const reel = projet?.budget_reel || 0;
+    const reel = Math.max(0, projet?.budget_reel || 0); // Force 0 minimum
     const percentage = prevu > 0 ? Math.round((reel / prevu) * 100) : 0;
-    const restant = prevu - reel;
+    const restant = Math.max(0, prevu - reel);
     
     let status = 'success';
     if (percentage >= 90) status = 'danger';
