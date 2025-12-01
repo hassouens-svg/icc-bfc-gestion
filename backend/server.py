@@ -371,7 +371,7 @@ class Tache(BaseModel):
     titre: str
     description: Optional[str] = None
     assigne_a: Optional[str] = None  # username
-    statut: str = "a_faire"  # a_faire, en_cours, termine
+    statut: str = "a_faire"  # a_faire, en_cours, termine, en_retard
     deadline: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
