@@ -2761,7 +2761,7 @@ async def get_stats_pasteur(
                 "secteurs": len(secteurs),
                 "familles": len(fis),
                 "membres": len(membres),
-                "fidelisation": cultes_fidelisation
+                "fidelisation": round(fidelisation_fi, 2)
             },
             "cultes": {
                 "moy_adultes": moy_adultes,
