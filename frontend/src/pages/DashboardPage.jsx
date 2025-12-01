@@ -338,7 +338,7 @@ const DashboardPage = () => {
                 <Input
                   value={newPromoName}
                   onChange={(e) => setNewPromoName(e.target.value)}
-                  placeholder="Ex: Promo Excellence, Novembre 2024..."
+                  placeholder="Ex: Bergerie Excellence, Bergerie de Novembre..."
                 />
                 <p className="text-xs text-gray-500">
                   Ce nom remplacera "{user?.assigned_month}" partout dans l'application
