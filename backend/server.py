@@ -4186,6 +4186,17 @@ async def get_projets(ville: Optional[str] = None, current_user: dict = Depends(
         query["ville"] = ville
     
     projets = await db.projets.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    
+    # Add task statistics to each project
+    for projet in projets:
+        taches = await db.taches.find({"projet_id": projet["id"]}, {"_id": 0}).to_list(1000)
+        total_taches = len(taches)
+        taches_terminees = len([t for t in taches if t.get("statut") == "termine"])
+        
+        projet["total_taches"] = total_taches
+        projet["taches_terminees"] = taches_terminees
+        projet["taux_achevement"] = round((taches_terminees / total_taches * 100), 1) if total_taches > 0 else 0
+    
     return projets
 
 @api_router.post("/events/projets")
