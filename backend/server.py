@@ -2711,27 +2711,13 @@ async def get_stats_pasteur(
         # Cultes fidelisation (same as promotions fidelisation)
         cultes_fidelisation = round(promos_fidelisation, 2)
         
-        # Dynamique d'Évangélisation stats with flexible filtering
-        # Try different query structures to find data
-        evangel_filter_eglise = {"ville": ville}
-        evangel_filter_fi = {"ville": ville}
+        # Dynamique d'Évangélisation stats - FILTERED by année/mois
+        evangel_query = {"ville": ville}
+        if date_filter_start and date_filter_end:
+            evangel_query["date"] = {"$gte": date_filter_start, "$lt": date_filter_end}
         
-        if annee:
-            if mois:
-                start_date = f"{annee}-{str(mois).zfill(2)}-01"
-                if mois == 12:
-                    end_date = f"{annee + 1}-01-01"
-                else:
-                    end_date = f"{annee}-{str(mois + 1).zfill(2)}-01"
-                date_range = {"$gte": start_date, "$lt": end_date}
-            else:
-                date_range = {"$gte": f"{annee}-01-01", "$lt": f"{annee + 1}-01-01"}
-            
-            evangel_filter_eglise["date"] = date_range
-            evangel_filter_fi["date"] = date_range
-        
-        # Get all evangelisation data for the city
-        all_evangel = await db.evangelisation.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        # Get all evangelisation data for the city with filters
+        all_evangel = await db.evangelisation.find(evangel_query, {"_id": 0}).to_list(length=None)
         
         # Separate by type
         evangel_eglise = [e for e in all_evangel if e.get("eglise") or e.get("type") == "eglise"]
