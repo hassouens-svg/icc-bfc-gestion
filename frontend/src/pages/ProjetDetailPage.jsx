@@ -725,7 +725,8 @@ const ProjetDetailPage = () => {
                       <div key={idx} className="flex items-center justify-between border rounded p-3">
                         <div>
                           <div className="font-medium">{member.nom}</div>
-                          <div className="text-sm text-gray-500">{member.email}</div>
+                          <div className="text-sm text-gray-500">{member.role}</div>
+                          {member.telephone && <div className="text-xs text-gray-400">📱 {member.telephone}</div>}
                         </div>
                         <Button size="sm" variant="ghost" onClick={() => handleRemoveMember(idx)}>
                           <X className="h-4 w-4" />
