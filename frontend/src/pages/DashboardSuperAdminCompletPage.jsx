@@ -762,7 +762,7 @@ const DashboardSuperAdminCompletPage = () => {
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-red-600">-</div>
+                  <div className="text-2xl font-bold text-red-600">{deletedVisitorsCount}</div>
                   <p className="text-xs text-muted-foreground">Voir liste complète</p>
                 </CardContent>
               </Card>
