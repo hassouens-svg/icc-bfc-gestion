@@ -4,7 +4,7 @@
 
 **Symptôme** : Les images uploadées s'affichaient en preview dans l'application mais pas dans les emails reçus (Gmail, Outlook, etc.)
 
-**Cause** : Les images étaient stockées dans `/app/frontend/public/uploads/` et l'URL retournée était `https://event-church.preview.emergentagent.com/uploads/image.jpg`. Cette URL pointait vers le dossier `public` du frontend React, qui n'est accessible que lors de la navigation dans l'application. Les clients email externes (Gmail, Outlook) ne pouvaient pas accéder à ces fichiers.
+**Cause** : Les images étaient stockées dans `/app/frontend/public/uploads/` et l'URL retournée était `https://cityview-dashboard.preview.emergentagent.com/uploads/image.jpg`. Cette URL pointait vers le dossier `public` du frontend React, qui n'est accessible que lors de la navigation dans l'application. Les clients email externes (Gmail, Outlook) ne pouvaient pas accéder à ces fichiers.
 
 ## ✅ Solution implémentée
 
@@ -56,7 +56,7 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
     file_path = os.path.join(upload_dir, new_filename)
     
     # Return API URL (served by backend, accessible publicly)
-    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://event-church.preview.emergentagent.com')
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://cityview-dashboard.preview.emergentagent.com')
     public_url = f"{backend_url}/api/uploads/{new_filename}"
     
     return {"image_url": public_url}
@@ -96,7 +96,7 @@ for camp in campaigns:
 curl -I http://localhost:8001/api/uploads/campaign_20251128_222925_94bb10e4.jpeg
 
 # Test en production
-curl -I https://event-church.preview.emergentagent.com/api/uploads/campaign_20251128_222925_94bb10e4.jpeg
+curl -I https://cityview-dashboard.preview.emergentagent.com/api/uploads/campaign_20251128_222925_94bb10e4.jpeg
 ```
 
 **Réponse attendue** :

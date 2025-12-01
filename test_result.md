@@ -60,7 +60,7 @@ Testing the RSVP Links feature for "My Events Church" section - COMPLETED ✅
 5. Test clicking on markers and viewing details
 
 ## Test Environment Details
-- Backend URL: https://event-church.preview.emergentagent.com
+- Backend URL: https://cityview-dashboard.preview.emergentagent.com
 - Database: test_database
 - Test users created:
   - superadmin / superadmin123 (super_admin)

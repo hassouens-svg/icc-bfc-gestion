@@ -103,7 +103,7 @@ La page RSVP affiche l'affiche de l'événement **EN HAUT** si et seulement si :
 
 Dans la base de données, l'URL de l'image doit ressembler à :
 ```
-https://event-church.preview.emergentagent.com/api/uploads/campaign_XXXXXXXX.jpeg
+https://cityview-dashboard.preview.emergentagent.com/api/uploads/campaign_XXXXXXXX.jpeg
 ```
 
 ### Test 2 : Accès direct à l'image

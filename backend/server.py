@@ -4376,7 +4376,7 @@ async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_cu
             rsvp_html = ""
             if rsvp_enabled:
                 # Utiliser l'URL depuis REACT_APP_BACKEND_URL mais en remplaçant par le frontend
-                backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://event-church.preview.emergentagent.com')
+                backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://cityview-dashboard.preview.emergentagent.com')
                 # L'URL frontend est la même que le backend (le backend est accessible via /api)
                 base_url = backend_url
                 contact_identifier = destinataire.get("email")
@@ -4587,7 +4587,7 @@ async def upload_image(file: UploadFile = File(...), current_user: dict = Depend
         f.write(contents)
     
     # Return API URL (served by backend, accessible publicly)
-    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://event-church.preview.emergentagent.com')
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://cityview-dashboard.preview.emergentagent.com')
     public_url = f"{backend_url}/api/uploads/{new_filename}"
     
     return {"image_url": public_url}
@@ -4617,7 +4617,7 @@ async def upload_visitor_photo(file: UploadFile = File(...), current_user: dict 
         f.write(contents)
     
     # Return API URL
-    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://event-church.preview.emergentagent.com')
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://cityview-dashboard.preview.emergentagent.com')
     public_url = f"{backend_url}/api/uploads/{new_filename}"
     
     return {"photo_url": public_url}
@@ -4826,7 +4826,7 @@ async def upload_event_image(file: UploadFile = File(...), current_user: dict = 
         f.write(contents)
     
     # Return public URL
-    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://event-church.preview.emergentagent.com')
+    backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://cityview-dashboard.preview.emergentagent.com')
     public_url = f"{backend_url}/api/uploads/{new_filename}"
     
     return {"image_url": public_url}

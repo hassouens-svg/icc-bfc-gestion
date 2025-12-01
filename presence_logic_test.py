@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://event-church.preview.emergentagent.com/api"
+BASE_URL = "https://cityview-dashboard.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 def login_user(username, password, city):
