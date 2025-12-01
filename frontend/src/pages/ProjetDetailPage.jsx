@@ -27,7 +27,7 @@ const ProjetDetailPage = () => {
   const [isDepenseOpen, setIsDepenseOpen] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [newTache, setNewTache] = useState({ titre: '', description: '', deadline: '', assigne_a: '' });
-  const [newMember, setNewMember] = useState({ nom: '', email: '' });
+  const [newMember, setNewMember] = useState({ nom: '', telephone: '', role: '' });
   const [newDepense, setNewDepense] = useState({ montant: '', raison: '', date: new Date().toISOString().split('T')[0] });
   const [editData, setEditData] = useState({});
   const [filtreStatut, setFiltreStatut] = useState('tous');
