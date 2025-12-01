@@ -13,6 +13,12 @@ export const CitiesProvider = ({ children }) => {
   const loadCities = async () => {
     if (loaded || loading) return; // Prevent duplicate loads
     
+    // Don't load if not authenticated
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     
@@ -23,7 +29,10 @@ export const CitiesProvider = ({ children }) => {
     } catch (err) {
       console.error('Error loading cities:', err);
       setError(err.message || 'Erreur lors du chargement des villes');
-      toast.error('Erreur lors du chargement des villes');
+      // Only show toast if user is authenticated (not on homepage)
+      if (token) {
+        toast.error('Erreur lors du chargement des villes');
+      }
     } finally {
       setLoading(false);
     }
