@@ -133,7 +133,7 @@ const EventsLoginPage = () => {
               />
             </div>
 
-            {/* City selection - shown for all roles except super_admin and pasteur */}
+            {/* City selection - shown for all roles except super_admin, pasteur and gestion_projet */}
             <div className="space-y-2">
               <Label htmlFor="city">Ville ICC *</Label>
               <Select value={city} onValueChange={setCity}>
@@ -149,7 +149,7 @@ const EventsLoginPage = () => {
                 </SelectContent>
               </Select>
               <p className="text-xs text-gray-500">
-                Note: Super Admin et Pasteur peuvent se connecter sans sélectionner de ville
+                Note: Super Admin, Pasteur et Gestion de Projet voient toutes les villes (pas besoin de sélectionner)
               </p>
             </div>
 
