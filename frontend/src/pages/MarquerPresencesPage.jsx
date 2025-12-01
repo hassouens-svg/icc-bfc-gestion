@@ -19,7 +19,7 @@ const MarquerPresencesPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || !['referent', 'promotions', 'responsable_promo', 'admin', 'super_admin'].includes(user.role)) {
+    if (!user || !['referent', 'promotions', 'berger', 'admin', 'super_admin'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }

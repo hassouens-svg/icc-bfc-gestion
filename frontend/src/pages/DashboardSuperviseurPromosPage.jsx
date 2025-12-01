@@ -25,9 +25,9 @@ const DashboardSuperviseurPromosPage = () => {
 
   const loadData = async () => {
     try {
-      // Load all users to get responsable_promo and referent list
+      // Load all users to get berger and referent list
       const allUsers = await getReferents();
-      const resposPromo = allUsers.filter(u => (u.role === 'responsable_promo' || u.role === 'referent') && u.city === user.city);
+      const resposPromo = allUsers.filter(u => (u.role === 'berger' || u.role === 'referent') && u.city === user.city);
       setResponsablesPromo(resposPromo);
       
       // Load ALL visitors (including stopped ones)

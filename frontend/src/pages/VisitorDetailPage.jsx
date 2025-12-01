@@ -191,7 +191,7 @@ const VisitorDetailPage = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            {['super_admin', 'admin', 'promotions', 'referent', 'responsable_promo'].includes(user?.role) && (
+            {['super_admin', 'admin', 'promotions', 'referent', 'berger'].includes(user?.role) && (
               <Button
                 variant="outline"
                 onClick={handleOpenEditDialog}

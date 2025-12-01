@@ -149,7 +149,7 @@ const DashboardPage = () => {
               <UserPlus className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {user?.role === 'responsable_promo' || user?.role === 'referent' ? (
+              {user?.role === 'berger' || user?.role === 'referent' ? (
                 <div className="space-y-2">
                   <div className="flex justify-between items-center mb-3">
                     <p className="text-sm font-medium text-gray-700">Saisir les responsables (max 5)</p>

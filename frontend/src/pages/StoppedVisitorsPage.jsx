@@ -46,7 +46,7 @@ const StoppedVisitorsPage = () => {
       // Load responsables promo for grouping
       if (user.role === 'superviseur_promos') {
         const allUsers = await getReferents();
-        const respos = allUsers.filter(u => (u.role === 'responsable_promo' || u.role === 'referent') && u.city === user.city);
+        const respos = allUsers.filter(u => (u.role === 'berger' || u.role === 'referent') && u.city === user.city);
         setResponsablesPromo(respos);
         calculatePromoStats(data, respos);
       }
