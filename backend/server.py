@@ -2631,12 +2631,23 @@ async def get_stats_pasteur(
         
         # Get visitors (Personnes Reçues) - FILTERED by année/mois if provided
         visitor_query = {"city": ville}
-        if date_filter_start and date_filter_end:
-            # Filter by assigned_month (format: "2025-11")
-            if mois:
-                visitor_query["assigned_month"] = f"{annee}-{str(mois).zfill(2)}"
-            else:
-                visitor_query["assigned_month"] = {"$regex": f"^{annee}-"}
+        
+        # Only apply date filter if both annee and mois are provided (specific month)
+        # Otherwise, load all visitors for the city
+        if annee and mois and date_filter_start and date_filter_end:
+            # Try to filter by assigned_month first (format: "2025-11")
+            visitor_query["$or"] = [
+                {"assigned_month": f"{annee}-{str(mois).zfill(2)}"},
+                {"assigned_month": {"$regex": f"^{annee}-{str(mois).zfill(2)}"}},
+                # Fallback: check if assigned_month contains the year-month pattern
+                {"assigned_month": {"$regex": f"{annee}-{str(mois).zfill(2)}"}}
+            ]
+        elif annee and date_filter_start and date_filter_end:
+            # Filter by year only
+            visitor_query["$or"] = [
+                {"assigned_month": {"$regex": f"^{annee}-"}},
+                {"assigned_month": {"$regex": f"{annee}"}}
+            ]
         
         visitors = await db.visitors.find(visitor_query, {"_id": 0}).to_list(length=None)
         
