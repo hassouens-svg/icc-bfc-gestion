@@ -52,13 +52,22 @@ const EventsLoginPage = () => {
 
     setLoading(true);
     try {
-      // Utiliser la ville de l'utilisateur enregistrée dans la base de données
-      // On fait d'abord une requête pour récupérer l'info de l'utilisateur
-      const result = await login(username, password, 'Dijon', null); // Ville par défaut pour la connexion
+      // Pour super_admin et pasteur, on utilise une ville par défaut
+      // Pour les autres rôles, la ville doit être sélectionnée
+      let loginCity = city || 'Dijon'; // Ville sélectionnée ou Dijon par défaut
+      
+      const result = await login(username, password, loginCity, null);
       
       // Vérifier si l'utilisateur a les permissions pour My Events Church
       const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
       if (allowedRoles.includes(result.user.role)) {
+        // Si le rôle n'est pas super_admin ou pasteur, vérifier que la ville a été sélectionnée
+        if (!['super_admin', 'pasteur'].includes(result.user.role) && !city) {
+          toast.error('Veuillez sélectionner votre ville');
+          setLoading(false);
+          return;
+        }
+        
         toast.success('Connexion réussie! Redirection...');
         // Redirection directe vers My Events Church
         navigate('/events-management');
