@@ -172,14 +172,22 @@ const ProjetDetailPage = () => {
     if (!window.confirm('Supprimer cette tâche ?')) return;
 
     try {
-      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/taches/${tacheId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/taches/${tacheId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
+      
+      if (!response.ok) {
+        throw new Error('Erreur de suppression');
+      }
+      
       toast.success('Tâche supprimée');
-      loadData();
+      // Force immediate update
+      setTaches(prev => prev.filter(t => t.id !== tacheId));
+      await loadData();
     } catch (error) {
-      toast.error('Erreur');
+      console.error('Erreur suppression:', error);
+      toast.error('Erreur lors de la suppression');
     }
   };
 
