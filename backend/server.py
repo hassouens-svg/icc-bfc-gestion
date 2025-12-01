@@ -2593,6 +2593,40 @@ async def get_stats_superviseur(ville: Optional[str] = None, current_user: dict 
         "secteurs_details": secteur_details
     }
 
+@api_router.get("/debug/data-structure")
+async def debug_data_structure(ville: str = "Dijon", current_user: dict = Depends(get_current_user)):
+    """Debug endpoint to check data structure in production"""
+    try:
+        # Check visitors structure
+        visitor_sample = await db.visitors.find_one({"city": ville}, {"_id": 0})
+        visitor_count = await db.visitors.count_documents({"city": ville})
+        
+        # Check culte_stats structure  
+        culte_sample = await db.culte_stats.find_one({"ville": ville}, {"_id": 0})
+        culte_count = await db.culte_stats.count_documents({"ville": ville})
+        
+        # Check all assigned_month values
+        assigned_months = await db.visitors.distinct("assigned_month", {"city": ville})
+        
+        # Check all culte dates
+        culte_dates = await db.culte_stats.distinct("date", {"ville": ville})
+        
+        return {
+            "ville": ville,
+            "visitors": {
+                "count": visitor_count,
+                "sample": visitor_sample,
+                "assigned_months": assigned_months[:10]
+            },
+            "cultes": {
+                "count": culte_count,
+                "sample": culte_sample,
+                "dates": [str(d) for d in culte_dates[:10]]
+            }
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 @api_router.get("/fi/stats/pasteur")
 async def get_stats_pasteur(
     annee: Optional[int] = None,
