@@ -648,7 +648,7 @@ const ProjetDetailPage = () => {
                   <SelectTrigger><SelectValue placeholder="Sélectionner" /></SelectTrigger>
                   <SelectContent>
                     {(projet.team_members || []).map((member, idx) => (
-                      <SelectItem key={idx} value={member.email}>{member.nom}</SelectItem>
+                      <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
