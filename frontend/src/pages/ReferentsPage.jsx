@@ -53,7 +53,7 @@ const ReferentsPage = () => {
       const data = await getReferents();
       setReferents(data);
     } catch (error) {
-      toast.error('Erreur lors du chargement des responsable de promoss');
+      toast.error('Erreur lors du chargement des bergers');
     } finally {
       setLoading(false);
     }
@@ -68,13 +68,13 @@ const ReferentsPage = () => {
     }
 
     if (newReferent.role === 'referent' && !newReferent.assigned_month) {
-      toast.error('Veuillez sélectionner un mois pour le responsable de promos');
+      toast.error('Veuillez sélectionner un mois pour le berger');
       return;
     }
 
     try {
       await createReferent(newReferent);
-      toast.success('Responsable de promos créé avec succès!');
+      toast.success('Berger créé avec succès!');
       setIsDialogOpen(false);
       setNewReferent({
         username: '',
@@ -115,7 +115,7 @@ const ReferentsPage = () => {
       };
       
       await updateUser(selectedReferent.id, updateData);
-      toast.success('Responsable de promos mis à jour avec succès!');
+      toast.success('Berger mis à jour avec succès!');
       setIsManageDialogOpen(false);
       loadReferents();
     } catch (error) {
@@ -190,19 +190,19 @@ const ReferentsPage = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900" data-testid="referents-title">Responsable de promoss</h2>
-            <p className="text-gray-500 mt-1">Gérez vos responsable de promoss et membres de l'équipe</p>
+            <h2 className="text-3xl font-bold text-gray-900" data-testid="referents-title">Bergers</h2>
+            <p className="text-gray-500 mt-1">Gérez vos bergers et membres de l'équipe</p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button data-testid="add-referent-button">
                 <Plus className="h-4 w-4 mr-2" />
-                Nouveau Responsable de promos
+                Nouveau Berger
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Créer un nouveau responsable de promos</DialogTitle>
+                <DialogTitle>Créer un nouveau berger</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleCreateReferent} className="space-y-4">
                 <div className="space-y-2">
@@ -257,7 +257,7 @@ const ReferentsPage = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="referent">Responsable de promos (mois spécifique)</SelectItem>
+                      <SelectItem value="referent">Berger (mois spécifique)</SelectItem>
                       <SelectItem value="accueil">Accueil et Intégration</SelectItem>
                       <SelectItem value="promotions">Promotions</SelectItem>
                     </SelectContent>
@@ -286,22 +286,22 @@ const ReferentsPage = () => {
                 )}
 
                 <Button type="submit" className="w-full" data-testid="submit-referent">
-                  Créer le responsable de promos
+                  Créer le berger
                 </Button>
               </form>
             </DialogContent>
           </Dialog>
         </div>
 
-        {/* Responsable de promoss List */}
+        {/* Bergers List */}
         <Card>
           <CardHeader>
-            <CardTitle>Liste des responsable de promoss ({referents.length})</CardTitle>
+            <CardTitle>Liste des bergers ({referents.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {referents.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">Aucun responsable de promos</p>
+                <p className="text-center text-gray-500 py-8">Aucun berger</p>
               ) : (
                 referents.map((referent) => (
                   <div
@@ -314,7 +314,7 @@ const ReferentsPage = () => {
                       <div>
                         <p className="font-medium">{referent.username}</p>
                         <p className="text-sm text-gray-500">
-                          {referent.role === 'referent' ? 'Responsable de promos' : 
+                          {referent.role === 'referent' ? 'Berger' : 
                            referent.role === 'accueil' ? 'Accueil et Intégration' : 
                            'Promotions'}
                           {referent.assigned_month && ` - ${referent.assigned_month}`}
@@ -345,7 +345,7 @@ const ReferentsPage = () => {
         <Dialog open={isManageDialogOpen} onOpenChange={setIsManageDialogOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Gérer le responsable de promos - {selectedReferent?.username}</DialogTitle>
+              <DialogTitle>Gérer le berger - {selectedReferent?.username}</DialogTitle>
             </DialogHeader>
             {selectedReferent && (
               <form onSubmit={handleUpdateResponsableDePromos} className="space-y-6">
@@ -364,7 +364,7 @@ const ReferentsPage = () => {
                     <Label htmlFor="manage-role">Rôle</Label>
                     <Input
                       id="manage-role"
-                      value={selectedReferent.role === 'referent' ? 'Responsable de promos' : 
+                      value={selectedReferent.role === 'referent' ? 'Berger' : 
                              selectedReferent.role === 'accueil' ? 'Accueil et Intégration' : 
                              selectedReferent.role === 'promotions' ? 'Promotions' : 
                              selectedReferent.role}

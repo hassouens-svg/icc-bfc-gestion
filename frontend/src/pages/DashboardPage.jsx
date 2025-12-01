@@ -254,7 +254,7 @@ const DashboardPage = () => {
                     data-testid="quick-action-referents"
                   >
                     <UserPlus className="h-6 w-6 mr-2" />
-                    Gérer les responsable de promoss
+                    Gérer les bergers
                   </Button>
                   <Button 
                     variant="outline" 

@@ -138,7 +138,7 @@ const Layout = ({ children }) => {
                 user?.role === 'promotions' ? 'Promotions' : 
                 user?.role === 'pilote_fi' ? 'Pilote FI' :
                 user?.role === 'responsable_secteur' ? 'Responsable Secteur' :
-                'Responsable de promos'})
+                'Berger'})
             </p>
           </div>
           
