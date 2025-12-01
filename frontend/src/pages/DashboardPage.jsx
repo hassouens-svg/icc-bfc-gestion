@@ -330,7 +330,7 @@ const DashboardPage = () => {
         <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Renommer la promo</DialogTitle>
+              <DialogTitle>Renommer la bergerie</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
