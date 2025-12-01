@@ -55,7 +55,7 @@ const Layout = ({ children }) => {
     { path: '/dashboard-superviseur-promos', label: 'Dashboard Superviseur', icon: BarChart3, roles: ['superviseur_promos'], department: 'promotions' },
     { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['superviseur_promos', 'referent', 'accueil', 'promotions', 'berger'], department: 'promotions' },
     { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['superviseur_promos', 'referent', 'promotions', 'berger'], department: 'promotions' },
-    { path: '/referents', label: 'Responsables Promos', icon: UserPlus, roles: ['superviseur_promos', 'promotions', 'berger'], department: 'promotions' },
+    { path: '/referents', label: 'Bergers', icon: UserPlus, roles: ['superviseur_promos', 'promotions', 'berger'], department: 'promotions' },
     { path: '/analytics', label: 'Analytics Promos', icon: BarChart3, roles: ['superviseur_promos', 'promotions', 'berger'], department: 'promotions' },
     { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['superviseur_promos', 'promotions', 'berger'], department: 'promotions' },
     
