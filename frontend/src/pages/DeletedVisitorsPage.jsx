@@ -14,7 +14,8 @@ const DeletedVisitorsPage = () => {
     if (user?.role === 'super_admin') {
       loadDeletedVisitors();
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadDeletedVisitors = async () => {
     try {
