@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, List, Mail, BarChart3, LogOut, Menu, X, Home, MessageSquare, CheckCircle } from 'lucide-react';
+import { Calendar, List, Mail, BarChart3, LogOut, Menu, X, Home, MessageSquare, CheckCircle, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
 
 const EventsLayout = ({ children }) => {
