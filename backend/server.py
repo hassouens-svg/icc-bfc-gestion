@@ -389,6 +389,22 @@ class TacheUpdate(BaseModel):
     statut: Optional[str] = None
     deadline: Optional[str] = None
 
+class Depense(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    projet_id: str
+    montant: float
+    raison: str
+    date: str  # Date de la dépense
+    created_by: str  # username
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class DepenseCreate(BaseModel):
+    projet_id: str
+    montant: float
+    raison: str
+    date: Optional[str] = None
+
 class CommentaireProjet(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
