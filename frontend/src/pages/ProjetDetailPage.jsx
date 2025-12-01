@@ -704,10 +704,15 @@ const ProjetDetailPage = () => {
             <div className="space-y-4">
               <div className="border rounded p-4">
                 <h3 className="font-semibold mb-3">Ajouter un membre</h3>
-                <div className="flex gap-2">
-                  <Input placeholder="Nom" value={newMember.nom} onChange={(e) => setNewMember({...newMember, nom: e.target.value})} />
-                  <Input placeholder="Email" value={newMember.email} onChange={(e) => setNewMember({...newMember, email: e.target.value})} />
-                  <Button onClick={handleAddMember}><Plus className="h-4 w-4" /></Button>
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input placeholder="Nom *" value={newMember.nom} onChange={(e) => setNewMember({...newMember, nom: e.target.value})} />
+                    <Input placeholder="Téléphone (optionnel)" value={newMember.telephone} onChange={(e) => setNewMember({...newMember, telephone: e.target.value})} />
+                  </div>
+                  <div className="flex gap-2">
+                    <Input placeholder="Rôle *" value={newMember.role} onChange={(e) => setNewMember({...newMember, role: e.target.value})} />
+                    <Button onClick={handleAddMember}><Plus className="h-4 w-4" /></Button>
+                  </div>
                 </div>
               </div>
               <div>
