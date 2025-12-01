@@ -2699,6 +2699,19 @@ async def get_stats_pasteur(
         # Cultes fidelisation (same as promotions fidelisation)
         cultes_fidelisation = round(promos_fidelisation, 2)
         
+        # Fidelisation Familles d'Impact - FILTERED by année/mois
+        membre_ids = [m["id"] for m in membres]
+        presences_fi_query = {"membre_fi_id": {"$in": membre_ids}}
+        if date_filter_start and date_filter_end:
+            presences_fi_query["date"] = {"$gte": date_filter_start, "$lt": date_filter_end}
+        
+        presences_fi = await db.presences_fi.find(presences_fi_query, {"_id": 0}).to_list(length=None)
+        
+        unique_jeudis_fi = len(set([p["date"] for p in presences_fi]))
+        total_presences_fi = sum([1 for p in presences_fi if p["present"]])
+        max_possible_fi = len(membres) * unique_jeudis_fi if unique_jeudis_fi > 0 else 0
+        fidelisation_fi = (total_presences_fi / max_possible_fi * 100) if max_possible_fi > 0 else 0
+        
         # Dynamique d'Évangélisation stats - FILTERED by année/mois
         evangel_query = {"ville": ville}
         if date_filter_start and date_filter_end:
