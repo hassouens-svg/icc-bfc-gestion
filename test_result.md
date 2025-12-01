@@ -146,6 +146,31 @@ All functionality implemented and ready for use. Map loads instantly with pre-ge
 
 ---
 
+## CITIES STATISTICS PAGE TESTING
+
+### 🎯 NEW TESTING TASK: Cities Statistics Page (Villes)
+**Test Date**: Current Session  
+**Test Focus**: Cities statistics page functionality and data display  
+**Priority**: High  
+
+#### Test Requirements:
+1. Login as superadmin (username: superadmin, password: superadmin123)
+2. Navigate to the "Villes" page (/cities)
+3. Verify the page loads and displays city cards
+4. Click on the "Dijon" city card to expand it
+5. Verify the expanded card shows real data (not zeros) in:
+   - **Personnes Reçues section** (Total: 59, de passage, résident, NA: 59, NC, Fidélisation %)
+   - **Statistiques Cultes section** (Moy. Adultes: ~106.4, Moy. Enfants: ~8.4, Total Services: 5)
+   - **Familles d'Impact section** (should show data)
+   - **Dynamique d'Évangélisation section** for both Église and Familles d'Impact
+
+#### Expected Results:
+- All statistics should display real data from the database (not zeros)
+- Backend endpoint `/api/fi/stats/pasteur` should return accurate aggregated data
+- Fidélisation should be calculated correctly
+
+---
+
 ## RSVP EVENTS BACKEND TESTING RESULTS
 
 ### 🎯 COMPREHENSIVE BACKEND TEST COMPLETED
