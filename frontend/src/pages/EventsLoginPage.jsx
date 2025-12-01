@@ -52,17 +52,19 @@ const EventsLoginPage = () => {
 
     setLoading(true);
     try {
-      // Pour super_admin et pasteur, on utilise une ville par défaut
-      // Pour les autres rôles, la ville doit être sélectionnée
+      // Pour super_admin, pasteur et gestion_projet : pas besoin de ville (voient tout)
+      // Pour les autres rôles : la ville doit être sélectionnée
       let loginCity = city || 'Dijon'; // Ville sélectionnée ou Dijon par défaut
       
       const result = await login(username, password, loginCity, null);
       
       // Vérifier si l'utilisateur a les permissions pour My Events Church
       const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
+      const rolesWithFullAccess = ['super_admin', 'pasteur', 'gestion_projet']; // Voient toutes les villes
+      
       if (allowedRoles.includes(result.user.role)) {
-        // Si le rôle n'est pas super_admin ou pasteur, vérifier que la ville a été sélectionnée
-        if (!['super_admin', 'pasteur'].includes(result.user.role) && !city) {
+        // Si le rôle n'a pas accès complet, vérifier que la ville a été sélectionnée
+        if (!rolesWithFullAccess.includes(result.user.role) && !city) {
           toast.error('Veuillez sélectionner votre ville');
           setLoading(false);
           return;
