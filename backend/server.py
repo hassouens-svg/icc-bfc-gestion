@@ -2633,30 +2633,46 @@ async def get_stats_pasteur(
         # Get visitors (Personnes Reçues) - simple approach like FI
         visitors = await db.visitors.find({"city": ville}, {"_id": 0}).to_list(length=None)
         
-        # Count by status
+        # Count by status using "types" field (not "statut")
         total_visitors = len(visitors)
-        de_passage_count = len([v for v in visitors if v.get("statut") == "de_passage"])
-        resident_count = len([v for v in visitors if v.get("statut") == "resident"])
-        na_count = len([v for v in visitors if v.get("statut") == "nouveau_adherent" or v.get("statut") == "NA"])
-        nc_count = len([v for v in visitors if v.get("statut") == "non_converti" or v.get("statut") == "NC"])
+        de_passage_count = len([v for v in visitors if "De Passage" in v.get("types", [])])
+        resident_count = len([v for v in visitors if "De Passage" not in v.get("types", [])])
+        na_count = total_visitors  # ALL visitors are NA
+        nc_count = len([v for v in visitors if "Nouveau Converti" in v.get("types", [])])
         
-        # Promotions fidelisation - use the SAME calculation as Promotion page (fidélisation générale)
-        # This is the general fidelisation already calculated above
-        promos_fidelisation = fidelisation  # Use the same fidelisation as FI
+        # Promotions fidelisation - Calculate from presences_dimanche and presences_jeudi
+        # This is the SAME calculation as Promotion dashboard (fidélisation générale)
+        total_presences_dimanche = 0
+        total_presences_jeudi = 0
+        for visitor in visitors:
+            presences_dim = visitor.get("presences_dimanche", [])
+            presences_jeu = visitor.get("presences_jeudi", [])
+            total_presences_dimanche += len([p for p in presences_dim if p.get("present")])
+            total_presences_jeudi += len([p for p in presences_jeu if p.get("present")])
         
-        # Cultes stats - simple approach like FI
-        cultes = await db.cultes.find({"ville": ville}, {"_id": 0}).to_list(length=None)
-        total_adultes = sum([c.get("adultes", 0) for c in cultes])
-        total_enfants = sum([c.get("enfants", 0) for c in cultes])
-        total_stars = sum([c.get("stars", 0) for c in cultes])
+        # Expected presences: assume 4 sundays and 4 thursdays per month
+        num_sundays = 4
+        num_thursdays = 4
+        expected_dimanche = total_visitors * num_sundays if total_visitors > 0 else 0
+        expected_jeudi = total_visitors * num_thursdays if total_visitors > 0 else 0
+        
+        taux_dimanche = (total_presences_dimanche / expected_dimanche) if expected_dimanche > 0 else 0
+        taux_jeudi = (total_presences_jeudi / expected_jeudi) if expected_jeudi > 0 else 0
+        promos_fidelisation = ((taux_dimanche * 2) + (taux_jeudi * 1)) / 2 * 100
+        
+        # Cultes stats - Use culte_stats collection (not cultes)
+        cultes = await db.culte_stats.find({"ville": ville}, {"_id": 0}).to_list(length=None)
+        total_adultes = sum([c.get("nombre_adultes", 0) for c in cultes])
+        total_enfants = sum([c.get("nombre_enfants", 0) for c in cultes])
+        total_stars = sum([c.get("nombre_stars", 0) for c in cultes])
         total_services = len(cultes)
         
         moy_adultes = round(total_adultes / total_services, 1) if total_services > 0 else 0
         moy_enfants = round(total_enfants / total_services, 1) if total_services > 0 else 0
         moy_stars = round(total_stars / total_services, 1) if total_services > 0 else 0
         
-        # Cultes fidelisation (based on presences)
-        cultes_fidelisation = round(fidelisation, 2)
+        # Cultes fidelisation (same as promotions fidelisation)
+        cultes_fidelisation = round(promos_fidelisation, 2)
         
         # Dynamique d'Évangélisation stats with flexible filtering
         # Try different query structures to find data
