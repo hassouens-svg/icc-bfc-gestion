@@ -626,7 +626,7 @@ async def create_referent(user_data: UserCreate, current_user: dict = Depends(ge
 @api_router.get("/users/referents")
 async def get_referents(current_user: dict = Depends(get_current_user)):
     # Get all users - seul super_admin voit toutes les villes
-    query = {"role": {"$in": ["referent", "accueil", "promotions", "superviseur_promos", "superviseur_fi", "pilote_fi", "responsable_secteur", "pasteur", "super_admin", "responsable_eglise"]}}
+    query = {"role": {"$in": ["referent", "accueil", "promotions", "superviseur_promos", "superviseur_fi", "pilote_fi", "responsable_secteur", "pasteur", "super_admin", "responsable_eglise", "gestion_projet", "responsable_evangelisation"]}}
     
     # Seul super_admin peut voir toutes les villes, tous les autres voient uniquement leur ville
     if current_user["role"] != "super_admin":
