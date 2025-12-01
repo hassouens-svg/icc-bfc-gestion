@@ -2630,52 +2630,8 @@ async def get_stats_pasteur(
         
         # Build filters for different collections (some use 'date', others use 'date_creation' or no date)
         
-        # Get visitors (Personnes Reçues) for Promotions stats
-        # Try multiple field combinations for city
-        visitors_filter_options = [
-            {"city": ville},
-            {"ville": ville},
-            {"city_name": ville}
-        ]
-        
-        visitors = []
-        for filter_opt in visitors_filter_options:
-            try:
-                # Apply date filter if specified
-                if annee:
-                    if mois:
-                        start_date = f"{annee}-{str(mois).zfill(2)}-01"
-                        if mois == 12:
-                            end_date = f"{annee + 1}-01-01"
-                        else:
-                            end_date = f"{annee}-{str(mois + 1).zfill(2)}-01"
-                        date_range = {"$gte": start_date, "$lt": end_date}
-                        filter_opt["date_visite"] = date_range
-                    else:
-                        date_range = {"$gte": f"{annee}-01-01", "$lt": f"{annee + 1}-01-01"}
-                        filter_opt["date_visite"] = date_range
-                
-                temp_visitors = await db.visitors.find(filter_opt, {"_id": 0}).to_list(length=None)
-                if temp_visitors:
-                    visitors = temp_visitors
-                    break
-            except:
-                continue
-        
-        # Cultes stats - try with and without date filter
-        culte_filter = {"ville": ville}
-        if annee:
-            if mois:
-                start_date = f"{annee}-{str(mois).zfill(2)}-01"
-                if mois == 12:
-                    end_date = f"{annee + 1}-01-01"
-                else:
-                    end_date = f"{annee}-{str(mois + 1).zfill(2)}-01"
-                date_range = {"$gte": start_date, "$lt": end_date}
-            else:
-                date_range = {"$gte": f"{annee}-01-01", "$lt": f"{annee + 1}-01-01"}
-            
-            culte_filter["date"] = date_range
+        # Get visitors (Personnes Reçues) - simple approach like FI
+        visitors = await db.visitors.find({"city": ville}, {"_id": 0}).to_list(length=None)
         
         # Count by status
         total_visitors = len(visitors)
