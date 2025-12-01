@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://cityview-dashboard.preview.emergentagent.com/api"
+BASE_URL = "https://evangelize-app.preview.emergentagent.com/api"
 
 def test_fi_public_endpoint_with_time_fields():
     """

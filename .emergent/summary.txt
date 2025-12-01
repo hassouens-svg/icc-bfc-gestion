@@ -1,0 +1,178 @@
+<analysis>**original_problem_statement:**
+The initial task was to fix inaccurate statistics on the Villes (Cities) dashboard. This was completed. The scope then expanded significantly to include multiple new features and fixes:
+1.  **WhatsApp Campaigns:** Implement a Campagne WhatsApp feature within the My Event Church section, mirroring the existing SMS/Email campaign functionality, with integration via Brevo.
+2.  **Branding Update:** Globally replace Promotions and Responsable de promos with Bergerie and Bergers respectively. Add a bible verse to the Berger dashboard.
+3.  **Project Management Enhancements (My Event Church):**
+    *   Add expense tracking to projects (amount, reason) that deducts from a total budget.
+    *   Automatically set task status to En retard (Overdue) if the deadline has passed.
+    *   Implement filtering by task status.
+    *   Add color-coding to task rows based on status.
+    *   Display a project completion percentage on both the detail page and the project list cards.
+    *   Numerous UI/UX fixes, including changing currency symbols to '€', fixing task deletion, and modifying the add team member form.
+4.  **Bug Fixes & Stabilisation:**
+    *   Fix an error on the homepage related to loading cities before login.
+    *   Fix an issue preventing users with the gestion_projet role from being displayed.
+    *   Modify the My Events Church login to require a city selection for non-admin roles.
+    *   Stabilize the Deleted Visitors list page.
+    *   Fix deployment blockers related to hardcoded environment variable fallbacks.
+    *   Ensure Villes statistics work in production by adding more flexible data querying.
+
+**User's preferred language**: French
+
+**what currently exists?**
+The application is largely functional. The Villes statistics page is now working correctly in the local environment, with backend logic updated to be more resilient for production data. The Bergerie rebranding is complete across the UI and database. The Campagne WhatsApp feature has been fully implemented on both frontend and backend, with a guide created for Brevo integration.
+
+The My Events Church project management section has been significantly overhauled:
+*   Backend supports expense tracking and automatic En retard (Overdue) task statuses.
+*   The project detail page () has been completely rewritten to include a new UI for expense management, task filtering by status, color-coded tasks, a large title with a completion percentage, and various bug fixes (task deletion, team member management, currency symbol).
+
+**Last working item**:
+-   **Last item agent was working:** The user requested adding the project completion percentage to the individual project cards on the project list page, similar to what was just added to the project detail page. The agent acknowledged the request but has not yet started the implementation.
+-   **Status**: NOT STARTED
+-   **Agent Testing Done**: N
+-   **Which testing method agent to use?** screenshot tool (to verify the UI change on the project list page).
+-   **User Testing Done**: N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1: Add completion percentage to project list cards (P0)**
+    -   **Description:** The list of projects (likely on ) should display a completion percentage on each project's card. This percentage is calculated based on the number of completed tasks vs. the total number of tasks for that project.
+    -   **Attempted fixes:** None.
+    -   **Next debug checklist:**
+        1.  Locate the project list component, likely .
+        2.  Verify if the API endpoint that fetches the list of projects already includes the necessary task data to calculate the percentage. If not, modify the backend endpoint (likely ) to include a count of total and completed tasks for each project.
+        3.  Update the frontend component () to calculate and display the completion percentage on each project card. A progress bar or a simple text display would suffice.
+    -   **Why fix this issue and what will be achieved with the fix?** It provides a quick, at-a-glance overview of the progress of all projects, improving usability.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** frontend
+    -   **Blocked on other issue:** None
+
+-   **Issue 2: User cannot see Gestion de projet role option (P1)**
+    -   **Description:** The user reported not seeing the Gestion de projet role in the dropdown when creating a new user. The agent's investigation concluded that this is the correct behavior, as the UI restricts the creation of this role to  users only.
+    -   **Attempted fixes:** The agent verified the code logic is correct.
+    -   **Next debug checklist:** This is not a bug. The next step is to confirm with the user that they are logged in as  when trying to create a Gestion de projet user. If they are and still cannot see it, further investigation is needed.
+    -   **Why fix this issue and what will be achieved with the fix?** Resolves user confusion about role permissions.
+    -   **Status:** USER VERIFICATION PENDING
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** frontend (if a code change is needed)
+    -   **Blocked on other issue:** None
+
+-   **Issue 3: Villes stats showing zeros in production (P2)**
+    -   **Description:** The user reported that the Villes statistics, while working in the preview environment, were showing zeros in production.
+    -   **Attempted fixes:** The agent modified the backend endpoint () to use more flexible date filters and to have fallbacks that query for all data if the filtered query returns nothing. A diagnostic endpoint () was also added to inspect production data structure.
+    -   **Next debug checklist:** The fixes have been implemented but not verified in the production environment. The user needs to deploy the latest changes and check if the Villes statistics are now populated correctly. If not, the diagnostic endpoint should be used to compare production data structure with the assumptions in the code.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical dashboard for high-level users. This fix will make it reliable in the production environment.
+    -   **Status:** USER VERIFICATION PENDING
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** backend (by checking production data)
+    -   **Blocked on other issue:** None
+
+**In progress Task List**:
+(None, all current work is captured in the issue list)
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   **(P1) Create read-only Vue Evangelisation:** For / roles, the Vue Evangelisation link should lead to a read-only statistics page.
+    -   **(P2) Push Notifications:** Implement mobile push notifications.
+-   **Future Tasks:**
+    -   **(P3) Refactor :** The main backend file is now over 5000 lines and is a significant technical debt. It should be broken down into a proper project structure with routers, models, and services.
+    -   **(P4) Refactor :** This file has become very large and complex; its logic could be broken down into smaller components and custom hooks.
+
+**Completed work in this session**
+-   **Villes Statistics Fix:** Corrected backend queries in  to use proper collection/field names and logic, and added filtering for all KPIs. Added fallbacks for production data robustness.
+-   **Deployment Blockers Resolved:** Removed all hardcoded environment variable fallbacks in  that were causing production deployment to fail.
+-   **Bergerie Rebranding:** Replaced all instances of Promotions with Bergerie and Responsable de promos with Bergers in the frontend and database. Added a Bible verse to the Berger dashboard.
+-   **WhatsApp Campaign Feature:**
+    -   Added Campagne WhatsApp to UI menus and home page.
+    -   Created new frontend pages (, ).
+    -   Added supporting backend models and API endpoints in .
+    -   Created a  document.
+-   **Project Management Overhaul ():**
+    -   Implemented expense tracking with a new backend model and API endpoints.
+    -   Added automatic En retard (Overdue) status calculation for tasks.
+    -   Implemented task filtering by status and color-coding.
+    -   Redesigned the project header to be larger and include a completion percentage.
+    -   Fixed task deletion, updated the team member creation form, and changed currency symbol to '€'.
+-   **General Bug Fixes:**
+    -   Fixed a crash on the homepage by preventing city data from loading before login.
+    -   Fixed a bug where gestion_projet users were not appearing in user lists.
+    -   Stabilized the  page by improving  dependencies.
+    -   Made the My Events Church login page require city selection for non-admin roles.
+    -   Gave  role the same permissions as  in My Events Church.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Backend:** FastAPI, Pydantic, Motor (async MongoDB driver).
+-   **Frontend:** React, Shadcn UI, Tailwind CSS, .
+-   **Database:** MongoDB.
+-   **Deployment:** The system is prepared for a Kubernetes deployment, with a strict requirement for environment variables over hardcoded fallbacks.
+
+**key DB schema**
+-   **projets:** Contains project details. Now implicitly linked to .
+-   **taches:** Contains task details.  field now dynamically updated to en_retard by the API if  is passed.
+-   **depenses:** (NEW) Stores expense records .
+-   **visitors:** Collection for Personnes Reçues.
+-   **culte_stats:** Collection for Statistiques Cultes (previously misidentified as ).
+
+**changes in tech stack**
+-   None.
+
+**All files**
+-   **/app/backend/server.py**: Heavily modified to fix stats, add WhatsApp endpoints, add Project Expense endpoints, fix role permissions, remove deployment blockers, and add diagnostic endpoints.
+-   **/app/frontend/src/pages/ProjetDetailPage.jsx**: Completely rewritten to add expense tracking, status filters, color-coding, completion percentage, and fix numerous bugs.
+-   **/app/frontend/src/pages/EventsLoginPage.jsx**: Modified to conditionally show a city selector based on user role.
+-   **/app/frontend/src/pages/HomePage.jsx**: Modified for Bergerie rebranding and subtitle display.
+-   **/app/frontend/src/pages/DashboardSuperAdminCompletPage.jsx**: Modified to correctly fetch and display the Deleted Visitors count.
+-   **/app/frontend/src/contexts/CitiesContext.jsx**: Modified to prevent API calls before user authentication.
+-   **/app/frontend/src/pages/CommunicationWhatsAppPage.jsx** & **/app/frontend/src/pages/ContactGroupsWhatsAppPage.jsx**: New files created for the WhatsApp feature.
+-   **/.env.example** files, **DEPLOYMENT_GUIDE.md**, **PRODUCTION_STATS_FIX.md**, **WHATSAPP_BREVO_GUIDE.md**: New documentation and configuration files created.
+
+**Areas that need refactoring**:
+-    is critically overgrown and is a major stability risk. It urgently needs to be broken down into a proper project structure (e.g., , , ).
+-    is now a very large and complex component. Its state management and UI logic should be extracted into smaller, reusable components and custom hooks.
+
+**key api endpoints**
+-   : The core endpoint for the Villes page. Heavily modified for correctness and robustness.
+-   : (NEW) Adds an expense to a project.
+-   : (NEW) Retrieves expenses for a project.
+-   : Modified to automatically calculate and return the en_retard status.
+-   : Modified to include the  role.
+-   : (NEW) A temporary diagnostic endpoint to inspect production data.
+-   , , etc.: New endpoints for the WhatsApp feature.
+
+**Critical Info for New Agent**
+-   **Your P0 Task:** Your immediate priority is to add the completion percentage to the project cards on the main project list page (), as requested by the user in their last message.
+-   **Production Issues:** Be aware that two issues ( stats and  role visibility) have fixes or explanations that are pending user verification in the production environment. Do not treat them as new bugs unless the user confirms the problem persists after deployment.
+-   **Environment Variables:** The application is now strict about environment variables for production. All hardcoded fallbacks have been removed from the backend. Refer to the new  files.
+-   **Refactoring:** The  file is extremely fragile. Be very careful when making changes and consider any opportunity for minor refactoring. The user has not approved a full refactor, but it is a major source of risk.
+
+**documents created in this job**
+-   /app/WHATSAPP_BREVO_GUIDE.md
+-   /app/backend/.env.example
+-   /app/frontend/.env.example
+-   /app/DEPLOYMENT_GUIDE.md
+-   /app/PRODUCTION_STATS_FIX.md
+
+**Last 5 User Messages and any pending user messages**
+-   **User:** Requested adding an expense tracking system, En retard status, status filters, and color-coding to the Projects page. (COMPLETED)
+-   **User:** Requested fixing task deletion, changing the add member form (remove email, add role), and changing the currency symbol to Euro. (COMPLETED)
+-   **User:** Requested making the project title larger, adding a completion percentage next to it, and fixing the budget display. (COMPLETED)
+-   **User:** Requested adding the completion percentage to the project *list* cards as well. (PENDING - This is the current P0 task).
+-   **User:** Asked to ensure the title is large and the completion percentage is next to it (related to project detail page). (COMPLETED)
+
+**Project Health Check:**
+-   **Broken:** No. The application is in a functional state with several major features and fixes completed. However, there are pending user verifications for fixes intended for the production environment.
+
+**Testing status**
+-   **Testing agent used after significant changes:** YES
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None in this session.
+-   **Known regressions:** A database update script temporarily corrupted usernames, but this was fixed immediately. No other known regressions.
+
+**Credentials to test flow:**
+-   **superadmin** / **superadmin123**
+
+**What agent forgot to execute**
+The agent has not yet started the user's last request: to add the completion percentage to the project cards on the project list page (). This has been set as the P0 task for the next agent.</analysis>

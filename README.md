@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://cityview-dashboard.preview.emergentagent.com/login
-- **Inscription Publique**: https://cityview-dashboard.preview.emergentagent.com/register
+- **Connexion**: https://evangelize-app.preview.emergentagent.com/login
+- **Inscription Publique**: https://evangelize-app.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**

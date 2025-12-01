@@ -3,7 +3,7 @@
 ## ⚠️ IMPORTANT : Configuration des URLs
 
 ### Problème actuel
-- L'URL actuelle dans `.env` est : `https://cityview-dashboard.preview.emergentagent.com`
+- L'URL actuelle dans `.env` est : `https://evangelize-app.preview.emergentagent.com`
 - Ceci est l'URL de **PREVIEW/TEST**, pas de PRODUCTION
 - Les liens RSVP dans les emails pointent vers cette URL preview
 
