@@ -2616,19 +2616,7 @@ async def get_stats_pasteur(
         fi_ids = [fi["id"] for fi in fis]
         membres = await db.membres_fi.find({"fi_id": {"$in": fi_ids}}, {"_id": 0}).to_list(length=None)
         
-        # Fidelisation
-        membre_ids = [m["id"] for m in membres]
-        presences = await db.presences_fi.find(
-            {"membre_fi_id": {"$in": membre_ids}},
-            {"_id": 0}
-        ).to_list(length=None)
-        
-        unique_jeudis = len(set([p["date"] for p in presences]))
-        total_presences = sum([1 for p in presences if p["present"]])
-        max_possible = len(membres) * unique_jeudis if unique_jeudis > 0 else 0
-        fidelisation = (total_presences / max_possible * 100) if max_possible > 0 else 0
-        
-        # Build date filters for année/mois
+        # Build date filters for année/mois FIRST
         date_filter_start = None
         date_filter_end = None
         if annee and mois:
