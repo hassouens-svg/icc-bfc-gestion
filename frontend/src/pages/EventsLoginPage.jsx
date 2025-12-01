@@ -131,6 +131,26 @@ const EventsLoginPage = () => {
               />
             </div>
 
+            {/* City selection - shown for all roles except super_admin and pasteur */}
+            <div className="space-y-2">
+              <Label htmlFor="city">Ville ICC *</Label>
+              <Select value={city} onValueChange={setCity}>
+                <SelectTrigger id="city">
+                  <SelectValue placeholder="Sélectionnez votre ville" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((c) => (
+                    <SelectItem key={c.id} value={c.name}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500">
+                Note: Super Admin et Pasteur peuvent se connecter sans sélectionner de ville
+              </p>
+            </div>
+
             <Button 
               type="submit" 
               className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700" 
