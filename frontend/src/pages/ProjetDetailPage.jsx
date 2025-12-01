@@ -448,13 +448,12 @@ const ProjetDetailPage = () => {
           </Card>
         )}
 
-        {/* Dépenses */}
-        {depenses.length > 0 && (
+        {/* Dépenses - Affichée SEULEMENT s'il y a des dépenses */}
+        {depenses && depenses.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                Dépenses ({depenses.length})
+                💰 Dépenses ({depenses.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
