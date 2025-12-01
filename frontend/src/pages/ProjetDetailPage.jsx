@@ -269,7 +269,7 @@ const ProjetDetailPage = () => {
     if (!projet?.team_members) return [];
     
     return projet.team_members.map(member => {
-      const memberTaches = taches.filter(t => t.assigne_a === member.email);
+      const memberTaches = taches.filter(t => t.assigne_a === member.nom);
       const termine = memberTaches.filter(t => t.statut === 'termine').length;
       const total = memberTaches.length;
       const progress = total > 0 ? Math.round((termine / total) * 100) : 0;
