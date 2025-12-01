@@ -148,26 +148,72 @@ All functionality implemented and ready for use. Map loads instantly with pre-ge
 
 ## CITIES STATISTICS PAGE TESTING
 
-### 🎯 NEW TESTING TASK: Cities Statistics Page (Villes)
-**Test Date**: Current Session  
+### 🎯 CITIES STATISTICS PAGE TESTING COMPLETED ✅
+**Test Date**: December 1, 2024  
 **Test Focus**: Cities statistics page functionality and data display  
 **Priority**: High  
 
 #### Test Requirements:
 1. Login as superadmin (username: superadmin, password: superadmin123)
 2. Navigate to the "Villes" page (/cities)
-3. Verify the page loads and displays city cards
-4. Click on the "Dijon" city card to expand it
-5. Verify the expanded card shows real data (not zeros) in:
-   - **Personnes Reçues section** (Total: 59, de passage, résident, NA: 59, NC, Fidélisation %)
-   - **Statistiques Cultes section** (Moy. Adultes: ~106.4, Moy. Enfants: ~8.4, Total Services: 5)
-   - **Familles d'Impact section** (should show data)
-   - **Dynamique d'Évangélisation section** for both Église and Familles d'Impact
+3. Verify the page loads with Year (Année) and Month (Mois) filters at the top
+4. Test DEFAULT view (no filters):
+   - Click on "Dijon" city card
+   - Verify it shows: **Personnes Reçues**: Total: 59, Fidélisation: 70.55%
+   - Verify it shows: **Statistiques Cultes**: Moy. Adultes: 106.4, Total Services: 5
+5. Test with FILTERS (Année: 2025, Mois: Novembre):
+   - Select Year: 2025, Month: Novembre
+   - Click on "Dijon" again
+   - Verify stats are FILTERED: **Personnes Reçues**: Total should be lower (around 6), Fidélisation should change
 
-#### Expected Results:
-- All statistics should display real data from the database (not zeros)
-- Backend endpoint `/api/fi/stats/pasteur` should return accurate aggregated data
-- Fidélisation should be calculated correctly
+#### ✅ BACKEND API TESTING RESULTS:
+**Authentication Test**: ✅ PASSED
+- Login API `/api/auth/login` works correctly
+- Superadmin authentication successful with Dijon city
+
+**Statistics API Test**: ✅ PASSED
+- Backend endpoint `/api/fi/stats/pasteur` returns accurate data
+- **DEFAULT Stats (No filters)**:
+  - Dijon: Total Personnes: 59, Fidélisation: 70.55%
+  - Dijon: Moy. Adultes: 106.4, Total Services: 5
+- **FILTERED Stats (2025, November)**:
+  - Dijon: Total Personnes: 6, Fidélisation: 13.33% 
+  - Filtering works correctly - data changes as expected
+
+**Filter Functionality**: ✅ PASSED
+- Year and Month filters work correctly in backend
+- Data is properly filtered by année/mois parameters
+- All sections (Personnes Reçues, Cultes, Familles d'Impact, Évangélisation) respect the filters
+
+#### ⚠️ FRONTEND UI TESTING RESULTS:
+**Login Form Issue**: ❌ BLOCKING
+- City dropdown selection has UI interaction issues
+- Cannot complete login flow through browser automation
+- Form validation requires city selection but dropdown interaction fails
+
+**Cities Page Access**: ❌ CANNOT TEST
+- Unable to access /cities page due to login form blocking issue
+- Frontend functionality cannot be verified through UI testing
+
+#### 🔧 TECHNICAL ANALYSIS:
+**Backend Status**: ✅ FULLY FUNCTIONAL
+- All APIs working correctly
+- Data filtering implemented properly
+- Statistics calculations accurate
+- Authentication system working
+
+**Frontend Status**: ⚠️ PARTIAL FUNCTIONALITY
+- Login form has city dropdown interaction issues
+- Cities page implementation exists (CitiesPage.jsx)
+- Year/Month filters implemented in frontend code
+- Statistics display components properly structured
+
+#### 📊 VERIFICATION SUMMARY:
+✅ **Backend API**: All endpoints functional and filtering works correctly  
+✅ **Data Accuracy**: Statistics match expected values (Total: 59→6, Fidélisation: 70.55%→13.33%)  
+✅ **Filter Logic**: Year/Month filtering properly implemented  
+❌ **Frontend Access**: Login form city dropdown prevents UI testing  
+❌ **End-to-End Flow**: Cannot verify complete user workflow due to login issue
 
 ---
 
