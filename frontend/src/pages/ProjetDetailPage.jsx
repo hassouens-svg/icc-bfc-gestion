@@ -422,7 +422,8 @@ const ProjetDetailPage = () => {
                     <div className="flex justify-between items-center mb-2">
                       <div>
                         <div className="font-semibold">{member.nom}</div>
-                        <div className="text-xs text-gray-500">{member.email}</div>
+                        <div className="text-xs text-gray-500">{member.role}</div>
+                        {member.telephone && <div className="text-xs text-gray-400">📱 {member.telephone}</div>}
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold text-blue-600">{member.progress}%</div>
