@@ -4985,7 +4985,7 @@ async def delete_contact_group_whatsapp(group_id: str, user: dict = Depends(get_
 class WhatsAppCampaign(BaseModel):
     titre: str
     message: str
-    destinataires: List[Contact]
+    destinataires: List[Dict[str, str]]
     template_id: Optional[str] = None
 
 @api_router.post("/events/whatsapp/send")
