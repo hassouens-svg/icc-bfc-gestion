@@ -2695,7 +2695,13 @@ async def get_stats_pasteur(
         # Cultes stats - Use culte_stats collection (not cultes) - FILTERED by année/mois
         culte_query = {"ville": ville}
         if date_filter_start and date_filter_end:
-            culte_query["date"] = {"$gte": date_filter_start, "$lt": date_filter_end}
+            # Support multiple date formats: string or datetime
+            culte_query["$or"] = [
+                {"date": {"$gte": date_filter_start, "$lt": date_filter_end}},
+                # Also check if date field is datetime object
+                {"date": {"$gte": datetime.fromisoformat(date_filter_start.replace('Z', '+00:00')) if isinstance(date_filter_start, str) else date_filter_start,
+                          "$lt": datetime.fromisoformat(date_filter_end.replace('Z', '+00:00')) if isinstance(date_filter_end, str) else date_filter_end}}
+            ]
         
         cultes = await db.culte_stats.find(culte_query, {"_id": 0}).to_list(length=None)
         total_adultes = sum([c.get("nombre_adultes", 0) for c in cultes])
