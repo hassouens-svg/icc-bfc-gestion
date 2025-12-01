@@ -154,6 +154,25 @@ const ProjetsList = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-3">{projet.description || 'Aucune description'}</p>
                   
+                  {/* Taux d'achèvement */}
+                  {projet.total_taches > 0 && (
+                    <div className="mb-3">
+                      <div className="flex justify-between items-center text-xs mb-1">
+                        <span className="text-gray-600 font-medium">Progression</span>
+                        <span className="text-gray-800 font-bold">{projet.taux_achevement}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${projet.taux_achevement}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {projet.taches_terminees} / {projet.total_taches} tâches terminées
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="space-y-1 text-sm text-gray-500">
                     {projet.date_debut && (
                       <div className="flex items-center gap-2">
