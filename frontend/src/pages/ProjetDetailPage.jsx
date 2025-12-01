@@ -210,15 +210,30 @@ const ProjetDetailPage = () => {
     }
   };
 
-  const handleAddMember = () => {
+  const handleAddMember = async () => {
     if (!newMember.nom || !newMember.role) {
       toast.error('Nom et rôle requis');
       return;
     }
 
-    const updatedMembers = [...(projet.team_members || []), newMember];
-    setEditData({ ...editData, team_members: updatedMembers });
-    setNewMember({ nom: '', telephone: '', role: '' });
+    try {
+      const updatedMembers = [...(editData.team_members || []), newMember];
+      
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/projets/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ team_members: updatedMembers })
+      });
+      
+      toast.success(`${newMember.nom} ajouté à l'équipe`);
+      setNewMember({ nom: '', telephone: '', role: '' });
+      await loadData();
+    } catch (error) {
+      toast.error('Erreur lors de l\'ajout du membre');
+    }
   };
 
   const handleRemoveMember = (index) => {
