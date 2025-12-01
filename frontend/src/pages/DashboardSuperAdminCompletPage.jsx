@@ -273,6 +273,15 @@ const DashboardSuperAdminCompletPage = () => {
         console.error('Error loading visitors:', results[3].reason);
         setVisitorsTable([]);
       }
+      
+      // Load deleted visitors count
+      if (results[4].status === 'fulfilled') {
+        const deletedVisitors = results[4].value || [];
+        setDeletedVisitorsCount(deletedVisitors.length);
+      } else {
+        console.error('Error loading deleted visitors:', results[4].reason);
+        setDeletedVisitorsCount(0);
+      }
     } catch (error) {
       console.error('Error loading promotions:', error);
       // Set default empty values to prevent undefined errors
@@ -280,6 +289,7 @@ const DashboardSuperAdminCompletPage = () => {
       setArrivalChannelDist([]);
       setPromosData(null);
       setVisitorsTable([]);
+      setDeletedVisitorsCount(0);
     }
   };
 
