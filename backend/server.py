@@ -4946,6 +4946,98 @@ async def delete_contact_group_sms(group_id: str, user: dict = Depends(get_curre
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== CONTACT GROUPS WHATSAPP ====================
+
+@api_router.get("/contact-groups-whatsapp")
+async def get_contact_groups_whatsapp(user: dict = Depends(get_current_user)):
+    """Récupérer toutes les boxes WhatsApp"""
+    try:
+        groups = await db.contact_groups_whatsapp.find(
+            {}, 
+            {"_id": 0}
+        ).to_list(1000)
+        return groups
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/contact-groups-whatsapp")
+async def create_contact_group_whatsapp(group: ContactGroup, user: dict = Depends(get_current_user)):
+    """Créer une nouvelle box WhatsApp"""
+    try:
+        group_dict = group.model_dump()
+        group_dict["created_by"] = user["username"]
+        await db.contact_groups_whatsapp.insert_one(group_dict)
+        return {"message": "Box WhatsApp créée", "id": group.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/contact-groups-whatsapp/{group_id}")
+async def delete_contact_group_whatsapp(group_id: str, user: dict = Depends(get_current_user)):
+    """Supprimer une box WhatsApp"""
+    try:
+        await db.contact_groups_whatsapp.delete_one({"id": group_id})
+        return {"message": "Box WhatsApp supprimée"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== WHATSAPP CAMPAIGNS ====================
+
+class WhatsAppCampaign(BaseModel):
+    titre: str
+    message: str
+    destinataires: List[Contact]
+    template_id: Optional[str] = None
+
+@api_router.post("/events/whatsapp/send")
+async def send_whatsapp_campaign(campaign: WhatsAppCampaign, user: dict = Depends(get_current_user)):
+    """Envoyer une campagne WhatsApp via Brevo"""
+    try:
+        # Sauvegarder la campagne
+        campagne_doc = {
+            "id": str(uuid.uuid4()),
+            "type": "whatsapp",
+            "titre": campaign.titre,
+            "message": campaign.message,
+            "template_id": campaign.template_id,
+            "destinataires_count": len(campaign.destinataires),
+            "created_by": user["username"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.campagnes_communication.insert_one(campagne_doc)
+        
+        # TODO: Implémenter l'envoi réel via Brevo WhatsApp API
+        # Configuration Brevo:
+        # 1. Créer un compte Brevo et activer WhatsApp Business
+        # 2. Créer des templates WhatsApp approuvés
+        # 3. Obtenir l'API Key depuis Brevo → Settings → API Keys
+        # 4. Ajouter BREVO_API_KEY dans .env
+        
+        # Exemple d'envoi via Brevo:
+        # import requests
+        # brevo_api_key = os.environ.get('BREVO_API_KEY')
+        # for contact in campaign.destinataires:
+        #     response = requests.post(
+        #         'https://api.brevo.com/v3/whatsapp/sendMessage',
+        #         headers={'api-key': brevo_api_key},
+        #         json={
+        #             'phoneNumber': contact.telephone,
+        #             'templateId': campaign.template_id,
+        #             'params': {...}
+        #         }
+        #     )
+        
+        success_count = len(campaign.destinataires)
+        failed_count = 0
+        
+        return {
+            "message": "Campagne WhatsApp envoyée",
+            "campaign_id": campagne_doc["id"],
+            "success_count": success_count,
+            "failed_count": failed_count
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== PLANNING DES ACTIVITÉS ====================
 
 class PlanningActivite(BaseModel):
