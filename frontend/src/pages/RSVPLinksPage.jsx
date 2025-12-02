@@ -390,9 +390,50 @@ const RSVPLinksPage = () => {
               <Input value={newEvent.location} onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Image</Label>
-              <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} />
-              {newEvent.image_url && <img src={newEvent.image_url} alt="Preview" className="mt-2 h-32 object-cover rounded" />}
+              <Label>Image de l'événement</Label>
+              {newEvent.image_url ? (
+                <div className="relative">
+                  <img 
+                    src={newEvent.image_url} 
+                    alt="Image de l'événement" 
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="absolute top-2 right-2 bg-white/90 hover:bg-white"
+                    onClick={() => document.getElementById('imageUploadInput').click()}
+                    disabled={uploadingImage}
+                  >
+                    <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    Modifier
+                  </Button>
+                  <input
+                    id="imageUploadInput"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <Input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageUpload} 
+                    disabled={uploadingImage} 
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Ajoutez une image pour votre événement</p>
+                </div>
+              )}
+              {uploadingImage && (
+                <p className="text-sm text-blue-600">Téléchargement en cours...</p>
+              )}
             </div>
             <div className="flex gap-2">
               <Button type="submit" className="flex-1" disabled={uploadingImage}>
