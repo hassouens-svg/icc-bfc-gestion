@@ -263,7 +263,7 @@ class BergerPresenceTest:
                         )
                         
                         # Verify specific test data
-                        promo_aout = next((p for p in data if p.get("promo_name") == "Promo Août"), None)
+                        promo_aout = next((p for p in data if p.get("promo_name") == getattr(self, 'test_promo_aout', 'Promo Août')), None)
                         if promo_aout:
                             expected_noms = "Jean Dupont, Marie Martin"
                             expected_personnes = 5
@@ -280,7 +280,7 @@ class BergerPresenceTest:
                                 self.log_result(
                                     "Data Integrity", 
                                     False, 
-                                    f"Data mismatch for Promo Août",
+                                    f"Data mismatch for test promo",
                                     {
                                         "expected": {"noms_bergers": expected_noms, "personnes_suivies": expected_personnes},
                                         "actual": {"noms_bergers": promo_aout.get("noms_bergers"), "personnes_suivies": promo_aout.get("personnes_suivies")}
