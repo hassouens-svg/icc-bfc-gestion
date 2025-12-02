@@ -5104,7 +5104,8 @@ async def create_berger_presences_batch(
     current_user: dict = Depends(get_current_user)
 ):
     """Enregistrer plusieurs présences de bergers en une fois"""
-    if current_user["role"] != "superviseur_promos":
+    allowed_roles = ["superviseur_promos", "super_admin"]
+    if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
     created_count = 0
