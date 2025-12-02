@@ -11,6 +11,13 @@ const PublicEventRSVPPage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    is_star: false
+  });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
