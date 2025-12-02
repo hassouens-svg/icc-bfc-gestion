@@ -1024,49 +1024,48 @@ const ProjetDetailPage = () => {
 
         {/* Dialog Pôle */}
         <Dialog open={isPoleOpen} onOpenChange={setIsPoleOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Créer un nouveau pôle</DialogTitle>
+              <DialogTitle className="text-lg">Créer un pôle</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
-                <Label>Nom du pôle *</Label>
+                <Label className="text-sm">Nom du pôle *</Label>
                 <Input 
                   value={newPole.nom} 
                   onChange={(e) => setNewPole({...newPole, nom: e.target.value})} 
-                  placeholder="Ex: Communication, Logistique, Finance..."
+                  placeholder="Ex: Communication, Logistique..."
+                  className="mt-1"
                 />
               </div>
               <div>
-                <Label>Description</Label>
+                <Label className="text-sm">Description</Label>
                 <Textarea 
                   value={newPole.description} 
                   onChange={(e) => setNewPole({...newPole, description: e.target.value})} 
-                  placeholder="Décrivez les objectifs de ce pôle..."
-                  rows={3}
+                  placeholder="Objectifs..."
+                  rows={2}
+                  className="mt-1"
                 />
               </div>
               <div>
-                <Label>Responsable du pôle</Label>
+                <Label className="text-sm">Responsable</Label>
                 <Select value={newPole.responsable || 'none'} onValueChange={(val) => setNewPole({...newPole, responsable: val === 'none' ? '' : val})}>
-                  <SelectTrigger><SelectValue placeholder="Sélectionner un responsable (optionnel)" /></SelectTrigger>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder="Optionnel" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Aucun responsable</SelectItem>
+                    <SelectItem value="none">Aucun</SelectItem>
                     {(projet.team_members || []).map((member, idx) => (
-                      <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
+                      <SelectItem key={idx} value={member.nom}>{member.nom}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-                💡 Un pôle permet de regrouper des tâches liées et de suivre leur progression globale.
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => {
+              <div className="flex justify-end gap-2 pt-2">
+                <Button size="sm" variant="outline" onClick={() => {
                   setIsPoleOpen(false);
                   setNewPole({ nom: '', description: '', responsable: '' });
                 }}>Annuler</Button>
-                <Button onClick={handleAddPole}>Créer le pôle</Button>
+                <Button size="sm" onClick={handleAddPole}>Créer</Button>
               </div>
             </div>
           </DialogContent>
