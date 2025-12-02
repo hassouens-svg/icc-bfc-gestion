@@ -4365,7 +4365,7 @@ async def create_tache(tache: TacheCreate, current_user: dict = Depends(get_curr
     tache_dict = tache.model_dump()
     tache_dict["id"] = str(uuid.uuid4())
     tache_dict["created_at"] = datetime.now(timezone.utc).isoformat()
-    tache_dict["statut"] = "a_faire"
+    # Don't override statut if it's provided in the request
     
     await db.taches.insert_one(tache_dict)
     return {"message": "Tâche créée", "id": tache_dict["id"]}
