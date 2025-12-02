@@ -33,6 +33,10 @@ const ProjetDetailPage = () => {
   const [newPole, setNewPole] = useState({ nom: '', description: '', responsable: '' });
   const [editingPole, setEditingPole] = useState(null);
   const [newMember, setNewMember] = useState({ nom: '', telephone: '', role: '' });
+  const [jalons, setJalons] = useState([]);
+  const [isJalonOpen, setIsJalonOpen] = useState(false);
+  const [newJalon, setNewJalon] = useState({ titre: '', description: '', acteur: '', deadline: '' });
+  const [editingJalon, setEditingJalon] = useState(null);
   const [newDepense, setNewDepense] = useState({ montant: '', raison: '', date: new Date().toISOString().split('T')[0] });
   const [editData, setEditData] = useState({});
   const [filtreStatut, setFiltreStatut] = useState('tous');
