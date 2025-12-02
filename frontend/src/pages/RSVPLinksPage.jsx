@@ -171,6 +171,56 @@ const RSVPLinksPage = () => {
     }
   };
 
+  const handleEditEvent = (event) => {
+    setIsEditMode(true);
+    setEditingEventId(event.id);
+    setNewEvent({
+      title: event.title,
+      description: event.description || '',
+      date: event.date,
+      time: event.time || '',
+      location: event.location || '',
+      image_url: event.image_url || ''
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleUpdateEvent = async (e) => {
+    e.preventDefault();
+    try {
+      const eventData = {
+        ...newEvent,
+        description: newEvent.description || null,
+        time: newEvent.time || null,
+        location: newEvent.location || null,
+        image_url: newEvent.image_url || null
+      };
+
+      const response = await fetch(`${backendUrl}/api/events/${editingEventId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Mise à jour échouée');
+      }
+
+      toast.success('✅ Événement mis à jour !');
+      setIsDialogOpen(false);
+      setIsEditMode(false);
+      setEditingEventId(null);
+      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
+      loadEvents();
+    } catch (error) {
+      console.error('Update event error:', error);
+      toast.error('Erreur mise à jour');
+    }
+  };
+
   const handleDeleteEvent = async (eventId) => {
     if (!window.confirm('Supprimer cet événement ?')) return;
 
