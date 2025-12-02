@@ -16,6 +16,7 @@ const MarquerPresenceBergersPage = () => {
   const [loading, setLoading] = useState(true);
   const [dateSelectionnee, setDateSelectionnee] = useState(new Date().toISOString().split('T')[0]);
   const [saving, setSaving] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
 
   useEffect(() => {
     if (!user || user.role !== 'superviseur_promos') {
