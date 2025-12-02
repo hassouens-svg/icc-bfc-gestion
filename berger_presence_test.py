@@ -322,8 +322,8 @@ class BergerPresenceTest:
                 data = response.json()
                 
                 # Look for our test data
-                promo_aout = next((p for p in data if p.get("promo_name") == "Promo Août"), None)
-                promo_septembre = next((p for p in data if p.get("promo_name") == "Promo Septembre"), None)
+                promo_aout = next((p for p in data if p.get("promo_name") == getattr(self, 'test_promo_aout', 'Promo Août')), None)
+                promo_septembre = next((p for p in data if p.get("promo_name") == getattr(self, 'test_promo_septembre', 'Promo Septembre')), None)
                 
                 if promo_aout and promo_septembre:
                     # Verify Promo Août data
