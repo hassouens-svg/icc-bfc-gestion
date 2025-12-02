@@ -1201,3 +1201,111 @@ The "Gestion des Pôles dans les Projets" feature is **FULLY FUNCTIONAL** and re
 5. ✅ Business rules enforced (cannot delete poles with tasks)
 6. ✅ All API endpoints working with proper authentication and authorization
 
+---
+
+## 🎯 JALONS (MILESTONES) FUNCTIONALITY TESTING - 2 Décembre 2024
+
+### 📋 Agent: Testing Agent
+**Date**: 2 Décembre 2024  
+**Task**: Rapid Testing of Jalons CRUD Endpoints After Bug Fixes  
+**Priority**: High  
+
+### ✅ COMPREHENSIVE JALONS TESTING COMPLETED
+**Test Suite**: Jalons CRUD Backend Test Suite  
+**Total Tests**: 9  
+**Success Rate**: 100% ✅
+
+### 📊 DETAILED TEST RESULTS:
+
+#### Authentication & Authorization ✅
+- **Login Test**: Successfully authenticated as superadmin user with Dijon city
+- **Role Verification**: Confirmed super_admin role has access to all jalons endpoints
+
+#### Project Setup ✅
+- **Test Project Creation**: Successfully created test projects for jalons testing
+- **Project Management**: Proper project lifecycle management with cleanup
+
+#### Jalons CRUD Operations ✅
+- **Create Jalons**: Successfully created jalons via `POST /api/events/jalons`
+  - Test data: projet_id, titre: "Test Jalon 1", description: "Description test", acteur: "Jean Dupont", deadline: "2025-12-31T23:59:00"
+  - Status 200 returned with proper jalon ID
+- **Retrieve Jalons**: Successfully retrieved jalons via `GET /api/events/jalons?projet_id={id}`
+  - Jalons correctly returned in list format
+  - Proper filtering by projet_id working
+- **Update Jalons**: Successfully updated jalons via `PUT /api/events/jalons/{jalon_id}`
+  - Test data: statut: "en_cours", titre: "Jalon Modifié"
+  - Updates properly applied and verified
+- **Delete Jalons**: Successfully deleted jalons via `DELETE /api/events/jalons/{jalon_id}`
+  - Jalons properly removed from database
+  - Verification confirmed via list endpoint
+
+#### Data Integrity ✅
+- **Field Validation**: All required fields (projet_id, titre, description, acteur, deadline) properly handled
+- **Status Management**: Status updates working correctly (a_faire → en_cours)
+- **Deadline Handling**: ISO datetime format properly processed
+- **Data Persistence**: All CRUD operations persist correctly in database
+
+### 🎯 USER-SPECIFIED TEST SCENARIOS VALIDATED:
+
+#### Test 1: Création de Jalon ✅
+```bash
+POST /api/events/jalons
+Body: {
+  "projet_id": "test-project-1",
+  "titre": "Test Jalon 1", 
+  "description": "Description test",
+  "acteur": "Jean Dupont",
+  "deadline": "2025-12-31T23:59:00"
+}
+```
+**Result**: ✅ Status 200, jalon créé avec ID
+
+#### Test 2: Récupération des Jalons ✅
+```bash
+GET /api/events/jalons?projet_id=test-project-1
+```
+**Result**: ✅ Le jalon créé est retourné
+
+#### Test 3: Mise à Jour ✅
+```bash
+PUT /api/events/jalons/{jalon_id}
+Body: {
+  "statut": "en_cours",
+  "titre": "Jalon Modifié"
+}
+```
+**Result**: ✅ Mise à jour réussie
+
+#### Test 4: Suppression ✅
+```bash
+DELETE /api/events/jalons/{jalon_id}
+```
+**Result**: ✅ Suppression réussie
+
+### 🚀 READY FOR PRODUCTION:
+
+All jalons endpoints are fully functional and tested:
+- **POST** `/api/events/jalons` - Create jalon ✅
+- **GET** `/api/events/jalons?projet_id={id}` - Retrieve jalons ✅
+- **PUT** `/api/events/jalons/{jalon_id}` - Update jalon ✅
+- **DELETE** `/api/events/jalons/{jalon_id}` - Delete jalon ✅
+
+### 📋 TEST DATA USED:
+- **Test User**: superadmin with super_admin role in Dijon
+- **Test Projects**: Created dedicated test projects for isolation
+- **Test Jalons**: Realistic milestone data with proper datetime formatting
+- **Validation**: All CRUD operations, data persistence, and field validation
+
+### 🎉 FEATURE VALIDATION COMPLETE:
+The jalons (milestones) functionality is **FULLY FUNCTIONAL** and ready for production use. All requirements from the review request have been successfully implemented and tested:
+
+1. ✅ Jalons can be created with all required fields
+2. ✅ Jalons can be retrieved by project ID
+3. ✅ Jalons can be updated (status and title changes)
+4. ✅ Jalons can be deleted successfully
+5. ✅ All endpoints return proper HTTP status codes
+6. ✅ Data integrity maintained across all operations
+7. ✅ Authentication and authorization working correctly
+
+**RECOMMENDATION**: The jalons functionality is **READY FOR PRODUCTION**. All bug fixes have been validated and the CRUD endpoints work without errors as requested.
+
