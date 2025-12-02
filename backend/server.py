@@ -4256,6 +4256,15 @@ async def get_projet(projet_id: str, current_user: dict = Depends(get_current_us
     if current_user["role"] != "super_admin" and projet["ville"] != current_user["city"]:
         raise HTTPException(status_code=403, detail="Access denied")
     
+    # Calculate global completion percentage from all tasks (including poles and general tasks)
+    all_taches = await db.taches.find({"projet_id": projet_id}, {"_id": 0}).to_list(1000)
+    total_taches = len(all_taches)
+    taches_terminees = len([t for t in all_taches if t.get("statut") == "termine"])
+    
+    projet["total_taches"] = total_taches
+    projet["taches_terminees"] = taches_terminees
+    projet["taux_achevement"] = round((taches_terminees / total_taches * 100) if total_taches > 0 else 0, 1)
+    
     return projet
 
 @api_router.put("/events/projets/{projet_id}")
