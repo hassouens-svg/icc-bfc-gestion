@@ -601,17 +601,26 @@ const ProjetDetailPage = () => {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>📊 Pôles du Projet ({poles.length})</CardTitle>
-              <Button onClick={() => setIsPoleOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" /> Nouveau Pôle
-              </Button>
+              <CardTitle className="text-2xl">📊 Pôles du Projet ({poles.length})</CardTitle>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => {
+                  setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
+                  setIsTacheOpen(true);
+                }}>
+                  <Plus className="h-4 w-4 mr-2" /> Tâche Générale
+                </Button>
+                <Button onClick={() => setIsPoleOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" /> Nouveau Pôle
+                </Button>
+              </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             {poles.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Target className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                <p>Aucun pôle créé. Créez des pôles pour organiser vos tâches.</p>
+              <div className="text-center py-12 text-gray-500">
+                <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg mb-2">Aucun pôle créé</p>
+                <p className="text-sm">Créez des pôles pour mieux organiser vos tâches par thématique</p>
               </div>
             ) : (
               <div className="space-y-6">
