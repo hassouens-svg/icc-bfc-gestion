@@ -775,38 +775,37 @@ const ProjetDetailPage = () => {
 
                 {/* Tâches sans pôle */}
                 {taches.filter(t => !t.pole_id).length > 0 && (
-                  <div className="border-2 border-gray-300 rounded-xl overflow-hidden mt-6">
-                    <div className="bg-gray-100 p-6">
+                  <div className="border border-gray-300 rounded-lg overflow-hidden mt-4">
+                    <div className="bg-gray-100 p-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h3 className="text-2xl font-bold text-gray-800 mb-2">📋 Tâches Générales</h3>
-                          <p className="text-sm text-gray-600">Tâches non assignées à un pôle spécifique ({taches.filter(t => !t.pole_id).length})</p>
+                          <h3 className="text-base font-bold text-gray-800">📋 Tâches Générales ({taches.filter(t => !t.pole_id).length})</h3>
                         </div>
                         <Button 
-                          size="lg"
+                          size="sm"
                           variant="outline"
                           onClick={() => {
                             setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
                             setIsTacheOpen(true);
                           }}
                         >
-                          <Plus className="h-5 w-5 mr-2" /> Ajouter une tâche
+                          <Plus className="h-3 w-3 mr-1" /> Tâche
                         </Button>
                       </div>
                     </div>
-                    <div className="p-6 bg-white space-y-3">
+                    <div className="p-3 bg-white space-y-2">
                       {taches.filter(t => !t.pole_id).map(tache => (
-                        <div key={tache.id} className={`border rounded-lg p-3 ${getTaskColor(tache.statut)}`}>
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h4 className="font-semibold text-sm">{tache.titre}</h4>
+                        <div key={tache.id} className={`border rounded p-2 ${getTaskColor(tache.statut)}`}>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1 mb-1">
+                                <h4 className="font-medium text-sm truncate">{tache.titre}</h4>
                                 {getStatutBadge(tache.statut)}
                               </div>
                               {tache.description && (
-                                <p className="text-xs text-gray-600 mb-1">{tache.description}</p>
+                                <p className="text-xs text-gray-600 mb-1 line-clamp-1">{tache.description}</p>
                               )}
-                              <div className="flex gap-3 text-xs text-gray-500">
+                              <div className="flex gap-2 text-xs text-gray-500">
                                 {tache.deadline && (
                                   <div className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
@@ -816,14 +815,14 @@ const ProjetDetailPage = () => {
                                 {tache.assigne_a && (
                                   <div className="flex items-center gap-1">
                                     <Users className="h-3 w-3" />
-                                    {tache.assigne_a}
+                                    <span className="truncate">{tache.assigne_a}</span>
                                   </div>
                                 )}
                               </div>
                             </div>
-                            <div className="flex gap-1">
+                            <div className="flex gap-1 flex-shrink-0">
                               <Select value={tache.statut} onValueChange={(val) => handleUpdateTacheStatut(tache.id, val)}>
-                                <SelectTrigger className="w-[110px] h-8 text-xs">
+                                <SelectTrigger className="w-[90px] h-7 text-xs">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -833,7 +832,7 @@ const ProjetDetailPage = () => {
                                   <SelectItem value="termine">Terminé</SelectItem>
                                 </SelectContent>
                               </Select>
-                              <Button size="sm" variant="ghost" onClick={() => handleDeleteTache(tache.id)}>
+                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => handleDeleteTache(tache.id)}>
                                 <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
