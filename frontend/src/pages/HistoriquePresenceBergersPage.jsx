@@ -16,7 +16,7 @@ const HistoriquePresenceBergersPage = () => {
   const [promos, setPromos] = useState([]);
 
   useEffect(() => {
-    if (!user || user.role !== 'superviseur_promos') {
+    if (!user || (user.role !== 'superviseur_promos' && user.role !== 'super_admin')) {
       navigate('/dashboard');
       return;
     }
