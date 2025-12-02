@@ -419,19 +419,30 @@ const MarquerPresenceBergersPage = () => {
                         {/* Prière - Liste déroulante */}
                         <td className="text-center py-3 px-4">
                           <Select 
-                            value={data.priere || 'Non'} 
-                            onValueChange={(value) => handlePriereChange(promo.promo_name, value)}
+                            value={String(data.priere || 'Non')} 
+                            onValueChange={(value) => {
+                              console.log('Prière changée:', promo.promo_name, 'Nouvelle valeur:', value);
+                              handlePriereChange(promo.promo_name, value);
+                            }}
                           >
-                            <SelectTrigger className={`w-24 ${
+                            <SelectTrigger className={`w-28 font-medium ${
                               data.priere === 'Oui' 
-                                ? 'bg-green-100 text-green-800 border-green-300' 
-                                : 'bg-red-100 text-red-800 border-red-300'
+                                ? 'bg-green-100 text-green-800 border-green-400' 
+                                : 'bg-red-100 text-red-800 border-red-400'
                             }`}>
-                              <SelectValue />
+                              <SelectValue placeholder="Non" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Oui" className="text-green-700 font-medium">✔️ Oui</SelectItem>
-                              <SelectItem value="Non" className="text-red-700 font-medium">❌ Non</SelectItem>
+                              <SelectItem value="Oui" className="text-green-700 font-medium">
+                                <span className="flex items-center gap-2">
+                                  <Check className="h-4 w-4" /> Oui
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="Non" className="text-red-700 font-medium">
+                                <span className="flex items-center gap-2">
+                                  <X className="h-4 w-4" /> Non
+                                </span>
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </td>
