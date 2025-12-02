@@ -42,6 +42,8 @@ import DashboardPiloteFIPage from './pages/DashboardPiloteFIPage';
 import DashboardSuperviseurFIPage from './pages/DashboardSuperviseurFIPage';
 import DashboardSuperviseurPromosPage from './pages/DashboardSuperviseurPromosPage';
 import DashboardResponsableSecteurPage from './pages/DashboardResponsableSecteurPage';
+import MarquerPresenceBergersPage from './pages/MarquerPresenceBergersPage';
+import HistoriquePresenceBergersPage from './pages/HistoriquePresenceBergersPage';
 import MarquerPresencesFIPage from './pages/MarquerPresencesFIPage';
 import VueTableauFIPage from './pages/VueTableauFIPage';
 import TrouverMaFIPage from './pages/TrouverMaFIPage';
