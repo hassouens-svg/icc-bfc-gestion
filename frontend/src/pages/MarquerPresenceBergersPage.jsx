@@ -144,13 +144,22 @@ const MarquerPresenceBergersPage = () => {
   };
 
   const handleCommentaireChange = (promoName, value) => {
-    setPresencesData(prev => ({
-      ...prev,
-      [promoName]: {
-        ...prev[promoName],
-        commentaire: value
+    console.log('Commentaire change:', promoName, value);
+    setPresencesData(prev => {
+      if (!prev[promoName]) {
+        console.error('Promo not found in state:', promoName);
+        return prev;
       }
-    }));
+      const updated = {
+        ...prev,
+        [promoName]: {
+          ...prev[promoName],
+          commentaire: value
+        }
+      };
+      console.log('Nouvel état après commentaire:', updated[promoName]);
+      return updated;
+    });
   };
 
   const startEditing = (promoName, field, currentValue) => {
