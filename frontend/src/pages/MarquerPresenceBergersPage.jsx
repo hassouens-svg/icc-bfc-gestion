@@ -25,17 +25,27 @@ const MarquerPresenceBergersPage = () => {
       navigate('/dashboard');
       return;
     }
-    loadBergers();
+    loadPromoData();
   }, [user, navigate]);
 
-  const loadBergers = async () => {
+  const loadPromoData = async () => {
     try {
+      // Charger les bergers/référents
       const allUsers = await getReferents();
       const bergersList = allUsers.filter(
         u => (u.role === 'berger' || u.role === 'referent') && u.city === user.city
       );
       
-      // Grouper par promo
+      // Charger les visiteurs pour calculer le nombre de personnes suivies
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors?include_stopped=true`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const allVisitors = await response.json();
+      const cityVisitors = allVisitors.filter(v => v.city === user.city);
+      
+      // Grouper par promo avec statistiques
       const promoGroups = {};
       bergersList.forEach(berger => {
         if (berger.assigned_month) {
@@ -48,34 +58,48 @@ const MarquerPresenceBergersPage = () => {
           const promoName = berger.promo_name || `Promo ${monthNames[monthPart]}`;
           
           if (!promoGroups[promoName]) {
-            promoGroups[promoName] = [];
+            promoGroups[promoName] = {
+              promo_name: promoName,
+              month_num: monthPart,
+              bergers: [],
+              personnes_suivies: 0
+            };
           }
-          promoGroups[promoName].push(berger);
+          promoGroups[promoName].bergers.push(berger);
         }
       });
       
-      // Convertir en tableau trié
-      const sortedPromos = Object.keys(promoGroups).sort().map(promoName => ({
-        promo_name: promoName,
-        bergers: promoGroups[promoName]
-      }));
-      
-      setBergers(sortedPromos);
-      
-      // Initialiser les présences
-      const initialPresences = {};
-      sortedPromos.forEach(promo => {
-        promo.bergers.forEach(berger => {
-          initialPresences[berger.id] = {
-            present: null, // null = non défini, true = présent, false = absent
-            priere: false,
-            commentaire: ''
-          };
+      // Calculer le nombre de personnes suivies par promo
+      Object.keys(promoGroups).forEach(promoName => {
+        const monthNum = promoGroups[promoName].month_num;
+        const suivies = cityVisitors.filter(v => {
+          if (!v.assigned_month) return false;
+          const visitorMonth = v.assigned_month.split('-')[1];
+          return visitorMonth === monthNum && v.statut_suivi !== 'arrete';
         });
+        promoGroups[promoName].personnes_suivies = suivies.length;
       });
-      setPresences(initialPresences);
+      
+      // Convertir en tableau trié
+      const sortedPromos = Object.values(promoGroups).sort((a, b) => 
+        a.promo_name.localeCompare(b.promo_name)
+      );
+      
+      setPromoStats(sortedPromos);
+      
+      // Initialiser les données de présence par promo
+      const initialData = {};
+      sortedPromos.forEach(promo => {
+        initialData[promo.promo_name] = {
+          presents: 0,
+          absents: 0,
+          priere: false,
+          commentaire: ''
+        };
+      });
+      setPresencesData(initialData);
     } catch (error) {
-      console.error('Erreur chargement bergers:', error);
+      console.error('Erreur chargement données:', error);
       toast.error('Erreur lors du chargement');
     } finally {
       setLoading(false);
