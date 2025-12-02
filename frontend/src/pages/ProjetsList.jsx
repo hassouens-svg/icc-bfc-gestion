@@ -29,11 +29,15 @@ const ProjetsList = () => {
 
   useEffect(() => {
     loadProjets();
-  }, []);
+  }, [showArchived]);
 
   const loadProjets = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/projets`, {
+      const url = showArchived 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/events/projets?archived=true`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/events/projets`;
+      
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
