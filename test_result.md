@@ -583,3 +583,100 @@ L'utilisateur doit tester manuellement:
 2. Vérifier que l'image reste visible avec le bouton "Modifier"
 3. Vérifier la page de confirmation publique avec vraie image
 
+
+---
+
+## 🔧 CORRECTION FINALE - Édition d'Événements RSVP - 2 Décembre 2024
+
+### 📋 Suite du problème utilisateur
+
+**Problème rapporté**: 
+- "Je ne vois ni la photo que j'ai chargé ni le crayon"
+- "Je ne vois pas la photo sur la page pour confirmer"
+
+**Cause identifiée**:
+1. L'événement "Ydud" n'a pas d'`image_url` sauvegardée (`null` en base)
+2. Le bouton "Modifier" avec crayon n'existe que dans le modal de création, pas sur les cartes d'événements existants
+3. Pas de moyen d'éditer un événement déjà créé pour ajouter/modifier l'image
+
+### ✅ SOLUTION COMPLÈTE APPLIQUÉE
+
+#### 1. Ajout du Bouton "Modifier" sur les Cartes d'Événements
+**Fichier**: `/app/frontend/src/pages/RSVPLinksPage.jsx`
+
+- Ajouté un bouton avec icône crayon à côté de "Stats" et "Supprimer"
+- Click ouvre le modal en mode édition avec les données pré-remplies
+
+#### 2. Mode Édition dans le Modal
+**États ajoutés**:
+- `isEditMode`: Boolean pour distinguer création vs édition
+- `editingEventId`: ID de l'événement en cours d'édition
+
+**Fonctionnalités**:
+- `handleEditEvent(event)`: Charge les données de l'événement dans le formulaire
+- `handleUpdateEvent()`: Appelle l'API PUT pour mettre à jour
+- Titre du modal change: "Créer" → "Modifier l'Événement"
+- Bouton submit change: "Créer" → "Mettre à jour"
+- Reset automatique des états lors de la fermeture
+
+#### 3. Backend - Endpoint PUT pour Mise à Jour
+**Fichier**: `/app/backend/server.py`
+
+**Nouvel endpoint** : `PUT /api/events/{event_id}`
+```python
+- Vérifie que l'événement existe
+- Vérifie que l'utilisateur est propriétaire ou super_admin
+- Met à jour les données avec `$set`
+- Ajoute `updated_at` timestamp
+- Retourne message de confirmation
+```
+
+**Sécurité**:
+- Vérification des rôles autorisés
+- Vérification de propriété (sauf super_admin)
+- Retour 403 si non autorisé
+- Retour 404 si événement introuvable
+
+### 📋 WORKFLOW COMPLET MAINTENANT
+
+1. **Créer un événement** → Click "Nouvel Événement" → Uploader image → Créer
+2. **L'image reste visible** dans le modal avec bouton "Modifier" (icône crayon)
+3. **Sur la liste**, l'événement affiche l'image uploadée
+4. **Éditer l'événement** → Click bouton crayon sur la carte → Modal s'ouvre en mode édition
+5. **Modifier l'image** → Click "Modifier" sur l'image → Choisir nouvelle image → Mettre à jour
+6. **Page de confirmation publique** → Affiche titre grand, description, et image en 320px de haut
+
+### 🧪 TEST À FAIRE
+
+1. **Créer un nouvel événement avec image**:
+   ```
+   - Aller sur /events/rsvp-links
+   - Click "Nouvel Événement"
+   - Remplir tous les champs
+   - Uploader une image (JPG/PNG)
+   - Vérifier que l'image apparaît avec le bouton "Modifier"
+   - Click "Créer"
+   ```
+
+2. **Modifier l'événement "Ydud" pour ajouter une image**:
+   ```
+   - Sur la liste, trouver "Ydud"
+   - Click sur le bouton crayon (à côté de Stats)
+   - Modal s'ouvre avec les données de "Ydud"
+   - Click sur input file ou "Modifier" si déjà une image
+   - Choisir une image
+   - Click "Mettre à jour"
+   ```
+
+3. **Vérifier la page publique**:
+   ```
+   - Click sur "Copier" pour le lien
+   - Ouvrir dans un nouvel onglet ou navigateur privé
+   - Vérifier: Titre grand, Image 320px, Description, Boutons
+   ```
+
+### 📊 FICHIERS MODIFIÉS
+
+- `/app/frontend/src/pages/RSVPLinksPage.jsx`: Ajout mode édition complet
+- `/app/backend/server.py`: Ajout endpoint PUT /api/events/{event_id}
+
