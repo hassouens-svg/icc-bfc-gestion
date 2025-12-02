@@ -60,7 +60,7 @@ Testing the RSVP Links feature for "My Events Church" section - COMPLETED ✅
 5. Test clicking on markers and viewing details
 
 ## Test Environment Details
-- Backend URL: https://church-shepherd-app.preview.emergentagent.com
+- Backend URL: https://shepherd-track.preview.emergentagent.com
 - Database: test_database
 - Test users created:
   - superadmin / superadmin123 (super_admin)

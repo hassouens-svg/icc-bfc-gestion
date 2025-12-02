@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://church-shepherd-app.preview.emergentagent.com/api"
+BASE_URL = "https://shepherd-track.preview.emergentagent.com/api"
 
 def test_fi_public_endpoint_with_time_fields():
     """
