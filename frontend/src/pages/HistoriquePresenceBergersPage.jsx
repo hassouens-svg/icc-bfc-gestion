@@ -86,10 +86,11 @@ const HistoriquePresenceBergersPage = () => {
           
           const presence = presencesData.find(p => p.berger_id === berger.id);
           if (presence) {
-            if (presence.present) promoGroups[promoKey].presents++;
-            else promoGroups[promoKey].absents++;
+            // S'il y a au moins une présence, marquer toute la promo
+            if (presence.present) promoGroups[promoKey].present = true;
+            if (!presence.present) promoGroups[promoKey].absent = true;
             
-            if (presence.priere) promoGroups[promoKey].priere = true;
+            if (presence.priere) promoGroups[promoKey].priere = 'Oui';
             if (presence.commentaire && !promoGroups[promoKey].commentaire) {
               promoGroups[promoKey].commentaire = presence.commentaire;
             }
