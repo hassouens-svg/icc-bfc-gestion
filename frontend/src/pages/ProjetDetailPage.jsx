@@ -597,81 +597,223 @@ const ProjetDetailPage = () => {
           </Card>
         )}
 
-        {/* Tâches */}
+        {/* Pôles et Tâches */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Tâches ({tachesFiltrees.length})</CardTitle>
-              <div className="flex gap-2">
-                <Select value={filtreStatut} onValueChange={setFiltreStatut}>
-                  <SelectTrigger className="w-[180px]">
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="tous">Tous</SelectItem>
-                    <SelectItem value="a_faire">À faire</SelectItem>
-                    <SelectItem value="en_cours">En cours</SelectItem>
-                    <SelectItem value="en_retard">En retard</SelectItem>
-                    <SelectItem value="termine">Terminé</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button onClick={() => setIsTacheOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" /> Tâche
-                </Button>
-              </div>
+              <CardTitle>📊 Pôles du Projet ({poles.length})</CardTitle>
+              <Button onClick={() => setIsPoleOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" /> Nouveau Pôle
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
-            {tachesFiltrees.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">Aucune tâche</div>
+            {poles.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <Target className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p>Aucun pôle créé. Créez des pôles pour organiser vos tâches.</p>
+              </div>
             ) : (
-              <div className="space-y-3">
-                {tachesFiltrees.map(tache => (
-                  <div key={tache.id} className={`border rounded-lg p-4 ${getTaskColor(tache.statut)}`}>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold">{tache.titre}</h3>
-                          {getStatutBadge(tache.statut)}
+              <div className="space-y-6">
+                {poles.map(pole => {
+                  const poleTaches = taches.filter(t => t.pole_id === pole.id);
+                  const tachesTerminees = poleTaches.filter(t => t.statut === 'termine').length;
+                  const pourcentage = poleTaches.length > 0 ? Math.round((tachesTerminees / poleTaches.length) * 100) : 0;
+                  
+                  return (
+                    <div key={pole.id} className="border-2 border-purple-200 rounded-lg overflow-hidden">
+                      {/* En-tête du Pôle */}
+                      <div className="bg-purple-50 p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            {editingPole?.id === pole.id ? (
+                              <div className="space-y-2">
+                                <Input
+                                  value={editingPole.nom}
+                                  onChange={(e) => setEditingPole({...editingPole, nom: e.target.value})}
+                                  placeholder="Nom du pôle"
+                                  className="font-semibold"
+                                />
+                                <Input
+                                  value={editingPole.description || ''}
+                                  onChange={(e) => setEditingPole({...editingPole, description: e.target.value})}
+                                  placeholder="Description"
+                                />
+                                <Select value={editingPole.responsable || ''} onValueChange={(val) => setEditingPole({...editingPole, responsable: val})}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Sélectionner responsable" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {(projet.team_members || []).map((member, idx) => (
+                                      <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <div className="flex gap-2">
+                                  <Button size="sm" onClick={handleUpdatePole}>
+                                    <Check className="h-4 w-4 mr-1" /> Enregistrer
+                                  </Button>
+                                  <Button size="sm" variant="outline" onClick={() => setEditingPole(null)}>
+                                    <X className="h-4 w-4 mr-1" /> Annuler
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex items-center gap-3">
+                                  <h3 className="text-xl font-bold text-purple-900">{pole.nom}</h3>
+                                  <div className="flex items-center gap-2">
+                                    <div className="text-2xl font-bold text-purple-600">{pourcentage}%</div>
+                                    <span className="text-sm text-gray-600">({tachesTerminees}/{poleTaches.length} tâches)</span>
+                                  </div>
+                                </div>
+                                {pole.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{pole.description}</p>
+                                )}
+                                {pole.responsable && (
+                                  <div className="flex items-center gap-1 mt-2 text-sm text-purple-700">
+                                    <Users className="h-4 w-4" />
+                                    <span className="font-medium">Responsable: {pole.responsable}</span>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                          {!editingPole && (
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="outline" onClick={() => setEditingPole(pole)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => {
+                                setNewTache({ ...newTache, pole_id: pole.id });
+                                setIsTacheOpen(true);
+                              }}>
+                                <Plus className="h-4 w-4 mr-1" /> Tâche
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={() => handleDeletePole(pole.id)}>
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
-                        {tache.description && (
-                          <p className="text-sm text-gray-600 mb-2">{tache.description}</p>
-                        )}
-                        <div className="flex gap-4 text-xs text-gray-500">
-                          {tache.deadline && (
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              {new Date(tache.deadline).toLocaleDateString('fr-FR')}
-                            </div>
-                          )}
-                          {tache.assigne_a && (
-                            <div className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {tache.assigne_a}
-                            </div>
-                          )}
+                        {/* Barre de progression du pôle */}
+                        <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+                          <div className="h-full bg-purple-600 transition-all" style={{width: `${pourcentage}%`}}></div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Select value={tache.statut} onValueChange={(val) => handleUpdateTacheStatut(tache.id, val)}>
-                          <SelectTrigger className="w-[130px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="a_faire">À faire</SelectItem>
-                            <SelectItem value="en_cours">En cours</SelectItem>
-                            <SelectItem value="en_retard">En retard</SelectItem>
-                            <SelectItem value="termine">Terminé</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button size="sm" variant="ghost" onClick={() => handleDeleteTache(tache.id)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+
+                      {/* Tâches du Pôle */}
+                      <div className="p-4 space-y-2">
+                        {poleTaches.length === 0 ? (
+                          <div className="text-center py-4 text-gray-400 text-sm">Aucune tâche dans ce pôle</div>
+                        ) : (
+                          poleTaches.map(tache => (
+                            <div key={tache.id} className={`border rounded-lg p-3 ${getTaskColor(tache.statut)}`}>
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="font-semibold text-sm">{tache.titre}</h4>
+                                    {getStatutBadge(tache.statut)}
+                                  </div>
+                                  {tache.description && (
+                                    <p className="text-xs text-gray-600 mb-1">{tache.description}</p>
+                                  )}
+                                  <div className="flex gap-3 text-xs text-gray-500">
+                                    {tache.deadline && (
+                                      <div className="flex items-center gap-1">
+                                        <Calendar className="h-3 w-3" />
+                                        {new Date(tache.deadline).toLocaleDateString('fr-FR')}
+                                      </div>
+                                    )}
+                                    {tache.assigne_a && (
+                                      <div className="flex items-center gap-1">
+                                        <Users className="h-3 w-3" />
+                                        {tache.assigne_a}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex gap-1">
+                                  <Select value={tache.statut} onValueChange={(val) => handleUpdateTacheStatut(tache.id, val)}>
+                                    <SelectTrigger className="w-[110px] h-8 text-xs">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="a_faire">À faire</SelectItem>
+                                      <SelectItem value="en_cours">En cours</SelectItem>
+                                      <SelectItem value="en_retard">En retard</SelectItem>
+                                      <SelectItem value="termine">Terminé</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <Button size="sm" variant="ghost" onClick={() => handleDeleteTache(tache.id)}>
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
                       </div>
                     </div>
+                  );
+                })}
+
+                {/* Tâches sans pôle */}
+                {taches.filter(t => !t.pole_id).length > 0 && (
+                  <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                    <div className="bg-gray-50 p-4">
+                      <h3 className="text-lg font-bold text-gray-700">📋 Tâches Générales (Sans Pôle)</h3>
+                      <p className="text-sm text-gray-500">Tâches non assignées à un pôle spécifique</p>
+                    </div>
+                    <div className="p-4 space-y-2">
+                      {taches.filter(t => !t.pole_id).map(tache => (
+                        <div key={tache.id} className={`border rounded-lg p-3 ${getTaskColor(tache.statut)}`}>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-semibold text-sm">{tache.titre}</h4>
+                                {getStatutBadge(tache.statut)}
+                              </div>
+                              {tache.description && (
+                                <p className="text-xs text-gray-600 mb-1">{tache.description}</p>
+                              )}
+                              <div className="flex gap-3 text-xs text-gray-500">
+                                {tache.deadline && (
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    {new Date(tache.deadline).toLocaleDateString('fr-FR')}
+                                  </div>
+                                )}
+                                {tache.assigne_a && (
+                                  <div className="flex items-center gap-1">
+                                    <Users className="h-3 w-3" />
+                                    {tache.assigne_a}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-1">
+                              <Select value={tache.statut} onValueChange={(val) => handleUpdateTacheStatut(tache.id, val)}>
+                                <SelectTrigger className="w-[110px] h-8 text-xs">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="a_faire">À faire</SelectItem>
+                                  <SelectItem value="en_cours">En cours</SelectItem>
+                                  <SelectItem value="en_retard">En retard</SelectItem>
+                                  <SelectItem value="termine">Terminé</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Button size="sm" variant="ghost" onClick={() => handleDeleteTache(tache.id)}>
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
             )}
           </CardContent>
