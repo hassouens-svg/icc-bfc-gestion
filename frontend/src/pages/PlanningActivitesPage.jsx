@@ -282,6 +282,36 @@ const PlanningActivitesPage = () => {
 
   const stats = villeSelectionnee ? calculateStats() : { total: 0, fait: 0, aVenir: 0, reporte: 0, annule: 0, pourcentage: 0, enRetard: 0 };
 
+  // Filtrer et trier les activités
+  const activitesFiltrees = () => {
+    let filtered = [...activites];
+    
+    // Filtre par statut
+    if (statutFiltre !== 'tous') {
+      if (statutFiltre === 'En retard') {
+        // Activités en retard = date passée et pas "Fait"
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        filtered = filtered.filter(a => {
+          const dateFin = new Date(a.date_fin || a.date);
+          dateFin.setHours(0, 0, 0, 0);
+          return dateFin < today && a.statut !== 'Fait';
+        });
+      } else {
+        filtered = filtered.filter(a => a.statut === statutFiltre);
+      }
+    }
+    
+    // Tri chronologique : plus récent en haut (décembre avant juillet)
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.date_debut || a.date);
+      const dateB = new Date(b.date_debut || b.date);
+      return dateB - dateA; // Ordre décroissant (récent en premier)
+    });
+    
+    return filtered;
+  };
+
   // Fonction pour déterminer la couleur de la ligne
   const getRowColor = (activite) => {
     const today = new Date();
