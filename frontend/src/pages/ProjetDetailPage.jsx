@@ -312,6 +312,75 @@ const ProjetDetailPage = () => {
     }
   };
 
+  const handleAddJalon = async () => {
+    if (!newJalon.titre) {
+      toast.error('Titre requis');
+      return;
+    }
+
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/jalons`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...newJalon, projet_id: id })
+      });
+      toast.success('Jalon créé');
+      setNewJalon({ titre: '', description: '', acteur: '', deadline: '' });
+      setIsJalonOpen(false);
+      loadData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+  const handleUpdateJalon = async () => {
+    if (!editingJalon || !editingJalon.titre) {
+      toast.error('Titre requis');
+      return;
+    }
+
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/jalons/${editingJalon.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          titre: editingJalon.titre,
+          description: editingJalon.description,
+          acteur: editingJalon.acteur,
+          deadline: editingJalon.deadline,
+          statut: editingJalon.statut
+        })
+      });
+      toast.success('Jalon mis à jour');
+      setEditingJalon(null);
+      loadData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+  const handleDeleteJalon = async (jalonId) => {
+    if (!window.confirm('Supprimer ce jalon ?')) return;
+
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/jalons/${jalonId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      toast.success('Jalon supprimé');
+      loadData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
