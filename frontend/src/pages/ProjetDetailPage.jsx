@@ -1126,13 +1126,13 @@ const ProjetDetailPage = () => {
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Membres actuels</h3>
+                <h3 className="font-semibold mb-2">Membres actuels ({(editData.team_members || []).length})</h3>
                 {(editData.team_members || []).length === 0 ? (
                   <div className="text-center py-4 text-gray-500">Aucun membre</div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2">
                     {(editData.team_members || []).map((member, idx) => (
-                      <div key={idx} className="flex items-center justify-between border rounded p-3">
+                      <div key={idx} className="flex items-center justify-between border rounded p-3 bg-white hover:bg-gray-50">
                         <div>
                           <div className="font-medium">{member.nom}</div>
                           <div className="text-sm text-gray-500">{member.role}</div>
