@@ -404,6 +404,7 @@ class TacheCreate(BaseModel):
     titre: str
     description: Optional[str] = None
     assigne_a: Optional[str] = None
+    statut: Optional[str] = "a_faire"  # Default to "a_faire" but allow override
     deadline: Optional[str] = None
 
 class TacheUpdate(BaseModel):
