@@ -7,8 +7,9 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
-import { Calendar, ArrowLeft, Edit2 } from 'lucide-react';
+import { Calendar, ArrowLeft, Edit2, Check, X, Save } from 'lucide-react';
 
 const MarquerPresenceBergersPage = () => {
   const navigate = useNavigate();
@@ -16,9 +17,9 @@ const MarquerPresenceBergersPage = () => {
   const [promoStats, setPromoStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dateSelectionnee, setDateSelectionnee] = useState(new Date().toISOString().split('T')[0]);
-  const [editingPromo, setEditingPromo] = useState(null);
-  const [editFormData, setEditFormData] = useState({});
-  const [saving, setSaving] = useState(false);
+  const [presencesData, setPresencesData] = useState({});
+  const [editingField, setEditingField] = useState(null);
+  const [tempValue, setTempValue] = useState('');
 
   useEffect(() => {
     if (!user || user.role !== 'superviseur_promos') {
@@ -52,7 +53,6 @@ const MarquerPresenceBergersPage = () => {
       const allVisitors = await response.json();
       const cityVisitors = allVisitors.filter(v => v.city === user.city);
       
-      // Grouper par mois (pas par surnom de promo)
       const promoGroups = {};
       bergersList.forEach(berger => {
         if (berger.assigned_month) {
@@ -72,7 +72,6 @@ const MarquerPresenceBergersPage = () => {
         }
       });
       
-      // Calculer personnes suivies
       Object.keys(promoGroups).forEach(promoName => {
         const monthNum = promoGroups[promoName].month_num;
         const suivies = cityVisitors.filter(v => {
@@ -88,6 +87,20 @@ const MarquerPresenceBergersPage = () => {
       );
       
       setPromoStats(sortedPromos);
+      
+      // Initialiser les données de présence
+      const initialData = {};
+      sortedPromos.forEach(promo => {
+        initialData[promo.promo_name] = {
+          present: false,
+          absent: false,
+          priere: 'Non',
+          commentaire: '',
+          noms_bergers: promo.bergers.map(b => b.name).join(', '),
+          personnes_suivies: promo.personnes_suivies
+        };
+      });
+      setPresencesData(initialData);
     } catch (error) {
       console.error('Erreur chargement données:', error);
       toast.error('Erreur lors du chargement');
@@ -96,32 +109,91 @@ const MarquerPresenceBergersPage = () => {
     }
   };
 
-  const handleEditPromo = (promo) => {
-    setEditingPromo(promo);
-    setEditFormData({
-      presents: 0,
-      absents: 0,
-      priere: false,
-      commentaire: '',
-      personnes_suivies: promo.personnes_suivies
+  const handleCheckboxChange = (promoName, field) => {
+    setPresencesData({
+      ...presencesData,
+      [promoName]: {
+        ...presencesData[promoName],
+        [field]: !presencesData[promoName][field],
+        // Si on coche présent, on décoche absent et vice versa
+        ...(field === 'present' && { absent: false }),
+        ...(field === 'absent' && { present: false })
+      }
     });
   };
 
-  const handleSavePromo = async () => {
-    if (!editingPromo) return;
-    
-    setSaving(true);
+  const handlePriereChange = (promoName, value) => {
+    setPresencesData({
+      ...presencesData,
+      [promoName]: {
+        ...presencesData[promoName],
+        priere: value
+      }
+    });
+  };
+
+  const handleCommentaireChange = (promoName, value) => {
+    setPresencesData({
+      ...presencesData,
+      [promoName]: {
+        ...presencesData[promoName],
+        commentaire: value
+      }
+    });
+  };
+
+  const startEditing = (promoName, field, currentValue) => {
+    setEditingField({ promoName, field });
+    setTempValue(currentValue);
+  };
+
+  const saveEditing = () => {
+    if (editingField) {
+      setPresencesData({
+        ...presencesData,
+        [editingField.promoName]: {
+          ...presencesData[editingField.promoName],
+          [editingField.field]: tempValue
+        }
+      });
+      setEditingField(null);
+      setTempValue('');
+    }
+  };
+
+  const cancelEditing = () => {
+    setEditingField(null);
+    setTempValue('');
+  };
+
+  const handleSaveAll = async () => {
     try {
-      const presencesToSave = editingPromo.bergers.map(berger => ({
-        berger_id: berger.id,
-        date: dateSelectionnee,
-        present: editFormData.presents > 0,
-        priere: editFormData.priere,
-        commentaire: editFormData.commentaire,
-        enregistre_par: user.id,
-        ville: user.city,
-        promo_name: editingPromo.promo_name
-      }));
+      const presencesToSave = [];
+      
+      Object.entries(presencesData).forEach(([promoName, data]) => {
+        if (data.present || data.absent) {
+          const promo = promoStats.find(p => p.promo_name === promoName);
+          if (promo) {
+            promo.bergers.forEach(berger => {
+              presencesToSave.push({
+                berger_id: berger.id,
+                date: dateSelectionnee,
+                present: data.present,
+                priere: data.priere === 'Oui',
+                commentaire: data.commentaire,
+                enregistre_par: user.id,
+                ville: user.city,
+                promo_name: promoName
+              });
+            });
+          }
+        }
+      });
+
+      if (presencesToSave.length === 0) {
+        toast.error('Veuillez cocher au moins une présence');
+        return;
+      }
 
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/berger-presences/batch`, {
         method: 'POST',
@@ -136,13 +208,13 @@ const MarquerPresenceBergersPage = () => {
         throw new Error('Erreur enregistrement');
       }
 
-      toast.success(`✅ ${editingPromo.promo_name} enregistré`);
-      setEditingPromo(null);
+      toast.success(`✅ ${presencesToSave.length} présence(s) enregistrée(s)`);
+      
+      // Réinitialiser
+      loadPromoData();
     } catch (error) {
       console.error('Erreur:', error);
       toast.error('Erreur lors de l\'enregistrement');
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -175,7 +247,7 @@ const MarquerPresenceBergersPage = () => {
             <div className="flex items-center gap-4">
               <Calendar className="h-6 w-6 text-purple-600" />
               <div>
-                <Label>Date du compte rendu</Label>
+                <Label>Sélectionnez la date</Label>
                 <Input
                   type="date"
                   value={dateSelectionnee}
@@ -183,6 +255,15 @@ const MarquerPresenceBergersPage = () => {
                   className="w-48"
                 />
               </div>
+              <div className="flex-1"></div>
+              <Button 
+                onClick={handleSaveAll}
+                className="bg-purple-600 hover:bg-purple-700"
+                size="lg"
+              >
+                <Save className="h-5 w-5 mr-2" />
+                Enregistrer
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -197,155 +278,153 @@ const MarquerPresenceBergersPage = () => {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Nom de la Promo</th>
-                    <th className="text-center py-3 px-4">
-                      Nbre de Pers Suivies
-                      <Edit2 className="inline h-3 w-3 ml-1 text-gray-400" />
-                    </th>
+                    <th className="text-center py-3 px-4">Nbre de Pers Suivies</th>
                     <th className="text-left py-3 px-4">Noms des Bergers</th>
-                    <th className="text-center py-3 px-4">Présents</th>
-                    <th className="text-center py-3 px-4">Absents</th>
+                    <th className="text-center py-3 px-4">Présent</th>
+                    <th className="text-center py-3 px-4">Absent</th>
                     <th className="text-center py-3 px-4">Prière</th>
                     <th className="text-left py-3 px-4">Commentaire</th>
-                    <th className="text-center py-3 px-4">
-                      <Edit2 className="h-4 w-4" />
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {promoStats.length > 0 ? (
-                    promoStats.map((promo, index) => (
+                  {promoStats.map((promo, index) => {
+                    const data = presencesData[promo.promo_name] || {};
+                    const isEditingBergers = editingField?.promoName === promo.promo_name && editingField?.field === 'noms_bergers';
+                    const isEditingSuivies = editingField?.promoName === promo.promo_name && editingField?.field === 'personnes_suivies';
+                    
+                    return (
                       <tr key={index} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4 font-medium text-purple-700">{promo.promo_name}</td>
+                        
+                        {/* Nbre de Pers Suivies - Editable */}
                         <td className="text-center py-3 px-4">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
-                            {promo.personnes_suivies}
-                          </span>
+                          {isEditingSuivies ? (
+                            <div className="flex items-center gap-1 justify-center">
+                              <Input
+                                type="number"
+                                value={tempValue}
+                                onChange={(e) => setTempValue(e.target.value)}
+                                className="w-20 text-center"
+                                autoFocus
+                              />
+                              <Button size="sm" variant="ghost" onClick={saveEditing}>
+                                <Check className="h-4 w-4 text-green-600" />
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={cancelEditing}>
+                                <X className="h-4 w-4 text-red-600" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 justify-center">
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
+                                {data.personnes_suivies || 0}
+                              </span>
+                              <button
+                                onClick={() => startEditing(promo.promo_name, 'personnes_suivies', data.personnes_suivies || 0)}
+                                className="text-gray-400 hover:text-purple-600"
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          )}
                         </td>
-                        <td className="py-3 px-4 text-sm text-gray-600">
-                          {promo.bergers.map(b => b.name).join(', ')}
+                        
+                        {/* Noms des Bergers - Editable */}
+                        <td className="py-3 px-4">
+                          {isEditingBergers ? (
+                            <div className="flex items-center gap-1">
+                              <Input
+                                value={tempValue}
+                                onChange={(e) => setTempValue(e.target.value)}
+                                className="text-sm"
+                                autoFocus
+                              />
+                              <Button size="sm" variant="ghost" onClick={saveEditing}>
+                                <Check className="h-4 w-4 text-green-600" />
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={cancelEditing}>
+                                <X className="h-4 w-4 text-red-600" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-gray-600">{data.noms_bergers || '-'}</span>
+                              <button
+                                onClick={() => startEditing(promo.promo_name, 'noms_bergers', data.noms_bergers || '')}
+                                className="text-gray-400 hover:text-purple-600"
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          )}
                         </td>
+                        
+                        {/* Présent - Grosse case à cocher */}
                         <td className="text-center py-3 px-4">
-                          <span className="text-gray-400">-</span>
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <span className="text-gray-400">-</span>
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <input type="checkbox" disabled className="h-4 w-4" />
-                        </td>
-                        <td className="py-3 px-4 text-sm text-gray-400">
-                          -
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <Button
-                            size="sm"
-                            onClick={() => handleEditPromo(promo)}
-                            className="bg-purple-600 hover:bg-purple-700"
+                          <button
+                            onClick={() => handleCheckboxChange(promo.promo_name, 'present')}
+                            className={`w-8 h-8 rounded border-2 flex items-center justify-center transition-colors ${
+                              data.present 
+                                ? 'bg-green-500 border-green-600' 
+                                : 'bg-white border-gray-300 hover:border-green-400'
+                            }`}
                           >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
+                            {data.present && <Check className="h-6 w-6 text-white font-bold" strokeWidth={3} />}
+                          </button>
+                        </td>
+                        
+                        {/* Absent - Grosse case à cocher */}
+                        <td className="text-center py-3 px-4">
+                          <button
+                            onClick={() => handleCheckboxChange(promo.promo_name, 'absent')}
+                            className={`w-8 h-8 rounded border-2 flex items-center justify-center transition-colors ${
+                              data.absent 
+                                ? 'bg-red-500 border-red-600' 
+                                : 'bg-white border-gray-300 hover:border-red-400'
+                            }`}
+                          >
+                            {data.absent && <X className="h-6 w-6 text-white font-bold" strokeWidth={3} />}
+                          </button>
+                        </td>
+                        
+                        {/* Prière - Liste déroulante */}
+                        <td className="text-center py-3 px-4">
+                          <Select 
+                            value={data.priere || 'Non'} 
+                            onValueChange={(value) => handlePriereChange(promo.promo_name, value)}
+                          >
+                            <SelectTrigger className={`w-24 ${
+                              data.priere === 'Oui' 
+                                ? 'bg-green-100 text-green-800 border-green-300' 
+                                : 'bg-red-100 text-red-800 border-red-300'
+                            }`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Oui" className="text-green-700 font-medium">✔️ Oui</SelectItem>
+                              <SelectItem value="Non" className="text-red-700 font-medium">❌ Non</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        
+                        {/* Commentaire */}
+                        <td className="py-3 px-4">
+                          <Input
+                            type="text"
+                            value={data.commentaire || ''}
+                            onChange={(e) => handleCommentaireChange(promo.promo_name, e.target.value)}
+                            placeholder="Commentaire..."
+                            className="min-w-[200px]"
+                          />
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={8} className="text-center py-8 text-gray-500">
-                        Aucune promotion trouvée
-                      </td>
-                    </tr>
-                  )}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           </CardContent>
         </Card>
-
-        {/* Modal de modification */}
-        {editingPromo && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <CardHeader className="bg-purple-50">
-                <CardTitle>Modifier - {editingPromo.promo_name}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-700">
-                    <strong>Bergers ({editingPromo.bergers.length}) :</strong> {editingPromo.bergers.map(b => b.name).join(', ')}
-                  </p>
-                </div>
-
-                <div>
-                  <Label>Nombre de personnes suivies (éditable)</Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={editFormData.personnes_suivies || 0}
-                    onChange={(e) => setEditFormData({ ...editFormData, personnes_suivies: parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Nombre de présents</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      max={editingPromo.bergers.length}
-                      value={editFormData.presents || 0}
-                      onChange={(e) => setEditFormData({ ...editFormData, presents: parseInt(e.target.value) || 0 })}
-                    />
-                  </div>
-                  <div>
-                    <Label>Nombre d\'absents</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      max={editingPromo.bergers.length}
-                      value={editFormData.absents || 0}
-                      onChange={(e) => setEditFormData({ ...editFormData, absents: parseInt(e.target.value) || 0 })}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 bg-yellow-50 p-4 rounded-lg">
-                  <input
-                    type="checkbox"
-                    id="modal-priere"
-                    checked={editFormData.priere || false}
-                    onChange={(e) => setEditFormData({ ...editFormData, priere: e.target.checked })}
-                    className="h-5 w-5 text-purple-600 rounded focus:ring-purple-500"
-                  />
-                  <Label htmlFor="modal-priere" className="cursor-pointer text-lg">
-                    🙏 Prière demandée
-                  </Label>
-                </div>
-
-                <div>
-                  <Label>Commentaire</Label>
-                  <Textarea
-                    value={editFormData.commentaire || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, commentaire: e.target.value })}
-                    placeholder="Notes ou observations..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="flex gap-2 justify-end pt-4 border-t">
-                  <Button variant="outline" onClick={() => setEditingPromo(null)}>
-                    Annuler
-                  </Button>
-                  <Button
-                    onClick={handleSavePromo}
-                    disabled={saving}
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    {saving ? 'Enregistrement...' : 'Enregistrer'}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
     </Layout>
   );
