@@ -126,13 +126,14 @@ const MarquerPresenceBergersPage = () => {
   };
 
   const handlePriereChange = (promoName, value) => {
-    setPresencesData({
-      ...presencesData,
+    setPresencesData(prev => ({
+      ...prev,
       [promoName]: {
-        ...presencesData[promoName],
+        ...prev[promoName],
         priere: value
       }
-    });
+    }));
+    console.log('Prière changée pour', promoName, ':', value);
   };
 
   const handleCommentaireChange = (promoName, value) => {
