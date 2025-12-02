@@ -526,32 +526,59 @@ const RSVPLinksPage = () => {
             <div className="space-y-4">
               {eventStats ? (
                 <>
-                  <Card className="border-0 shadow-sm">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center justify-between gap-4 px-2">
-                        <div className="flex flex-col items-center">
-                          <p className="text-4xl font-bold text-blue-600">{eventStats.total || 0}</p>
-                          <p className="text-xs text-gray-600 mt-1">Envoyés</p>
+                  <div className="space-y-3">
+                    <Card className="border-0 shadow-sm">
+                      <CardContent className="pt-6">
+                        <div className="flex items-center justify-between gap-4 px-2">
+                          <div className="flex flex-col items-center">
+                            <p className="text-4xl font-bold text-blue-600">{eventStats.total || 0}</p>
+                            <p className="text-xs text-gray-600 mt-1">Envoyés</p>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <p className="text-4xl font-bold text-green-600">{eventStats.confirmed || 0}</p>
+                            <p className="text-xs text-gray-600 mt-1">Oui</p>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <p className="text-4xl font-bold text-red-600">{eventStats.declined || 0}</p>
+                            <p className="text-xs text-gray-600 mt-1">Non</p>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <p className="text-4xl font-bold text-orange-500">{eventStats.maybe || 0}</p>
+                            <p className="text-xs text-gray-600 mt-1">Peut-être</p>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <p className="text-4xl font-bold text-gray-400">{(eventStats.total - (eventStats.confirmed + eventStats.declined + eventStats.maybe)) || 0}</p>
+                            <p className="text-xs text-gray-600 mt-1 text-center">Sans<br/>réponse</p>
+                          </div>
                         </div>
-                        <div className="flex flex-col items-center">
-                          <p className="text-4xl font-bold text-green-600">{eventStats.confirmed || 0}</p>
-                          <p className="text-xs text-gray-600 mt-1">Oui</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-0 shadow-sm bg-yellow-50">
+                      <CardContent className="pt-4 pb-4">
+                        <div className="flex items-center justify-around gap-4">
+                          <div className="flex flex-col items-center">
+                            <div className="flex items-center gap-1">
+                              <span className="text-3xl">⭐</span>
+                              <p className="text-3xl font-bold text-yellow-600">
+                                {eventStats.responses ? eventStats.responses.filter(r => r.is_star).length : 0}
+                              </p>
+                            </div>
+                            <p className="text-xs text-gray-700 mt-1">Stars / VIP</p>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <div className="flex items-center gap-1">
+                              <span className="text-3xl">👤</span>
+                              <p className="text-3xl font-bold text-gray-600">
+                                {eventStats.responses ? eventStats.responses.filter(r => !r.is_star).length : 0}
+                              </p>
+                            </div>
+                            <p className="text-xs text-gray-700 mt-1">Non Stars</p>
+                          </div>
                         </div>
-                        <div className="flex flex-col items-center">
-                          <p className="text-4xl font-bold text-red-600">{eventStats.declined || 0}</p>
-                          <p className="text-xs text-gray-600 mt-1">Non</p>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <p className="text-4xl font-bold text-orange-500">{eventStats.maybe || 0}</p>
-                          <p className="text-xs text-gray-600 mt-1">Peut-être</p>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <p className="text-4xl font-bold text-gray-400">{(eventStats.total - (eventStats.confirmed + eventStats.declined + eventStats.maybe)) || 0}</p>
-                          <p className="text-xs text-gray-600 mt-1 text-center">Sans<br/>réponse</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </div>
 
                   {eventStats.responses && eventStats.responses.length > 0 && (
                     <div className="border rounded-lg overflow-hidden">
