@@ -669,18 +669,18 @@ const ProjetDetailPage = () => {
                               </div>
                             ) : (
                               <>
-                                <div className="flex items-center gap-3">
-                                  <h3 className="text-xl font-bold text-purple-900">{pole.nom}</h3>
+                                <div className="flex items-center gap-4 mb-3">
+                                  <h3 className="text-2xl font-bold text-purple-900">{pole.nom}</h3>
                                   <div className="flex items-center gap-2">
-                                    <div className="text-2xl font-bold text-purple-600">{pourcentage}%</div>
-                                    <span className="text-sm text-gray-600">({tachesTerminees}/{poleTaches.length} tâches)</span>
+                                    <div className="text-3xl font-bold text-purple-600">{pourcentage}%</div>
+                                    <span className="text-base text-gray-600">({tachesTerminees}/{poleTaches.length} tâches)</span>
                                   </div>
                                 </div>
                                 {pole.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{pole.description}</p>
+                                  <p className="text-sm text-gray-600 mb-3">{pole.description}</p>
                                 )}
                                 {pole.responsable && (
-                                  <div className="flex items-center gap-1 mt-2 text-sm text-purple-700">
+                                  <div className="flex items-center gap-2 text-sm text-purple-700 bg-purple-100 rounded-full px-3 py-1 w-fit">
                                     <Users className="h-4 w-4" />
                                     <span className="font-medium">Responsable: {pole.responsable}</span>
                                   </div>
@@ -693,11 +693,15 @@ const ProjetDetailPage = () => {
                               <Button size="sm" variant="outline" onClick={() => setEditingPole(pole)}>
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button size="sm" variant="outline" onClick={() => {
-                                setNewTache({ ...newTache, pole_id: pole.id });
-                                setIsTacheOpen(true);
-                              }}>
-                                <Plus className="h-4 w-4 mr-1" /> Tâche
+                              <Button 
+                                size="lg"
+                                className="bg-purple-600 hover:bg-purple-700 text-white"
+                                onClick={() => {
+                                  setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: pole.id });
+                                  setIsTacheOpen(true);
+                                }}
+                              >
+                                <Plus className="h-5 w-5 mr-2" /> Ajouter une tâche
                               </Button>
                               <Button size="sm" variant="ghost" onClick={() => handleDeletePole(pole.id)}>
                                 <Trash2 className="h-4 w-4 text-red-500" />
@@ -706,15 +710,18 @@ const ProjetDetailPage = () => {
                           )}
                         </div>
                         {/* Barre de progression du pôle */}
-                        <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div className="mt-4 bg-gray-200 rounded-full h-3 overflow-hidden">
                           <div className="h-full bg-purple-600 transition-all" style={{width: `${pourcentage}%`}}></div>
                         </div>
                       </div>
 
                       {/* Tâches du Pôle */}
-                      <div className="p-4 space-y-2">
+                      <div className="p-6 bg-gray-50 space-y-3">
                         {poleTaches.length === 0 ? (
-                          <div className="text-center py-4 text-gray-400 text-sm">Aucune tâche dans ce pôle</div>
+                          <div className="text-center py-8 text-gray-400">
+                            <p className="text-base mb-2">Aucune tâche dans ce pôle</p>
+                            <p className="text-sm">Cliquez sur &quot;Ajouter une tâche&quot; ci-dessus pour commencer</p>
+                          </div>
                         ) : (
                           poleTaches.map(tache => (
                             <div key={tache.id} className={`border rounded-lg p-3 ${getTaskColor(tache.statut)}`}>
