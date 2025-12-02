@@ -146,7 +146,7 @@ class EventManagementTester:
             stats = response.json()
             
             # Check if we have STAR RSVPs in the response
-            rsvps = stats.get("rsvps", [])
+            rsvps = stats.get("responses", [])  # Fixed: use "responses" not "rsvps"
             star_rsvps = [rsvp for rsvp in rsvps if rsvp.get("is_star", False)]
             
             if len(star_rsvps) > 0:
