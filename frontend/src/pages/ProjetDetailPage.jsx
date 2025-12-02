@@ -35,6 +35,7 @@ const ProjetDetailPage = () => {
   const [newMember, setNewMember] = useState({ nom: '', telephone: '', role: '' });
   const [jalons, setJalons] = useState([]);
   const [isJalonOpen, setIsJalonOpen] = useState(false);
+  const [isGanttOpen, setIsGanttOpen] = useState(false);
   const [newJalon, setNewJalon] = useState({ titre: '', description: '', acteur: '', deadline: '' });
   const [editingJalon, setEditingJalon] = useState(null);
   const [newDepense, setNewDepense] = useState({ montant: '', raison: '', date: new Date().toISOString().split('T')[0] });
