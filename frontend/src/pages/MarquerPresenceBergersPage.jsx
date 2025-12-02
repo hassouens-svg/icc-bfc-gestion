@@ -401,14 +401,18 @@ const MarquerPresenceBergersPage = () => {
                         {/* Absent - Grosse case à cocher */}
                         <td className="text-center py-3 px-4">
                           <button
-                            onClick={() => handleCheckboxChange(promo.promo_name, 'absent')}
-                            className={`w-8 h-8 rounded border-2 flex items-center justify-center transition-colors ${
-                              data.absent 
-                                ? 'bg-red-500 border-red-600' 
-                                : 'bg-white border-gray-300 hover:border-red-400'
+                            onClick={() => {
+                              console.log('Click absent pour', promo.promo_name, 'État actuel:', data.absent);
+                              handleCheckboxChange(promo.promo_name, 'absent');
+                            }}
+                            className={`w-10 h-10 rounded border-2 flex items-center justify-center transition-all mx-auto ${
+                              data.absent === true
+                                ? 'bg-red-500 border-red-600 shadow-md' 
+                                : 'bg-white border-gray-300 hover:border-red-400 hover:bg-red-50'
                             }`}
+                            title={data.absent ? "Absent coché" : "Marquer comme absent"}
                           >
-                            {data.absent && <X className="h-6 w-6 text-white font-bold" strokeWidth={3} />}
+                            {data.absent === true && <X className="h-7 w-7 text-white font-bold" strokeWidth={4} />}
                           </button>
                         </td>
                         
