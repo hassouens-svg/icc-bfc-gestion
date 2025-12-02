@@ -997,23 +997,6 @@ const ProjetDetailPage = () => {
           </DialogContent>
         </Dialog>
 
-                    {(projet.team_members || []).map((member, idx) => (
-                      <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => {
-                  setIsTacheOpen(false);
-                  setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
-                }}>Annuler</Button>
-                <Button onClick={handleAddTache}>Créer</Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
         {/* Dialog Dépense */}
         <Dialog open={isDepenseOpen} onOpenChange={setIsDepenseOpen}>
           <DialogContent>
