@@ -5169,6 +5169,31 @@ async def get_berger_presences(
     
     return presences
 
+
+@api_router.get("/berger-presences/latest")
+async def get_latest_berger_presences(
+    ville: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Obtenir les dernières présences des bergers par promo pour pré-remplissage"""
+    allowed_roles = ["superviseur_promos", "super_admin"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Récupérer toutes les présences de cette ville, triées par date décroissante
+    all_presences = await db.berger_presences.find({
+        "ville": ville
+    }, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    
+    # Pour chaque promo, garder seulement la dernière présence
+    latest_by_promo = {}
+    for presence in all_presences:
+        promo_name = presence.get("promo_name")
+        if promo_name and promo_name not in latest_by_promo:
+            latest_by_promo[promo_name] = presence
+    
+    return list(latest_by_promo.values())
+
 @api_router.post("/contact-groups")
 async def create_contact_group(group: ContactGroup, user: dict = Depends(get_current_user)):
     """Créer une nouvelle box de contacts"""
