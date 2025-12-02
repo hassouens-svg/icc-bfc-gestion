@@ -5141,7 +5141,8 @@ async def get_berger_presences(
     current_user: dict = Depends(get_current_user)
 ):
     """Obtenir les présences des bergers pour une date donnée"""
-    if current_user["role"] != "superviseur_promos":
+    allowed_roles = ["superviseur_promos", "super_admin"]
+    if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
     presences = await db.berger_presences.find({
