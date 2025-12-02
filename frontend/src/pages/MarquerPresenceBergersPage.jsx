@@ -110,15 +110,18 @@ const MarquerPresenceBergersPage = () => {
   };
 
   const handleCheckboxChange = (promoName, field) => {
-    setPresencesData({
-      ...presencesData,
-      [promoName]: {
-        ...presencesData[promoName],
-        [field]: !presencesData[promoName][field],
-        // Si on coche présent, on décoche absent et vice versa
-        ...(field === 'present' && { absent: false }),
-        ...(field === 'absent' && { present: false })
-      }
+    setPresencesData(prev => {
+      const currentValue = prev[promoName]?.[field] || false;
+      return {
+        ...prev,
+        [promoName]: {
+          ...prev[promoName],
+          [field]: !currentValue,
+          // Si on coche présent, on décoche absent et vice versa
+          ...(field === 'present' && { absent: false }),
+          ...(field === 'absent' && { present: false })
+        }
+      };
     });
   };
 
