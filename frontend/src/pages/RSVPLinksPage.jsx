@@ -585,15 +585,21 @@ const RSVPLinksPage = () => {
                       <table className="w-full">
                         <thead className="bg-gray-50">
                           <tr>
+                            <th className="text-left p-3 text-sm">Prénom</th>
                             <th className="text-left p-3 text-sm">Nom</th>
+                            <th className="text-center p-3 text-sm">⭐</th>
                             <th className="text-left p-3 text-sm">Contact</th>
                             <th className="text-left p-3 text-sm">Statut</th>
                           </tr>
                         </thead>
                         <tbody>
                           {eventStats.responses.map((rsvp, idx) => (
-                            <tr key={idx} className="border-t">
-                              <td className="p-3">{rsvp.name}</td>
+                            <tr key={idx} className="border-t hover:bg-gray-50">
+                              <td className="p-3">{rsvp.first_name || '-'}</td>
+                              <td className="p-3">{rsvp.last_name || '-'}</td>
+                              <td className="p-3 text-center">
+                                {rsvp.is_star && <span className="text-xl">⭐</span>}
+                              </td>
                               <td className="p-3 text-sm">{rsvp.email || rsvp.phone || '-'}</td>
                               <td className="p-3">
                                 <span className={`px-2 py-1 rounded text-xs ${
