@@ -214,11 +214,11 @@ const ProjetsList = () => {
                       Voir
                     </Button>
                     {projet.archived ? (
-                      <Button size="sm" variant="outline" onClick={() => handleArchiveProjet(projet.id)} title="Désarchiver">
+                      <Button size="sm" variant="outline" onClick={() => handleArchiveProjet(projet.id, true)} title="Désarchiver">
                         <ArchiveRestore className="h-4 w-4" />
                       </Button>
                     ) : (
-                      <Button size="sm" variant="outline" onClick={() => handleArchiveProjet(projet.id)} title="Archiver">
+                      <Button size="sm" variant="outline" onClick={() => handleArchiveProjet(projet.id, false)} title="Archiver">
                         <Archive className="h-4 w-4" />
                       </Button>
                     )}
