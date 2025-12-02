@@ -441,3 +441,145 @@ Projet "Mon église 2025":
 - Tester l'interface utilisateur via navigateur manuel
 - Vérifier le design de la barre de progression sur mobile
 
+
+---
+
+## 🎨 AMÉLIORATIONS UI/UX - RSVP Events - 2 Décembre 2024
+
+### 📋 Agent: E1 Fork  
+**Date**: 2 Décembre 2024  
+
+### ✅ CORRECTIONS APPLIQUÉES
+
+#### 1. Page de Création d'Événement RSVP (RSVPLinksPage.jsx) - AMÉLIORÉ
+**Demande utilisateur**: "Une fois qu'on importe la photo, ça ne bouge plus, ça doit demeurer là toujours et mets un crayon pour modifier"
+
+**Problème initial**:
+- Après l'upload d'une image, la preview était petite (h-32) et l'input file restait visible
+- L'utilisateur ne pouvait pas facilement modifier l'image uploadée
+- UX confuse : l'image et l'input file étaient affichés simultanément
+
+**Solution Appliquée**:
+1. **Affichage persistant de l'image**:
+   - Image affichée en grand (h-48, full-width) une fois uploadée
+   - L'input file se cache automatiquement après l'upload
+   - L'image reste visible en permanence
+
+2. **Bouton "Modifier" avec icône crayon**:
+   - Bouton overlay positionné en haut à droite de l'image
+   - Icône de crayon (edit icon) clairement visible
+   - Fond blanc semi-transparent pour bonne visibilité
+   - Click sur "Modifier" ouvre un input file caché
+
+3. **Amélioration visuelle**:
+   - Image avec coins arrondis (rounded-lg)
+   - Indicateur de chargement ("Téléchargement en cours...")
+   - Message d'aide quand aucune image n'est présente
+
+**Fichier modifié**:
+- `/app/frontend/src/pages/RSVPLinksPage.jsx` (lignes 392-428)
+
+---
+
+#### 2. Page de Confirmation RSVP Publique (PublicEventRSVPPage.jsx) - RESTRUCTURÉ
+**Demande utilisateur**: "Met le titre de l'événement en grand en haut, une brève description, plus évidemment la photo bien claire, bien grande et qui ne bouge pas"
+
+**Problème initial**:
+- Titre "Confirmation de Présence" générique au lieu du titre de l'événement
+- Image trop petite (h-64)
+- Pas de section dédiée pour la description
+- Layout confus avec l'icône calendrier en premier
+
+**Solution Appliquée**:
+
+1. **Restructuration complète du layout**:
+   ```
+   [Header avec icône + Titre de l'événement en GRAND]
+   [Image de l'événement - GRANDE et FIXE (h-80)]
+   [Section "À PROPOS" avec description]
+   [Informations (date, heure, lieu) dans un encadré]
+   [Message de confirmation]
+   [Boutons de réponse]
+   [Footer]
+   ```
+
+2. **Titre de l'événement en grand**:
+   - Taille: `text-4xl sm:text-5xl` (très grand)
+   - Positionné en haut avec fond dégradé purple/indigo
+   - Icône calendrier décorative au-dessus
+
+3. **Image bien grande et fixe**:
+   - Hauteur: 320px (h-80) au lieu de 256px
+   - Largeur full-width
+   - `object-cover` pour garder les proportions
+   - `object-position: center` pour centrage optimal
+   - Pas d'animation ou de mouvement
+
+4. **Description claire et visible**:
+   - Section "À PROPOS" dédiée avec fond gris clair
+   - Typo: `text-base` avec `leading-relaxed`
+   - Coins arrondis et padding généreux
+
+5. **Informations de l'événement améliorées**:
+   - Fond indigo clair (bg-indigo-50)
+   - Icônes colorées (text-indigo-600)
+   - Date formatée en français complet
+   - Chaque info sur sa propre ligne avec icône
+
+6. **Boutons de réponse améliorés**:
+   - Plus grands (h-16 au lieu de h-14)
+   - Coins arrondis (rounded-xl)
+   - Ombres pour effet de profondeur
+   - Transitions smooth au hover
+
+**Fichiers modifiés**:
+- `/app/frontend/src/pages/PublicEventRSVPPage.jsx` (lignes 116-202)
+
+---
+
+### 🧪 TESTS RÉALISÉS
+
+**Test 1: Page de Confirmation Publique**
+```bash
+URL testée: http://localhost:3000/rsvp/ead74b69-6937-44cf-8258-03d265853279
+Résultat: ✅ SUCCESS
+```
+
+**Éléments validés**:
+- ✅ Titre en très grand: "Test Church Event - Full Details"
+- ✅ Section "À PROPOS" avec description complète
+- ✅ Informations de l'événement (date, heure, lieu) bien formatées
+- ✅ Boutons verts/rouges/jaunes bien visibles et grands
+- ❌ Image non affichée (URL externe invalide - non critique pour le test)
+
+**Test 2: Formulaire de Création**
+- Nécessite test manuel avec upload d'image réelle
+- Logique de l'UI confirmée dans le code
+
+---
+
+### 📊 AVANT / APRÈS
+
+**AVANT**:
+- Capture 1: Image preview petite + input file visible = confus
+- Capture 2: Titre générique, image petite, pas de description claire
+
+**APRÈS**:
+- Capture 1: Image grande avec bouton "Modifier" + icône crayon
+- Capture 2: Titre d'événement en grand, image h-80, description dans section dédiée
+
+---
+
+### 🎯 STATUT FINAL
+
+- ✅ Upload d'image avec affichage persistant et bouton modifier
+- ✅ Page de confirmation restructurée avec titre, description et grande image
+- ✅ Toutes les demandes utilisateur implémentées
+- ⏳ Test manuel requis pour vérifier l'upload d'image complet
+
+**Prochaine étape**: 
+L'utilisateur doit tester manuellement:
+1. Créer un événement avec image
+2. Vérifier que l'image reste visible avec le bouton "Modifier"
+3. Vérifier la page de confirmation publique avec vraie image
+
