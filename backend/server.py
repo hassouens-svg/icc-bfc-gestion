@@ -5163,15 +5163,6 @@ async def get_berger_presences(
     
     return presences
 
-
-        groups = await db.contact_groups.find(
-            {}, 
-            {"_id": 0}
-        ).to_list(1000)
-        return groups
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 @api_router.post("/contact-groups")
 async def create_contact_group(group: ContactGroup, user: dict = Depends(get_current_user)):
     """Créer une nouvelle box de contacts"""
