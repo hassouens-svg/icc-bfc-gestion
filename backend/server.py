@@ -4545,7 +4545,7 @@ async def get_jalons(projet_id: str, current_user: dict = Depends(get_current_us
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    jalons = await db.jalons.find({"projet_id": projet_id}, {"_id": 0}).sort("deadline", 1).to_list(1000)
+    jalons = await db.jalons.find({"projet_id": projet_id}, {"_id": 0}).sort("date_debut", 1).to_list(1000)
     
     # Auto-update status to "en_retard" if date_fin is passed
     now = datetime.now(timezone.utc)
