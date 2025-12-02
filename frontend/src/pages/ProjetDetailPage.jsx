@@ -933,56 +933,56 @@ const ProjetDetailPage = () => {
             </DialogHeader>
             <div className="space-y-3">
               {poles.length > 0 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <Label className="text-sm font-semibold mb-2 block">📂 Pôle</Label>
+                <div className="bg-blue-50 border border-blue-200 rounded p-2">
+                  <Label className="text-sm mb-1 block">📂 Pôle</Label>
                   <Select value={newTache.pole_id || 'none'} onValueChange={(val) => setNewTache({...newTache, pole_id: val === 'none' ? '' : val})}>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="Sélectionner un pôle" />
+                    <SelectTrigger className="bg-white h-8 text-sm">
+                      <SelectValue placeholder="Sélectionner" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">💡 Tâche générale (sans pôle)</SelectItem>
+                      <SelectItem value="none">Tâche générale</SelectItem>
                       {poles.map((pole) => (
-                        <SelectItem key={pole.id} value={pole.id}>📊 {pole.nom}</SelectItem>
+                        <SelectItem key={pole.id} value={pole.id}>{pole.nom}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
               )}
               <div>
-                <Label className="text-base font-semibold">Titre de la tâche *</Label>
+                <Label className="text-sm">Titre *</Label>
                 <Input 
                   value={newTache.titre} 
                   onChange={(e) => setNewTache({...newTache, titre: e.target.value})} 
-                  placeholder="Ex: Préparer la présentation"
-                  className="mt-2 text-base"
+                  placeholder="Ex: Préparer présentation"
+                  className="mt-1"
                 />
               </div>
               <div>
-                <Label className="text-base font-semibold">Description</Label>
+                <Label className="text-sm">Description</Label>
                 <Textarea 
                   value={newTache.description} 
                   onChange={(e) => setNewTache({...newTache, description: e.target.value})} 
-                  placeholder="Détails de la tâche..."
-                  rows={3}
-                  className="mt-2"
+                  placeholder="Détails..."
+                  rows={2}
+                  className="mt-1"
                 />
               </div>
               <div>
-                <Label className="text-base font-semibold">📅 Date limite</Label>
+                <Label className="text-sm">📅 Date limite</Label>
                 <Input 
                   type="date" 
                   value={newTache.deadline} 
                   onChange={(e) => setNewTache({...newTache, deadline: e.target.value})} 
-                  className="mt-2"
+                  className="mt-1"
                 />
               </div>
               <div>
-                <Label className="text-base font-semibold">👥 Assigné à (plusieurs personnes possibles)</Label>
+                <Label className="text-sm">👥 Assigné à (plusieurs personnes, séparées par virgule)</Label>
                 <Input 
                   value={newTache.assigne_a || ''} 
                   onChange={(e) => setNewTache({...newTache, assigne_a: e.target.value})}
                   placeholder="Ex: Jean Dupont, Marie Martin"
-                  className="mt-2"
+                  className="mt-1"
                 />
                 <div className="mt-2 flex flex-wrap gap-1">
                   {(projet.team_members || []).map((member, idx) => (
@@ -998,7 +998,7 @@ const ProjetDetailPage = () => {
                           setNewTache({...newTache, assigne_a: [...names, member.nom].join(', ')});
                         }
                       }}
-                      className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                      className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
                         (newTache.assigne_a || '').split(',').map(n => n.trim()).includes(member.nom)
                           ? 'bg-purple-600 text-white border-purple-600'
                           : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
@@ -1009,13 +1009,13 @@ const ProjetDetailPage = () => {
                   ))}
                 </div>
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button variant="outline" size="lg" onClick={() => {
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <Button size="sm" variant="outline" onClick={() => {
                   setIsTacheOpen(false);
                   setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
                 }}>Annuler</Button>
-                <Button size="lg" onClick={handleAddTache} className="bg-purple-600 hover:bg-purple-700">
-                  <Check className="h-5 w-5 mr-2" /> Créer la tâche
+                <Button size="sm" onClick={handleAddTache} className="bg-purple-600 hover:bg-purple-700">
+                  <Check className="h-4 w-4 mr-1" /> Créer
                 </Button>
               </div>
             </div>
