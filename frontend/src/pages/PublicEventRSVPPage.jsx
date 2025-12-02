@@ -224,40 +224,109 @@ const PublicEventRSVPPage = () => {
                 </div>
               </div>
 
-              {/* Boutons de réponse */}
-              <div className="space-y-3 pt-2">
-                <Button
-                  onClick={() => handleResponse('confirmed')}
-                  disabled={submitting}
-                  className="w-full h-16 text-lg bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
-                >
-                  <CheckCircle className="h-6 w-6" />
-                  <span>✓</span>
-                  <span>Oui, je serai présent(e)</span>
-                </Button>
+              {/* Boutons de réponse ou Formulaire */}
+              {!showForm ? (
+                <div className="space-y-3 pt-2">
+                  <Button
+                    onClick={() => handleStatusClick('confirmed')}
+                    disabled={submitting}
+                    className="w-full h-16 text-lg bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
+                  >
+                    <CheckCircle className="h-6 w-6" />
+                    <span>✓</span>
+                    <span>Oui, je serai présent(e)</span>
+                  </Button>
 
-                <Button
-                  onClick={() => handleResponse('declined')}
-                  disabled={submitting}
-                  variant="destructive"
-                  className="w-full h-16 text-lg bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
-                >
-                  <X className="h-6 w-6" />
-                  <span>✗</span>
-                  <span>Non, je ne pourrai pas venir</span>
-                </Button>
+                  <Button
+                    onClick={() => handleStatusClick('declined')}
+                    disabled={submitting}
+                    variant="destructive"
+                    className="w-full h-16 text-lg bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
+                  >
+                    <X className="h-6 w-6" />
+                    <span>✗</span>
+                    <span>Non, je ne pourrai pas venir</span>
+                  </Button>
 
-                <Button
-                  onClick={() => handleResponse('maybe')}
-                  disabled={submitting}
-                  variant="outline"
-                  className="w-full h-16 text-lg border-2 border-yellow-400 text-gray-900 hover:bg-yellow-50 flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
-                >
-                  <HelpCircle className="h-6 w-6 text-gray-400" />
-                  <span>🤔</span>
-                  <span>Je ne sais pas encore</span>
-                </Button>
-              </div>
+                  <Button
+                    onClick={() => handleStatusClick('maybe')}
+                    disabled={submitting}
+                    variant="outline"
+                    className="w-full h-16 text-lg border-2 border-yellow-400 text-gray-900 hover:bg-yellow-50 flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
+                  >
+                    <HelpCircle className="h-6 w-6 text-gray-400" />
+                    <span>🤔</span>
+                    <span>Je ne sais pas encore</span>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-2">
+                  <div className="bg-indigo-50 p-4 rounded-lg">
+                    <p className="text-sm text-indigo-900 font-medium mb-3">
+                      Merci de renseigner vos informations :
+                    </p>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Prénom *
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.first_name}
+                          onChange={(e) => setFormData({...formData, first_name: e.target.value})}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          placeholder="Votre prénom"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Nom *
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.last_name}
+                          onChange={(e) => setFormData({...formData, last_name: e.target.value})}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          placeholder="Votre nom"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2 bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                        <input
+                          type="checkbox"
+                          id="is_star"
+                          checked={formData.is_star}
+                          onChange={(e) => setFormData({...formData, is_star: e.target.checked})}
+                          className="h-5 w-5 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="is_star" className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-2">
+                          <span className="text-xl">⭐</span>
+                          <span>Personne importante / VIP</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => {
+                        setShowForm(false);
+                        setFormData({first_name: '', last_name: '', is_star: false});
+                      }}
+                      variant="outline"
+                      className="flex-1"
+                      disabled={submitting}
+                    >
+                      Retour
+                    </Button>
+                    <Button
+                      onClick={handleSubmitResponse}
+                      disabled={submitting}
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      {submitting ? 'Envoi...' : 'Confirmer'}
+                    </Button>
+                  </div>
+                </div>
+              )}
 
               {/* Footer */}
               <div className="text-center text-sm text-gray-400 pt-6 border-t">
