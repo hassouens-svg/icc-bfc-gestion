@@ -153,7 +153,7 @@ const ProjetDetailPage = () => {
         body: JSON.stringify({ ...newTache, projet_id: id })
       });
       toast.success('Tâche créée');
-      setNewTache({ titre: '', description: '', deadline: '', assigne_a: '' });
+      setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
       setIsTacheOpen(false);
       loadData();
     } catch (error) {
