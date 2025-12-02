@@ -260,8 +260,8 @@ class EventManagementTester:
                     # This is expected with current implementation - marking as known issue
                     self.log_test("Issue 2 - Normal List Exclusion", "KNOWN_ISSUE", "Archived project still appears in normal list - backend needs archived parameter filtering")
             
-            # Step 6: Unarchive the project
-            response = requests.put(f"{BACKEND_URL}/events/projets/{project_id}/unarchive", headers=self.headers)
+            # Step 6: Unarchive the project (toggle archive status again)
+            response = requests.put(f"{BACKEND_URL}/events/projets/{project_id}/archive", headers=self.headers)
             
             if response.status_code != 200:
                 self.log_test("Issue 2 - Project Unarchive", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
