@@ -308,9 +308,14 @@ const MarquerPresenceBergersPage = () => {
                     const isEditingBergers = editingField?.promoName === promo.promo_name && editingField?.field === 'noms_bergers';
                     const isEditingSuivies = editingField?.promoName === promo.promo_name && editingField?.field === 'personnes_suivies';
                     
+                    const hasData = data.present || data.absent;
+                    
                     return (
-                      <tr key={index} className="border-b hover:bg-gray-50">
-                        <td className="py-3 px-4 font-medium text-purple-700">{promo.promo_name}</td>
+                      <tr key={index} className={`border-b hover:bg-gray-50 ${hasData ? 'bg-blue-50' : ''}`}>
+                        <td className="py-3 px-4 font-medium text-purple-700">
+                          {promo.promo_name}
+                          {hasData && <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-0.5 rounded">✓</span>}
+                        </td>
                         
                         {/* Nbre de Pers Suivies - Editable */}
                         <td className="text-center py-3 px-4">
