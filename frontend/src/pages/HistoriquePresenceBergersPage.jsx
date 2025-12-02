@@ -73,15 +73,16 @@ const HistoriquePresenceBergersPage = () => {
             promoGroups[promoKey] = {
               nom: promoKey,
               monthNum: monthPart,
-              totalBergers: 0,
-              presents: 0,
-              absents: 0,
-              priere: false,
+              bergers: [],
+              nomsBergers: '',
+              present: false,
+              absent: false,
+              priere: 'Non',
               commentaire: '',
               personnesSuivies: 0
             };
           }
-          promoGroups[promoKey].totalBergers++;
+          promoGroups[promoKey].bergers.push(berger);
           
           const presence = presencesData.find(p => p.berger_id === berger.id);
           if (presence) {
