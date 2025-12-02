@@ -306,10 +306,10 @@ def main():
             test_jalon_retrieval(token, project_id, results)
             
             # Test 3: Update jalon
-            test_jalon_update(token, jalon_id, results)
+            test_jalon_update(token, jalon_id, project_id, results)
             
             # Test 4: Delete jalon
-            test_jalon_deletion(token, jalon_id, results)
+            test_jalon_deletion(token, jalon_id, project_id, results)
         
     finally:
         # Cleanup
