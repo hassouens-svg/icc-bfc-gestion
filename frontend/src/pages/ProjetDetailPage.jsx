@@ -47,7 +47,7 @@ const ProjetDetailPage = () => {
 
   const loadData = async () => {
     try {
-      const [projetRes, tachesRes, polesRes, commentsRes, depensesRes] = await Promise.all([
+      const [projetRes, tachesRes, polesRes, jalonsRes, commentsRes, depensesRes] = await Promise.all([
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/projets/${id}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         }),
@@ -55,6 +55,9 @@ const ProjetDetailPage = () => {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         }),
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/poles?projet_id=${id}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/jalons?projet_id=${id}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         }),
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/commentaires?projet_id=${id}`, {
@@ -68,12 +71,14 @@ const ProjetDetailPage = () => {
       const projetData = await projetRes.json();
       const tachesData = await tachesRes.json();
       const polesData = await polesRes.json();
+      const jalonsData = await jalonsRes.json();
       const commentsData = await commentsRes.json();
       const depensesData = await depensesRes.json();
       
       setProjet(projetData);
       setTaches(tachesData);
       setPoles(polesData);
+      setJalons(jalonsData);
       setCommentaires(commentsData);
       setDepenses(depensesData);
       setEditData(projetData);
