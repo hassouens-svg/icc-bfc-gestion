@@ -99,16 +99,23 @@ const HistoriquePresenceBergersPage = () => {
       });
       
       Object.values(promoGroups).forEach(promo => {
-        // Noms des bergers
-        promo.nomsBergers = promo.bergers.map(b => b.name).join(', ');
+        // Chercher les données sauvegardées dans les présences
+        const promoPresence = presencesData.find(p => p.promo_name === promo.nom);
         
-        // Personnes suivies
-        const suivies = cityVisitors.filter(v => {
-          if (!v.assigned_month) return false;
-          const visitorMonth = v.assigned_month.split('-')[1];
-          return visitorMonth === promo.monthNum && v.statut_suivi !== 'arrete';
-        });
-        promo.personnesSuivies = suivies.length;
+        if (promoPresence && promoPresence.noms_bergers) {
+          // Utiliser les données sauvegardées
+          promo.nomsBergers = promoPresence.noms_bergers;
+          promo.personnesSuivies = promoPresence.personnes_suivies || 0;
+        } else {
+          // Fallback sur les valeurs calculées si pas de données sauvegardées
+          promo.nomsBergers = promo.bergers.map(b => b.name).join(', ');
+          const suivies = cityVisitors.filter(v => {
+            if (!v.assigned_month) return false;
+            const visitorMonth = v.assigned_month.split('-')[1];
+            return visitorMonth === promo.monthNum && v.statut_suivi !== 'arrete';
+          });
+          promo.personnesSuivies = suivies.length;
+        }
       });
       
       const sortedPromos = Object.values(promoGroups)
