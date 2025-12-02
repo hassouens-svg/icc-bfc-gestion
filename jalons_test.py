@@ -192,7 +192,7 @@ def test_jalon_retrieval(token, project_id, results):
         results.add_failure("Récupération jalons", error_msg)
         return False
 
-def test_jalon_update(token, jalon_id, results):
+def test_jalon_update(token, jalon_id, project_id, results):
     """Test 3: Mise à Jour de Jalon"""
     print(f"\n✏️ TEST 3: MISE À JOUR DE JALON")
     print(f"{'='*50}")
@@ -207,18 +207,23 @@ def test_jalon_update(token, jalon_id, results):
     if response and response.status_code == 200:
         results.add_success("Mise à jour jalon", "Jalon mis à jour avec succès")
         
-        # Vérifier que la mise à jour a bien été appliquée
-        get_response = make_authenticated_request("GET", f"/events/jalons/{jalon_id}", token)
+        # Vérifier que la mise à jour a bien été appliquée en récupérant la liste
+        get_response = make_authenticated_request("GET", "/events/jalons", token, params={"projet_id": project_id})
         if get_response and get_response.status_code == 200:
-            jalon_data = get_response.json()
-            if jalon_data.get("titre") == "Jalon Modifié" and jalon_data.get("statut") == "en_cours":
-                results.add_success("Vérification mise à jour", "Modifications confirmées")
-                return True
+            jalons = get_response.json()
+            updated_jalon = next((j for j in jalons if j.get("id") == jalon_id), None)
+            if updated_jalon:
+                if updated_jalon.get("titre") == "Jalon Modifié" and updated_jalon.get("statut") == "en_cours":
+                    results.add_success("Vérification mise à jour", "Modifications confirmées")
+                    return True
+                else:
+                    results.add_failure("Vérification mise à jour", f"Titre: {updated_jalon.get('titre')}, Statut: {updated_jalon.get('statut')}")
+                    return False
             else:
-                results.add_failure("Vérification mise à jour", f"Titre: {jalon_data.get('titre')}, Statut: {jalon_data.get('statut')}")
+                results.add_failure("Vérification mise à jour", "Jalon non trouvé dans la liste")
                 return False
         else:
-            results.add_failure("Vérification mise à jour", "Impossible de récupérer le jalon mis à jour")
+            results.add_failure("Vérification mise à jour", "Impossible de récupérer la liste des jalons")
             return False
     else:
         error_msg = f"Status: {response.status_code if response else 'No response'}"
