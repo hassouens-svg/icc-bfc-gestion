@@ -5076,6 +5076,87 @@ class ContactGroup(BaseModel):
 async def get_contact_groups(user: dict = Depends(get_current_user)):
     """Récupérer toutes les boxes de contacts"""
     try:
+
+# ==================== PRÉSENCE BERGERS ====================
+
+class BergerPresence(BaseModel):
+    berger_id: str
+    date: str
+    present: bool
+    priere: bool = False
+    commentaire: Optional[str] = None
+    enregistre_par: str
+    ville: str
+
+class BergerPresenceBatch(BaseModel):
+    presences: list[BergerPresence]
+
+@api_router.post("/berger-presences/batch")
+async def create_berger_presences_batch(
+    batch: BergerPresenceBatch,
+    current_user: dict = Depends(get_current_user)
+):
+    """Enregistrer plusieurs présences de bergers en une fois"""
+    if current_user["role"] != "superviseur_promos":
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    created_count = 0
+    for presence in batch.presences:
+        presence_data = presence.model_dump()
+        presence_data["id"] = str(uuid4())
+        presence_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Vérifier si une présence existe déjà pour ce berger à cette date
+        existing = await db.berger_presences.find_one({
+            "berger_id": presence.berger_id,
+            "date": presence.date
+        })
+        
+        if existing:
+            # Mettre à jour
+            await db.berger_presences.update_one(
+                {"id": existing["id"]},
+                {"$set": presence_data}
+            )
+        else:
+            # Créer nouveau
+            await db.berger_presences.insert_one(presence_data)
+        
+        created_count += 1
+    
+    return {"message": f"{created_count} présence(s) enregistrée(s)", "count": created_count}
+
+@api_router.get("/berger-presences")
+async def get_berger_presences(
+    date: str,
+    ville: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Obtenir les présences des bergers pour une date donnée"""
+    if current_user["role"] != "superviseur_promos":
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    presences = await db.berger_presences.find({
+        "date": date,
+        "ville": ville
+    }, {"_id": 0}).to_list(100)
+    
+    # Enrichir avec les noms des bergers et enregistreurs
+    for presence in presences:
+        # Chercher le berger
+        berger = await db.users.find_one({"id": presence["berger_id"]}, {"_id": 0})
+        if berger:
+            presence["berger_name"] = berger.get("name", "Inconnu")
+            presence["berger_email"] = berger.get("email", "")
+        
+        # Chercher l'enregistreur
+        enregistreur = await db.users.find_one({"id": presence["enregistre_par"]}, {"_id": 0})
+        if enregistreur:
+            presence["enregistre_par_name"] = enregistreur.get("name", "Inconnu")
+    
+    return presences
+
+
         groups = await db.contact_groups.find(
             {}, 
             {"_id": 0}
