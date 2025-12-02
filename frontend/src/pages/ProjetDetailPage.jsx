@@ -968,29 +968,46 @@ const ProjetDetailPage = () => {
                   className="mt-2"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-base font-semibold">📅 Date limite</Label>
-                  <Input 
-                    type="date" 
-                    value={newTache.deadline} 
-                    onChange={(e) => setNewTache({...newTache, deadline: e.target.value})} 
-                    className="mt-2"
-                  />
-                </div>
-                <div>
-                  <Label className="text-base font-semibold">👤 Assigné à</Label>
-                  <Select value={newTache.assigne_a || 'none'} onValueChange={(val) => setNewTache({...newTache, assigne_a: val === 'none' ? '' : val})}>
-                    <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="Choisir" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Non assigné</SelectItem>
-                      {(projet.team_members || []).map((member, idx) => (
-                        <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div>
+                <Label className="text-base font-semibold">📅 Date limite</Label>
+                <Input 
+                  type="date" 
+                  value={newTache.deadline} 
+                  onChange={(e) => setNewTache({...newTache, deadline: e.target.value})} 
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label className="text-base font-semibold">👥 Assigné à (plusieurs personnes possibles)</Label>
+                <Input 
+                  value={newTache.assigne_a || ''} 
+                  onChange={(e) => setNewTache({...newTache, assigne_a: e.target.value})}
+                  placeholder="Ex: Jean Dupont, Marie Martin"
+                  className="mt-2"
+                />
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {(projet.team_members || []).map((member, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        const current = newTache.assigne_a || '';
+                        const names = current.split(',').map(n => n.trim()).filter(Boolean);
+                        if (names.includes(member.nom)) {
+                          setNewTache({...newTache, assigne_a: names.filter(n => n !== member.nom).join(', ')});
+                        } else {
+                          setNewTache({...newTache, assigne_a: [...names, member.nom].join(', ')});
+                        }
+                      }}
+                      className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                        (newTache.assigne_a || '').split(',').map(n => n.trim()).includes(member.nom)
+                          ? 'bg-purple-600 text-white border-purple-600'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
+                      }`}
+                    >
+                      {member.nom}
+                    </button>
+                  ))}
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4 border-t">
