@@ -4907,15 +4907,19 @@ async def create_event(event: ChurchEventCreate, current_user: dict = Depends(ge
 
 @api_router.get("/events")
 async def get_events(current_user: dict = Depends(get_current_user)):
-    """Get all events created by user"""
+    """Get all events - visibility based on role"""
     allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    events = await db.church_events.find(
-        {"created_by": current_user["id"]},
-        {"_id": 0}
-    ).sort("created_at", -1).to_list(100)
+    # super_admin, pasteur, gestion_projet: voient tous les événements
+    # responsable_eglise: voit seulement les événements de sa ville
+    query = {}
+    if current_user["role"] == "responsable_eglise":
+        # Responsable d'église ne voit que les événements de sa ville
+        query["city"] = current_user.get("city")
+    
+    events = await db.church_events.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
     
     return events
 
