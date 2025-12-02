@@ -277,6 +277,26 @@ const MarquerPresenceBergersPage = () => {
           </CardContent>
         </Card>
 
+        {/* Debug Panel - À retirer en production */}
+        <Card className="bg-yellow-50 border-yellow-200">
+          <CardContent className="pt-4">
+            <div className="text-xs">
+              <strong>Debug - État actuel :</strong>
+              <div className="mt-2 grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                {Object.entries(presencesData).map(([promo, data]) => (
+                  <div key={promo} className="text-xs bg-white p-2 rounded">
+                    <strong>{promo}:</strong> 
+                    {data.present && <span className="text-green-600"> ✓Présent</span>}
+                    {data.absent && <span className="text-red-600"> ✗Absent</span>}
+                    {data.priere === 'Oui' && <span className="text-purple-600"> 🙏Prière</span>}
+                    {data.commentaire && <span className="text-gray-600"> 💬</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>📊 Liste des Promotions</CardTitle>
