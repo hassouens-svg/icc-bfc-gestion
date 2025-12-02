@@ -930,6 +930,57 @@ const ProjetDetailPage = () => {
                   <SelectTrigger><SelectValue placeholder="Sélectionner un membre" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Non assigné</SelectItem>
+
+        {/* Dialog Pôle */}
+        <Dialog open={isPoleOpen} onOpenChange={setIsPoleOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Créer un nouveau pôle</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Nom du pôle *</Label>
+                <Input 
+                  value={newPole.nom} 
+                  onChange={(e) => setNewPole({...newPole, nom: e.target.value})} 
+                  placeholder="Ex: Communication, Logistique, Finance..."
+                />
+              </div>
+              <div>
+                <Label>Description</Label>
+                <Textarea 
+                  value={newPole.description} 
+                  onChange={(e) => setNewPole({...newPole, description: e.target.value})} 
+                  placeholder="Décrivez les objectifs de ce pôle..."
+                  rows={3}
+                />
+              </div>
+              <div>
+                <Label>Responsable du pôle</Label>
+                <Select value={newPole.responsable || ''} onValueChange={(val) => setNewPole({...newPole, responsable: val})}>
+                  <SelectTrigger><SelectValue placeholder="Sélectionner un responsable (optionnel)" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Aucun responsable</SelectItem>
+                    {(projet.team_members || []).map((member, idx) => (
+                      <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
+                💡 Un pôle permet de regrouper des tâches liées et de suivre leur progression globale.
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => {
+                  setIsPoleOpen(false);
+                  setNewPole({ nom: '', description: '', responsable: '' });
+                }}>Annuler</Button>
+                <Button onClick={handleAddPole}>Créer le pôle</Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
                     {(projet.team_members || []).map((member, idx) => (
                       <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
                     ))}
