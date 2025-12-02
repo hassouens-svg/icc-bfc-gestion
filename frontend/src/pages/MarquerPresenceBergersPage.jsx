@@ -323,6 +323,16 @@ const MarquerPresenceBergersPage = () => {
                           className="w-full px-3 py-2 border rounded min-w-[200px]"
                         />
                       </td>
+                      
+                      <td className="text-center py-4 px-4">
+                        <button
+                          onClick={() => setEditingRow(editingRow === index ? null : index)}
+                          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                          title="Modifier la ligne"
+                        >
+                          <Edit2 className={`h-5 w-5 ${editingRow === index ? 'text-purple-600' : 'text-gray-400'}`} />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
