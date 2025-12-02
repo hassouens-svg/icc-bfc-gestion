@@ -4912,14 +4912,10 @@ async def get_events(current_user: dict = Depends(get_current_user)):
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    # super_admin, pasteur, gestion_projet: voient tous les événements
-    # responsable_eglise: voit seulement les événements de sa ville
-    query = {}
-    if current_user["role"] == "responsable_eglise":
-        # Responsable d'église ne voit que les événements de sa ville
-        query["city"] = current_user.get("city")
-    
-    events = await db.church_events.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    # Tous les rôles voient tous les événements RSVP
+    # Note: responsable_eglise pourrait être filtré par ville si les événements avaient un champ "city"
+    # Pour l'instant, tout le monde voit tout comme demandé
+    events = await db.church_events.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
     
     return events
 
