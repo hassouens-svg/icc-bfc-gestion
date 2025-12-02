@@ -241,29 +241,23 @@ const HistoriquePresenceBergersPage = () => {
                 </div>
 
                 <div className="mt-6 pt-6 border-t">
-                  <h3 className="font-semibold mb-4">Résumé</h3>
-                  <div className="grid grid-cols-4 gap-4">
+                  <h3 className="font-semibold mb-4">Résumé de la journée</h3>
+                  <div className="grid grid-cols-3 gap-4">
                     <div className="text-center p-4 bg-blue-50 rounded-lg">
                       <p className="text-2xl font-bold text-blue-600">{promos.length}</p>
-                      <p className="text-sm text-gray-600">Promos</p>
-                    </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <p className="text-2xl font-bold text-purple-600">
-                        {promos.reduce((sum, p) => sum + p.totalBergers, 0)}
-                      </p>
-                      <p className="text-sm text-gray-600">Total Bergers</p>
+                      <p className="text-sm text-gray-600">Promos avec présences</p>
                     </div>
                     <div className="text-center p-4 bg-green-50 rounded-lg">
                       <p className="text-2xl font-bold text-green-600">
-                        {promos.reduce((sum, p) => sum + p.presents, 0)}
+                        {promos.filter(p => p.present).length}
                       </p>
-                      <p className="text-sm text-gray-600">Présents</p>
+                      <p className="text-sm text-gray-600">Promos présentes</p>
                     </div>
                     <div className="text-center p-4 bg-red-50 rounded-lg">
                       <p className="text-2xl font-bold text-red-600">
-                        {promos.reduce((sum, p) => sum + p.absents, 0)}
+                        {promos.filter(p => p.absent).length}
                       </p>
-                      <p className="text-sm text-gray-600">Absents</p>
+                      <p className="text-sm text-gray-600">Promos absentes</p>
                     </div>
                   </div>
                 </div>
