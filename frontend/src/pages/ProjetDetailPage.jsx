@@ -628,17 +628,15 @@ const ProjetDetailPage = () => {
             </CardContent>
           </Card>
 
-          {/* Deadline */}
-          <Card>
+          {/* Jalons */}
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setIsJalonOpen(true)}>
             <CardContent className="pt-6">
               <div className="text-center">
-                <Calendar className="h-8 w-8 mx-auto mb-2 text-orange-600" />
-                <div className="text-sm text-gray-600">Deadline</div>
-                <div className="text-lg font-bold mt-2">{projet.deadline || 'Non définie'}</div>
-                <div className="mt-2">
-                  <span className={`px-2 py-1 text-xs rounded-full ${projet.statut === 'Terminé' ? 'bg-green-100 text-green-800' : projet.statut === 'En cours' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-                    {projet.statut}
-                  </span>
+                <Target className="h-8 w-8 mx-auto mb-2 text-orange-600" />
+                <div className="text-sm text-gray-600">Jalons</div>
+                <div className="text-2xl font-bold mt-2">{jalons.length}</div>
+                <div className="mt-2 text-xs text-gray-500">
+                  {jalons.filter(j => j.statut === 'termine').length} terminés
                 </div>
               </div>
             </CardContent>
