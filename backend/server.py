@@ -365,10 +365,32 @@ class ProjetUpdate(BaseModel):
     budget_reel: Optional[float] = None
     team_members: Optional[List[Dict[str, str]]] = None
 
+class Pole(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    projet_id: str
+    nom: str
+    description: Optional[str] = None
+    responsable: Optional[str] = None  # username
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PoleCreate(BaseModel):
+    projet_id: str
+    nom: str
+    description: Optional[str] = None
+    responsable: Optional[str] = None
+
+class PoleUpdate(BaseModel):
+    nom: Optional[str] = None
+    description: Optional[str] = None
+    responsable: Optional[str] = None
+
 class Tache(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     projet_id: str
+    pole_id: Optional[str] = None
     titre: str
     description: Optional[str] = None
     assigne_a: Optional[str] = None  # username
@@ -378,6 +400,7 @@ class Tache(BaseModel):
 
 class TacheCreate(BaseModel):
     projet_id: str
+    pole_id: Optional[str] = None
     titre: str
     description: Optional[str] = None
     assigne_a: Optional[str] = None
@@ -389,6 +412,7 @@ class TacheUpdate(BaseModel):
     assigne_a: Optional[str] = None
     statut: Optional[str] = None
     deadline: Optional[str] = None
+    pole_id: Optional[str] = None
 
 class Depense(BaseModel):
     model_config = ConfigDict(extra="ignore")
