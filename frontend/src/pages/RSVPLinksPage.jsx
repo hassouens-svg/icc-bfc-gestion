@@ -417,13 +417,20 @@ const RSVPLinksPage = () => {
         )}
       </div>
 
-      {/* Create Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      {/* Create/Edit Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) {
+          setIsEditMode(false);
+          setEditingEventId(null);
+          setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
+        }
+      }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Créer un Nouvel Événement</DialogTitle>
+            <DialogTitle>{isEditMode ? 'Modifier l\'Événement' : 'Créer un Nouvel Événement'}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleCreateEvent} className="space-y-4">
+          <form onSubmit={isEditMode ? handleUpdateEvent : handleCreateEvent} className="space-y-4">
             <div className="space-y-2">
               <Label>Titre *</Label>
               <Input required value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} placeholder="Culte Spécial" />
