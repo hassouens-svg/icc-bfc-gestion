@@ -1276,6 +1276,185 @@ const ProjetDetailPage = () => {
           </DialogContent>
         </Dialog>
 
+
+        {/* Dialog Jalons */}
+        <Dialog open={isJalonOpen} onOpenChange={setIsJalonOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-xl">🎯 Jalons du Projet</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {/* Liste des jalons */}
+              <div>
+                <h3 className="font-semibold mb-3">Jalons ({jalons.length})</h3>
+                {jalons.length === 0 ? (
+                  <div className="text-center py-8 text-gray-400">
+                    <Target className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                    <p>Aucun jalon défini</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                    {jalons.map((jalon) => (
+                      <div key={jalon.id} className="border rounded p-3 hover:bg-gray-50">
+                        {editingJalon?.id === jalon.id ? (
+                          <div className="space-y-3">
+                            <Input
+                              value={editingJalon.titre}
+                              onChange={(e) => setEditingJalon({...editingJalon, titre: e.target.value})}
+                              placeholder="Titre"
+                              className="font-medium"
+                            />
+                            <Textarea
+                              value={editingJalon.description || ''}
+                              onChange={(e) => setEditingJalon({...editingJalon, description: e.target.value})}
+                              placeholder="Description"
+                              rows={2}
+                            />
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <Label className="text-xs">Acteur</Label>
+                                <Input
+                                  value={editingJalon.acteur || ''}
+                                  onChange={(e) => setEditingJalon({...editingJalon, acteur: e.target.value})}
+                                  placeholder="Nom"
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-xs">Date et heure</Label>
+                                <Input
+                                  type="datetime-local"
+                                  value={editingJalon.deadline || ''}
+                                  onChange={(e) => setEditingJalon({...editingJalon, deadline: e.target.value})}
+                                  className="mt-1"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <Label className="text-xs">Statut</Label>
+                              <Select value={editingJalon.statut} onValueChange={(val) => setEditingJalon({...editingJalon, statut: val})}>
+                                <SelectTrigger className="mt-1">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="a_faire">À faire</SelectItem>
+                                  <SelectItem value="en_cours">En cours</SelectItem>
+                                  <SelectItem value="termine">Terminé</SelectItem>
+                                  <SelectItem value="en_retard">En retard</SelectItem>
+                                  <SelectItem value="annule">Annulé</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="flex justify-end gap-2">
+                              <Button size="sm" variant="outline" onClick={() => setEditingJalon(null)}>
+                                <X className="h-3 w-3 mr-1" /> Annuler
+                              </Button>
+                              <Button size="sm" onClick={handleUpdateJalon}>
+                                <Check className="h-3 w-3 mr-1" /> Enregistrer
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-medium">{jalon.titre}</h4>
+                                <span className={`px-2 py-0.5 text-xs rounded-full ${
+                                  jalon.statut === 'termine' ? 'bg-green-100 text-green-800' :
+                                  jalon.statut === 'en_retard' ? 'bg-red-100 text-red-800' :
+                                  jalon.statut === 'en_cours' ? 'bg-blue-100 text-blue-800' :
+                                  jalon.statut === 'annule' ? 'bg-gray-100 text-gray-800' :
+                                  'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {jalon.statut === 'a_faire' ? 'À faire' :
+                                   jalon.statut === 'en_cours' ? 'En cours' :
+                                   jalon.statut === 'termine' ? 'Terminé' :
+                                   jalon.statut === 'en_retard' ? 'En retard' : 'Annulé'}
+                                </span>
+                              </div>
+                              {jalon.description && <p className="text-sm text-gray-600 mb-2">{jalon.description}</p>}
+                              <div className="flex gap-3 text-xs text-gray-500">
+                                {jalon.acteur && (
+                                  <div className="flex items-center gap-1">
+                                    <Users className="h-3 w-3" />
+                                    {jalon.acteur}
+                                  </div>
+                                )}
+                                {jalon.deadline && (
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    {new Date(jalon.deadline).toLocaleString('fr-FR')}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button size="sm" variant="ghost" onClick={() => setEditingJalon(jalon)}>
+                                <Edit className="h-3 w-3 text-blue-600" />
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={() => handleDeleteJalon(jalon.id)}>
+                                <Trash2 className="h-3 w-3 text-red-500" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Formulaire nouveau jalon */}
+              <div className="border-t pt-4">
+                <h3 className="font-semibold mb-3">Ajouter un jalon</h3>
+                <div className="space-y-3">
+                  <div>
+                    <Label>Titre *</Label>
+                    <Input
+                      value={newJalon.titre}
+                      onChange={(e) => setNewJalon({...newJalon, titre: e.target.value})}
+                      placeholder="Ex: Lancement de la phase 1"
+                    />
+                  </div>
+                  <div>
+                    <Label>Description</Label>
+                    <Textarea
+                      value={newJalon.description || ''}
+                      onChange={(e) => setNewJalon({...newJalon, description: e.target.value})}
+                      placeholder="Détails du jalon..."
+                      rows={2}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Acteur</Label>
+                      <Input
+                        value={newJalon.acteur || ''}
+                        onChange={(e) => setNewJalon({...newJalon, acteur: e.target.value})}
+                        placeholder="Personne responsable"
+                      />
+                    </div>
+                    <div>
+                      <Label>Date et heure limite</Label>
+                      <Input
+                        type="datetime-local"
+                        value={newJalon.deadline || ''}
+                        onChange={(e) => setNewJalon({...newJalon, deadline: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={() => setIsJalonOpen(false)}>Fermer</Button>
+                    <Button onClick={handleAddJalon}>
+                      <Plus className="h-4 w-4 mr-1" /> Ajouter le jalon
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Dialog Équipe */}
         <Dialog open={isTeamOpen} onOpenChange={setIsTeamOpen}>
           <DialogContent className="max-w-2xl">
