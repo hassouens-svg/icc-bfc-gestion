@@ -8,15 +8,16 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { toast } from 'sonner';
-import { Calendar, Save, ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Save, ArrowLeft, Edit } from 'lucide-react';
 
 const MarquerPresenceBergersPage = () => {
   const navigate = useNavigate();
   const user = getUser();
-  const [bergers, setBergers] = useState([]);
+  const [promoStats, setPromoStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dateSelectionnee, setDateSelectionnee] = useState(new Date().toISOString().split('T')[0]);
-  const [presences, setPresences] = useState({});
+  const [presencesData, setPresencesData] = useState({});
+  const [editingPromo, setEditingPromo] = useState(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
