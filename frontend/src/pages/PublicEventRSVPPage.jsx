@@ -43,18 +43,32 @@ const PublicEventRSVPPage = () => {
     }
   };
 
-  const handleResponse = async (status) => {
+  const handleStatusClick = (status) => {
+    setSelectedStatus(status);
+    setShowForm(true);
+  };
+
+  const handleSubmitResponse = async () => {
+    if (!formData.first_name || !formData.last_name) {
+      toast.error('Nom et prénom requis');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
+      const fullName = `${formData.first_name} ${formData.last_name}`;
       const response = await fetch(`${backendUrl}/api/events/${eventId}/rsvp-public`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: 'Anonymous',
-          status: status,
+          name: fullName,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          is_star: formData.is_star,
+          status: selectedStatus,
           guests_count: 1
         })
       });
