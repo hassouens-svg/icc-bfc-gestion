@@ -232,7 +232,7 @@ def test_jalon_update(token, jalon_id, project_id, results):
         results.add_failure("Mise à jour jalon", error_msg)
         return False
 
-def test_jalon_deletion(token, jalon_id, results):
+def test_jalon_deletion(token, jalon_id, project_id, results):
     """Test 4: Suppression de Jalon"""
     print(f"\n🗑️ TEST 4: SUPPRESSION DE JALON")
     print(f"{'='*50}")
@@ -242,13 +242,19 @@ def test_jalon_deletion(token, jalon_id, results):
     if response and response.status_code == 200:
         results.add_success("Suppression jalon", "Jalon supprimé avec succès")
         
-        # Vérifier que le jalon a bien été supprimé
-        get_response = make_authenticated_request("GET", f"/events/jalons/{jalon_id}", token)
-        if get_response and get_response.status_code == 404:
-            results.add_success("Vérification suppression", "Jalon introuvable après suppression")
-            return True
+        # Vérifier que le jalon a bien été supprimé en récupérant la liste
+        get_response = make_authenticated_request("GET", "/events/jalons", token, params={"projet_id": project_id})
+        if get_response and get_response.status_code == 200:
+            jalons = get_response.json()
+            deleted_jalon = next((j for j in jalons if j.get("id") == jalon_id), None)
+            if deleted_jalon is None:
+                results.add_success("Vérification suppression", "Jalon introuvable dans la liste après suppression")
+                return True
+            else:
+                results.add_failure("Vérification suppression", "Jalon encore présent dans la liste")
+                return False
         else:
-            results.add_failure("Vérification suppression", f"Jalon encore accessible: {get_response.status_code if get_response else 'No response'}")
+            results.add_failure("Vérification suppression", "Impossible de récupérer la liste des jalons")
             return False
     else:
         error_msg = f"Status: {response.status_code if response else 'No response'}"
