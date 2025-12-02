@@ -564,7 +564,7 @@ const RSVPLinksPage = () => {
                                 {eventStats.responses ? eventStats.responses.filter(r => r.is_star).length : 0}
                               </p>
                             </div>
-                            <p className="text-xs text-gray-700 mt-1">Stars / VIP</p>
+                            <p className="text-xs text-gray-700 mt-1">STAR</p>
                           </div>
                           <div className="flex flex-col items-center">
                             <div className="flex items-center gap-1">
@@ -573,7 +573,7 @@ const RSVPLinksPage = () => {
                                 {eventStats.responses ? eventStats.responses.filter(r => !r.is_star).length : 0}
                               </p>
                             </div>
-                            <p className="text-xs text-gray-700 mt-1">Non Stars</p>
+                            <p className="text-xs text-gray-700 mt-1">Non STAR</p>
                           </div>
                         </div>
                       </CardContent>
