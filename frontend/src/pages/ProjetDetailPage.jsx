@@ -718,23 +718,22 @@ const ProjetDetailPage = () => {
                       {/* Tâches du Pôle */}
                       <div className="p-3 bg-gray-50 space-y-2">
                         {poleTaches.length === 0 ? (
-                          <div className="text-center py-8 text-gray-400">
-                            <p className="text-base mb-2">Aucune tâche dans ce pôle</p>
-                            <p className="text-sm">Cliquez sur &quot;Ajouter une tâche&quot; ci-dessus pour commencer</p>
+                          <div className="text-center py-4 text-gray-400 text-xs">
+                            Aucune tâche - Cliquez sur &quot;Tâche&quot; pour ajouter
                           </div>
                         ) : (
                           poleTaches.map(tache => (
-                            <div key={tache.id} className={`border rounded-lg p-3 ${getTaskColor(tache.statut)}`}>
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <h4 className="font-semibold text-sm">{tache.titre}</h4>
+                            <div key={tache.id} className={`border rounded p-2 ${getTaskColor(tache.statut)}`}>
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1 mb-1">
+                                    <h4 className="font-medium text-sm truncate">{tache.titre}</h4>
                                     {getStatutBadge(tache.statut)}
                                   </div>
                                   {tache.description && (
-                                    <p className="text-xs text-gray-600 mb-1">{tache.description}</p>
+                                    <p className="text-xs text-gray-600 mb-1 line-clamp-1">{tache.description}</p>
                                   )}
-                                  <div className="flex gap-3 text-xs text-gray-500">
+                                  <div className="flex gap-2 text-xs text-gray-500">
                                     {tache.deadline && (
                                       <div className="flex items-center gap-1">
                                         <Calendar className="h-3 w-3" />
@@ -744,14 +743,14 @@ const ProjetDetailPage = () => {
                                     {tache.assigne_a && (
                                       <div className="flex items-center gap-1">
                                         <Users className="h-3 w-3" />
-                                        {tache.assigne_a}
+                                        <span className="truncate">{tache.assigne_a}</span>
                                       </div>
                                     )}
                                   </div>
                                 </div>
-                                <div className="flex gap-1">
+                                <div className="flex gap-1 flex-shrink-0">
                                   <Select value={tache.statut} onValueChange={(val) => handleUpdateTacheStatut(tache.id, val)}>
-                                    <SelectTrigger className="w-[110px] h-8 text-xs">
+                                    <SelectTrigger className="w-[90px] h-7 text-xs">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -761,7 +760,7 @@ const ProjetDetailPage = () => {
                                       <SelectItem value="termine">Terminé</SelectItem>
                                     </SelectContent>
                                   </Select>
-                                  <Button size="sm" variant="ghost" onClick={() => handleDeleteTache(tache.id)}>
+                                  <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => handleDeleteTache(tache.id)}>
                                     <Trash2 className="h-3 w-3" />
                                   </Button>
                                 </div>
