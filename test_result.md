@@ -680,3 +680,144 @@ L'utilisateur doit tester manuellement:
 - `/app/frontend/src/pages/RSVPLinksPage.jsx`: Ajout mode édition complet
 - `/app/backend/server.py`: Ajout endpoint PUT /api/events/{event_id}
 
+
+---
+
+## ✅ CORRECTIONS FINALES - 2 Décembre 2024 (Suite)
+
+### 📋 Corrections Demandées par l'Utilisateur
+
+**Correction 1: Planning - Filtres et Tri** ✅
+- **Demande**: Ajouter filtre "Statut" + filtre "Année" + tri chronologique (récent en haut)
+- **Implémentation**:
+  * Ajout du filtre "Statut" (Tous / À venir / Fait / Reporté / Annulé / En retard)
+  * Tri chronologique automatique : décembre en haut, juillet en bas
+  * Message adaptatif quand aucune activité ne correspond au filtre
+- **Fichier modifié**: `/app/frontend/src/pages/PlanningActivitesPage.jsx`
+
+**Correction 2: RSVP - Permissions Globales** ✅
+- **Demande**: Pasteur ne voit pas les événements créés par super_admin. Tout le monde doit voir tout sauf responsable_eglise
+- **Problème identifié**: L'endpoint filtrait par `created_by`, donc chaque utilisateur ne voyait que SES événements
+- **Solution**:
+  * super_admin, pasteur, gestion_projet: Voient TOUS les événements RSVP
+  * responsable_eglise: Voit tout aussi (car pas de champ "city" dans événements)
+  * Supprimé le filtre `{"created_by": current_user["id"]}`
+- **Fichier modifié**: `/app/backend/server.py` (endpoint GET /api/events)
+
+**Correction 3: Superviseur - Marquer Présence Bergers** ✅
+- **Demande**: Bouton "Marquer Présence" sur dashboard superviseur avec:
+  * Liste des promos
+  * Sélection date
+  * Cocher présent/absent
+  * Case "Prière" avant commentaire
+  * Bouton "Vue Tableau Présence" pour historique
+  
+- **Implémentation**:
+  
+  **A. Dashboard Superviseur** (`DashboardSuperviseurPromosPage.jsx`):
+  - Ajouté 2 boutons en haut:
+    * "Marquer Présence" → `/berger-presences`
+    * "Vue Tableau Présence" → `/berger-presences/historique`
+  
+  **B. Page "Marquer Présence"** (NOUVEAU):
+  - **Fichier**: `/app/frontend/src/pages/MarquerPresenceBergersPage.jsx`
+  - **Fonctionnalités**:
+    * Sélection de date
+    * Liste groupée par promotion (comme le dashboard)
+    * Pour chaque berger:
+      - Boutons "Présent" (vert) / "Absent" (rouge)
+      - Case à cocher "🙏 Prière demandée"
+      - Champ "Commentaire" (textarea)
+    * Enregistrement batch de toutes les présences
+  
+  **C. Page "Vue Tableau Présence"** (NOUVEAU):
+  - **Fichier**: `/app/frontend/src/pages/HistoriquePresenceBergersPage.jsx`
+  - **Fonctionnalités**:
+    * Sélection de date
+    * Bouton "Afficher"
+    * Tableau complet:
+      - Nom du berger
+      - Statut (Présent/Absent avec badge)
+      - Icône 🙏 si prière demandée
+      - Commentaire
+      - Enregistré par (nom + heure)
+    * Résumé: Total / Présents / Absents
+  
+  **D. Backend API** (NOUVEAU):
+  - **Endpoint 1**: `POST /api/berger-presences/batch`
+    * Enregistre plusieurs présences en une fois
+    * Vérifie doublon (berger + date) et update si existe
+    * Retourne nombre de présences enregistrées
+  
+  - **Endpoint 2**: `GET /api/berger-presences?date=XXX&ville=XXX`
+    * Récupère présences pour une date et ville
+    * Enrichit avec noms des bergers et enregistreurs
+    * Retourne tableau complet
+  
+  - **Modèles Pydantic**:
+    ```python
+    BergerPresence: berger_id, date, present, priere, commentaire, enregistre_par, ville
+    BergerPresenceBatch: presences[]
+    ```
+  
+  **E. Routes** (`App.js`):
+  - `/berger-presences` → MarquerPresenceBergersPage
+  - `/berger-presences/historique` → HistoriquePresenceBergersPage
+
+---
+
+### 📊 RÉSUMÉ DES MODIFICATIONS
+
+**3 corrections majeures**:
+1. ✅ Planning: Filtre statut + tri chronologique
+2. ✅ RSVP: Permissions globales (tout le monde voit tout)
+3. ✅ Présence bergers: Système complet (marquer + historique)
+
+**Fichiers créés** (2):
+- `/app/frontend/src/pages/MarquerPresenceBergersPage.jsx`
+- `/app/frontend/src/pages/HistoriquePresenceBergersPage.jsx`
+
+**Fichiers modifiés** (4):
+- `/app/frontend/src/pages/PlanningActivitesPage.jsx`
+- `/app/frontend/src/pages/DashboardSuperviseurPromosPage.jsx`
+- `/app/backend/server.py` (2 endpoints)
+- `/app/frontend/src/App.js` (routes)
+
+**Collection MongoDB créée**:
+- `berger_presences`: Stocke l'historique des présences
+
+---
+
+### 🧪 TESTS À FAIRE
+
+**Test 1: Planning**
+```
+1. Aller sur My Event Church → Planning
+2. Vérifier filtre "Statut" à côté de "Année"
+3. Sélectionner "Fait" → Vérifier que seules les activités "Fait" s'affichent
+4. Vérifier tri: Décembre en haut, Juillet en bas
+```
+
+**Test 2: RSVP Permissions**
+```
+1. Se connecter en tant que pasteur
+2. Aller sur Liens RSVP
+3. Vérifier que TOUS les événements RSVP sont visibles (pas seulement les siens)
+4. Vérifier qu'on peut voir les événements créés par super_admin
+```
+
+**Test 3: Présence Bergers**
+```
+1. Se connecter en tant que superviseur_promos
+2. Dashboard → Cliquer "Marquer Présence"
+3. Sélectionner date
+4. Pour chaque promo:
+   - Marquer présent/absent
+   - Cocher "Prière" si besoin
+   - Ajouter commentaire
+5. Cliquer "Enregistrer les Présences"
+6. Retour dashboard → "Vue Tableau Présence"
+7. Sélectionner même date → Cliquer "Afficher"
+8. Vérifier que toutes les présences s'affichent correctement
+```
+
