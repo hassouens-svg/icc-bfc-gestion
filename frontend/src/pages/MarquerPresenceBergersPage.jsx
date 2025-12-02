@@ -318,14 +318,13 @@ const MarquerPresenceBergersPage = () => {
                 </thead>
                 <tbody>
                   {promoStats.map((promo, index) => {
-                    const data = presencesData[promo.promo_name] || {
-                      present: false,
-                      absent: false,
-                      priere: 'Non',
-                      commentaire: '',
-                      noms_bergers: promo.bergers.map(b => b.name).join(', '),
-                      personnes_suivies: promo.personnes_suivies
-                    };
+                    // S'assurer que les données existent
+                    if (!presencesData[promo.promo_name]) {
+                      console.error('Données manquantes pour', promo.promo_name);
+                      return null;
+                    }
+                    
+                    const data = presencesData[promo.promo_name];
                     const isEditingBergers = editingField?.promoName === promo.promo_name && editingField?.field === 'noms_bergers';
                     const isEditingSuivies = editingField?.promoName === promo.promo_name && editingField?.field === 'personnes_suivies';
                     
