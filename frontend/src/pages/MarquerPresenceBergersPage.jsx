@@ -497,10 +497,14 @@ const MarquerPresenceBergersPage = () => {
                         <td className="py-3 px-4">
                           <Input
                             type="text"
-                            value={data.commentaire || ''}
-                            onChange={(e) => handleCommentaireChange(promo.promo_name, e.target.value)}
+                            value={data?.commentaire || ''}
+                            onChange={(e) => {
+                              console.log('Input onChange:', e.target.value);
+                              handleCommentaireChange(promo.promo_name, e.target.value);
+                            }}
                             placeholder="Commentaire..."
                             className="min-w-[200px]"
+                            onFocus={() => console.log('Input focused for', promo.promo_name)}
                           />
                         </td>
                       </tr>
