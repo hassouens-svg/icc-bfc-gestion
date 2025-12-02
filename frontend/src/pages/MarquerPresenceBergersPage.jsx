@@ -383,14 +383,18 @@ const MarquerPresenceBergersPage = () => {
                         {/* Présent - Grosse case à cocher */}
                         <td className="text-center py-3 px-4">
                           <button
-                            onClick={() => handleCheckboxChange(promo.promo_name, 'present')}
-                            className={`w-8 h-8 rounded border-2 flex items-center justify-center transition-colors ${
-                              data.present 
-                                ? 'bg-green-500 border-green-600' 
-                                : 'bg-white border-gray-300 hover:border-green-400'
+                            onClick={() => {
+                              console.log('Click présent pour', promo.promo_name, 'État actuel:', data.present);
+                              handleCheckboxChange(promo.promo_name, 'present');
+                            }}
+                            className={`w-10 h-10 rounded border-2 flex items-center justify-center transition-all mx-auto ${
+                              data.present === true
+                                ? 'bg-green-500 border-green-600 shadow-md' 
+                                : 'bg-white border-gray-300 hover:border-green-400 hover:bg-green-50'
                             }`}
+                            title={data.present ? "Présent coché" : "Marquer comme présent"}
                           >
-                            {data.present && <Check className="h-6 w-6 text-white font-bold" strokeWidth={3} />}
+                            {data.present === true && <Check className="h-7 w-7 text-white font-bold" strokeWidth={4} />}
                           </button>
                         </td>
                         
