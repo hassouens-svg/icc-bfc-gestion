@@ -370,15 +370,17 @@ const PlanningActivitesPage = () => {
           </div>
         </div>
 
-        {/* Filtre Année */}
+        {/* Filtres Année et Statut */}
         <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <Label>Année du planning</Label>
-          <Select value={anneeSelectionnee.toString()} onValueChange={handleAnneeSelection}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {annees.map((annee) => (
+          <div className="flex gap-6 items-end">
+            <div className="flex-1">
+              <Label>Année du planning</Label>
+              <Select value={anneeSelectionnee.toString()} onValueChange={handleAnneeSelection}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {annees.map((annee) => (
                 <SelectItem key={annee} value={annee.toString()}>{annee}</SelectItem>
               ))}
             </SelectContent>
