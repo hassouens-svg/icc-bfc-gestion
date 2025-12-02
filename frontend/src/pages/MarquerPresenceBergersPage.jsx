@@ -86,9 +86,7 @@ const MarquerPresenceBergersPage = () => {
         parseInt(a.month_num) - parseInt(b.month_num)
       );
       
-      setPromoStats(sortedPromos);
-      
-      // Initialiser les données de présence
+      // Initialiser les données de présence AVANT de set promoStats
       const initialData = {};
       sortedPromos.forEach(promo => {
         initialData[promo.promo_name] = {
@@ -100,7 +98,10 @@ const MarquerPresenceBergersPage = () => {
           personnes_suivies: promo.personnes_suivies
         };
       });
+      
+      console.log('Initialisation des données:', initialData);
       setPresencesData(initialData);
+      setPromoStats(sortedPromos);
     } catch (error) {
       console.error('Erreur chargement données:', error);
       toast.error('Erreur lors du chargement');
