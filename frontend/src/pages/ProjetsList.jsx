@@ -85,13 +85,13 @@ const ProjetsList = () => {
     return colors[statut] || 'bg-gray-100 text-gray-800';
   };
 
-  const handleArchiveProjet = async (projetId) => {
+  const handleArchiveProjet = async (projetId, currentlyArchived) => {
     try {
       await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/projets/${projetId}/archive`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      toast.success('Projet archivé');
+      toast.success(currentlyArchived ? 'Projet désarchivé' : 'Projet archivé');
       loadProjets();
     } catch (error) {
       toast.error('Erreur');
