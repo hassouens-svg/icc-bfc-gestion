@@ -4527,6 +4527,80 @@ async def delete_depense(depense_id: str, current_user: dict = Depends(get_curre
     return {"message": "Dépense supprimée"}
 
 
+
+# JALONS
+@api_router.get("/events/jalons")
+async def get_jalons(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Get all milestones for a project"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    jalons = await db.jalons.find({"projet_id": projet_id}, {"_id": 0}).sort("deadline", 1).to_list(1000)
+    
+    # Auto-update status to "en_retard" if deadline is passed
+    now = datetime.now(timezone.utc)
+    for jalon in jalons:
+        if jalon.get("deadline") and jalon.get("statut") in ["a_faire", "en_cours"]:
+            try:
+                deadline_dt = datetime.fromisoformat(jalon["deadline"].replace("Z", "+00:00"))
+                if deadline_dt < now:
+                    await db.jalons.update_one(
+                        {"id": jalon["id"]},
+                        {"$set": {"statut": "en_retard"}}
+                    )
+                    jalon["statut"] = "en_retard"
+            except:
+                pass
+    
+    return jalons
+
+@api_router.post("/events/jalons")
+async def create_jalon(jalon: JalonCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new milestone"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    jalon_dict = jalon.model_dump()
+    jalon_dict["id"] = str(uuid.uuid4())
+    jalon_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    jalon_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    jalon_dict["statut"] = "a_faire"
+    
+    await db.jalons.insert_one(jalon_dict)
+    return {"message": "Jalon créé", "id": jalon_dict["id"]}
+
+@api_router.put("/events/jalons/{jalon_id}")
+async def update_jalon(jalon_id: str, jalon: JalonUpdate, current_user: dict = Depends(get_current_user)):
+    """Update a milestone"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    existing = await db.jalons.find_one({"id": jalon_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Jalon non trouvé")
+    
+    update_data = {k: v for k, v in jalon.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.jalons.update_one({"id": jalon_id}, {"$set": update_data})
+    return {"message": "Jalon mis à jour"}
+
+@api_router.delete("/events/jalons/{jalon_id}")
+async def delete_jalon(jalon_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a milestone"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    result = await db.jalons.delete_one({"id": jalon_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Jalon non trouvé")
+    
+    return {"message": "Jalon supprimé"}
+
 # POLES
 @api_router.get("/events/poles")
 async def get_poles(projet_id: str, current_user: dict = Depends(get_current_user)):
