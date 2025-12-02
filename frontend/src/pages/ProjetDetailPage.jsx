@@ -669,54 +669,54 @@ const ProjetDetailPage = () => {
                               </div>
                             ) : (
                               <>
-                                <div className="flex items-center gap-4 mb-3">
-                                  <h3 className="text-2xl font-bold text-purple-900">{pole.nom}</h3>
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h3 className="text-lg font-bold text-purple-900">{pole.nom}</h3>
                                   <div className="flex items-center gap-2">
-                                    <div className="text-3xl font-bold text-purple-600">{pourcentage}%</div>
-                                    <span className="text-base text-gray-600">({tachesTerminees}/{poleTaches.length} tâches)</span>
+                                    <div className="text-xl font-bold text-purple-600">{pourcentage}%</div>
+                                    <span className="text-sm text-gray-600">({tachesTerminees}/{poleTaches.length})</span>
                                   </div>
                                 </div>
                                 {pole.description && (
-                                  <p className="text-sm text-gray-600 mb-3">{pole.description}</p>
+                                  <p className="text-xs text-gray-600 mb-2">{pole.description}</p>
                                 )}
                                 {pole.responsable && (
-                                  <div className="flex items-center gap-2 text-sm text-purple-700 bg-purple-100 rounded-full px-3 py-1 w-fit">
-                                    <Users className="h-4 w-4" />
-                                    <span className="font-medium">Responsable: {pole.responsable}</span>
+                                  <div className="flex items-center gap-1 text-xs text-purple-700 bg-purple-100 rounded-full px-2 py-1 w-fit">
+                                    <Users className="h-3 w-3" />
+                                    <span>{pole.responsable}</span>
                                   </div>
                                 )}
                               </>
                             )}
                           </div>
                           {!editingPole && (
-                            <div className="flex gap-2">
+                            <div className="flex gap-1">
                               <Button size="sm" variant="outline" onClick={() => setEditingPole(pole)}>
-                                <Edit className="h-4 w-4" />
+                                <Edit className="h-3 w-3" />
                               </Button>
                               <Button 
-                                size="lg"
+                                size="sm"
                                 className="bg-purple-600 hover:bg-purple-700 text-white"
                                 onClick={() => {
                                   setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: pole.id });
                                   setIsTacheOpen(true);
                                 }}
                               >
-                                <Plus className="h-5 w-5 mr-2" /> Ajouter une tâche
+                                <Plus className="h-3 w-3 mr-1" /> Tâche
                               </Button>
                               <Button size="sm" variant="ghost" onClick={() => handleDeletePole(pole.id)}>
-                                <Trash2 className="h-4 w-4 text-red-500" />
+                                <Trash2 className="h-3 w-3 text-red-500" />
                               </Button>
                             </div>
                           )}
                         </div>
                         {/* Barre de progression du pôle */}
-                        <div className="mt-4 bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
                           <div className="h-full bg-purple-600 transition-all" style={{width: `${pourcentage}%`}}></div>
                         </div>
                       </div>
 
                       {/* Tâches du Pôle */}
-                      <div className="p-6 bg-gray-50 space-y-3">
+                      <div className="p-3 bg-gray-50 space-y-2">
                         {poleTaches.length === 0 ? (
                           <div className="text-center py-8 text-gray-400">
                             <p className="text-base mb-2">Aucune tâche dans ce pôle</p>
