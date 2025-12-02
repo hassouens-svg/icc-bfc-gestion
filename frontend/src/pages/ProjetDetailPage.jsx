@@ -200,6 +200,80 @@ const ProjetDetailPage = () => {
     }
   };
 
+  const handleAddPole = async () => {
+    if (!newPole.nom) {
+      toast.error('Nom du pôle requis');
+      return;
+    }
+
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/poles`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...newPole, projet_id: id })
+      });
+      toast.success('Pôle créé');
+      setNewPole({ nom: '', description: '', responsable: '' });
+      setIsPoleOpen(false);
+      loadData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+  const handleUpdatePole = async () => {
+    if (!editingPole || !editingPole.nom) {
+      toast.error('Nom du pôle requis');
+      return;
+    }
+
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/poles/${editingPole.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nom: editingPole.nom,
+          description: editingPole.description,
+          responsable: editingPole.responsable
+        })
+      });
+      toast.success('Pôle mis à jour');
+      setEditingPole(null);
+      loadData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+  const handleDeletePole = async (poleId) => {
+    if (!window.confirm('Supprimer ce pôle ? Les tâches associées devront être réassignées.')) return;
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/poles/${poleId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        toast.error(data.detail || 'Erreur de suppression');
+        return;
+      }
+
+      toast.success('Pôle supprimé');
+      loadData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
