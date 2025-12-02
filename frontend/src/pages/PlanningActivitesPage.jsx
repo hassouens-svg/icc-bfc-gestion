@@ -31,6 +31,7 @@ const PlanningActivitesPage = () => {
   const [villes, setVilles] = useState([]);
   const [user, setUser] = useState(null);
   const [anneeSelectionnee, setAnneeSelectionnee] = useState(new Date().getFullYear());
+  const [statutFiltre, setStatutFiltre] = useState('tous');
   
   const statuts = ['À venir', 'Reporté', 'Annulé', 'Fait'];
   const annees = Array.from({ length: 11 }, (_, i) => 2025 + i); // 2025-2035
