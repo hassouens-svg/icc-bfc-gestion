@@ -354,7 +354,8 @@ const ProjetDetailPage = () => {
           titre: editingJalon.titre,
           description: editingJalon.description,
           acteur: editingJalon.acteur,
-          deadline: editingJalon.deadline,
+          date_debut: editingJalon.date_debut,
+          date_fin: editingJalon.date_fin,
           statut: editingJalon.statut
         })
       });
