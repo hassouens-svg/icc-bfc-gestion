@@ -56,6 +56,12 @@ const HistoriquePresenceBergersPage = () => {
         '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
       };
       
+      // Créer un map des bergers pour récupérer leurs noms
+      const bergersMap = {};
+      bergersList.forEach(berger => {
+        bergersMap[berger.id] = berger;
+      });
+      
       const promoGroups = {};
       bergersList.forEach(berger => {
         if (berger.assigned_month) {
