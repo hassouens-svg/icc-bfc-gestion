@@ -922,16 +922,16 @@ const ProjetDetailPage = () => {
 
         {/* Dialog Tâche */}
         <Dialog open={isTacheOpen} onOpenChange={setIsTacheOpen}>
-          <DialogContent className="max-w-xl">
+          <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle className="text-2xl">
+              <DialogTitle className="text-lg">
                 {newTache.pole_id ? 
-                  `➕ Nouvelle tâche dans ${poles.find(p => p.id === newTache.pole_id)?.nom || 'le pôle'}` : 
-                  '➕ Nouvelle tâche générale'
+                  `Nouvelle tâche - ${poles.find(p => p.id === newTache.pole_id)?.nom || 'Pôle'}` : 
+                  'Nouvelle tâche générale'
                 }
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-5">
+            <div className="space-y-3">
               {poles.length > 0 && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <Label className="text-sm font-semibold mb-2 block">📂 Pôle</Label>
