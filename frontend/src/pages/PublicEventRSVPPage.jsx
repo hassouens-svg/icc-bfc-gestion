@@ -203,43 +203,46 @@ const PublicEventRSVPPage = () => {
                 </div>
               </div>
 
-            <div className="space-y-3">
-              <Button
-                onClick={() => handleResponse('confirmed')}
-                disabled={submitting}
-                className="w-full h-14 text-lg bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-3"
-              >
-                <CheckCircle className="h-6 w-6" />
-                <span>✓</span>
-                <span>Oui, je serai présent(e)</span>
-              </Button>
+              {/* Boutons de réponse */}
+              <div className="space-y-3 pt-2">
+                <Button
+                  onClick={() => handleResponse('confirmed')}
+                  disabled={submitting}
+                  className="w-full h-16 text-lg bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
+                >
+                  <CheckCircle className="h-6 w-6" />
+                  <span>✓</span>
+                  <span>Oui, je serai présent(e)</span>
+                </Button>
 
-              <Button
-                onClick={() => handleResponse('declined')}
-                disabled={submitting}
-                variant="destructive"
-                className="w-full h-14 text-lg bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-3"
-              >
-                <X className="h-6 w-6" />
-                <span>✗</span>
-                <span>Non, je ne pourrai pas venir</span>
-              </Button>
+                <Button
+                  onClick={() => handleResponse('declined')}
+                  disabled={submitting}
+                  variant="destructive"
+                  className="w-full h-16 text-lg bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
+                >
+                  <X className="h-6 w-6" />
+                  <span>✗</span>
+                  <span>Non, je ne pourrai pas venir</span>
+                </Button>
 
-              <Button
-                onClick={() => handleResponse('maybe')}
-                disabled={submitting}
-                variant="outline"
-                className="w-full h-14 text-lg border-2 border-yellow-400 text-gray-900 hover:bg-yellow-50 flex items-center justify-center gap-3"
-              >
-                <HelpCircle className="h-6 w-6 text-gray-400" />
-                <span>🤔</span>
-                <span>Je ne sais pas encore</span>
-              </Button>
-            </div>
+                <Button
+                  onClick={() => handleResponse('maybe')}
+                  disabled={submitting}
+                  variant="outline"
+                  className="w-full h-16 text-lg border-2 border-yellow-400 text-gray-900 hover:bg-yellow-50 flex items-center justify-center gap-3 rounded-xl shadow-md hover:shadow-lg transition-all"
+                >
+                  <HelpCircle className="h-6 w-6 text-gray-400" />
+                  <span>🤔</span>
+                  <span>Je ne sais pas encore</span>
+                </Button>
+              </div>
 
-            <div className="text-center text-sm text-gray-400 pt-4">
-              <p>Impact Centre Chrétien BFC-Italie</p>
-              <p>My Events Church</p>
+              {/* Footer */}
+              <div className="text-center text-sm text-gray-400 pt-6 border-t">
+                <p>Impact Centre Chrétien BFC-Italie</p>
+                <p>My Events Church</p>
+              </div>
             </div>
           </CardContent>
         </Card>
