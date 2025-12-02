@@ -925,53 +925,84 @@ const ProjetDetailPage = () => {
 
         {/* Dialog Tâche */}
         <Dialog open={isTacheOpen} onOpenChange={setIsTacheOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-xl">
             <DialogHeader>
-              <DialogTitle>Nouvelle tâche</DialogTitle>
+              <DialogTitle className="text-2xl">
+                {newTache.pole_id ? 
+                  `➕ Nouvelle tâche dans ${poles.find(p => p.id === newTache.pole_id)?.nom || 'le pôle'}` : 
+                  '➕ Nouvelle tâche générale'
+                }
+              </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-5">
+              {poles.length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <Label className="text-sm font-semibold mb-2 block">📂 Pôle</Label>
+                  <Select value={newTache.pole_id || 'none'} onValueChange={(val) => setNewTache({...newTache, pole_id: val === 'none' ? '' : val})}>
+                    <SelectTrigger className="bg-white">
+                      <SelectValue placeholder="Sélectionner un pôle" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">💡 Tâche générale (sans pôle)</SelectItem>
+                      {poles.map((pole) => (
+                        <SelectItem key={pole.id} value={pole.id}>📊 {pole.nom}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div>
-                <Label>Pôle</Label>
-                <Select value={newTache.pole_id || 'none'} onValueChange={(val) => setNewTache({...newTache, pole_id: val === 'none' ? '' : val})}>
-                  <SelectTrigger><SelectValue placeholder="Sélectionner un pôle (optionnel)" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Aucun pôle (Tâche générale)</SelectItem>
-                    {poles.map((pole) => (
-                      <SelectItem key={pole.id} value={pole.id}>{pole.nom}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-base font-semibold">Titre de la tâche *</Label>
+                <Input 
+                  value={newTache.titre} 
+                  onChange={(e) => setNewTache({...newTache, titre: e.target.value})} 
+                  placeholder="Ex: Préparer la présentation"
+                  className="mt-2 text-base"
+                />
               </div>
               <div>
-                <Label>Titre *</Label>
-                <Input value={newTache.titre} onChange={(e) => setNewTache({...newTache, titre: e.target.value})} />
+                <Label className="text-base font-semibold">Description</Label>
+                <Textarea 
+                  value={newTache.description} 
+                  onChange={(e) => setNewTache({...newTache, description: e.target.value})} 
+                  placeholder="Détails de la tâche..."
+                  rows={3}
+                  className="mt-2"
+                />
               </div>
-              <div>
-                <Label>Description</Label>
-                <Textarea value={newTache.description} onChange={(e) => setNewTache({...newTache, description: e.target.value})} />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-base font-semibold">📅 Date limite</Label>
+                  <Input 
+                    type="date" 
+                    value={newTache.deadline} 
+                    onChange={(e) => setNewTache({...newTache, deadline: e.target.value})} 
+                    className="mt-2"
+                  />
+                </div>
+                <div>
+                  <Label className="text-base font-semibold">👤 Assigné à</Label>
+                  <Select value={newTache.assigne_a || 'none'} onValueChange={(val) => setNewTache({...newTache, assigne_a: val === 'none' ? '' : val})}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Choisir" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Non assigné</SelectItem>
+                      {(projet.team_members || []).map((member, idx) => (
+                        <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <Label>Deadline</Label>
-                <Input type="date" value={newTache.deadline} onChange={(e) => setNewTache({...newTache, deadline: e.target.value})} />
-              </div>
-              <div>
-                <Label>Assigné à</Label>
-                <Select value={newTache.assigne_a || 'none'} onValueChange={(val) => setNewTache({...newTache, assigne_a: val === 'none' ? '' : val})}>
-                  <SelectTrigger><SelectValue placeholder="Sélectionner un membre" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Non assigné</SelectItem>
-                    {(projet.team_members || []).map((member, idx) => (
-                      <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => {
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button variant="outline" size="lg" onClick={() => {
                   setIsTacheOpen(false);
                   setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
                 }}>Annuler</Button>
-                <Button onClick={handleAddTache}>Créer</Button>
+                <Button size="lg" onClick={handleAddTache} className="bg-purple-600 hover:bg-purple-700">
+                  <Check className="h-5 w-5 mr-2" /> Créer la tâche
+                </Button>
               </div>
             </div>
           </DialogContent>
