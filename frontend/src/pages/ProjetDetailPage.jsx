@@ -598,18 +598,18 @@ const ProjetDetailPage = () => {
 
         {/* Pôles et Tâches */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">📊 Pôles du Projet ({poles.length})</CardTitle>
+              <CardTitle className="text-lg">📊 Pôles ({poles.length})</CardTitle>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => {
+                <Button size="sm" variant="outline" onClick={() => {
                   setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
                   setIsTacheOpen(true);
                 }}>
-                  <Plus className="h-4 w-4 mr-2" /> Tâche Générale
+                  <Plus className="h-3 w-3 mr-1" /> Tâche Générale
                 </Button>
-                <Button onClick={() => setIsPoleOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" /> Nouveau Pôle
+                <Button size="sm" onClick={() => setIsPoleOpen(true)}>
+                  <Plus className="h-3 w-3 mr-1" /> Pôle
                 </Button>
               </div>
             </div>
