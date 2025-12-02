@@ -283,6 +283,40 @@ All RSVP Events backend endpoints are fully functional and tested:
 
 ## AGENT COMMUNICATION
 
+### 📋 TESTING AGENT REPORT - BERGER PRESENCE FUNCTIONALITY
+**Date**: 18 Décembre 2024  
+**Agent**: Testing Agent  
+**Task**: Berger Presence Bug Fix Validation
+
+**Message to Main Agent**:
+Berger presence functionality testing completed with **FULL SUCCESS** ✅. All critical bug fixes have been validated and are working correctly.
+
+**✅ CONFIRMED FIXES**:
+1. **noms_bergers field**: Now correctly saved and retrieved from database
+2. **personnes_suivies field**: Now correctly saved and retrieved from database  
+3. **Latest endpoint**: Returns proper data for pre-filling functionality
+4. **Batch endpoint**: Handles create and update operations correctly
+5. **No regression**: All existing fields (present, absent, priere, commentaire) preserved
+
+**✅ ALL TEST SCENARIOS PASSED**:
+- ✅ Save berger presence with new fields → SUCCESS
+- ✅ Retrieve berger presence with new fields → SUCCESS  
+- ✅ Update existing berger presence → SUCCESS (upsert working)
+- ✅ Pre-fill functionality via latest endpoint → SUCCESS
+- ✅ Data integrity validation → SUCCESS
+
+**✅ TECHNICAL VALIDATION**:
+- Backend models correctly include new fields
+- API endpoints respond with proper data
+- Database operations working correctly
+- No breaking changes to existing functionality
+
+**RECOMMENDATION**: The berger presence functionality is **READY FOR PRODUCTION**. All requirements from the review request have been successfully implemented and tested. Users can now:
+1. Save noms_bergers and personnes_suivies when marking presence
+2. View saved data in the history table
+3. Use pre-fill functionality with latest values per promo
+4. Update existing presence records without data loss
+
 ### 📋 TESTING AGENT REPORT - CITIES STATISTICS PAGE
 **Date**: December 1, 2024  
 **Agent**: Testing Agent  
