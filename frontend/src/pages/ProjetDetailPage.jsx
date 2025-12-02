@@ -1526,14 +1526,14 @@ const ProjetDetailPage = () => {
                   return (
                     <div className="text-center py-12 text-gray-400">
                       <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                      <p>Aucun jalon avec date limite définie</p>
+                      <p>Aucun jalon avec dates de début et fin définies</p>
                     </div>
                   );
                 }
 
-                const dates = jalonsWithDates.map(j => new Date(j.deadline));
-                const minDate = new Date(Math.min(...dates));
-                const maxDate = new Date(Math.max(...dates));
+                const allDates = jalonsWithDates.flatMap(j => [new Date(j.date_debut), new Date(j.date_fin)]);
+                const minDate = new Date(Math.min(...allDates));
+                const maxDate = new Date(Math.max(...allDates));
                 const today = new Date();
                 
                 // Ajouter une marge de 7 jours avant et après
