@@ -380,12 +380,31 @@ const PlanningActivitesPage = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {annees.map((annee) => (
-                <SelectItem key={annee} value={annee.toString()}>{annee}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+                    {annees.map((annee) => (
+                      <SelectItem key={annee} value={annee.toString()}>{annee}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex-1">
+                <Label>Filtrer par statut</Label>
+                <Select value={statutFiltre} onValueChange={setStatutFiltre}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="tous">Tous les statuts</SelectItem>
+                    <SelectItem value="À venir">À venir</SelectItem>
+                    <SelectItem value="Fait">Fait</SelectItem>
+                    <SelectItem value="Reporté">Reporté</SelectItem>
+                    <SelectItem value="Annulé">Annulé</SelectItem>
+                    <SelectItem value="En retard">En retard</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
 
         {/* Indicateur d'avancement */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
