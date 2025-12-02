@@ -177,12 +177,12 @@ const MarquerPresenceBergersPage = () => {
 
   return (
     <Layout>
-      <div className="space-y-6 max-w-6xl mx-auto">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Marquer Présence des Bergers</h1>
-            <p className="text-gray-500 mt-1">Enregistrer la présence aux comptes rendus</p>
+            <p className="text-gray-500 mt-1">Enregistrer la présence aux comptes rendus - {user.city}</p>
           </div>
           <Button variant="outline" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -195,106 +195,200 @@ const MarquerPresenceBergersPage = () => {
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <Calendar className="h-6 w-6 text-purple-600" />
-              <div className="flex-1">
+              <div>
                 <Label>Date du compte rendu</Label>
                 <Input
                   type="date"
                   value={dateSelectionnee}
                   onChange={(e) => setDateSelectionnee(e.target.value)}
-                  className="max-w-xs"
+                  className="w-48"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Liste des promotions avec bergers */}
-        {bergers.map((promo, index) => (
-          <Card key={index}>
-            <CardHeader className="bg-purple-50">
-              <CardTitle className="text-xl text-purple-900">{promo.promo_name}</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-4">
-                {promo.bergers.map((berger) => (
-                  <div key={berger.id} className="border rounded-lg p-4 hover:bg-gray-50">
-                    <div className="flex items-start gap-4">
-                      {/* Nom du berger */}
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-lg">{berger.name}</h3>
-                        <p className="text-sm text-gray-500">{berger.email}</p>
-                      </div>
-
-                      {/* Boutons Présent/Absent */}
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant={presences[berger.id]?.present === true ? 'default' : 'outline'}
-                          className={presences[berger.id]?.present === true ? 'bg-green-600 hover:bg-green-700' : ''}
-                          onClick={() => handlePresenceChange(berger.id, true)}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Présent
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={presences[berger.id]?.present === false ? 'default' : 'outline'}
-                          className={presences[berger.id]?.present === false ? 'bg-red-600 hover:bg-red-700' : ''}
-                          onClick={() => handlePresenceChange(berger.id, false)}
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Absent
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Prière et Commentaire (visible si présence marquée) */}
-                    {presences[berger.id]?.present !== null && (
-                      <div className="mt-4 space-y-3 border-t pt-4">
-                        <div className="flex items-center gap-2">
+        {/* Tableau des promotions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              📊 Liste des Promotions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4">Nom de la Promo</th>
+                    <th className="text-center py-3 px-4">Nbre de Pers Suivies</th>
+                    <th className="text-center py-3 px-4">
+                      Nbre de Bergers
+                      <Edit className="inline h-3 w-3 ml-1 text-gray-400" />
+                    </th>
+                    <th className="text-center py-3 px-4">Présents</th>
+                    <th className="text-center py-3 px-4">Absents</th>
+                    <th className="text-center py-3 px-4">Prière</th>
+                    <th className="text-left py-3 px-4">Commentaire</th>
+                    <th className="text-center py-3 px-4">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {promoStats.length > 0 ? (
+                    promoStats.map((promo, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="py-3 px-4 font-medium text-purple-700">{promo.promo_name}</td>
+                        <td className="text-center py-3 px-4">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
+                            {promo.personnes_suivies}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm font-medium">
+                            {promo.bergers.length}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <Input
+                            type="number"
+                            min="0"
+                            max={promo.bergers.length}
+                            value={presencesData[promo.promo_name]?.presents || 0}
+                            onChange={(e) => handleUpdatePresencesData(promo.promo_name, 'presents', parseInt(e.target.value) || 0)}
+                            className="w-20 text-center"
+                          />
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <Input
+                            type="number"
+                            min="0"
+                            max={promo.bergers.length}
+                            value={presencesData[promo.promo_name]?.absents || 0}
+                            onChange={(e) => handleUpdatePresencesData(promo.promo_name, 'absents', parseInt(e.target.value) || 0)}
+                            className="w-20 text-center"
+                          />
+                        </td>
+                        <td className="text-center py-3 px-4">
                           <input
                             type="checkbox"
-                            id={`priere-${berger.id}`}
-                            checked={presences[berger.id]?.priere || false}
-                            onChange={(e) => handlePriereChange(berger.id, e.target.checked)}
+                            checked={presencesData[promo.promo_name]?.priere || false}
+                            onChange={(e) => handleUpdatePresencesData(promo.promo_name, 'priere', e.target.checked)}
                             className="h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
                           />
-                          <Label htmlFor={`priere-${berger.id}`} className="cursor-pointer">
-                            🙏 Prière demandée
-                          </Label>
-                        </div>
-
-                        <div>
-                          <Label htmlFor={`commentaire-${berger.id}`}>Commentaire</Label>
-                          <Textarea
-                            id={`commentaire-${berger.id}`}
-                            value={presences[berger.id]?.commentaire || ''}
-                            onChange={(e) => handleCommentaireChange(berger.id, e.target.value)}
-                            placeholder="Notes ou observations..."
-                            rows={2}
+                        </td>
+                        <td className="py-3 px-4">
+                          <Input
+                            type="text"
+                            value={presencesData[promo.promo_name]?.commentaire || ''}
+                            onChange={(e) => handleUpdatePresencesData(promo.promo_name, 'commentaire', e.target.value)}
+                            placeholder="Notes..."
+                            className="min-w-[200px]"
                           />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <Button
+                            size="sm"
+                            onClick={() => handleEditPromo(promo)}
+                            className="bg-purple-600 hover:bg-purple-700"
+                          >
+                            Modifier
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="text-center py-8 text-gray-500">
+                        Aucune promotion trouvée pour {user.city}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Bouton Enregistrer */}
-        <div className="flex justify-end">
-          <Button
-            size="lg"
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <Save className="h-5 w-5 mr-2" />
-            {saving ? 'Enregistrement...' : 'Enregistrer les Présences'}
-          </Button>
-        </div>
+        {/* Modal de modification */}
+        {editingPromo && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <CardHeader className="bg-purple-50">
+                <CardTitle>Modifier la Présence - {editingPromo.promo_name}</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-700">
+                    <strong>Nombre de bergers :</strong> {editingPromo.bergers.length}
+                  </p>
+                  <p className="text-sm text-gray-700 mt-1">
+                    <strong>Bergers :</strong> {editingPromo.bergers.map(b => b.name).join(', ')}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Nombre de présents</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max={editingPromo.bergers.length}
+                      value={presencesData[editingPromo.promo_name]?.presents || 0}
+                      onChange={(e) => handleUpdatePresencesData(editingPromo.promo_name, 'presents', parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Nombre d'absents</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max={editingPromo.bergers.length}
+                      value={presencesData[editingPromo.promo_name]?.absents || 0}
+                      onChange={(e) => handleUpdatePresencesData(editingPromo.promo_name, 'absents', parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="modal-priere"
+                    checked={presencesData[editingPromo.promo_name]?.priere || false}
+                    onChange={(e) => handleUpdatePresencesData(editingPromo.promo_name, 'priere', e.target.checked)}
+                    className="h-4 w-4 text-purple-600 rounded focus:ring-purple-500"
+                  />
+                  <Label htmlFor="modal-priere" className="cursor-pointer">
+                    🙏 Prière demandée
+                  </Label>
+                </div>
+
+                <div>
+                  <Label>Commentaire</Label>
+                  <Textarea
+                    value={presencesData[editingPromo.promo_name]?.commentaire || ''}
+                    onChange={(e) => handleUpdatePresencesData(editingPromo.promo_name, 'commentaire', e.target.value)}
+                    placeholder="Notes ou observations..."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="flex gap-2 justify-end pt-4">
+                  <Button variant="outline" onClick={() => setEditingPromo(null)}>
+                    Annuler
+                  </Button>
+                  <Button
+                    onClick={handleSavePromo}
+                    disabled={saving}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {saving ? 'Enregistrement...' : 'Enregistrer'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </Layout>
   );
