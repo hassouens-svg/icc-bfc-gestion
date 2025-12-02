@@ -300,7 +300,7 @@ const PublicEventRSVPPage = () => {
                         />
                         <label htmlFor="is_star" className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-2">
                           <span className="text-xl">⭐</span>
-                          <span>Personne importante / VIP</span>
+                          <span>STAR (Serviteurs Travaillant Activement pour le Royaume)</span>
                         </label>
                       </div>
                     </div>
