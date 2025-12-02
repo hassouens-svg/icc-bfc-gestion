@@ -969,13 +969,21 @@ const ProjetDetailPage = () => {
         </Dialog>
 
         {/* Dialog Tâche */}
-        <Dialog open={isTacheOpen} onOpenChange={setIsTacheOpen}>
+        <Dialog open={isTacheOpen || !!editingTache} onOpenChange={(open) => {
+          if (!open) {
+            setIsTacheOpen(false);
+            setEditingTache(null);
+          }
+        }}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle className="text-lg">
-                {newTache.pole_id ? 
-                  `Nouvelle tâche - ${poles.find(p => p.id === newTache.pole_id)?.nom || 'Pôle'}` : 
-                  'Nouvelle tâche générale'
+                {editingTache ? 
+                  'Modifier la tâche' :
+                  (newTache.pole_id ? 
+                    `Nouvelle tâche - ${poles.find(p => p.id === newTache.pole_id)?.nom || 'Pôle'}` : 
+                    'Nouvelle tâche générale'
+                  )
                 }
               </DialogTitle>
             </DialogHeader>
