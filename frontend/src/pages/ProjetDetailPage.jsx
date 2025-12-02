@@ -859,6 +859,15 @@ const ProjetDetailPage = () => {
                               </div>
                             </div>
                             <div className="flex gap-1 flex-shrink-0">
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                className="h-7 w-7 p-0" 
+                                onClick={() => setEditingTache(tache)}
+                                title="Modifier la tâche"
+                              >
+                                <Edit className="h-3 w-3 text-blue-600" />
+                              </Button>
                               <Select value={tache.statut} onValueChange={(val) => handleUpdateTacheStatut(tache.id, val)}>
                                 <SelectTrigger className="w-[90px] h-7 text-xs">
                                   <SelectValue />
