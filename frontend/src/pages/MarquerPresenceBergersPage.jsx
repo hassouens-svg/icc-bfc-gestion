@@ -149,15 +149,20 @@ const MarquerPresenceBergersPage = () => {
 
   const saveEditing = () => {
     if (editingField) {
-      setPresencesData({
-        ...presencesData,
+      const newValue = editingField.field === 'personnes_suivies' 
+        ? parseInt(tempValue) || 0 
+        : tempValue;
+      
+      setPresencesData(prev => ({
+        ...prev,
         [editingField.promoName]: {
-          ...presencesData[editingField.promoName],
-          [editingField.field]: tempValue
+          ...prev[editingField.promoName],
+          [editingField.field]: newValue
         }
-      });
+      }));
       setEditingField(null);
       setTempValue('');
+      toast.success('✅ Modifié');
     }
   };
 
