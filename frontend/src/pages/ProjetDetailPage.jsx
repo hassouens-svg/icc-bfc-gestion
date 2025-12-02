@@ -988,7 +988,7 @@ const ProjetDetailPage = () => {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
-              {poles.length > 0 && (
+              {poles.length > 0 && !editingTache && (
                 <div className="bg-blue-50 border border-blue-200 rounded p-2">
                   <Label className="text-sm mb-1 block">📂 Pôle</Label>
                   <Select value={newTache.pole_id || 'none'} onValueChange={(val) => setNewTache({...newTache, pole_id: val === 'none' ? '' : val})}>
@@ -1004,11 +1004,30 @@ const ProjetDetailPage = () => {
                   </Select>
                 </div>
               )}
+              {editingTache && poles.length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded p-2">
+                  <Label className="text-sm mb-1 block">📂 Pôle</Label>
+                  <Select value={editingTache.pole_id || 'none'} onValueChange={(val) => setEditingTache({...editingTache, pole_id: val === 'none' ? '' : val})}>
+                    <SelectTrigger className="bg-white h-8 text-sm">
+                      <SelectValue placeholder="Sélectionner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Tâche générale</SelectItem>
+                      {poles.map((pole) => (
+                        <SelectItem key={pole.id} value={pole.id}>{pole.nom}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div>
                 <Label className="text-sm">Titre *</Label>
                 <Input 
-                  value={newTache.titre} 
-                  onChange={(e) => setNewTache({...newTache, titre: e.target.value})} 
+                  value={editingTache ? editingTache.titre : newTache.titre} 
+                  onChange={(e) => editingTache ? 
+                    setEditingTache({...editingTache, titre: e.target.value}) : 
+                    setNewTache({...newTache, titre: e.target.value})
+                  } 
                   placeholder="Ex: Préparer présentation"
                   className="mt-1"
                 />
@@ -1016,8 +1035,11 @@ const ProjetDetailPage = () => {
               <div>
                 <Label className="text-sm">Description</Label>
                 <Textarea 
-                  value={newTache.description} 
-                  onChange={(e) => setNewTache({...newTache, description: e.target.value})} 
+                  value={editingTache ? editingTache.description : newTache.description} 
+                  onChange={(e) => editingTache ? 
+                    setEditingTache({...editingTache, description: e.target.value}) : 
+                    setNewTache({...newTache, description: e.target.value})
+                  } 
                   placeholder="Détails..."
                   rows={2}
                   className="mt-1"
@@ -1027,51 +1049,68 @@ const ProjetDetailPage = () => {
                 <Label className="text-sm">📅 Date limite</Label>
                 <Input 
                   type="date" 
-                  value={newTache.deadline} 
-                  onChange={(e) => setNewTache({...newTache, deadline: e.target.value})} 
+                  value={editingTache ? editingTache.deadline : newTache.deadline} 
+                  onChange={(e) => editingTache ? 
+                    setEditingTache({...editingTache, deadline: e.target.value}) : 
+                    setNewTache({...newTache, deadline: e.target.value})
+                  } 
                   className="mt-1"
                 />
               </div>
               <div>
                 <Label className="text-sm">👥 Assigné à (plusieurs personnes, séparées par virgule)</Label>
                 <Input 
-                  value={newTache.assigne_a || ''} 
-                  onChange={(e) => setNewTache({...newTache, assigne_a: e.target.value})}
+                  value={editingTache ? (editingTache.assigne_a || '') : (newTache.assigne_a || '')} 
+                  onChange={(e) => editingTache ? 
+                    setEditingTache({...editingTache, assigne_a: e.target.value}) : 
+                    setNewTache({...newTache, assigne_a: e.target.value})
+                  }
                   placeholder="Ex: Jean Dupont, Marie Martin"
                   className="mt-1"
                 />
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {(projet.team_members || []).map((member, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => {
-                        const current = newTache.assigne_a || '';
-                        const names = current.split(',').map(n => n.trim()).filter(Boolean);
-                        if (names.includes(member.nom)) {
-                          setNewTache({...newTache, assigne_a: names.filter(n => n !== member.nom).join(', ')});
-                        } else {
-                          setNewTache({...newTache, assigne_a: [...names, member.nom].join(', ')});
-                        }
-                      }}
-                      className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
-                        (newTache.assigne_a || '').split(',').map(n => n.trim()).includes(member.nom)
-                          ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
-                      }`}
-                    >
-                      {member.nom}
-                    </button>
-                  ))}
+                  {(projet.team_members || []).map((member, idx) => {
+                    const currentAssignees = editingTache ? (editingTache.assigne_a || '') : (newTache.assigne_a || '');
+                    const names = currentAssignees.split(',').map(n => n.trim()).filter(Boolean);
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          const newAssignees = names.includes(member.nom) 
+                            ? names.filter(n => n !== member.nom).join(', ')
+                            : [...names, member.nom].join(', ');
+                          
+                          if (editingTache) {
+                            setEditingTache({...editingTache, assigne_a: newAssignees});
+                          } else {
+                            setNewTache({...newTache, assigne_a: newAssignees});
+                          }
+                        }}
+                        className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                          names.includes(member.nom)
+                            ? 'bg-purple-600 text-white border-purple-600'
+                            : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400'
+                        }`}
+                      >
+                        {member.nom}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <Button size="sm" variant="outline" onClick={() => {
                   setIsTacheOpen(false);
+                  setEditingTache(null);
                   setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
                 }}>Annuler</Button>
-                <Button size="sm" onClick={handleAddTache} className="bg-purple-600 hover:bg-purple-700">
-                  <Check className="h-4 w-4 mr-1" /> Créer
+                <Button 
+                  size="sm" 
+                  onClick={editingTache ? handleUpdateTache : handleAddTache} 
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  <Check className="h-4 w-4 mr-1" /> {editingTache ? 'Enregistrer' : 'Créer'}
                 </Button>
               </div>
             </div>
