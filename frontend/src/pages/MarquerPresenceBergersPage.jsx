@@ -124,7 +124,9 @@ const MarquerPresenceBergersPage = () => {
               commentaire: promo.commentaire,
               enregistre_par: user.id,
               ville: user.city,
-              promo_name: promo.nom
+              promo_name: promo.nom,
+              noms_bergers: promo.nomsBergers,
+              personnes_suivies: promo.personnesSuivies
             });
           });
         }
