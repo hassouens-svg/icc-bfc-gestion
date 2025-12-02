@@ -412,7 +412,7 @@ class BergerPresenceTest:
                 
                 if get_response.status_code == 200:
                     data = get_response.json()
-                    promo_aout = next((p for p in data if p.get("promo_name") == "Promo Août"), None)
+                    promo_aout = next((p for p in data if p.get("promo_name") == getattr(self, 'test_promo_aout', 'Promo Août')), None)
                     
                     if promo_aout:
                         updated_correctly = (
