@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://evangelize-app.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://church-shepherd-app.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 # Liste des comptes à tester
