@@ -821,3 +821,111 @@ L'utilisateur doit tester manuellement:
 8. Vérifier que toutes les présences s'affichent correctement
 ```
 
+---
+
+## 🧪 BERGER PRESENCE FUNCTIONALITY TESTING - 18 Décembre 2024
+
+### 📋 Agent: Testing Agent
+**Date**: 18 Décembre 2024  
+**Task**: Testing critical bug fix for "Marquer présence des bergers"
+
+### ✅ COMPREHENSIVE BACKEND TESTING COMPLETED
+
+**Test Suite**: Berger Presence Backend Test Suite  
+**Total Tests**: 9  
+**Success Rate**: 100% ✅
+
+### 📊 DETAILED TEST RESULTS:
+
+#### Authentication & Authorization ✅
+- **Login Test**: Successfully authenticated as super_admin user
+- **Role Verification**: Confirmed super_admin role has access to all berger presence endpoints
+
+#### New Endpoint Testing ✅
+- **GET /api/berger-presences/latest?ville={ville}**: ✅ WORKING
+  - Returns correct array format
+  - Supports new fields (noms_bergers, personnes_suivies)
+  - Pre-fill functionality working correctly
+
+#### Modified Endpoint Testing ✅
+- **POST /api/berger-presences/batch**: ✅ WORKING
+  - Successfully saves noms_bergers (string) field
+  - Successfully saves personnes_suivies (int) field
+  - Batch processing working correctly
+  - Upsert functionality working (updates existing, creates new)
+
+#### Data Retrieval Testing ✅
+- **GET /api/berger-presences?date={date}&ville={ville}**: ✅ WORKING
+  - Returns saved data with new fields
+  - Data integrity verified - saved values match expected values
+  - All existing fields preserved (no regression)
+
+#### Critical Bug Fix Verification ✅
+- **noms_bergers field**: ✅ SAVED AND RETRIEVED CORRECTLY
+  - Test data: "Jean Dupont, Marie Martin" → Saved and retrieved successfully
+  - Update test: "Jean Dupont, Marie Martin, Nouveau Berger" → Updated successfully
+- **personnes_suivies field**: ✅ SAVED AND RETRIEVED CORRECTLY
+  - Test data: 5 → Saved and retrieved successfully
+  - Update test: 7 → Updated successfully
+
+#### Pre-fill Functionality ✅
+- **Latest endpoint returns correct data per promo**: ✅ WORKING
+  - Promo Test Août: noms_bergers and personnes_suivies correctly returned
+  - Promo Test Septembre: noms_bergers and personnes_suivies correctly returned
+  - Data available for frontend pre-filling
+
+#### Update/Upsert Functionality ✅
+- **Batch endpoint handles updates correctly**: ✅ WORKING
+  - Same berger_id + date → Updates existing record
+  - New berger_id + date → Creates new record
+  - All fields updated correctly including new fields
+
+### 🔧 TECHNICAL VALIDATION:
+
+**Backend Models**: ✅ CORRECT
+```python
+class BergerPresence(BaseModel):
+    berger_id: str
+    date: str
+    present: bool
+    priere: bool = False
+    commentaire: Optional[str] = None
+    enregistre_par: str
+    ville: str
+    promo_name: Optional[str] = None
+    noms_bergers: Optional[str] = None      # ✅ NEW FIELD WORKING
+    personnes_suivies: Optional[int] = None # ✅ NEW FIELD WORKING
+```
+
+**API Endpoints**: ✅ ALL FUNCTIONAL
+- POST `/api/berger-presences/batch` - Batch save with new fields ✅
+- GET `/api/berger-presences?date={date}&ville={ville}` - Retrieve with new fields ✅
+- GET `/api/berger-presences/latest?ville={ville}` - Pre-fill data ✅
+
+### 🎯 BUG FIX VALIDATION:
+
+**BEFORE**: noms_bergers and personnes_suivies fields were not saved to database
+**AFTER**: ✅ Both fields are correctly saved and retrieved
+
+**Test Evidence**:
+- Created presence with noms_bergers: "Jean Dupont, Marie Martin" → ✅ Saved
+- Created presence with personnes_suivies: 5 → ✅ Saved
+- Retrieved data shows exact values → ✅ Retrieved correctly
+- Updated presence with new values → ✅ Updated correctly
+- Latest endpoint returns data for pre-filling → ✅ Pre-fill working
+
+### 🚀 READY FOR PRODUCTION:
+
+All berger presence endpoints are fully functional and tested:
+- ✅ New fields (noms_bergers, personnes_suivies) working correctly
+- ✅ No regression on existing fields (present, absent, priere, commentaire)
+- ✅ Pre-fill functionality operational
+- ✅ Batch save and update working
+- ✅ Data integrity maintained
+
+### 📋 TEST DATA USED:
+- **Test Presences**: Created with realistic data (unique IDs to avoid conflicts)
+- **Test Fields**: noms_bergers with multiple names, personnes_suivies with integer values
+- **Test User**: superadmin with super_admin role in Dijon
+- **Test Scenarios**: Create, retrieve, update, pre-fill validation
+
