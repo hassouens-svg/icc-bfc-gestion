@@ -132,10 +132,25 @@ const ProjetsList = () => {
             <h1 className="text-3xl font-bold">Projets & Événements</h1>
             <p className="text-gray-500">Gérez vos projets d&apos;église</p>
           </div>
-          <Button onClick={() => setIsDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nouveau Projet
-          </Button>
+          <div className="flex gap-3 items-center">
+            <div className="flex items-center gap-2 bg-white border rounded-lg px-3 py-2">
+              <input
+                type="checkbox"
+                id="showArchived"
+                checked={showArchived}
+                onChange={(e) => setShowArchived(e.target.checked)}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label htmlFor="showArchived" className="text-sm text-gray-700 cursor-pointer flex items-center gap-1">
+                <Archive className="h-4 w-4" />
+                <span>Afficher les projets archivés</span>
+              </label>
+            </div>
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nouveau Projet
+            </Button>
+          </div>
         </div>
 
         {loading ? (
