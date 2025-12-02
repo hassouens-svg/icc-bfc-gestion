@@ -173,61 +173,61 @@ const HistoriquePresenceBergersPage = () => {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b bg-gray-50">
-                        <th className="text-left py-3 px-4 font-semibold">Promo</th>
+                        <th className="text-left py-3 px-4 font-semibold">Nom de la Promo</th>
                         <th className="text-center py-3 px-4 font-semibold">Pers Suivies</th>
-                        <th className="text-center py-3 px-4 font-semibold">Nbre Bergers</th>
-                        <th className="text-center py-3 px-4 font-semibold">Présents</th>
-                        <th className="text-center py-3 px-4 font-semibold">Absents</th>
+                        <th className="text-left py-3 px-4 font-semibold">Noms des Bergers</th>
+                        <th className="text-center py-3 px-4 font-semibold">Présent</th>
+                        <th className="text-center py-3 px-4 font-semibold">Absent</th>
                         <th className="text-center py-3 px-4 font-semibold">Prière</th>
                         <th className="text-left py-3 px-4 font-semibold">Commentaire</th>
                       </tr>
                     </thead>
                     <tbody>
                       {promos.map((promo, index) => (
-                        <tr key={index} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4 font-medium text-purple-700">{promo.nom}</td>
-                          <td className="text-center py-3 px-4">
+                        <tr key={index} className={`border-b hover:bg-gray-50 ${(promo.present || promo.absent) ? 'bg-blue-50' : ''}`}>
+                          <td className="py-4 px-4 font-medium text-purple-700">{promo.nom}</td>
+                          
+                          <td className="text-center py-4 px-4">
                             <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
                               {promo.personnesSuivies}
                             </span>
                           </td>
-                          <td className="text-center py-3 px-4">
-                            <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm font-medium">
-                              {promo.totalBergers}
+                          
+                          <td className="py-4 px-4 text-sm text-gray-600">
+                            {promo.nomsBergers}
+                          </td>
+                          
+                          <td className="text-center py-4 px-4">
+                            <div className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center mx-auto ${
+                              promo.present
+                                ? 'bg-green-500 border-green-600' 
+                                : 'bg-white border-gray-200'
+                            }`}>
+                              {promo.present && <Check className="h-8 w-8 text-white" strokeWidth={4} />}
+                            </div>
+                          </td>
+                          
+                          <td className="text-center py-4 px-4">
+                            <div className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center mx-auto ${
+                              promo.absent
+                                ? 'bg-red-500 border-red-600' 
+                                : 'bg-white border-gray-200'
+                            }`}>
+                              {promo.absent && <X className="h-8 w-8 text-white" strokeWidth={4} />}
+                            </div>
+                          </td>
+                          
+                          <td className="text-center py-4 px-4">
+                            <span className={`px-3 py-2 rounded border font-medium inline-block ${
+                              promo.priere === 'Oui'
+                                ? 'bg-green-100 text-green-800 border-green-400'
+                                : 'bg-red-100 text-red-800 border-red-400'
+                            }`}>
+                              {promo.priere === 'Oui' ? '✅ Oui' : '❌ Non'}
                             </span>
                           </td>
-                          <td className="text-center py-3 px-4">
-                            {promo.presents > 0 ? (
-                              <div className="flex items-center justify-center gap-2">
-                                <Check className="h-5 w-5 text-green-600" />
-                                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full font-bold">
-                                  {promo.presents}
-                                </span>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="text-center py-3 px-4">
-                            {promo.absents > 0 ? (
-                              <div className="flex items-center justify-center gap-2">
-                                <X className="h-5 w-5 text-red-600" />
-                                <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full font-bold">
-                                  {promo.absents}
-                                </span>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="text-center py-3 px-4">
-                            {promo.priere ? (
-                              <span className="text-2xl">🙏</span>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4">
+                          
+                          <td className="py-4 px-4">
                             {promo.commentaire ? (
                               <span className="text-sm text-gray-700">{promo.commentaire}</span>
                             ) : (
