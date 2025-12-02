@@ -137,13 +137,13 @@ const MarquerPresenceBergersPage = () => {
   };
 
   const handleCommentaireChange = (promoName, value) => {
-    setPresencesData({
-      ...presencesData,
+    setPresencesData(prev => ({
+      ...prev,
       [promoName]: {
-        ...presencesData[promoName],
+        ...prev[promoName],
         commentaire: value
       }
-    });
+    }));
   };
 
   const startEditing = (promoName, field, currentValue) => {
