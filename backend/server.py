@@ -4929,6 +4929,32 @@ async def get_event(event_id: str):
     
     return event
 
+@api_router.put("/events/{event_id}")
+async def update_event(event_id: str, event: ChurchEventCreate, current_user: dict = Depends(get_current_user)):
+    """Update an existing event"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Check if event exists and belongs to user
+    existing_event = await db.church_events.find_one({"id": event_id})
+    if not existing_event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    if existing_event["created_by"] != current_user["id"] and current_user["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Not authorized to update this event")
+    
+    # Update the event
+    event_data = event.model_dump()
+    event_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.church_events.update_one(
+        {"id": event_id},
+        {"$set": event_data}
+    )
+    
+    return {"message": "Event updated successfully", "id": event_id}
+
 @api_router.delete("/events/{event_id}")
 async def delete_event(event_id: str, current_user: dict = Depends(get_current_user)):
     """Delete an event"""
