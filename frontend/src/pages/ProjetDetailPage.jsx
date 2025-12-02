@@ -29,6 +29,7 @@ const ProjetDetailPage = () => {
   const [isDepenseOpen, setIsDepenseOpen] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [newTache, setNewTache] = useState({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
+  const [editingTache, setEditingTache] = useState(null);
   const [newPole, setNewPole] = useState({ nom: '', description: '', responsable: '' });
   const [editingPole, setEditingPole] = useState(null);
   const [newMember, setNewMember] = useState({ nom: '', telephone: '', role: '' });
