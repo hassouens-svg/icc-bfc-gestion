@@ -4547,13 +4547,13 @@ async def get_jalons(projet_id: str, current_user: dict = Depends(get_current_us
     
     jalons = await db.jalons.find({"projet_id": projet_id}, {"_id": 0}).sort("deadline", 1).to_list(1000)
     
-    # Auto-update status to "en_retard" if deadline is passed
+    # Auto-update status to "en_retard" if date_fin is passed
     now = datetime.now(timezone.utc)
     for jalon in jalons:
-        if jalon.get("deadline") and jalon.get("statut") in ["a_faire", "en_cours"]:
+        if jalon.get("date_fin") and jalon.get("statut") in ["a_faire", "en_cours"]:
             try:
-                deadline_dt = datetime.fromisoformat(jalon["deadline"].replace("Z", "+00:00"))
-                if deadline_dt < now:
+                date_fin_dt = datetime.fromisoformat(jalon["date_fin"].replace("Z", "+00:00"))
+                if date_fin_dt < now:
                     await db.jalons.update_one(
                         {"id": jalon["id"]},
                         {"$set": {"statut": "en_retard"}}
