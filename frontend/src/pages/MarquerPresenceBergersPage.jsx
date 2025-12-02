@@ -241,6 +241,7 @@ const MarquerPresenceBergersPage = () => {
                     <th className="text-center py-3 px-4 font-semibold">Absent</th>
                     <th className="text-center py-3 px-4 font-semibold">Prière</th>
                     <th className="text-left py-3 px-4 font-semibold">Commentaire</th>
+                    <th className="text-center py-3 px-4 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
