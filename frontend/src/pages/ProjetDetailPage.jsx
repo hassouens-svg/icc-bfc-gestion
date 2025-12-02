@@ -178,6 +178,35 @@ const ProjetDetailPage = () => {
     }
   };
 
+  const handleUpdateTache = async () => {
+    if (!editingTache || !editingTache.titre) {
+      toast.error('Titre requis');
+      return;
+    }
+
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/taches/${editingTache.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          titre: editingTache.titre,
+          description: editingTache.description,
+          deadline: editingTache.deadline,
+          assigne_a: editingTache.assigne_a,
+          pole_id: editingTache.pole_id
+        })
+      });
+      toast.success('Tâche mise à jour');
+      setEditingTache(null);
+      loadData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
   const handleDeleteTache = async (tacheId) => {
     if (!window.confirm('Supprimer cette tâche ?')) return;
 
