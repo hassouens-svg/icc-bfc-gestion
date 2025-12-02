@@ -1429,10 +1429,10 @@ const ProjetDetailPage = () => {
                                     {jalon.acteur}
                                   </div>
                                 )}
-                                {jalon.deadline && (
+                                {jalon.date_debut && jalon.date_fin && (
                                   <div className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
-                                    {new Date(jalon.deadline).toLocaleString('fr-FR')}
+                                    {new Date(jalon.date_debut).toLocaleDateString('fr-FR')} → {new Date(jalon.date_fin).toLocaleDateString('fr-FR')}
                                   </div>
                                 )}
                               </div>
