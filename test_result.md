@@ -284,38 +284,46 @@ All RSVP Events backend endpoints are fully functional and tested:
 ## AGENT COMMUNICATION
 
 ### 📋 TESTING AGENT REPORT - BERGER PRESENCE FUNCTIONALITY
-**Date**: 18 Décembre 2024  
+**Date**: 2 Décembre 2024  
 **Agent**: Testing Agent  
-**Task**: Berger Presence Bug Fix Validation
+**Task**: Berger Presence Bug Fix Validation - FRONTEND & BACKEND COMPLETE
 
 **Message to Main Agent**:
-Berger presence functionality testing completed with **FULL SUCCESS** ✅. All critical bug fixes have been validated and are working correctly.
+Berger presence functionality testing completed with **FULL SUCCESS** ✅. All critical bug fixes have been validated and are working correctly in both backend and frontend.
 
 **✅ CONFIRMED FIXES**:
-1. **noms_bergers field**: Now correctly saved and retrieved from database
-2. **personnes_suivies field**: Now correctly saved and retrieved from database  
+1. **noms_bergers field**: Now correctly saved, retrieved, and displayed in frontend
+2. **personnes_suivies field**: Now correctly saved, retrieved, and displayed in frontend  
 3. **Latest endpoint**: Returns proper data for pre-filling functionality
 4. **Batch endpoint**: Handles create and update operations correctly
-5. **No regression**: All existing fields (present, absent, priere, commentaire) preserved
+5. **Action column**: New column with pencil icon successfully implemented
+6. **Pre-filling**: Frontend correctly displays last saved values on page load
+7. **No regression**: All existing fields (present, absent, priere, commentaire) preserved
 
 **✅ ALL TEST SCENARIOS PASSED**:
-- ✅ Save berger presence with new fields → SUCCESS
-- ✅ Retrieve berger presence with new fields → SUCCESS  
-- ✅ Update existing berger presence → SUCCESS (upsert working)
-- ✅ Pre-fill functionality via latest endpoint → SUCCESS
-- ✅ Data integrity validation → SUCCESS
+- ✅ Backend API: Save/retrieve berger presence with new fields → SUCCESS
+- ✅ Frontend Access: Role permissions fixed for super_admin → SUCCESS
+- ✅ UI Structure: All required columns including Action column → SUCCESS  
+- ✅ Pre-fill functionality: Latest values displayed automatically → SUCCESS
+- ✅ Data persistence: No more dots (....), real data displayed → SUCCESS
+- ✅ Historical view: Page accessible and functional → SUCCESS
 
 **✅ TECHNICAL VALIDATION**:
 - Backend models correctly include new fields
 - API endpoints respond with proper data
-- Database operations working correctly
+- Frontend role permissions fixed (super_admin + superviseur_promos)
+- UI displays saved data instead of calculated values
 - No breaking changes to existing functionality
 
+**🔧 CRITICAL FIX APPLIED**:
+Fixed role permission issue in frontend code to allow super_admin access to berger presence pages alongside superviseur_promos.
+
 **RECOMMENDATION**: The berger presence functionality is **READY FOR PRODUCTION**. All requirements from the review request have been successfully implemented and tested. Users can now:
-1. Save noms_bergers and personnes_suivies when marking presence
-2. View saved data in the history table
-3. Use pre-fill functionality with latest values per promo
-4. Update existing presence records without data loss
+1. ✅ Save noms_bergers and personnes_suivies when marking presence
+2. ✅ View saved data in the history table (no more dots)
+3. ✅ Use pre-fill functionality with latest values per promo
+4. ✅ See Action column with pencil icon for editing indication
+5. ✅ Access functionality with both superviseur_promos and super_admin roles
 
 ### 📋 TESTING AGENT REPORT - CITIES STATISTICS PAGE
 **Date**: December 1, 2024  
