@@ -4489,6 +4489,83 @@ async def delete_depense(depense_id: str, current_user: dict = Depends(get_curre
     await db.depenses_projet.delete_one({"id": depense_id})
     return {"message": "Dépense supprimée"}
 
+
+# POLES
+@api_router.get("/events/poles")
+async def get_poles(projet_id: str, current_user: dict = Depends(get_current_user)):
+    """Get all poles for a project"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    poles = await db.poles.find({"projet_id": projet_id}, {"_id": 0}).sort("created_at", 1).to_list(1000)
+    
+    # For each pole, calculate completion percentage
+    for pole in poles:
+        taches = await db.taches.find({"pole_id": pole["id"]}, {"_id": 0}).to_list(1000)
+        total_taches = len(taches)
+        taches_terminees = len([t for t in taches if t.get("statut") == "termine"])
+        pole["nb_taches"] = total_taches
+        pole["nb_taches_terminees"] = taches_terminees
+        pole["completion_percent"] = round((taches_terminees / total_taches * 100) if total_taches > 0 else 0, 1)
+    
+    return poles
+
+@api_router.post("/events/poles")
+async def create_pole(pole: PoleCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new pole"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Verify project exists
+    projet = await db.projets.find_one({"id": pole.projet_id}, {"_id": 0})
+    if not projet:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    pole_dict = pole.model_dump()
+    pole_dict["id"] = str(uuid.uuid4())
+    pole_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    pole_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.poles.insert_one(pole_dict)
+    return {"message": "Pôle créé", "id": pole_dict["id"]}
+
+@api_router.put("/events/poles/{pole_id}")
+async def update_pole(pole_id: str, pole: PoleUpdate, current_user: dict = Depends(get_current_user)):
+    """Update a pole"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    existing = await db.poles.find_one({"id": pole_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Pôle non trouvé")
+    
+    update_data = {k: v for k, v in pole.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.poles.update_one({"id": pole_id}, {"$set": update_data})
+    return {"message": "Pôle mis à jour"}
+
+@api_router.delete("/events/poles/{pole_id}")
+async def delete_pole(pole_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a pole"""
+    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
+    if current_user["role"] not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Check if pole has tasks
+    taches = await db.taches.find({"pole_id": pole_id}, {"_id": 0}).to_list(1)
+    if taches:
+        raise HTTPException(status_code=400, detail="Impossible de supprimer un pôle contenant des tâches. Supprimez d'abord les tâches ou déplacez-les.")
+    
+    result = await db.poles.delete_one({"id": pole_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Pôle non trouvé")
+    
+    return {"message": "Pôle supprimé"}
+
 # CAMPAGNES COMMUNICATION
 @api_router.get("/events/campagnes")
 async def get_campagnes(current_user: dict = Depends(get_current_user)):
