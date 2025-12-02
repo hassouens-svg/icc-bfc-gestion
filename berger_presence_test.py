@@ -378,14 +378,14 @@ class BergerPresenceTest:
         update_data = {
             "presences": [
                 {
-                    "berger_id": "test-berger-1",  # Same berger_id as before
+                    "berger_id": getattr(self, 'test_berger_1', 'test-berger-1'),  # Same berger_id as before
                     "date": self.test_date,        # Same date
                     "present": True,
                     "priere": False,               # Changed from True to False
                     "commentaire": "Commentaire mis à jour",
                     "enregistre_par": "test-user-1",
                     "ville": self.ville,
-                    "promo_name": "Promo Août",
+                    "promo_name": getattr(self, 'test_promo_aout', 'Promo Août'),
                     "noms_bergers": "Jean Dupont, Marie Martin, Nouveau Berger",  # Updated
                     "personnes_suivies": 7         # Changed from 5 to 7
                 }
