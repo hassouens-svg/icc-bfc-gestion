@@ -106,47 +106,31 @@ const MarquerPresenceBergersPage = () => {
     }
   };
 
-  const handlePresenceChange = (bergerId, present) => {
-    setPresences({
-      ...presences,
-      [bergerId]: { ...presences[bergerId], present }
+  const handleEditPromo = (promo) => {
+    setEditingPromo({
+      ...promo,
+      editData: presencesData[promo.promo_name]
     });
   };
 
-  const handlePriereChange = (bergerId, checked) => {
-    setPresences({
-      ...presences,
-      [bergerId]: { ...presences[bergerId], priere: checked }
-    });
-  };
-
-  const handleCommentaireChange = (bergerId, commentaire) => {
-    setPresences({
-      ...presences,
-      [bergerId]: { ...presences[bergerId], commentaire }
-    });
-  };
-
-  const handleSave = async () => {
+  const handleSavePromo = async () => {
+    if (!editingPromo) return;
+    
     setSaving(true);
     try {
-      // Filtrer uniquement les bergers avec une présence définie
-      const presencesToSave = Object.entries(presences)
-        .filter(([_, data]) => data.present !== null)
-        .map(([bergerId, data]) => ({
-          berger_id: bergerId,
-          date: dateSelectionnee,
-          present: data.present,
-          priere: data.priere,
-          commentaire: data.commentaire,
-          enregistre_par: user.id,
-          ville: user.city
-        }));
-
-      if (presencesToSave.length === 0) {
-        toast.error('Veuillez marquer au moins une présence');
-        return;
-      }
+      const promoData = presencesData[editingPromo.promo_name];
+      
+      // Sauvegarder pour chaque berger de la promo
+      const presencesToSave = editingPromo.bergers.map(berger => ({
+        berger_id: berger.id,
+        date: dateSelectionnee,
+        present: promoData.presents > 0, // Si au moins 1 présent
+        priere: promoData.priere,
+        commentaire: promoData.commentaire,
+        enregistre_par: user.id,
+        ville: user.city,
+        promo_name: editingPromo.promo_name
+      }));
 
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/berger-presences/batch`, {
         method: 'POST',
@@ -161,20 +145,24 @@ const MarquerPresenceBergersPage = () => {
         throw new Error('Erreur enregistrement');
       }
 
-      toast.success(`✅ ${presencesToSave.length} présence(s) enregistrée(s)`);
-      
-      // Réinitialiser le formulaire
-      const resetPresences = {};
-      Object.keys(presences).forEach(id => {
-        resetPresences[id] = { present: null, priere: false, commentaire: '' };
-      });
-      setPresences(resetPresences);
+      toast.success(`✅ Présence de ${editingPromo.promo_name} enregistrée`);
+      setEditingPromo(null);
     } catch (error) {
       console.error('Erreur:', error);
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleUpdatePresencesData = (promoName, field, value) => {
+    setPresencesData({
+      ...presencesData,
+      [promoName]: {
+        ...presencesData[promoName],
+        [field]: value
+      }
+    });
   };
 
   if (loading) {
