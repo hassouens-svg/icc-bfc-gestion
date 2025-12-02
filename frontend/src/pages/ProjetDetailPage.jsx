@@ -973,10 +973,10 @@ const ProjetDetailPage = () => {
               </div>
               <div>
                 <Label>Responsable du pôle</Label>
-                <Select value={newPole.responsable || ''} onValueChange={(val) => setNewPole({...newPole, responsable: val})}>
+                <Select value={newPole.responsable || 'none'} onValueChange={(val) => setNewPole({...newPole, responsable: val === 'none' ? '' : val})}>
                   <SelectTrigger><SelectValue placeholder="Sélectionner un responsable (optionnel)" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Aucun responsable</SelectItem>
+                    <SelectItem value="none">Aucun responsable</SelectItem>
                     {(projet.team_members || []).map((member, idx) => (
                       <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
                     ))}
