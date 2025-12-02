@@ -630,15 +630,37 @@ const ProjetDetailPage = () => {
 
           {/* Jalons */}
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setIsJalonOpen(true)}>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <Target className="h-8 w-8 mx-auto mb-2 text-orange-600" />
-                <div className="text-sm text-gray-600">Jalons</div>
-                <div className="text-2xl font-bold mt-2">{jalons.length}</div>
-                <div className="mt-2 text-xs text-gray-500">
-                  {jalons.filter(j => j.statut === 'termine').length} terminés
-                </div>
+            <CardContent className="pt-4">
+              <div className="text-center mb-3">
+                <Target className="h-6 w-6 mx-auto mb-1 text-orange-600" />
+                <div className="text-sm font-semibold">Jalons ({jalons.length})</div>
               </div>
+              {jalons.length === 0 ? (
+                <div className="text-xs text-gray-400 text-center">Aucun jalon</div>
+              ) : (
+                <div className="space-y-1">
+                  {jalons.slice(0, 3).map((jalon, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs">
+                      <div className="truncate flex-1 mr-2">{jalon.titre}</div>
+                      <span className={`px-1.5 py-0.5 rounded text-xs whitespace-nowrap ${
+                        jalon.statut === 'termine' ? 'bg-green-100 text-green-800' :
+                        jalon.statut === 'en_retard' ? 'bg-red-100 text-red-800' :
+                        jalon.statut === 'en_cours' ? 'bg-blue-100 text-blue-800' :
+                        jalon.statut === 'annule' ? 'bg-gray-100 text-gray-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {jalon.statut === 'termine' ? '✓' :
+                         jalon.statut === 'en_retard' ? '!' :
+                         jalon.statut === 'en_cours' ? '...' :
+                         jalon.statut === 'annule' ? 'X' : '○'}
+                      </span>
+                    </div>
+                  ))}
+                  {jalons.length > 3 && (
+                    <div className="text-xs text-gray-400 text-center mt-1">+{jalons.length - 3} autres</div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
