@@ -901,6 +901,18 @@ const ProjetDetailPage = () => {
             </DialogHeader>
             <div className="space-y-4">
               <div>
+                <Label>Pôle</Label>
+                <Select value={newTache.pole_id || ''} onValueChange={(val) => setNewTache({...newTache, pole_id: val})}>
+                  <SelectTrigger><SelectValue placeholder="Sélectionner un pôle (optionnel)" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Aucun pôle (Tâche générale)</SelectItem>
+                    {poles.map((pole) => (
+                      <SelectItem key={pole.id} value={pole.id}>{pole.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label>Titre *</Label>
                 <Input value={newTache.titre} onChange={(e) => setNewTache({...newTache, titre: e.target.value})} />
               </div>
@@ -914,9 +926,10 @@ const ProjetDetailPage = () => {
               </div>
               <div>
                 <Label>Assigné à</Label>
-                <Select value={newTache.assigne_a} onValueChange={(val) => setNewTache({...newTache, assigne_a: val})}>
-                  <SelectTrigger><SelectValue placeholder="Sélectionner" /></SelectTrigger>
+                <Select value={newTache.assigne_a || ''} onValueChange={(val) => setNewTache({...newTache, assigne_a: val})}>
+                  <SelectTrigger><SelectValue placeholder="Sélectionner un membre" /></SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="">Non assigné</SelectItem>
                     {(projet.team_members || []).map((member, idx) => (
                       <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
                     ))}
@@ -924,7 +937,10 @@ const ProjetDetailPage = () => {
                 </Select>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsTacheOpen(false)}>Annuler</Button>
+                <Button variant="outline" onClick={() => {
+                  setIsTacheOpen(false);
+                  setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
+                }}>Annuler</Button>
                 <Button onClick={handleAddTache}>Créer</Button>
               </div>
             </div>
