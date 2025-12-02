@@ -776,12 +776,26 @@ const ProjetDetailPage = () => {
 
                 {/* Tâches sans pôle */}
                 {taches.filter(t => !t.pole_id).length > 0 && (
-                  <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
-                    <div className="bg-gray-50 p-4">
-                      <h3 className="text-lg font-bold text-gray-700">📋 Tâches Générales (Sans Pôle)</h3>
-                      <p className="text-sm text-gray-500">Tâches non assignées à un pôle spécifique</p>
+                  <div className="border-2 border-gray-300 rounded-xl overflow-hidden mt-6">
+                    <div className="bg-gray-100 p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-2xl font-bold text-gray-800 mb-2">📋 Tâches Générales</h3>
+                          <p className="text-sm text-gray-600">Tâches non assignées à un pôle spécifique ({taches.filter(t => !t.pole_id).length})</p>
+                        </div>
+                        <Button 
+                          size="lg"
+                          variant="outline"
+                          onClick={() => {
+                            setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
+                            setIsTacheOpen(true);
+                          }}
+                        >
+                          <Plus className="h-5 w-5 mr-2" /> Ajouter une tâche
+                        </Button>
+                      </div>
                     </div>
-                    <div className="p-4 space-y-2">
+                    <div className="p-6 bg-white space-y-3">
                       {taches.filter(t => !t.pole_id).map(tache => (
                         <div key={tache.id} className={`border rounded-lg p-3 ${getTaskColor(tache.statut)}`}>
                           <div className="flex items-start justify-between">
