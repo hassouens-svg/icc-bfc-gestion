@@ -509,14 +509,17 @@ const PlanningActivitesPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {activites.length === 0 ? (
+              {activitesFiltrees().length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8 text-gray-500">
-                    Aucune activité pour l'année {anneeSelectionnee}. Cliquez sur "Nouvelle activité" pour commencer.
+                    {statutFiltre !== 'tous' 
+                      ? `Aucune activité avec le statut "${statutFiltre}" pour l'année ${anneeSelectionnee}.`
+                      : `Aucune activité pour l'année ${anneeSelectionnee}. Cliquez sur "Nouvelle activité" pour commencer.`
+                    }
                   </TableCell>
                 </TableRow>
               ) : (
-                activites.map((activite) => {
+                activitesFiltrees().map((activite) => {
                   const isEditing = editingId === activite.id;
                   const data = isEditing ? editData : activite;
                   
