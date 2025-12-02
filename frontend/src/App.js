@@ -120,6 +120,8 @@ function App() {
           <Route path="/trouver-ma-fi" element={<TrouverMaFIPage />} />
           <Route path="/familles-impact/dashboard-superviseur" element={<DashboardSuperviseurFIPage />} />
           <Route path="/dashboard-superviseur-promos" element={<DashboardSuperviseurPromosPage />} />
+          <Route path="/berger-presences" element={<MarquerPresenceBergersPage />} />
+          <Route path="/berger-presences/historique" element={<HistoriquePresenceBergersPage />} />
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
           {/* Redirection : Ancienne page -> Nouvelle page complète */}
