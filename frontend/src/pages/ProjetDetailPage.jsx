@@ -540,26 +540,25 @@ const ProjetDetailPage = () => {
         {/* Team Performance */}
         {teamStats.length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle>Performance de l'équipe</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">👥 Performance Équipe</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
                 {teamStats.map((member, idx) => (
-                  <div key={idx} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <div>
-                        <div className="font-semibold">{member.nom}</div>
+                  <div key={idx} className="border rounded p-2 text-sm">
+                    <div className="flex justify-between items-center mb-1">
+                      <div className="truncate">
+                        <div className="font-medium text-sm truncate">{member.nom}</div>
                         <div className="text-xs text-gray-500">{member.role}</div>
-                        {member.telephone && <div className="text-xs text-gray-400">📱 {member.telephone}</div>}
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-blue-600">{member.progress}%</div>
-                        <div className="text-xs text-gray-500">{member.termine}/{member.total} tâches</div>
+                      <div className="text-right ml-2">
+                        <div className="text-lg font-bold text-blue-600">{member.progress}%</div>
+                        <div className="text-xs text-gray-500">{member.termine}/{member.total}</div>
                       </div>
                     </div>
-                    <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
-                      <div className="bg-blue-500 h-full" style={{width: `${member.progress}%`}}></div>
+                    <div className="bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-blue-500 h-full transition-all" style={{width: `${member.progress}%`}}></div>
                     </div>
                   </div>
                 ))}
