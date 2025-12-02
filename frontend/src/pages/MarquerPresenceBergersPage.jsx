@@ -38,6 +38,13 @@ const MarquerPresenceBergersPage = () => {
       const allVisitors = await response.json();
       const cityVisitors = allVisitors.filter(v => v.city === user.city);
       
+      // Récupérer toutes les présences pour pré-remplir
+      const allPresencesResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/berger-presences/latest?ville=${user.city}`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+      );
+      const latestPresences = allPresencesResponse.ok ? await allPresencesResponse.json() : [];
+      
       const monthNames = {
         '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
         '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
@@ -70,13 +77,23 @@ const MarquerPresenceBergersPage = () => {
       });
       
       Object.values(promoGroups).forEach(promo => {
-        promo.nomsBergers = promo.bergers.map(b => b.name).join(', ');
-        const suivies = cityVisitors.filter(v => {
-          if (!v.assigned_month) return false;
-          const visitorMonth = v.assigned_month.split('-')[1];
-          return visitorMonth === promo.monthNum && v.statut_suivi !== 'arrete';
-        });
-        promo.personnesSuivies = suivies.length;
+        // Chercher la dernière présence sauvegardée pour cette promo
+        const lastPresence = latestPresences.find(p => p.promo_name === promo.nom);
+        
+        if (lastPresence && lastPresence.noms_bergers) {
+          // Pré-remplir avec les valeurs sauvegardées
+          promo.nomsBergers = lastPresence.noms_bergers;
+          promo.personnesSuivies = lastPresence.personnes_suivies || 0;
+        } else {
+          // Valeurs par défaut si pas de dernière présence
+          promo.nomsBergers = promo.bergers.map(b => b.name).join(', ');
+          const suivies = cityVisitors.filter(v => {
+            if (!v.assigned_month) return false;
+            const visitorMonth = v.assigned_month.split('-')[1];
+            return visitorMonth === promo.monthNum && v.statut_suivi !== 'arrete';
+          });
+          promo.personnesSuivies = suivies.length;
+        }
       });
       
       const sortedPromos = Object.values(promoGroups).sort((a, b) => 
