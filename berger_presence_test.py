@@ -153,34 +153,43 @@ class BergerPresenceTest:
     
     def test_berger_presences_batch_save(self):
         """Test 2: POST /api/berger-presences/batch with new fields"""
+        # Use unique test data to avoid conflicts
+        import uuid
+        unique_suffix = str(uuid.uuid4())[:8]
+        
         test_data = {
             "presences": [
                 {
-                    "berger_id": "test-berger-1",
+                    "berger_id": f"test-berger-unique-1-{unique_suffix}",
                     "date": self.test_date,
                     "present": True,
                     "priere": True,
-                    "commentaire": "Test commentaire pour Promo Août",
+                    "commentaire": "Test commentaire pour Promo Test Août",
                     "enregistre_par": "test-user-1",
                     "ville": self.ville,
-                    "promo_name": "Promo Août",
+                    "promo_name": f"Promo Test Août {unique_suffix}",
                     "noms_bergers": "Jean Dupont, Marie Martin",
                     "personnes_suivies": 5
                 },
                 {
-                    "berger_id": "test-berger-2", 
+                    "berger_id": f"test-berger-unique-2-{unique_suffix}", 
                     "date": self.test_date,
                     "present": False,
                     "priere": False,
                     "commentaire": "Absent pour raisons personnelles",
                     "enregistre_par": "test-user-1",
                     "ville": self.ville,
-                    "promo_name": "Promo Septembre",
+                    "promo_name": f"Promo Test Septembre {unique_suffix}",
                     "noms_bergers": "Pierre Durand, Sophie Leroy, Marc Petit",
                     "personnes_suivies": 8
                 }
             ]
         }
+        
+        # Store test data for later verification
+        self.test_promo_aout = f"Promo Test Août {unique_suffix}"
+        self.test_promo_septembre = f"Promo Test Septembre {unique_suffix}"
+        self.test_berger_1 = f"test-berger-unique-1-{unique_suffix}"
         
         try:
             response = requests.post(
