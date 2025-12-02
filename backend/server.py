@@ -431,6 +431,33 @@ class DepenseCreate(BaseModel):
     raison: str
     date: Optional[str] = None
 
+
+class Jalon(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    projet_id: str
+    titre: str
+    description: Optional[str] = None
+    acteur: Optional[str] = None  # username
+    deadline: Optional[str] = None  # datetime ISO format (YYYY-MM-DDTHH:mm)
+    statut: str = "a_faire"  # a_faire, en_cours, termine, en_retard, annule
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class JalonCreate(BaseModel):
+    projet_id: str
+    titre: str
+    description: Optional[str] = None
+    acteur: Optional[str] = None
+    deadline: Optional[str] = None
+
+class JalonUpdate(BaseModel):
+    titre: Optional[str] = None
+    description: Optional[str] = None
+    acteur: Optional[str] = None
+    deadline: Optional[str] = None
+    statut: Optional[str] = None
+
 class CommentaireProjet(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
