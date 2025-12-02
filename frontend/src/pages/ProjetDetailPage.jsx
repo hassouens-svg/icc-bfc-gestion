@@ -623,16 +623,16 @@ const ProjetDetailPage = () => {
                 <p className="text-sm">Créez des pôles pour mieux organiser vos tâches par thématique</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {poles.map(pole => {
                   const poleTaches = taches.filter(t => t.pole_id === pole.id);
                   const tachesTerminees = poleTaches.filter(t => t.statut === 'termine').length;
                   const pourcentage = poleTaches.length > 0 ? Math.round((tachesTerminees / poleTaches.length) * 100) : 0;
                   
                   return (
-                    <div key={pole.id} className="border-2 border-purple-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+                    <div key={pole.id} className="border border-purple-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       {/* En-tête du Pôle */}
-                      <div className="bg-purple-50 p-6">
+                      <div className="bg-purple-50 p-3">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             {editingPole?.id === pole.id ? (
