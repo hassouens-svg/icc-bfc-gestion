@@ -902,7 +902,7 @@ const ProjetDetailPage = () => {
             <div className="space-y-4">
               <div>
                 <Label>Pôle</Label>
-                <Select value={newTache.pole_id || ''} onValueChange={(val) => setNewTache({...newTache, pole_id: val})}>
+                <Select value={newTache.pole_id || 'none'} onValueChange={(val) => setNewTache({...newTache, pole_id: val === 'none' ? '' : val})}>
                   <SelectTrigger><SelectValue placeholder="Sélectionner un pôle (optionnel)" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Aucun pôle (Tâche générale)</SelectItem>
