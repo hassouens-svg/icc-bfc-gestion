@@ -1350,22 +1350,31 @@ const ProjetDetailPage = () => {
                               placeholder="Description"
                               rows={2}
                             />
+                            <div>
+                              <Label className="text-xs">Acteur</Label>
+                              <Input
+                                value={editingJalon.acteur || ''}
+                                onChange={(e) => setEditingJalon({...editingJalon, acteur: e.target.value})}
+                                placeholder="Nom"
+                                className="mt-1"
+                              />
+                            </div>
                             <div className="grid grid-cols-2 gap-2">
                               <div>
-                                <Label className="text-xs">Acteur</Label>
+                                <Label className="text-xs">Date début</Label>
                                 <Input
-                                  value={editingJalon.acteur || ''}
-                                  onChange={(e) => setEditingJalon({...editingJalon, acteur: e.target.value})}
-                                  placeholder="Nom"
+                                  type="datetime-local"
+                                  value={editingJalon.date_debut || ''}
+                                  onChange={(e) => setEditingJalon({...editingJalon, date_debut: e.target.value})}
                                   className="mt-1"
                                 />
                               </div>
                               <div>
-                                <Label className="text-xs">Date et heure</Label>
+                                <Label className="text-xs">Date fin</Label>
                                 <Input
                                   type="datetime-local"
-                                  value={editingJalon.deadline || ''}
-                                  onChange={(e) => setEditingJalon({...editingJalon, deadline: e.target.value})}
+                                  value={editingJalon.date_fin || ''}
+                                  onChange={(e) => setEditingJalon({...editingJalon, date_fin: e.target.value})}
                                   className="mt-1"
                                 />
                               </div>
