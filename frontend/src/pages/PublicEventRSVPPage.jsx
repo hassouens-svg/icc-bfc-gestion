@@ -115,24 +115,27 @@ const PublicEventRSVPPage = () => {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <Card className="shadow-lg">
-          <CardContent className="pt-8 pb-8 space-y-6">
-            <div className="mx-auto w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center">
-              <Calendar className="h-10 w-10 text-purple-600" />
+      <div className="max-w-2xl w-full">
+        <Card className="shadow-lg overflow-hidden">
+          <CardContent className="p-0">
+            {/* En-tête avec icône */}
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-8 pt-8 pb-6 text-center">
+              <div className="mx-auto w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                <Calendar className="h-10 w-10 text-purple-600" />
+              </div>
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-2">
+                {event.title}
+              </h1>
             </div>
-            
-            <h1 className="text-3xl font-bold text-center text-gray-900">
-              Confirmation de Présence
-            </h1>
 
-            {/* Image de l'événement - plus grande */}
+            {/* Image de l'événement - grande et fixe */}
             {event.image_url && (
-              <div className="rounded-lg overflow-hidden mb-4">
+              <div className="w-full overflow-hidden">
                 <img 
                   src={event.image_url} 
                   alt={event.title}
-                  className="w-full h-64 object-cover"
+                  className="w-full h-80 object-cover"
+                  style={{ objectPosition: 'center' }}
                   onError={(e) => { 
                     console.error('Image failed to load:', event.image_url);
                     e.target.style.display = 'none'; 
@@ -141,21 +144,64 @@ const PublicEventRSVPPage = () => {
               </div>
             )}
             {!event.image_url && (
-              <div className="w-full h-64 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center mb-4">
-                <Calendar className="h-20 w-20 text-purple-300" />
+              <div className="w-full h-80 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                <Calendar className="h-32 w-32 text-purple-300" />
               </div>
             )}
 
-            <div className="bg-gray-50 rounded-lg p-4 flex items-start gap-3">
-              <div className="text-gray-400 mt-1">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
+            {/* Contenu principal avec description */}
+            <div className="px-8 py-8 space-y-6">
+              {/* Description de l'événement */}
+              {event.description && (
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h2 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">À propos</h2>
+                  <p className="text-base text-gray-700 leading-relaxed">
+                    {event.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Informations de l'événement */}
+              <div className="space-y-3 bg-indigo-50 rounded-lg p-4">
+                {event.date && (
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Calendar className="h-5 w-5 text-indigo-600" />
+                    <span className="font-medium">{new Date(event.date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  </div>
+                )}
+                {event.time && (
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <svg className="h-5 w-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="font-medium">{event.time}</span>
+                  </div>
+                )}
+                {event.location && (
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <svg className="h-5 w-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="font-medium">{event.location}</span>
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-gray-600">
-                Merci de confirmer votre présence en cliquant sur l'un des boutons ci-dessous
-              </p>
-            </div>
+
+              {/* Message de confirmation */}
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 flex items-start gap-3">
+                <div className="text-purple-600 mt-1">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Confirmation de Présence</h3>
+                  <p className="text-sm text-gray-700">
+                    Merci de confirmer votre présence en cliquant sur l'un des boutons ci-dessous
+                  </p>
+                </div>
+              </div>
 
             <div className="space-y-3">
               <Button
