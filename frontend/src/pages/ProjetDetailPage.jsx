@@ -905,7 +905,7 @@ const ProjetDetailPage = () => {
                 <Select value={newTache.pole_id || ''} onValueChange={(val) => setNewTache({...newTache, pole_id: val})}>
                   <SelectTrigger><SelectValue placeholder="Sélectionner un pôle (optionnel)" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Aucun pôle (Tâche générale)</SelectItem>
+                    <SelectItem value="none">Aucun pôle (Tâche générale)</SelectItem>
                     {poles.map((pole) => (
                       <SelectItem key={pole.id} value={pole.id}>{pole.nom}</SelectItem>
                     ))}
