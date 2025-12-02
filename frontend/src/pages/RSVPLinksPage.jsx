@@ -501,9 +501,14 @@ const RSVPLinksPage = () => {
             </div>
             <div className="flex gap-2">
               <Button type="submit" className="flex-1" disabled={uploadingImage}>
-                Créer
+                {isEditMode ? 'Mettre à jour' : 'Créer'}
               </Button>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+              <Button type="button" variant="outline" onClick={() => {
+                setIsDialogOpen(false);
+                setIsEditMode(false);
+                setEditingEventId(null);
+                setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
+              }}>
                 Annuler
               </Button>
             </div>
