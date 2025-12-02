@@ -1464,21 +1464,29 @@ const ProjetDetailPage = () => {
                       rows={2}
                     />
                   </div>
+                  <div>
+                    <Label>Acteur / Responsable</Label>
+                    <Input
+                      value={newJalon.acteur || ''}
+                      onChange={(e) => setNewJalon({...newJalon, acteur: e.target.value})}
+                      placeholder="Personne responsable"
+                    />
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label>Acteur</Label>
+                      <Label>Date de début</Label>
                       <Input
-                        value={newJalon.acteur || ''}
-                        onChange={(e) => setNewJalon({...newJalon, acteur: e.target.value})}
-                        placeholder="Personne responsable"
+                        type="datetime-local"
+                        value={newJalon.date_debut || ''}
+                        onChange={(e) => setNewJalon({...newJalon, date_debut: e.target.value})}
                       />
                     </div>
                     <div>
-                      <Label>Date et heure limite</Label>
+                      <Label>Date de fin</Label>
                       <Input
                         type="datetime-local"
-                        value={newJalon.deadline || ''}
-                        onChange={(e) => setNewJalon({...newJalon, deadline: e.target.value})}
+                        value={newJalon.date_fin || ''}
+                        onChange={(e) => setNewJalon({...newJalon, date_fin: e.target.value})}
                       />
                     </div>
                   </div>
