@@ -1517,11 +1517,11 @@ const ProjetDetailPage = () => {
               {jalons.length === 0 ? (
                 <div className="text-center py-12 text-gray-400">
                   <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <p>Aucun jalon avec date limite définie</p>
+                  <p>Aucun jalon défini</p>
                 </div>
               ) : (() => {
                 // Calculer la plage de dates
-                const jalonsWithDates = jalons.filter(j => j.deadline);
+                const jalonsWithDates = jalons.filter(j => j.date_debut && j.date_fin);
                 if (jalonsWithDates.length === 0) {
                   return (
                     <div className="text-center py-12 text-gray-400">
