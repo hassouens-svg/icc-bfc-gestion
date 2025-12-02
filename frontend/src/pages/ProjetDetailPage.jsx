@@ -1494,6 +1494,188 @@ const ProjetDetailPage = () => {
           </DialogContent>
         </Dialog>
 
+
+        {/* Dialog Gantt */}
+        <Dialog open={isGanttOpen} onOpenChange={setIsGanttOpen}>
+          <DialogContent className="max-w-6xl max-h-[90vh]">
+            <DialogHeader>
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl">📊 Diagramme de Gantt - Jalons du Projet</DialogTitle>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setIsGanttOpen(false);
+                    setIsJalonOpen(true);
+                  }}
+                >
+                  Retour aux jalons
+                </Button>
+              </div>
+            </DialogHeader>
+            <div className="space-y-4 overflow-y-auto max-h-[70vh]">
+              {jalons.length === 0 ? (
+                <div className="text-center py-12 text-gray-400">
+                  <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                  <p>Aucun jalon avec date limite définie</p>
+                </div>
+              ) : (() => {
+                // Calculer la plage de dates
+                const jalonsWithDates = jalons.filter(j => j.deadline);
+                if (jalonsWithDates.length === 0) {
+                  return (
+                    <div className="text-center py-12 text-gray-400">
+                      <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                      <p>Aucun jalon avec date limite définie</p>
+                    </div>
+                  );
+                }
+
+                const dates = jalonsWithDates.map(j => new Date(j.deadline));
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+                const today = new Date();
+                
+                // Ajouter une marge de 7 jours avant et après
+                const startDate = new Date(Math.min(minDate, today));
+                startDate.setDate(startDate.getDate() - 7);
+                const endDate = new Date(Math.max(maxDate, today));
+                endDate.setDate(endDate.getDate() + 7);
+                
+                const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                
+                const getPosition = (date) => {
+                  const daysDiff = Math.ceil((new Date(date) - startDate) / (1000 * 60 * 60 * 24));
+                  return (daysDiff / totalDays) * 100;
+                };
+                
+                const todayPosition = getPosition(today);
+
+                return (
+                  <div className="space-y-4">
+                    {/* Légende des dates */}
+                    <div className="flex justify-between text-xs text-gray-600 px-48">
+                      <span>{startDate.toLocaleDateString('fr-FR')}</span>
+                      <span className="font-medium text-blue-600">Aujourd'hui</span>
+                      <span>{endDate.toLocaleDateString('fr-FR')}</span>
+                    </div>
+
+                    {/* Timeline */}
+                    <div className="space-y-3">
+                      {jalonsWithDates.sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).map((jalon, idx) => {
+                        const position = getPosition(jalon.deadline);
+                        const isPast = new Date(jalon.deadline) < today;
+                        const statusColor = 
+                          jalon.statut === 'termine' ? 'bg-green-500' :
+                          jalon.statut === 'en_retard' ? 'bg-red-500' :
+                          jalon.statut === 'en_cours' ? 'bg-blue-500' :
+                          jalon.statut === 'annule' ? 'bg-gray-400' :
+                          'bg-yellow-500';
+
+                        return (
+                          <div key={idx} className="relative">
+                            {/* Nom du jalon */}
+                            <div className="flex items-center gap-3 mb-2">
+                              <div className="w-44 text-sm font-medium truncate">{jalon.titre}</div>
+                              <span className={`px-2 py-0.5 text-xs rounded-full ${
+                                jalon.statut === 'termine' ? 'bg-green-100 text-green-800' :
+                                jalon.statut === 'en_retard' ? 'bg-red-100 text-red-800' :
+                                jalon.statut === 'en_cours' ? 'bg-blue-100 text-blue-800' :
+                                jalon.statut === 'annule' ? 'bg-gray-100 text-gray-800' :
+                                'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {jalon.statut === 'termine' ? 'Terminé' :
+                                 jalon.statut === 'en_retard' ? 'En retard' :
+                                 jalon.statut === 'en_cours' ? 'En cours' :
+                                 jalon.statut === 'annule' ? 'Annulé' : 'À faire'}
+                              </span>
+                            </div>
+
+                            {/* Barre de timeline */}
+                            <div className="relative h-12 bg-gray-100 rounded-lg overflow-hidden">
+                              {/* Ligne aujourd'hui */}
+                              {idx === 0 && (
+                                <div
+                                  className="absolute top-0 bottom-0 w-0.5 bg-blue-600 z-10"
+                                  style={{ left: `${todayPosition}%` }}
+                                >
+                                  <div className="absolute -top-1 -left-2 w-4 h-4 bg-blue-600 rounded-full"></div>
+                                </div>
+                              )}
+
+                              {/* Barre du jalon */}
+                              <div
+                                className={`absolute top-3 h-6 ${statusColor} rounded flex items-center px-2`}
+                                style={{
+                                  left: `${Math.max(0, position - 2)}%`,
+                                  width: '4%'
+                                }}
+                              >
+                                <span className="text-white text-xs font-bold">●</span>
+                              </div>
+
+                              {/* Info date */}
+                              <div
+                                className="absolute top-0 text-xs text-gray-600 font-medium"
+                                style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
+                              >
+                                {new Date(jalon.deadline).toLocaleDateString('fr-FR', { 
+                                  day: '2-digit', 
+                                  month: 'short' 
+                                })}
+                              </div>
+                              
+                              {/* Acteur */}
+                              {jalon.acteur && (
+                                <div
+                                  className="absolute bottom-0 text-xs text-gray-500"
+                                  style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
+                                >
+                                  {jalon.acteur}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Légende */}
+                    <div className="border-t pt-4 mt-6">
+                      <div className="flex flex-wrap gap-4 justify-center text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 bg-green-500 rounded"></div>
+                          <span>Terminé</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                          <span>En cours</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                          <span>À faire</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 bg-red-500 rounded"></div>
+                          <span>En retard</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                          <span>Annulé</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-0.5 h-4 bg-blue-600"></div>
+                          <span className="font-medium text-blue-600">Aujourd'hui</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Dialog Équipe */}
         <Dialog open={isTeamOpen} onOpenChange={setIsTeamOpen}>
           <DialogContent className="max-w-2xl">
