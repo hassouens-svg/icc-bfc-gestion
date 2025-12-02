@@ -29,6 +29,12 @@ const MarquerPresenceBergersPage = () => {
     loadPromoData();
   }, [user, navigate]);
 
+  // Debug: Afficher l'état à chaque changement
+  useEffect(() => {
+    console.log('État presencesData mis à jour:', presencesData);
+    console.log('Nombre de promos:', Object.keys(presencesData).length);
+  }, [presencesData]);
+
   const getMonthName = (monthNum) => {
     const months = {
       '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
