@@ -5,8 +5,6 @@ import { getUser, getReferents } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
 import { Calendar, ArrowLeft, Edit2, Check, X, Save } from 'lucide-react';
@@ -14,37 +12,20 @@ import { Calendar, ArrowLeft, Edit2, Check, X, Save } from 'lucide-react';
 const MarquerPresenceBergersPage = () => {
   const navigate = useNavigate();
   const user = getUser();
-  const [promoStats, setPromoStats] = useState([]);
+  const [promos, setPromos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dateSelectionnee, setDateSelectionnee] = useState(new Date().toISOString().split('T')[0]);
-  const [presencesData, setPresencesData] = useState({});
-  const [editingField, setEditingField] = useState(null);
-  const [tempValue, setTempValue] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!user || user.role !== 'superviseur_promos') {
       navigate('/dashboard');
       return;
     }
-    loadPromoData();
-  }, [user, navigate]);
+    loadData();
+  }, []);
 
-  // Debug: Afficher l'état à chaque changement
-  useEffect(() => {
-    console.log('État presencesData mis à jour:', presencesData);
-    console.log('Nombre de promos:', Object.keys(presencesData).length);
-  }, [presencesData]);
-
-  const getMonthName = (monthNum) => {
-    const months = {
-      '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
-      '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
-      '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
-    };
-    return months[monthNum] || monthNum;
-  };
-
-  const loadPromoData = async () => {
+  const loadData = async () => {
     try {
       const allUsers = await getReferents();
       const bergersList = allUsers.filter(
@@ -52,177 +33,100 @@ const MarquerPresenceBergersPage = () => {
       );
       
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors?include_stopped=true`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       const allVisitors = await response.json();
       const cityVisitors = allVisitors.filter(v => v.city === user.city);
+      
+      const monthNames = {
+        '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
+        '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
+        '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
+      };
       
       const promoGroups = {};
       bergersList.forEach(berger => {
         if (berger.assigned_month) {
           const monthPart = berger.assigned_month.split('-')[1];
-          const monthName = getMonthName(monthPart);
+          const monthName = monthNames[monthPart];
           const promoKey = `Promo ${monthName}`;
           
           if (!promoGroups[promoKey]) {
             promoGroups[promoKey] = {
-              promo_name: promoKey,
-              month_num: monthPart,
+              id: promoKey,
+              nom: promoKey,
+              monthNum: monthPart,
               bergers: [],
-              personnes_suivies: 0
+              nomsBergers: '',
+              personnesSuivies: 0,
+              present: false,
+              absent: false,
+              priere: 'Non',
+              commentaire: ''
             };
           }
           promoGroups[promoKey].bergers.push(berger);
         }
       });
       
-      Object.keys(promoGroups).forEach(promoName => {
-        const monthNum = promoGroups[promoName].month_num;
+      Object.values(promoGroups).forEach(promo => {
+        promo.nomsBergers = promo.bergers.map(b => b.name).join(', ');
         const suivies = cityVisitors.filter(v => {
           if (!v.assigned_month) return false;
           const visitorMonth = v.assigned_month.split('-')[1];
-          return visitorMonth === monthNum && v.statut_suivi !== 'arrete';
+          return visitorMonth === promo.monthNum && v.statut_suivi !== 'arrete';
         });
-        promoGroups[promoName].personnes_suivies = suivies.length;
+        promo.personnesSuivies = suivies.length;
       });
       
       const sortedPromos = Object.values(promoGroups).sort((a, b) => 
-        parseInt(a.month_num) - parseInt(b.month_num)
+        parseInt(a.monthNum) - parseInt(b.monthNum)
       );
       
-      // Initialiser les données de présence AVANT de set promoStats
-      const initialData = {};
-      sortedPromos.forEach(promo => {
-        initialData[promo.promo_name] = {
-          present: false,
-          absent: false,
-          priere: 'Non',
-          commentaire: '',
-          noms_bergers: promo.bergers.map(b => b.name).join(', '),
-          personnes_suivies: promo.personnes_suivies
-        };
-      });
-      
-      console.log('Initialisation des données:', initialData);
-      setPresencesData(initialData);
-      setPromoStats(sortedPromos);
+      setPromos(sortedPromos);
     } catch (error) {
-      console.error('Erreur chargement données:', error);
-      toast.error('Erreur lors du chargement');
+      console.error('Erreur:', error);
+      toast.error('Erreur chargement');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCheckboxChange = (promoName, field) => {
-    console.log('Checkbox change:', promoName, field);
-    setPresencesData(prev => {
-      if (!prev[promoName]) {
-        console.error('Promo not found:', promoName);
-        return prev;
-      }
-      
-      const currentValue = prev[promoName][field] || false;
-      const newValue = !currentValue;
-      
-      const updated = {
-        ...prev,
-        [promoName]: {
-          ...prev[promoName],
-          [field]: newValue,
-          // Si on coche présent, on décoche absent et vice versa
-          ...(field === 'present' && { absent: false }),
-          ...(field === 'absent' && { present: false })
-        }
-      };
-      
-      console.log('Nouvel état checkbox:', updated[promoName]);
-      return updated;
-    });
-  };
-
-  const handlePriereChange = (promoName, value) => {
-    setPresencesData(prev => ({
-      ...prev,
-      [promoName]: {
-        ...prev[promoName],
-        priere: value
-      }
-    }));
-    console.log('Prière changée pour', promoName, ':', value);
-  };
-
-  const handleCommentaireChange = (promoName, value) => {
-    console.log('Commentaire change:', promoName, value);
-    setPresencesData(prev => {
-      if (!prev[promoName]) {
-        console.error('Promo not found in state:', promoName);
-        return prev;
-      }
-      const updated = {
-        ...prev,
-        [promoName]: {
-          ...prev[promoName],
-          commentaire: value
-        }
-      };
-      console.log('Nouvel état après commentaire:', updated[promoName]);
-      return updated;
-    });
-  };
-
-  const startEditing = (promoName, field, currentValue) => {
-    setEditingField({ promoName, field });
-    setTempValue(currentValue);
-  };
-
-  const saveEditing = () => {
-    if (editingField) {
-      const newValue = editingField.field === 'personnes_suivies' 
-        ? parseInt(tempValue) || 0 
-        : tempValue;
-      
-      setPresencesData(prev => ({
-        ...prev,
-        [editingField.promoName]: {
-          ...prev[editingField.promoName],
-          [editingField.field]: newValue
-        }
-      }));
-      setEditingField(null);
-      setTempValue('');
-      toast.success('✅ Modifié');
+  const updatePromo = (index, field, value) => {
+    const newPromos = [...promos];
+    
+    if (field === 'present' && value === true) {
+      newPromos[index].present = true;
+      newPromos[index].absent = false;
+    } else if (field === 'absent' && value === true) {
+      newPromos[index].absent = true;
+      newPromos[index].present = false;
+    } else {
+      newPromos[index][field] = value;
     }
+    
+    setPromos(newPromos);
   };
 
-  const cancelEditing = () => {
-    setEditingField(null);
-    setTempValue('');
-  };
-
-  const handleSaveAll = async () => {
+  const handleSave = async () => {
+    setSaving(true);
     try {
       const presencesToSave = [];
       
-      Object.entries(presencesData).forEach(([promoName, data]) => {
-        if (data.present || data.absent) {
-          const promo = promoStats.find(p => p.promo_name === promoName);
-          if (promo) {
-            promo.bergers.forEach(berger => {
-              presencesToSave.push({
-                berger_id: berger.id,
-                date: dateSelectionnee,
-                present: data.present,
-                priere: data.priere === 'Oui',
-                commentaire: data.commentaire,
-                enregistre_par: user.id,
-                ville: user.city,
-                promo_name: promoName
-              });
+      promos.forEach(promo => {
+        if (promo.present || promo.absent) {
+          promo.bergers.forEach(berger => {
+            presencesToSave.push({
+              berger_id: berger.id,
+              date: dateSelectionnee,
+              present: promo.present,
+              priere: promo.priere === 'Oui',
+              commentaire: promo.commentaire,
+              enregistre_par: user.id,
+              ville: user.city,
+              promo_name: promo.nom
             });
-          }
+          });
         }
       });
 
@@ -240,17 +144,14 @@ const MarquerPresenceBergersPage = () => {
         body: JSON.stringify({ presences: presencesToSave })
       });
 
-      if (!response.ok) {
-        throw new Error('Erreur enregistrement');
-      }
+      if (!response.ok) throw new Error('Erreur');
 
       toast.success(`✅ ${presencesToSave.length} présence(s) enregistrée(s)`);
-      
-      // Réinitialiser
-      loadPromoData();
+      loadData();
     } catch (error) {
-      console.error('Erreur:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error('Erreur enregistrement');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -270,7 +171,7 @@ const MarquerPresenceBergersPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Marquer Présence des Bergers</h1>
-            <p className="text-gray-500 mt-1">Enregistrer la présence aux comptes rendus - {user.city}</p>
+            <p className="text-gray-500 mt-1">Comptes rendus - {user.city}</p>
           </div>
           <Button variant="outline" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -283,7 +184,7 @@ const MarquerPresenceBergersPage = () => {
             <div className="flex items-center gap-4">
               <Calendar className="h-6 w-6 text-purple-600" />
               <div>
-                <Label>Sélectionnez la date</Label>
+                <label className="block text-sm font-medium mb-1">Date</label>
                 <Input
                   type="date"
                   value={dateSelectionnee}
@@ -293,33 +194,14 @@ const MarquerPresenceBergersPage = () => {
               </div>
               <div className="flex-1"></div>
               <Button 
-                onClick={handleSaveAll}
+                onClick={handleSave}
+                disabled={saving}
                 className="bg-purple-600 hover:bg-purple-700"
                 size="lg"
               >
                 <Save className="h-5 w-5 mr-2" />
-                Enregistrer
+                {saving ? 'Enregistrement...' : 'Enregistrer'}
               </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Debug Panel - À retirer en production */}
-        <Card className="bg-yellow-50 border-yellow-200">
-          <CardContent className="pt-4">
-            <div className="text-xs">
-              <strong>Debug - État actuel :</strong>
-              <div className="mt-2 grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
-                {Object.entries(presencesData).map(([promo, data]) => (
-                  <div key={promo} className="text-xs bg-white p-2 rounded">
-                    <strong>{promo}:</strong> 
-                    {data.present && <span className="text-green-600"> ✓Présent</span>}
-                    {data.absent && <span className="text-red-600"> ✗Absent</span>}
-                    {data.priere === 'Oui' && <span className="text-purple-600"> 🙏Prière</span>}
-                    {data.commentaire && <span className="text-gray-600"> 💬</span>}
-                  </div>
-                ))}
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -332,184 +214,96 @@ const MarquerPresenceBergersPage = () => {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Nom de la Promo</th>
-                    <th className="text-center py-3 px-4">Nbre de Pers Suivies</th>
-                    <th className="text-left py-3 px-4">Noms des Bergers</th>
-                    <th className="text-center py-3 px-4">Présent</th>
-                    <th className="text-center py-3 px-4">Absent</th>
-                    <th className="text-center py-3 px-4">Prière</th>
-                    <th className="text-left py-3 px-4">Commentaire</th>
+                  <tr className="border-b bg-gray-50">
+                    <th className="text-left py-3 px-4 font-semibold">Nom de la Promo</th>
+                    <th className="text-center py-3 px-4 font-semibold">Pers Suivies</th>
+                    <th className="text-left py-3 px-4 font-semibold">Noms des Bergers</th>
+                    <th className="text-center py-3 px-4 font-semibold">Présent</th>
+                    <th className="text-center py-3 px-4 font-semibold">Absent</th>
+                    <th className="text-center py-3 px-4 font-semibold">Prière</th>
+                    <th className="text-left py-3 px-4 font-semibold">Commentaire</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {promoStats.map((promo, index) => {
-                    // S'assurer que les données existent
-                    if (!presencesData[promo.promo_name]) {
-                      console.error('Données manquantes pour', promo.promo_name);
-                      return null;
-                    }
-                    
-                    const data = presencesData[promo.promo_name];
-                    const isEditingBergers = editingField?.promoName === promo.promo_name && editingField?.field === 'noms_bergers';
-                    const isEditingSuivies = editingField?.promoName === promo.promo_name && editingField?.field === 'personnes_suivies';
-                    
-                    const hasData = data.present || data.absent;
-                    
-                    return (
-                      <tr key={index} className={`border-b hover:bg-gray-50 ${hasData ? 'bg-blue-50' : ''}`}>
-                        <td className="py-3 px-4 font-medium text-purple-700">
-                          {promo.promo_name}
-                          {hasData && <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-0.5 rounded">✓</span>}
-                        </td>
-                        
-                        {/* Nbre de Pers Suivies - Editable */}
-                        <td className="text-center py-3 px-4">
-                          {isEditingSuivies ? (
-                            <div className="flex items-center gap-1 justify-center">
-                              <Input
-                                type="number"
-                                value={tempValue}
-                                onChange={(e) => setTempValue(e.target.value)}
-                                className="w-20 text-center"
-                                autoFocus
-                              />
-                              <Button size="sm" variant="ghost" onClick={saveEditing}>
-                                <Check className="h-4 w-4 text-green-600" />
-                              </Button>
-                              <Button size="sm" variant="ghost" onClick={cancelEditing}>
-                                <X className="h-4 w-4 text-red-600" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2 justify-center">
-                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
-                                {data.personnes_suivies || 0}
-                              </span>
-                              <button
-                                onClick={() => startEditing(promo.promo_name, 'personnes_suivies', data.personnes_suivies || 0)}
-                                className="text-gray-400 hover:text-purple-600"
-                              >
-                                <Edit2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                        
-                        {/* Noms des Bergers - Editable */}
-                        <td className="py-3 px-4">
-                          {isEditingBergers ? (
-                            <div className="flex items-center gap-1">
-                              <Input
-                                value={tempValue}
-                                onChange={(e) => setTempValue(e.target.value)}
-                                className="text-sm"
-                                autoFocus
-                              />
-                              <Button size="sm" variant="ghost" onClick={saveEditing}>
-                                <Check className="h-4 w-4 text-green-600" />
-                              </Button>
-                              <Button size="sm" variant="ghost" onClick={cancelEditing}>
-                                <X className="h-4 w-4 text-red-600" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-600">{data.noms_bergers || '-'}</span>
-                              <button
-                                onClick={() => startEditing(promo.promo_name, 'noms_bergers', data.noms_bergers || '')}
-                                className="text-gray-400 hover:text-purple-600"
-                              >
-                                <Edit2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                        
-                        {/* Présent - Grosse case à cocher */}
-                        <td className="text-center py-3 px-4">
-                          <button
-                            onClick={() => {
-                              console.log('Click présent pour', promo.promo_name, 'État actuel:', data.present);
-                              handleCheckboxChange(promo.promo_name, 'present');
-                            }}
-                            className={`w-10 h-10 rounded border-2 flex items-center justify-center transition-all mx-auto ${
-                              data.present === true
-                                ? 'bg-green-500 border-green-600 shadow-md' 
-                                : 'bg-white border-gray-300 hover:border-green-400 hover:bg-green-50'
-                            }`}
-                            title={data.present ? "Présent coché" : "Marquer comme présent"}
-                          >
-                            {data.present === true && <Check className="h-7 w-7 text-white font-bold" strokeWidth={4} />}
-                          </button>
-                        </td>
-                        
-                        {/* Absent - Grosse case à cocher */}
-                        <td className="text-center py-3 px-4">
-                          <button
-                            onClick={() => {
-                              console.log('Click absent pour', promo.promo_name, 'État actuel:', data.absent);
-                              handleCheckboxChange(promo.promo_name, 'absent');
-                            }}
-                            className={`w-10 h-10 rounded border-2 flex items-center justify-center transition-all mx-auto ${
-                              data.absent === true
-                                ? 'bg-red-500 border-red-600 shadow-md' 
-                                : 'bg-white border-gray-300 hover:border-red-400 hover:bg-red-50'
-                            }`}
-                            title={data.absent ? "Absent coché" : "Marquer comme absent"}
-                          >
-                            {data.absent === true && <X className="h-7 w-7 text-white font-bold" strokeWidth={4} />}
-                          </button>
-                        </td>
-                        
-                        {/* Prière - Liste déroulante */}
-                        <td className="text-center py-3 px-4">
-                          <Select 
-                            value={String(data.priere || 'Non')} 
-                            onValueChange={(value) => {
-                              console.log('Prière changée:', promo.promo_name, 'Nouvelle valeur:', value);
-                              handlePriereChange(promo.promo_name, value);
-                            }}
-                          >
-                            <SelectTrigger className={`w-28 font-medium ${
-                              data.priere === 'Oui' 
-                                ? 'bg-green-100 text-green-800 border-green-400' 
-                                : 'bg-red-100 text-red-800 border-red-400'
-                            }`}>
-                              <SelectValue placeholder="Non" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Oui" className="text-green-700 font-medium">
-                                <span className="flex items-center gap-2">
-                                  <Check className="h-4 w-4" /> Oui
-                                </span>
-                              </SelectItem>
-                              <SelectItem value="Non" className="text-red-700 font-medium">
-                                <span className="flex items-center gap-2">
-                                  <X className="h-4 w-4" /> Non
-                                </span>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        
-                        {/* Commentaire */}
-                        <td className="py-3 px-4">
-                          <Input
-                            type="text"
-                            value={data?.commentaire || ''}
-                            onChange={(e) => {
-                              console.log('Input onChange:', e.target.value);
-                              handleCommentaireChange(promo.promo_name, e.target.value);
-                            }}
-                            placeholder="Commentaire..."
-                            className="min-w-[200px]"
-                            onFocus={() => console.log('Input focused for', promo.promo_name)}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {promos.map((promo, index) => (
+                    <tr key={index} className={`border-b hover:bg-gray-50 ${(promo.present || promo.absent) ? 'bg-blue-50' : ''}`}>
+                      <td className="py-4 px-4 font-medium text-purple-700">
+                        {promo.nom}
+                        {(promo.present || promo.absent) && (
+                          <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-0.5 rounded">✓</span>
+                        )}
+                      </td>
+                      
+                      <td className="text-center py-4 px-4">
+                        <input
+                          type="number"
+                          value={promo.personnesSuivies}
+                          onChange={(e) => updatePromo(index, 'personnesSuivies', parseInt(e.target.value) || 0)}
+                          className="w-20 px-2 py-1 text-center border rounded bg-blue-50 border-blue-200 font-medium"
+                        />
+                      </td>
+                      
+                      <td className="py-4 px-4">
+                        <input
+                          type="text"
+                          value={promo.nomsBergers}
+                          onChange={(e) => updatePromo(index, 'nomsBergers', e.target.value)}
+                          className="w-full px-2 py-1 border rounded text-sm"
+                        />
+                      </td>
+                      
+                      <td className="text-center py-4 px-4">
+                        <button
+                          onClick={() => updatePromo(index, 'present', !promo.present)}
+                          className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-all mx-auto ${
+                            promo.present
+                              ? 'bg-green-500 border-green-600 shadow-lg' 
+                              : 'bg-white border-gray-300 hover:border-green-400 hover:bg-green-50'
+                          }`}
+                        >
+                          {promo.present && <Check className="h-8 w-8 text-white" strokeWidth={4} />}
+                        </button>
+                      </td>
+                      
+                      <td className="text-center py-4 px-4">
+                        <button
+                          onClick={() => updatePromo(index, 'absent', !promo.absent)}
+                          className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-all mx-auto ${
+                            promo.absent
+                              ? 'bg-red-500 border-red-600 shadow-lg' 
+                              : 'bg-white border-gray-300 hover:border-red-400 hover:bg-red-50'
+                          }`}
+                        >
+                          {promo.absent && <X className="h-8 w-8 text-white" strokeWidth={4} />}
+                        </button>
+                      </td>
+                      
+                      <td className="text-center py-4 px-4">
+                        <select
+                          value={promo.priere}
+                          onChange={(e) => updatePromo(index, 'priere', e.target.value)}
+                          className={`px-3 py-2 rounded border font-medium cursor-pointer ${
+                            promo.priere === 'Oui'
+                              ? 'bg-green-100 text-green-800 border-green-400'
+                              : 'bg-red-100 text-red-800 border-red-400'
+                          }`}
+                        >
+                          <option value="Non">❌ Non</option>
+                          <option value="Oui">✅ Oui</option>
+                        </select>
+                      </td>
+                      
+                      <td className="py-4 px-4">
+                        <input
+                          type="text"
+                          value={promo.commentaire}
+                          onChange={(e) => updatePromo(index, 'commentaire', e.target.value)}
+                          placeholder="Commentaire..."
+                          className="w-full px-3 py-2 border rounded min-w-[200px]"
+                        />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
