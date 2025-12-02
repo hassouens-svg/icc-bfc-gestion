@@ -5094,6 +5094,7 @@ class BergerPresence(BaseModel):
     commentaire: Optional[str] = None
     enregistre_par: str
     ville: str
+    promo_name: Optional[str] = None
 
 class BergerPresenceBatch(BaseModel):
     presences: list[BergerPresence]
