@@ -5076,6 +5076,13 @@ class ContactGroup(BaseModel):
 async def get_contact_groups(user: dict = Depends(get_current_user)):
     """Récupérer toutes les boxes de contacts"""
     try:
+        groups = await db.contact_groups.find(
+            {}, 
+            {"_id": 0}
+        ).to_list(1000)
+        return groups
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== PRÉSENCE BERGERS ====================
 
