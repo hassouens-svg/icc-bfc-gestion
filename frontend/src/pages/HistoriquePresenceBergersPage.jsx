@@ -99,6 +99,10 @@ const HistoriquePresenceBergersPage = () => {
       });
       
       Object.values(promoGroups).forEach(promo => {
+        // Noms des bergers
+        promo.nomsBergers = promo.bergers.map(b => b.name).join(', ');
+        
+        // Personnes suivies
         const suivies = cityVisitors.filter(v => {
           if (!v.assigned_month) return false;
           const visitorMonth = v.assigned_month.split('-')[1];
@@ -108,7 +112,7 @@ const HistoriquePresenceBergersPage = () => {
       });
       
       const sortedPromos = Object.values(promoGroups)
-        .filter(p => p.presents > 0 || p.absents > 0)
+        .filter(p => p.present || p.absent)
         .sort((a, b) => parseInt(a.monthNum) - parseInt(b.monthNum));
       
       setPromos(sortedPromos);
