@@ -1562,9 +1562,11 @@ const ProjetDetailPage = () => {
 
                     {/* Timeline */}
                     <div className="space-y-3">
-                      {jalonsWithDates.sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).map((jalon, idx) => {
-                        const position = getPosition(jalon.deadline);
-                        const isPast = new Date(jalon.deadline) < today;
+                      {jalonsWithDates.sort((a, b) => new Date(a.date_debut) - new Date(b.date_debut)).map((jalon, idx) => {
+                        const startPos = getPosition(jalon.date_debut);
+                        const endPos = getPosition(jalon.date_fin);
+                        const barWidth = endPos - startPos;
+                        
                         const statusColor = 
                           jalon.statut === 'termine' ? 'bg-green-500' :
                           jalon.statut === 'en_retard' ? 'bg-red-500' :
@@ -1576,8 +1578,8 @@ const ProjetDetailPage = () => {
                           <div key={idx} className="relative">
                             {/* Nom du jalon */}
                             <div className="flex items-center gap-3 mb-2">
-                              <div className="w-44 text-sm font-medium truncate">{jalon.titre}</div>
-                              <span className={`px-2 py-0.5 text-xs rounded-full ${
+                              <div className="w-48 text-sm font-medium truncate">{jalon.titre}</div>
+                              <span className={`px-2 py-0.5 text-xs rounded-full whitespace-nowrap ${
                                 jalon.statut === 'termine' ? 'bg-green-100 text-green-800' :
                                 jalon.statut === 'en_retard' ? 'bg-red-100 text-red-800' :
                                 jalon.statut === 'en_cours' ? 'bg-blue-100 text-blue-800' :
@@ -1589,51 +1591,46 @@ const ProjetDetailPage = () => {
                                  jalon.statut === 'en_cours' ? 'En cours' :
                                  jalon.statut === 'annule' ? 'Annulé' : 'À faire'}
                               </span>
+                              {jalon.acteur && (
+                                <span className="text-xs text-gray-500">👤 {jalon.acteur}</span>
+                              )}
                             </div>
 
                             {/* Barre de timeline */}
-                            <div className="relative h-12 bg-gray-100 rounded-lg overflow-hidden">
-                              {/* Ligne aujourd'hui */}
+                            <div className="relative h-16 bg-gray-100 rounded-lg overflow-visible">
+                              {/* Ligne aujourd'hui (une seule fois) */}
                               {idx === 0 && (
                                 <div
-                                  className="absolute top-0 bottom-0 w-0.5 bg-blue-600 z-10"
+                                  className="absolute top-0 bottom-0 w-0.5 bg-blue-600 z-20"
                                   style={{ left: `${todayPosition}%` }}
                                 >
-                                  <div className="absolute -top-1 -left-2 w-4 h-4 bg-blue-600 rounded-full"></div>
+                                  <div className="absolute -top-2 -left-2 w-4 h-4 bg-blue-600 rounded-full"></div>
+                                  <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-blue-600 rounded-full"></div>
                                 </div>
                               )}
 
-                              {/* Barre du jalon */}
+                              {/* BARRE DE DURÉE du jalon */}
                               <div
-                                className={`absolute top-3 h-6 ${statusColor} rounded flex items-center px-2`}
+                                className={`absolute top-1/2 -translate-y-1/2 h-8 ${statusColor} rounded-lg shadow-md z-10 flex items-center justify-center`}
                                 style={{
-                                  left: `${Math.max(0, position - 2)}%`,
-                                  width: '4%'
+                                  left: `${startPos}%`,
+                                  width: `${Math.max(barWidth, 2)}%`
                                 }}
                               >
-                                <span className="text-white text-xs font-bold">●</span>
+                                <span className="text-white text-xs font-bold px-2 truncate">
+                                  {jalon.titre}
+                                </span>
                               </div>
 
-                              {/* Info date */}
-                              <div
-                                className="absolute top-0 text-xs text-gray-600 font-medium"
-                                style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
-                              >
-                                {new Date(jalon.deadline).toLocaleDateString('fr-FR', { 
-                                  day: '2-digit', 
-                                  month: 'short' 
-                                })}
-                              </div>
-                              
-                              {/* Acteur */}
-                              {jalon.acteur && (
-                                <div
-                                  className="absolute bottom-0 text-xs text-gray-500"
-                                  style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
-                                >
-                                  {jalon.acteur}
+                              {/* Dates début et fin */}
+                              <div className="absolute -top-5 left-0 right-0 flex justify-between text-xs text-gray-600">
+                                <div style={{position: 'absolute', left: `${startPos}%`, transform: 'translateX(-50%)'}}>
+                                  {new Date(jalon.date_debut).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
                                 </div>
-                              )}
+                                <div style={{position: 'absolute', left: `${endPos}%`, transform: 'translateX(-50%)'}}>
+                                  {new Date(jalon.date_fin).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         );
