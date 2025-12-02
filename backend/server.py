@@ -899,6 +899,9 @@ class EventRSVP(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     event_id: str
     name: str
+    first_name: Optional[str] = None  # Prénom
+    last_name: Optional[str] = None   # Nom
+    is_star: bool = False  # Personne VIP/importante
     email: Optional[str] = None
     phone: Optional[str] = None
     status: str = "confirmed"  # confirmed, declined, maybe
@@ -909,6 +912,9 @@ class EventRSVP(BaseModel):
 
 class EventRSVPCreate(BaseModel):
     name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    is_star: bool = False
     email: Optional[str] = None
     phone: Optional[str] = None
     status: str = "confirmed"
