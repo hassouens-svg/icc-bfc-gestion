@@ -926,10 +926,26 @@ const ProjetDetailPage = () => {
               </div>
               <div>
                 <Label>Assigné à</Label>
-                <Select value={newTache.assigne_a || ''} onValueChange={(val) => setNewTache({...newTache, assigne_a: val})}>
+                <Select value={newTache.assigne_a || 'none'} onValueChange={(val) => setNewTache({...newTache, assigne_a: val === 'none' ? '' : val})}>
                   <SelectTrigger><SelectValue placeholder="Sélectionner un membre" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Non assigné</SelectItem>
+                    <SelectItem value="none">Non assigné</SelectItem>
+                    {(projet.team_members || []).map((member, idx) => (
+                      <SelectItem key={idx} value={member.nom}>{member.nom} - {member.role}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => {
+                  setIsTacheOpen(false);
+                  setNewTache({ titre: '', description: '', deadline: '', assigne_a: '', pole_id: '' });
+                }}>Annuler</Button>
+                <Button onClick={handleAddTache}>Créer</Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Dialog Pôle */}
         <Dialog open={isPoleOpen} onOpenChange={setIsPoleOpen}>
