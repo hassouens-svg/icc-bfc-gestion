@@ -439,7 +439,8 @@ class Jalon(BaseModel):
     titre: str
     description: Optional[str] = None
     acteur: Optional[str] = None  # username
-    deadline: Optional[str] = None  # datetime ISO format (YYYY-MM-DDTHH:mm)
+    date_debut: Optional[str] = None  # datetime ISO format (YYYY-MM-DDTHH:mm)
+    date_fin: Optional[str] = None  # datetime ISO format (YYYY-MM-DDTHH:mm)
     statut: str = "a_faire"  # a_faire, en_cours, termine, en_retard, annule
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -449,13 +450,15 @@ class JalonCreate(BaseModel):
     titre: str
     description: Optional[str] = None
     acteur: Optional[str] = None
-    deadline: Optional[str] = None
+    date_debut: Optional[str] = None
+    date_fin: Optional[str] = None
 
 class JalonUpdate(BaseModel):
     titre: Optional[str] = None
     description: Optional[str] = None
     acteur: Optional[str] = None
-    deadline: Optional[str] = None
+    date_debut: Optional[str] = None
+    date_fin: Optional[str] = None
     statut: Optional[str] = None
 
 class CommentaireProjet(BaseModel):
