@@ -495,7 +495,12 @@ const ProjetDetailPage = () => {
     if (!projet?.team_members) return [];
     
     return projet.team_members.map(member => {
-      const memberTaches = taches.filter(t => t.assigne_a === member.nom);
+      // Split assigne_a by comma and check if member's name is in the list
+      const memberTaches = taches.filter(t => {
+        if (!t.assigne_a) return false;
+        const assignees = t.assigne_a.split(',').map(name => name.trim());
+        return assignees.includes(member.nom);
+      });
       const termine = memberTaches.filter(t => t.statut === 'termine').length;
       const total = memberTaches.length;
       const progress = total > 0 ? Math.round((termine / total) * 100) : 0;
