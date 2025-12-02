@@ -1304,7 +1304,23 @@ const ProjetDetailPage = () => {
         <Dialog open={isJalonOpen} onOpenChange={setIsJalonOpen}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-xl">🎯 Jalons du Projet</DialogTitle>
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl">🎯 Jalons du Projet</DialogTitle>
+                {jalons.length > 0 && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setIsJalonOpen(false);
+                      setIsGanttOpen(true);
+                    }}
+                    className="ml-4"
+                  >
+                    <BarChart className="h-4 w-4 mr-1" />
+                    Gantt
+                  </Button>
+                )}
+              </div>
             </DialogHeader>
             <div className="space-y-4">
               {/* Liste des jalons */}
