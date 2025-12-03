@@ -86,7 +86,11 @@ const DashboardPage = () => {
       const months = Array.isArray(user.assigned_month) 
         ? user.assigned_month 
         : [user.assigned_month];
+      console.log('Initializing months:', months, 'from user:', user.assigned_month);
       setSelectedMonths(months);
+    } else {
+      console.log('No assigned_month found for user');
+      setSelectedMonths([]);
     }
     setIsRenameDialogOpen(true);
   };
