@@ -9,6 +9,7 @@ import { Label } from '../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
 import { Users, UserPlus, TrendingUp, Download, BarChart3, Calendar, Edit } from 'lucide-react';
 import { toast } from 'sonner';
+import { Checkbox } from '../components/ui/checkbox';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
