@@ -78,7 +78,7 @@ class User(BaseModel):
     city: str
     role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin, responsable_eglise, gestion_projet
     telephone: Optional[str] = None  # Phone number (especially for pilote_fi)
-    assigned_month: Optional[str] = None  # For referents: "2025-01"
+    assigned_month: Optional[Union[str, List[str]]] = None  # For referents: "2025-01"
     promo_name: Optional[str] = None  # Custom name for promo (instead of "2025-01")
     assigned_secteur_id: Optional[str] = None  # For responsable_secteur
     assigned_fi_id: Optional[str] = None  # DEPRECATED: Use assigned_fi_ids instead
