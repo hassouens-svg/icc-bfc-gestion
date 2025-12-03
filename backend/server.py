@@ -8,7 +8,7 @@ import logging
 import warnings
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 import uuid
 from uuid import uuid4
 from datetime import datetime, timezone, timedelta
