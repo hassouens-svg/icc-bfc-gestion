@@ -1173,10 +1173,8 @@ async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_curre
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Permission denied")
     
-    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
-        # Referents/Responsables can only delete visitors from their assigned month
-        if visitor["assigned_month"] != current_user.get("assigned_month"):
-            raise HTTPException(status_code=403, detail="Vous ne pouvez supprimer que vos visiteurs assignés")
+    # Les responsables de promo peuvent supprimer tous leurs visiteurs
+    # Pas de restriction supplémentaire pour eux
     
     # Soft delete: marquer comme supprimé au lieu de supprimer physiquement
     await db.visitors.update_one(
