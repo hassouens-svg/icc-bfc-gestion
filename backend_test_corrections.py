@@ -178,12 +178,17 @@ def test_bug_1_rsvp_event_deletion_error_handling(token, results):
         print("📝 Step 4: Verifying event deletion...")
         
         # Use public endpoint (no auth headers needed) to verify deletion
-        response = make_request("GET", f"/events/{event_id}")
-        
-        if response and response.status_code == 404:
-            results.add_result("Bug 1 - Deletion Verification", True, "Event properly deleted (404 returned)")
-        else:
-            results.add_result("Bug 1 - Deletion Verification", False, f"Event still exists: {response.status_code if response else 'No response'}")
+        try:
+            response = requests.get(f"{BACKEND_URL}/events/{event_id}", timeout=30)
+            print(f"Debug: Verification response status: {response.status_code}")
+            
+            if response.status_code == 404:
+                results.add_result("Bug 1 - Deletion Verification", True, "Event properly deleted (404 returned)")
+            else:
+                results.add_result("Bug 1 - Deletion Verification", False, f"Event still exists: {response.status_code}")
+        except Exception as e:
+            print(f"Debug: Verification request failed: {e}")
+            results.add_result("Bug 1 - Deletion Verification", False, f"Verification request failed: {e}")
 
 def test_bug_2_jalons_status_update(token, results):
     """
