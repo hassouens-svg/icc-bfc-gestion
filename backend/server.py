@@ -563,11 +563,22 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 @api_router.post("/auth/login")
 async def login(user_login: UserLogin):
-    # Find user by username and city
-    user = await db.users.find_one({
-        "username": user_login.username,
-        "city": user_login.city
-    }, {"_id": 0})
+    # Pour pasteur et superadmin, chercher uniquement par username
+    # Pour les autres, chercher par username + city
+    query = {"username": user_login.username}
+    
+    # Chercher d'abord par username seul pour vérifier le rôle
+    user_by_username = await db.users.find_one(query, {"_id": 0})
+    
+    # Si l'utilisateur existe et est pasteur/superadmin, pas besoin de ville
+    if user_by_username and user_by_username["role"] in ["pasteur", "super_admin"]:
+        user = user_by_username
+    else:
+        # Pour les autres rôles, la ville est obligatoire
+        if not user_login.city:
+            raise HTTPException(status_code=401, detail="City is required for this role")
+        query["city"] = user_login.city
+        user = await db.users.find_one(query, {"_id": 0})
     
     if not user or not verify_password(user_login.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
