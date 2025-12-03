@@ -73,7 +73,9 @@ const DashboardPage = () => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       window.location.reload(); // Reload to update all displays
     } catch (error) {
-      toast.error('Erreur lors de la modification');
+      console.error('Erreur modification:', error);
+      const errorMsg = error?.response?.data?.detail || error?.message || 'Erreur lors de la modification';
+      toast.error(errorMsg);
     }
   };
 
