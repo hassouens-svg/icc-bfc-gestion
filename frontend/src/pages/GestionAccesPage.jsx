@@ -162,6 +162,25 @@ const GestionAccesPage = () => {
     }
   };
 
+  const handleImpersonate = (targetUser) => {
+    if (!window.confirm(`Se connecter en tant que ${targetUser.username} ?`)) {
+      return;
+    }
+    
+    // Sauvegarder l'utilisateur actuel pour pouvoir revenir
+    const originalUser = getUser();
+    localStorage.setItem('original_user', JSON.stringify(originalUser));
+    localStorage.setItem('is_impersonating', 'true');
+    
+    // Se connecter en tant que l'utilisateur cible
+    localStorage.setItem('user', JSON.stringify(targetUser));
+    toast.success(`Connecté en tant que ${targetUser.username}`);
+    
+    // Rediriger vers le dashboard
+    navigate('/dashboard');
+    window.location.reload();
+  };
+
   const handleBlockUser = async (userId) => {
     try {
       const userToBlock = users.find(u => u.id === userId);
