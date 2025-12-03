@@ -44,36 +44,37 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     
-    // Tout le monde doit sélectionner une ville
-    if (!city) {
-      toast.error('Veuillez sélectionner une ville');
-      return;
-    }
-    
     if (!username || !password) {
       toast.error('Veuillez remplir tous les champs');
       return;
     }
 
-    // Get pre-selected department from home page
-    const preSelectedDept = sessionStorage.getItem('selectedDepartment');
-    const departmentToUse = preSelectedDept || null;
-
     setLoading(true);
     try {
-      const result = await login(username, password, city, departmentToUse);
+      // Pour pasteur et superadmin, pas besoin de ville - on va leur demander après
+      // Pour les autres, on vérifie la ville
+      let cityToUse = city;
+      
+      // Tentative de login pour vérifier le rôle
+      const result = await login(username, password, cityToUse || 'temp', null);
+      
+      const isSpecialAccess = ['pasteur', 'super_admin'].includes(result.user.role);
+      
+      if (!isSpecialAccess && !city) {
+        toast.error('Veuillez sélectionner une ville');
+        setLoading(false);
+        return;
+      }
+      
       toast.success('Connexion réussie!');
       
       // Clear session storage
       sessionStorage.removeItem('selectedCity');
       sessionStorage.removeItem('selectedDepartment');
       
-      // Redirect special access users (pasteur, superadmin, responsable_eglise) to department selection
-      const isSpecialAccess = ['pasteur', 'super_admin', 'responsable_eglise'].includes(result.user.role);
+      // Redirect pasteur/superadmin to account selection page
       if (isSpecialAccess) {
-        // Stocker la ville sélectionnée pour les utilisateurs spéciaux
-        localStorage.setItem('selected_city_view', city);
-        navigate('/select-department');
+        navigate('/select-account');
       } else {
         navigate('/dashboard');
       }
