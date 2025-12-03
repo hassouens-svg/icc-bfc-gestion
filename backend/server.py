@@ -1656,17 +1656,28 @@ async def get_evangelisation_stats_for_city(city_name: str, year: Optional[int],
 # ==================== ANALYTICS ROUTES ====================
 
 @api_router.get("/analytics/stats")
-async def get_stats(current_user: dict = Depends(get_current_user)):
+async def get_stats(
+    impersonate_user_id: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    # If impersonating, load the target user's data for filtering
+    target_user = current_user
+    if impersonate_user_id and current_user["role"] in ["pasteur", "super_admin"]:
+        # SuperAdmin/Pasteur can impersonate - load target user
+        impersonate_user = await db.users.find_one({"id": impersonate_user_id}, {"_id": 0})
+        if impersonate_user:
+            target_user = impersonate_user
+    
     # Base query filter
     base_query = {"tracking_stopped": False}
     
     # For pasteur, super_admin, and responsable_eglise: responsable_eglise sees only their city
-    if current_user["role"] == "responsable_eglise":
-        base_query["city"] = current_user["city"]
-    elif current_user["role"] not in ["pasteur", "super_admin"]:
-        base_query["city"] = current_user["city"]
+    if target_user["role"] == "responsable_eglise":
+        base_query["city"] = target_user["city"]
+    elif target_user["role"] not in ["pasteur", "super_admin"]:
+        base_query["city"] = target_user["city"]
     
-    city = current_user["city"]
+    city = target_user["city"]
     
     # If referent or responsable_promo, filter by their assigned month (all years)
     if current_user["role"] in ["referent", "responsable_promo", "promotions", "berger"]:
