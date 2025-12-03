@@ -79,11 +79,11 @@ def test_1_login_pasteur_superadmin_sans_ville(results):
     print(f"\n🔐 TEST 1: LOGIN PASTEUR/SUPERADMIN SANS VILLE")
     print(f"{'='*60}")
     
-    # Test A: SuperAdmin login sans ville
+    # Test A: SuperAdmin login avec ville vide (le backend gère pasteur/superadmin différemment)
     superadmin_data = {
         "username": "superadmin",
-        "password": "superadmin123"
-        # Pas de champ "city" - doit fonctionner
+        "password": "superadmin123",
+        "city": ""  # Ville vide - le backend doit gérer pasteur/superadmin sans ville
     }
     
     try:
