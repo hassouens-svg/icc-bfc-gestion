@@ -58,6 +58,7 @@ import AccesSpecifiquesPage from './pages/AccesSpecifiquesPage';
 import AccesBergersEglisePage from './pages/AccesBergersEglisePage';
 import RegisterMembreFIPage from './pages/RegisterMembreFIPage';
 import SelectDepartmentPage from './pages/SelectDepartmentPage';
+import SelectAccountPage from './pages/SelectAccountPage';
 import GestionAccesPage from './pages/GestionAccesPage';
 import AttributionPilotesPage from './pages/AttributionPilotesPage';
 import SelectVillePage from './pages/SelectVillePage';
