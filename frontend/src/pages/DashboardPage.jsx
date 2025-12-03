@@ -51,17 +51,25 @@ const DashboardPage = () => {
   };
 
   const handleRenamePromo = async () => {
-    if (!newPromoName.trim()) {
-      toast.error('Veuillez entrer un nom');
+    if (!newPromoName.trim() && selectedMonths.length === 0) {
+      toast.error('Veuillez entrer un nom ou sélectionner au moins un mois');
       return;
     }
 
     try {
-      await updateUser(user.id, { promo_name: newPromoName });
-      toast.success('Nom de la promo modifié avec succès!');
+      const updateData = {};
+      if (newPromoName.trim()) {
+        updateData.promo_name = newPromoName;
+      }
+      if (selectedMonths.length > 0) {
+        updateData.assigned_month = selectedMonths.length > 1 ? selectedMonths : selectedMonths[0];
+      }
+      
+      await updateUser(user.id, updateData);
+      toast.success('Modifications enregistrées avec succès!');
       setIsRenameDialogOpen(false);
       // Update local user data
-      const updatedUser = { ...user, promo_name: newPromoName };
+      const updatedUser = { ...user, ...updateData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       window.location.reload(); // Reload to update all displays
     } catch (error) {
