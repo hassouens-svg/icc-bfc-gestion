@@ -177,7 +177,8 @@ def test_bug_1_rsvp_event_deletion_error_handling(token, results):
     if response and response.status_code == 200:
         print("📝 Step 4: Verifying event deletion...")
         
-        response = make_request("GET", f"/events/{event_id}", headers=headers)
+        # Use public endpoint (no auth headers needed) to verify deletion
+        response = make_request("GET", f"/events/{event_id}")
         
         if response and response.status_code == 404:
             results.add_result("Bug 1 - Deletion Verification", True, "Event properly deleted (404 returned)")
