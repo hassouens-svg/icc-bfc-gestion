@@ -21,7 +21,8 @@ const AnalyticsPage = () => {
       return;
     }
     loadStats();
-  }, [user, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]); // Ne pas inclure navigate pour éviter la boucle infinie
 
   const loadStats = async () => {
     try {
