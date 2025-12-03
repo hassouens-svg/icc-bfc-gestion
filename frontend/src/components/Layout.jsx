@@ -179,6 +179,23 @@ const Layout = ({ children }) => {
               </PopoverContent>
             </Popover>
 
+            {localStorage.getItem('is_impersonating') === 'true' && (
+              <Button 
+                onClick={() => {
+                  const originalUser = JSON.parse(localStorage.getItem('original_user'));
+                  localStorage.setItem('user', JSON.stringify(originalUser));
+                  localStorage.removeItem('original_user');
+                  localStorage.removeItem('is_impersonating');
+                  navigate('/gestion-acces');
+                  window.location.reload();
+                }} 
+                variant="outline"
+                className="bg-yellow-50 border-yellow-300 hover:bg-yellow-100"
+              >
+                <UserX className="h-4 w-4 mr-2" />
+                Revenir à mon compte
+              </Button>
+            )}
             <Button onClick={handleLogout} variant="outline" data-testid="logout-button">
               <LogOut className="h-4 w-4 mr-2" />
               Déconnexion
