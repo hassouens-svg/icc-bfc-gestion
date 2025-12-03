@@ -712,29 +712,27 @@ async def get_referents(current_user: dict = Depends(get_current_user)):
 async def update_user(user_id: str, update_data: UserUpdate, current_user: dict = Depends(get_current_user)):
     """Update user information"""
     
-    # Cas spécial : permettre aux users de mettre à jour leur propre team_members
+    # Cas spécial : permettre aux users de mettre à jour leurs propres informations
     is_self_update = (user_id == current_user["id"])
-    is_team_members_only = (
-        update_data.team_members is not None and
-        update_data.username is None and
-        update_data.city is None and
-        update_data.role is None and
-        update_data.assigned_month is None and
-        update_data.promo_name is None and
-        update_data.assigned_fi_id is None and
-        update_data.assigned_fi_ids is None and
-        update_data.assigned_secteur_id is None and
-        update_data.permissions is None
+    
+    # Liste des champs autorisés pour mise à jour de soi-même
+    allowed_self_update_fields = {'team_members', 'promo_name', 'assigned_month'}
+    
+    # Vérifier si uniquement des champs autorisés sont modifiés
+    update_dict = update_data.dict(exclude_unset=True)
+    is_only_allowed_fields = all(
+        field in allowed_self_update_fields 
+        for field in update_dict.keys()
     )
     
-    # Si c'est une mise à jour de team_members par soi-même, autoriser
-    if is_self_update and is_team_members_only:
+    # Si c'est une mise à jour de soi-même avec uniquement les champs autorisés
+    if is_self_update and is_only_allowed_fields:
         user = await db.users.find_one({"id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        # Mettre à jour uniquement team_members
-        await db.users.update_one({"id": user_id}, {"$set": {"team_members": update_data.team_members}})
-        return {"message": "Team members updated successfully"}
+        # Mettre à jour les champs autorisés
+        await db.users.update_one({"id": user_id}, {"$set": update_dict})
+        return {"message": "User updated successfully"}
     
     # Sinon, vérifier les permissions normales
     if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin", "superviseur_fi", "responsable_secteur"]:
