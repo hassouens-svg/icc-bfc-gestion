@@ -1680,10 +1680,10 @@ async def get_stats(
     city = target_user["city"]
     
     # If referent or responsable_promo, filter by their assigned month (all years)
-    if current_user["role"] in ["referent", "responsable_promo", "promotions", "berger"]:
-        permissions = current_user.get("permissions") or {}
+    if target_user["role"] in ["referent", "responsable_promo", "promotions", "berger"]:
+        permissions = target_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
-            assigned_month = current_user.get("assigned_month")
+            assigned_month = target_user.get("assigned_month")
             if assigned_month:
                 # Handle both string and list formats
                 if isinstance(assigned_month, list):
@@ -1704,9 +1704,9 @@ async def get_stats(
     total_visitors = await db.visitors.count_documents(base_query)
     
     # Total referents (only for admin/promotions/pasteur/super_admin)
-    if current_user["role"] in ["superviseur_promos", "promotions", "pasteur", "super_admin"]:
+    if target_user["role"] in ["superviseur_promos", "promotions", "pasteur", "super_admin"]:
         ref_query = {"role": {"$in": ["referent", "accueil", "promotions"]}}
-        if current_user["role"] not in ["pasteur", "super_admin"]:
+        if target_user["role"] not in ["pasteur", "super_admin"]:
             ref_query["city"] = city
         total_referents = await db.users.count_documents(ref_query)
     else:
