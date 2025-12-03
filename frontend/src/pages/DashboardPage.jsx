@@ -101,8 +101,8 @@ const DashboardPage = () => {
     const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
                        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     
-    // Generate months for current year, next year, and year after
-    for (let year = currentYear; year <= currentYear + 2; year++) {
+    // Generate months for previous year, current year, next year, and year after
+    for (let year = currentYear - 1; year <= currentYear + 2; year++) {
       for (let month = 1; month <= 12; month++) {
         const monthStr = month < 10 ? `0${month}` : `${month}`;
         months.push({
