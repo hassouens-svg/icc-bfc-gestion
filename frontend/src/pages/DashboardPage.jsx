@@ -70,8 +70,44 @@ const DashboardPage = () => {
   };
 
   const openRenameDialog = () => {
-    setNewPromoName(user.promo_name || user.assigned_month || '');
+    setNewPromoName(user?.promo_name || '');
+    // Initialize selected months from user's assigned_month
+    if (user?.assigned_month) {
+      const months = Array.isArray(user.assigned_month) 
+        ? user.assigned_month 
+        : [user.assigned_month];
+      setSelectedMonths(months);
+    }
     setIsRenameDialogOpen(true);
+  };
+
+  const generateMonths = () => {
+    const months = [];
+    const currentYear = new Date().getFullYear();
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+                       'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    
+    // Generate months for current year, next year, and year after
+    for (let year = currentYear; year <= currentYear + 2; year++) {
+      for (let month = 1; month <= 12; month++) {
+        const monthStr = month < 10 ? `0${month}` : `${month}`;
+        months.push({
+          value: `${year}-${monthStr}`,
+          label: `${monthNames[month - 1]} ${year}`
+        });
+      }
+    }
+    return months;
+  };
+
+  const toggleMonth = (monthValue) => {
+    setSelectedMonths(prev => {
+      if (prev.includes(monthValue)) {
+        return prev.filter(m => m !== monthValue);
+      } else {
+        return [...prev, monthValue];
+      }
+    });
   };
 
   if (loading) {
