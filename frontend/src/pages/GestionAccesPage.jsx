@@ -623,6 +623,82 @@ const GestionAccesPage = () => {
           </CardContent>
         </Card>
 
+        {/* Dialog Edit User */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Modifier l'utilisateur</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleEditUser} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Nom d'utilisateur</Label>
+                  <Input
+                    value={selectedUser?.username || ''}
+                    onChange={(e) => setSelectedUser({...selectedUser, username: e.target.value})}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Téléphone</Label>
+                  <Input
+                    value={selectedUser?.telephone || ''}
+                    onChange={(e) => setSelectedUser({...selectedUser, telephone: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Ville</Label>
+                  <Select 
+                    value={selectedUser?.city || ''} 
+                    onValueChange={(val) => setSelectedUser({...selectedUser, city: val})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Rôle</Label>
+                  <Select 
+                    value={selectedUser?.role || ''} 
+                    onValueChange={(val) => setSelectedUser({...selectedUser, role: val})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="super_admin">Super Administrateur</SelectItem>
+                      <SelectItem value="pasteur">Pasteur</SelectItem>
+                      <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
+                      <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
+                      <SelectItem value="resp_bergers">Responsable Bergers</SelectItem>
+                      <SelectItem value="berger">Berger</SelectItem>
+                      <SelectItem value="gestion_projet">Gestion Projet</SelectItem>
+                      <SelectItem value="accueil_integration">Accueil et Intégration</SelectItem>
+                      <SelectItem value="referent">Référent</SelectItem>
+                      <SelectItem value="responsable_promos">Responsable de Promos</SelectItem>
+                      <SelectItem value="pilote">Pilote</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit">Enregistrer</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
         {/* Dialog Reset Password */}
         <Dialog open={isResetPasswordDialogOpen} onOpenChange={setIsResetPasswordDialogOpen}>
           <DialogContent>
