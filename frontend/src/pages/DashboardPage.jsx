@@ -18,6 +18,7 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [newPromoName, setNewPromoName] = useState('');
+  const [selectedMonths, setSelectedMonths] = useState([]);
 
   useEffect(() => {
     if (!user) {
