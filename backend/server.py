@@ -114,7 +114,7 @@ class UserUpdate(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
-    city: str
+    city: Optional[str] = None  # Optionnel pour pasteur/superadmin
     department: Optional[str] = None  # "accueil" or "promotion"
 
 class CulteStats(BaseModel):
