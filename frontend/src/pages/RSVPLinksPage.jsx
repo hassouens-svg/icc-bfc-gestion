@@ -232,12 +232,17 @@ const RSVPLinksPage = () => {
         }
       });
 
-      if (!response.ok) throw new Error('Suppression échouée');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMsg = errorData.detail || `Erreur ${response.status}`;
+        throw new Error(errorMsg);
+      }
 
       toast.success('Événement supprimé');
       loadEvents();
     } catch (error) {
-      toast.error('Erreur suppression');
+      console.error('Delete error:', error);
+      toast.error(`Erreur suppression: ${error.message}`);
     }
   };
 
