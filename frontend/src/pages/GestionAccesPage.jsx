@@ -429,28 +429,26 @@ const GestionAccesPage = () => {
                   </div>
                 )}
 
-                {newUser.role === 'referent' && (
+                {(newUser.role === 'referent' || newUser.role === 'responsable_promos') && (
                   <div className="space-y-2">
-                    <Label>Mois assignés (sélection multiple) *</Label>
-                    <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
-                      <div className="grid grid-cols-2 gap-2">
-                        {generateMonths().map((month) => (
-                          <label key={month.value} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                            <input
-                              type="checkbox"
-                              checked={Array.isArray(newUser.assigned_month) && newUser.assigned_month.includes(month.value)}
-                              onChange={() => toggleMonth(month.value)}
-                              className="rounded"
-                            />
-                            <span className="text-sm">{month.label}</span>
-                          </label>
+                    <Label>Mois assigné *</Label>
+                    <Select 
+                      value={newUser.assigned_month || ''} 
+                      onValueChange={(val) => setNewUser({...newUser, assigned_month: val})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un mois" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {simpleMonths.map((month) => (
+                          <SelectItem key={month} value={month}>
+                            {month}
+                          </SelectItem>
                         ))}
-                      </div>
-                    </div>
+                      </SelectContent>
+                    </Select>
                     <p className="text-xs text-gray-500">
-                      {Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 0
-                        ? `${newUser.assigned_month.length} mois sélectionné(s)`
-                        : 'Aucun mois sélectionné'}
+                      Le responsable sera automatiquement assigné aux personnes arrivées dans ce mois, peu importe l'année
                     </p>
                   </div>
                 )}
