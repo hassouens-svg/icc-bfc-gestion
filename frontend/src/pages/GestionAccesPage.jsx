@@ -658,9 +658,15 @@ const GestionAccesPage = () => {
                       <SelectValue placeholder="Sélectionner" />
                     </SelectTrigger>
                     <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city} value={city}>{city}</SelectItem>
-                      ))}
+                      {Array.isArray(cities) && cities.map((city) => {
+                        const cityValue = typeof city === 'string' ? city : city?.name;
+                        const cityKey = typeof city === 'string' ? city : city?.id || city?.name;
+                        return (
+                          <SelectItem key={cityKey} value={cityValue}>
+                            {cityValue}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
