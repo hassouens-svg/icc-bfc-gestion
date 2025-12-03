@@ -155,12 +155,12 @@ const DashboardPage = () => {
               <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">
                 Tableau de bord - {user?.promo_name || user?.assigned_month || 'Bergerie'}
               </h2>
-              {user?.role === 'promotions' && (
+              {(['promotions', 'responsable_promos', 'referent', 'berger'].includes(user?.role)) && (
                 <Button 
                   onClick={openRenameDialog} 
                   variant="outline" 
                   size="sm"
-                  title="Renommer la bergerie"
+                  title="Modifier les informations"
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
