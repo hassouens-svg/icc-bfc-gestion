@@ -1847,3 +1847,116 @@ The dialog functionality is **PARTIALLY WORKING** with critical issues that prev
 
 **RECOMMENDATION**: Main agent should fix the month generation logic to include previous years and resolve the 403 permission error for berger users.
 
+
+
+---
+
+## 🧪 BERGER DIALOG TESTING - RE-TEST AFTER CORRECTIONS - 3 Décembre 2024
+
+### 📋 Agent: Testing Agent
+**Date**: 3 Décembre 2024  
+**Task**: Re-testing "Modifier les informations de la promo" dialog after corrections applied  
+**Priority**: High  
+
+### ✅ COMPREHENSIVE BERGER DIALOG RE-TESTING COMPLETED
+**Test Suite**: Berger Dialog Correction Verification Suite  
+**Total Tests**: 8  
+**Success Rate**: 100% ✅
+
+### 🔧 CORRECTIONS VERIFIED:
+
+#### ✅ CORRECTION 1: Month Generation Includes Previous Year (2024)
+- **Status**: FULLY IMPLEMENTED ✅
+- **Verification**: 2024 months (Janvier 2024 through Décembre 2024) are now visible in the dialog
+- **Specific Check**: "Août 2024", "Septembre 2024", and "Octobre 2024" all visible and selectable
+- **Pre-selection**: User's assigned month (Septembre 2024) is automatically pre-checked
+
+#### ✅ CORRECTION 2: Bergers Can Update Their Own Information
+- **Status**: FULLY IMPLEMENTED ✅
+- **Backend API**: PUT `/api/users/{user_id}` now allows berger users to update `promo_name` and `assigned_month`
+- **Permission Logic**: Self-update allowed for fields: `team_members`, `promo_name`, `assigned_month`
+- **Verification**: API test successful - berger user can update their own information without 403 error
+
+### 📊 DETAILED TEST RESULTS:
+
+#### Authentication & Authorization ✅
+- **Login Test**: Successfully authenticated as test_berger user (Dijon)
+- **Role Verification**: Confirmed berger role has full access to edit functionality
+- **Dashboard Access**: Successfully accessed `/dashboard` showing "Tableau de bord - 2024-09"
+
+#### Dialog Functionality ✅
+- **Edit Button**: Successfully found and clicked edit button (pencil icon)
+- **Dialog Opening**: Dialog opens correctly with title "Modifier les informations de la promo"
+- **Form Elements**: All form elements present and functional
+
+#### Month Generation ✅
+- **2024 Months Visible**: All 2024 months (Janvier through Décembre) are now visible
+- **Pre-selection Working**: User's assigned month (Septembre 2024) is automatically checked
+- **Multiple Selection**: Can select additional months (tested with Octobre 2024)
+- **Year Range**: Months from 2023-2026 are available (4-year range)
+
+#### Save Functionality ✅
+- **Promo Name Update**: Successfully entered "Bergerie de Test Correction"
+- **Month Selection**: Successfully selected additional month (Octobre 2024)
+- **Save Operation**: No 403 error - save completed successfully
+- **Success Message**: "Modifications enregistrées avec succès!" displayed
+- **Persistence**: Changes persist after page reload and dialog reopening
+
+#### Data Persistence ✅
+- **Dashboard Title**: Updated to show new promo name
+- **Dialog Reopening**: Saved promo name and month selections persist correctly
+- **Backend Storage**: API confirms data is properly stored in database
+
+### 🎯 SPECIFIC TEST SCENARIOS VALIDATED:
+
+#### Test 1: Login and Dashboard Access ✅
+- Credentials: test_berger / test123 / Dijon
+- Dashboard title: "Tableau de bord - 2024-09" (shows assigned month)
+
+#### Test 2: Month Generation Verification ✅
+- **2024 Months Present**: Août 2024, Septembre 2024, Octobre 2024 all visible
+- **Auto-selection**: Septembre 2024 (user's assigned month) pre-checked
+- **Range**: 4-year span (2023-2026) available for selection
+
+#### Test 3: Modification and Save ✅
+- **Promo Name**: Changed to "Bergerie de Test Correction"
+- **Additional Month**: Selected Octobre 2024
+- **Save Result**: Success message displayed, no errors
+
+#### Test 4: Persistence Verification ✅
+- **Dashboard Update**: Title shows new promo name
+- **Dialog Reopening**: All saved data correctly displayed
+- **Backend Confirmation**: API shows updated data
+
+### 🚀 BACKEND API VALIDATION:
+- **Self-Update Permission**: ✅ Berger users can update their own `promo_name` and `assigned_month`
+- **API Response**: ✅ Returns "User updated successfully" message
+- **Data Storage**: ✅ Changes properly persisted in database
+- **Authentication**: ✅ Proper token validation working
+
+### ✅ ALL CORRECTIONS SUCCESSFULLY IMPLEMENTED:
+
+1. **✅ Month Generation**: Now includes previous year (2024) and shows proper 4-year range
+2. **✅ Self-Update Permissions**: Berger users can now save their own promo information
+3. **✅ Pre-selection Logic**: User's assigned month is automatically checked
+4. **✅ Data Persistence**: All changes save and persist correctly
+5. **✅ Success Feedback**: Proper success messages displayed to user
+
+### 📋 TEST DATA USED:
+- **Test User**: test_berger with berger role in Dijon
+- **Original Assigned Month**: 2024-09 (Septembre 2024)
+- **Test Promo Name**: "Bergerie de Test Correction"
+- **Additional Month**: 2024-10 (Octobre 2024)
+
+### 🎉 FEATURE STATUS: **FULLY FUNCTIONAL** ✅
+
+All requested corrections have been successfully implemented and verified:
+- ✅ Month generation includes 2024 (previous year)
+- ✅ Bergers can update their own promo_name and assigned_month
+- ✅ No 403 errors when saving changes
+- ✅ Changes persist correctly after save
+- ✅ Dialog reopens with saved data
+
+**RECOMMENDATION**: The "Modifier les informations de la promo" dialog is now **READY FOR PRODUCTION**. All functionality works as expected and both corrections have been successfully applied.
+
+---
