@@ -589,11 +589,22 @@ const GestionAccesPage = () => {
                       </td>
                       {user?.role === 'super_admin' && (
                         <td className="p-2">
-                          {showPasswords ? (
-                            <code className="text-xs bg-gray-100 px-2 py-1 rounded">{u.plain_password || '***'}</code>
-                          ) : (
-                            <span className="text-gray-400 text-xs">•••••••</span>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {visiblePasswords[u.id] ? (
+                              <code className="text-xs bg-gray-100 px-2 py-1 rounded">{u.plain_password || '***'}</code>
+                            ) : (
+                              <span className="text-gray-400 text-xs">•••••••</span>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => togglePasswordVisibility(u.id)}
+                              title={visiblePasswords[u.id] ? "Masquer" : "Afficher"}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </td>
                       )}
                       <td className="p-2">
