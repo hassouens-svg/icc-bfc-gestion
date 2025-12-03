@@ -38,7 +38,7 @@ const GestionAccesPage = () => {
     role: 'referent',
     telephone: '',
     promo_name: '',
-    assigned_month: '', // Un seul mois sans année
+    assigned_month: [], // Changé en tableau pour sélection multiple
     assigned_fi_id: null,
     assigned_fi_ids: [],
     assigned_secteur_id: null
