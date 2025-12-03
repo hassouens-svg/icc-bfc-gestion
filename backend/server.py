@@ -1669,15 +1669,25 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
     city = current_user["city"]
     
     # If referent or responsable_promo, filter by their assigned month (all years)
-    if current_user["role"] in ["referent", "responsable_promo", "promotions"]:
+    if current_user["role"] in ["referent", "responsable_promo", "promotions", "berger"]:
         permissions = current_user.get("permissions") or {}
         if not permissions.get("can_view_all_months", False):
             assigned_month = current_user.get("assigned_month")
             if assigned_month:
-                # Extract month part only (MM from YYYY-MM)
-                month_part = assigned_month.split("-")[-1] if "-" in assigned_month else assigned_month
-                # Use regex to match any year with this month
-                base_query["assigned_month"] = {"$regex": f"-{month_part}$"}
+                # Handle both string and list formats
+                if isinstance(assigned_month, list):
+                    # Multiple months assigned - match any of them
+                    month_parts = []
+                    for month in assigned_month:
+                        month_part = month.split("-")[-1] if "-" in month else month
+                        month_parts.append(f"-{month_part}$")
+                    # Match any of the assigned months
+                    base_query["assigned_month"] = {"$regex": "|".join(month_parts)}
+                else:
+                    # Single month assigned
+                    month_part = assigned_month.split("-")[-1] if "-" in assigned_month else assigned_month
+                    # Use regex to match any year with this month
+                    base_query["assigned_month"] = {"$regex": f"-{month_part}$"}
     
     # Total visitors
     total_visitors = await db.visitors.count_documents(base_query)
