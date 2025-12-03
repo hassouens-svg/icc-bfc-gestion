@@ -181,6 +181,13 @@ const GestionAccesPage = () => {
     window.location.reload();
   };
 
+  const togglePasswordVisibility = (userId) => {
+    setVisiblePasswords(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
+  };
+
   const handleBlockUser = async (userId) => {
     try {
       const userToBlock = users.find(u => u.id === userId);
