@@ -220,7 +220,16 @@ export const getCityStats = async (cityId) => {
 
 // Analytics APIs
 export const getStats = async () => {
-  const response = await apiClient.get('/analytics/stats');
+  // Check if impersonating - send user_id for filtering
+  const isImpersonating = localStorage.getItem('is_impersonating') === 'true';
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  const params = {};
+  if (isImpersonating && currentUser.id) {
+    params.impersonate_user_id = currentUser.id;
+  }
+  
+  const response = await apiClient.get('/analytics/stats', { params });
   return response.data;
 };
 
