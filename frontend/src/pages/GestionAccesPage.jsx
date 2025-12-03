@@ -99,11 +99,9 @@ const GestionAccesPage = () => {
         dataToSend.telephone = newUser.telephone;
       }
       
-      // Gérer assigned_month pour les referents
-      if (newUser.role === 'referent' && Array.isArray(newUser.assigned_month) && newUser.assigned_month.length > 0) {
-        dataToSend.assigned_month = newUser.assigned_month.length > 1 
-          ? newUser.assigned_month 
-          : newUser.assigned_month[0];
+      // Gérer assigned_month pour les responsables de promos
+      if ((newUser.role === 'referent' || newUser.role === 'responsable_promos') && newUser.assigned_month) {
+        dataToSend.assigned_month = newUser.assigned_month;
       }
       
       await createUser(dataToSend);
