@@ -374,20 +374,42 @@ const DashboardPage = () => {
 
         {/* Rename Promo Dialog */}
         <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Renommer la bergerie</DialogTitle>
+              <DialogTitle>Modifier les informations de la promo</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Nom de la promo</Label>
+                <Label>Nom de la promo (optionnel)</Label>
                 <Input
                   value={newPromoName}
                   onChange={(e) => setNewPromoName(e.target.value)}
                   placeholder="Ex: Bergerie Excellence, Bergerie de Novembre..."
                 />
                 <p className="text-xs text-gray-500">
-                  Ce nom remplacera "{user?.assigned_month}" partout dans l'application
+                  Ce nom remplacera l'affichage du mois dans l'application
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Mois assignés (sélection multiple)</Label>
+                <div className="border rounded-md p-3 max-h-64 overflow-y-auto">
+                  <div className="grid grid-cols-2 gap-2">
+                    {generateMonths().map((month) => (
+                      <label key={month.value} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                        <Checkbox
+                          checked={selectedMonths.includes(month.value)}
+                          onCheckedChange={() => toggleMonth(month.value)}
+                        />
+                        <span className="text-sm">{month.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  {selectedMonths.length > 0
+                    ? `${selectedMonths.length} mois sélectionné(s)`
+                    : 'Aucun mois sélectionné'}
                 </p>
               </div>
             </div>
