@@ -248,10 +248,16 @@ const GestionAccesPage = () => {
     return names[month - 1];
   };
 
-  const simpleMonths = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-  ];
+  const toggleMonth = (month) => {
+    setNewUser(prev => {
+      const months = Array.isArray(prev.assigned_month) ? prev.assigned_month : [];
+      if (months.includes(month)) {
+        return {...prev, assigned_month: months.filter(m => m !== month)};
+      } else {
+        return {...prev, assigned_month: [...months, month]};
+      }
+    });
+  };
 
   if (loading) {
     return (
