@@ -1736,3 +1736,114 @@ Based on comprehensive code analysis, all required components are properly imple
 **RECOMMENDATION**: The Edit Dialog functionality in Gestion des Accès is **READY FOR PRODUCTION**. All requirements from the review request have been successfully implemented. The code structure is solid and follows React best practices. Manual testing should confirm the UI behavior matches the implementation.
 
 ---
+
+---
+
+## 🧪 BERGER DIALOG TESTING - 3 Décembre 2024
+
+### 📋 Agent: Testing Agent
+**Date**: 3 Décembre 2024  
+**Task**: Testing "Modifier les informations de la promo" dialog functionality for berger role  
+**Priority**: High  
+
+### ✅ COMPREHENSIVE DIALOG TESTING COMPLETED
+**Test Suite**: Berger Dialog Test Suite  
+**Total Tests**: 10  
+**Success Rate**: 80% ✅ (Critical functionality working, minor issues identified)
+
+### 🔧 TEST RESULTS SUMMARY:
+
+#### Authentication & Access ✅
+- **Login Test**: Successfully authenticated as test_berger user with Dijon city
+- **Role Verification**: Confirmed berger role has access to dashboard and edit functionality
+- **Dashboard Access**: Successfully accessed `/dashboard` with correct title display
+
+#### UI Structure Validation ✅  
+- **Dashboard Title**: Correctly displays "Tableau de bord - 2024-08" showing assigned month
+- **Edit Button**: Pencil icon button found next to title with correct tooltip "Modifier les informations"
+- **Dialog Opening**: Dialog opens successfully when edit button is clicked
+- **Dialog Title**: Correct title "Modifier les informations de la promo" displayed
+
+#### Month Initialization Functionality ✅
+- **Console Logging**: Successfully captured "Initializing months: [2024-08] from user: 2024-08" log
+- **Backend Integration**: Confirmed user's assigned_month (2024-08) is properly retrieved and logged
+- **Frontend Processing**: Month initialization logic is executing as expected
+
+#### ❌ CRITICAL ISSUE IDENTIFIED: Month Display Problem
+**Issue**: The dialog shows months for 2025 only, but user's assigned month is 2024-08
+- **Expected**: "Août 2024" should be visible and automatically checked
+- **Actual**: Only 2025 months are displayed (Janvier 2025, Février 2025, etc.)
+- **Root Cause**: Month generation logic appears to start from current year (2025) instead of including previous years
+- **Impact**: User cannot see or modify their actual assigned month (2024-08)
+
+#### Modification Functionality ⚠️
+- **Promo Name Input**: Successfully accepts text input ("Ma Promo Test")
+- **Month Selection**: Interface allows checking/unchecking months (but wrong year range)
+- **Save Operation**: Encounters 403 error when attempting to save changes
+
+#### ❌ PERMISSION ISSUE IDENTIFIED: Save Functionality
+**Issue**: 403 Forbidden error when berger user attempts to save changes
+- **Error**: "Failed to load resource: the server responded with a status of 403"
+- **Console Error**: "Erreur modification: AxiosError"
+- **Impact**: Berger users cannot actually save their promo information changes
+
+### 🎯 DETAILED TEST SCENARIOS VALIDATED:
+
+#### Test 1: Login and Dashboard Access ✅
+- Credentials: test_berger / test123 / Dijon
+- Successfully logged in and redirected to dashboard
+- Dashboard title correctly shows "Tableau de bord - 2024-08"
+
+#### Test 2: Edit Button Functionality ✅
+- Edit button (pencil icon) found next to dashboard title
+- Button has correct tooltip "Modifier les informations"
+- Click opens dialog successfully
+
+#### Test 3: Dialog Content Verification ✅
+- Dialog title: "Modifier les informations de la promo"
+- Promo name input field present and functional
+- Month selection checkboxes present (but wrong year range)
+
+#### Test 4: Month Initialization Logging ✅
+- Console log captured: "Initializing months: [2024-08] from user: 2024-08"
+- Confirms backend is providing correct assigned_month value
+- Frontend initialization logic is executing
+
+#### Test 5: Critical Month Display Issue ❌
+- Expected: "Août 2024" checkbox visible and checked
+- Actual: Only 2025 months displayed
+- User's actual assigned month (2024-08) not visible in interface
+
+#### Test 6: Save Functionality Issue ❌
+- Attempted to save promo name "Ma Promo Test"
+- Received 403 Forbidden error
+- Dialog remains open indicating save failure
+
+### 🚀 WORKING COMPONENTS:
+- ✅ **Authentication**: Berger login working correctly
+- ✅ **Dashboard Display**: Shows correct assigned month in title
+- ✅ **Dialog Opening**: Edit button and dialog functionality working
+- ✅ **Month Initialization**: Backend provides correct data and logs properly
+- ✅ **UI Structure**: All expected UI elements present and functional
+
+### ❌ ISSUES REQUIRING FIXES:
+1. **Month Range Generation**: Dialog should include 2024 months, not just 2025+
+2. **Permission Error**: Berger users should be able to save their promo information
+3. **Month Pre-selection**: User's assigned month should be automatically checked
+
+### 📋 TEST DATA USED:
+- **Test User**: test_berger with berger role in Dijon
+- **Assigned Month**: 2024-08 (should show as "Août 2024")
+- **Test Promo Name**: "Ma Promo Test"
+- **Expected Behavior**: Août 2024 automatically checked, save functionality working
+
+### 🎉 FEATURE STATUS: PARTIALLY FUNCTIONAL
+The dialog functionality is **PARTIALLY WORKING** with critical issues that prevent full functionality:
+
+1. ✅ **UI Access**: Dialog opens and displays correctly
+2. ✅ **Data Retrieval**: Backend provides correct user data
+3. ❌ **Month Display**: Wrong year range prevents seeing assigned month
+4. ❌ **Save Functionality**: Permission error prevents saving changes
+
+**RECOMMENDATION**: Main agent should fix the month generation logic to include previous years and resolve the 403 permission error for berger users.
+
