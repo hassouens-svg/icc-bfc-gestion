@@ -133,6 +133,7 @@ function App() {
           <Route path="/acces-specifiques" element={<AccesSpecifiquesPage />} />
           <Route path="/acces-bergers-eglise" element={<AccesBergersEglisePage />} />
           <Route path="/select-department" element={<SelectDepartmentPage />} />
+          <Route path="/select-account" element={<SelectAccountPage />} />
           <Route path="/select-ville" element={<SelectVillePage />} />
           <Route path="/gestion-acces" element={<GestionAccesPage />} />
           <Route path="/attribution-pilotes" element={<AttributionPilotesPage />} />
