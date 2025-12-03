@@ -95,7 +95,7 @@ class UserCreate(BaseModel):
     city: str
     role: str
     telephone: Optional[str] = None
-    assigned_month: Optional[str] = None
+    assigned_month: Optional[Union[str, List[str]]] = None
     permissions: Optional[Dict[str, bool]] = None
 
 class UserUpdate(BaseModel):
