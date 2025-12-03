@@ -21,7 +21,7 @@ const SelectAccountPage = () => {
     }
 
     loadAccounts();
-  }, [currentUser, navigate]);
+  }, [currentUser]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const loadAccounts = async () => {
     try {
