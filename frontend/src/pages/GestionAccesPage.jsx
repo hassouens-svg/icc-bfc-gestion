@@ -579,6 +579,16 @@ const GestionAccesPage = () => {
                       </td>
                       <td className="p-2 text-right">
                         <div className="flex gap-1 justify-end">
+                          {['super_admin', 'pasteur'].includes(user?.role) && u.id !== user?.id && (
+                            <Button 
+                              size="sm" 
+                              variant="default"
+                              onClick={() => handleImpersonate(u)}
+                              title="Se connecter en tant que cet utilisateur"
+                            >
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                          )}
                           <Button 
                             size="sm" 
                             variant="outline"
