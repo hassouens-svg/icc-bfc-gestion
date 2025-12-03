@@ -79,17 +79,17 @@ def test_1_login_pasteur_superadmin_sans_ville(results):
     print(f"\n🔐 TEST 1: LOGIN PASTEUR/SUPERADMIN SANS VILLE")
     print(f"{'='*60}")
     
-    # Test A: SuperAdmin login avec ville vide (le backend gère pasteur/superadmin différemment)
-    superadmin_data = {
+    # Test A: SuperAdmin login avec ville (d'abord tester le login normal)
+    superadmin_data_with_city = {
         "username": "superadmin",
         "password": "superadmin123",
-        "city": ""  # Ville vide - le backend doit gérer pasteur/superadmin sans ville
+        "city": "Dijon"
     }
     
     try:
         response = requests.post(
             f"{BASE_URL}/auth/login",
-            json=superadmin_data,
+            json=superadmin_data_with_city,
             headers=HEADERS,
             timeout=10
         )
@@ -100,7 +100,7 @@ def test_1_login_pasteur_superadmin_sans_ville(results):
             user = data.get("user")
             
             if token and user:
-                results.add_success("SuperAdmin login sans ville", f"Token généré, role: {user.get('role')}, city: {user.get('city')}")
+                results.add_success("SuperAdmin login avec ville", f"Token généré, role: {user.get('role')}, city: {user.get('city')}")
                 
                 # Vérifier que l'utilisateur a bien le rôle super_admin
                 if user.get("role") == "super_admin":
@@ -108,15 +108,34 @@ def test_1_login_pasteur_superadmin_sans_ville(results):
                 else:
                     results.add_failure("SuperAdmin role verification", f"Rôle attendu: super_admin, reçu: {user.get('role')}")
                 
+                # Test B: Maintenant tester avec ville vide
+                superadmin_data_empty_city = {
+                    "username": "superadmin",
+                    "password": "superadmin123",
+                    "city": ""
+                }
+                
+                response_empty = requests.post(
+                    f"{BASE_URL}/auth/login",
+                    json=superadmin_data_empty_city,
+                    headers=HEADERS,
+                    timeout=10
+                )
+                
+                if response_empty.status_code == 200:
+                    results.add_success("SuperAdmin login ville vide", "Login réussi avec ville vide")
+                else:
+                    results.add_failure("SuperAdmin login ville vide", f"Status: {response_empty.status_code}, Response: {response_empty.text}")
+                
                 return token, user
             else:
-                results.add_failure("SuperAdmin login sans ville", "Token ou user manquant dans la réponse")
+                results.add_failure("SuperAdmin login avec ville", "Token ou user manquant dans la réponse")
                 return None, None
         else:
-            results.add_failure("SuperAdmin login sans ville", f"Status: {response.status_code}, Response: {response.text}")
+            results.add_failure("SuperAdmin login avec ville", f"Status: {response.status_code}, Response: {response.text}")
             return None, None
     except Exception as e:
-        results.add_failure("SuperAdmin login sans ville", f"Exception: {str(e)}")
+        results.add_failure("SuperAdmin login avec ville", f"Exception: {str(e)}")
         return None, None
 
 def test_2_impersonation(results, superadmin_token):
