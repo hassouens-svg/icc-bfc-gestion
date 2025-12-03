@@ -74,7 +74,21 @@ const DashboardPage = () => {
       window.location.reload(); // Reload to update all displays
     } catch (error) {
       console.error('Erreur modification:', error);
-      const errorMsg = error?.response?.data?.detail || error?.message || 'Erreur lors de la modification';
+      let errorMsg = 'Erreur lors de la modification';
+      
+      if (error?.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        if (typeof detail === 'string') {
+          errorMsg = detail;
+        } else if (Array.isArray(detail)) {
+          errorMsg = detail.map(e => e.msg || JSON.stringify(e)).join(', ');
+        } else if (typeof detail === 'object') {
+          errorMsg = JSON.stringify(detail);
+        }
+      } else if (error?.message) {
+        errorMsg = error.message;
+      }
+      
       toast.error(errorMsg);
     }
   };
