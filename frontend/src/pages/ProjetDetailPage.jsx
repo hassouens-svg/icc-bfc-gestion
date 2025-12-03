@@ -1411,20 +1411,65 @@ const ProjetDetailPage = () => {
                         ) : (
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
+                              <div className="flex items-center gap-2 mb-2">
                                 <h4 className="font-medium">{jalon.titre}</h4>
-                                <span className={`px-2 py-0.5 text-xs rounded-full ${
-                                  jalon.statut === 'termine' ? 'bg-green-100 text-green-800' :
-                                  jalon.statut === 'en_retard' ? 'bg-red-100 text-red-800' :
-                                  jalon.statut === 'en_cours' ? 'bg-blue-100 text-blue-800' :
-                                  jalon.statut === 'annule' ? 'bg-gray-100 text-gray-800' :
-                                  'bg-yellow-100 text-yellow-800'
-                                }`}>
-                                  {jalon.statut === 'a_faire' ? 'À faire' :
-                                   jalon.statut === 'en_cours' ? 'En cours' :
-                                   jalon.statut === 'termine' ? 'Terminé' :
-                                   jalon.statut === 'en_retard' ? 'En retard' : 'Annulé'}
-                                </span>
+                              </div>
+                              <div className="mb-2">
+                                <Select 
+                                  value={jalon.statut} 
+                                  onValueChange={async (newStatut) => {
+                                    try {
+                                      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/jalons/${jalon.id}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                                          'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ statut: newStatut })
+                                      });
+                                      loadData();
+                                      toast.success('Statut mis à jour');
+                                    } catch (error) {
+                                      toast.error('Erreur lors de la mise à jour');
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="w-[140px] h-8">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="a_faire">
+                                      <span className="flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+                                        À faire
+                                      </span>
+                                    </SelectItem>
+                                    <SelectItem value="en_cours">
+                                      <span className="flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                                        En cours
+                                      </span>
+                                    </SelectItem>
+                                    <SelectItem value="termine">
+                                      <span className="flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                                        Terminé
+                                      </span>
+                                    </SelectItem>
+                                    <SelectItem value="en_retard">
+                                      <span className="flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                        En retard
+                                      </span>
+                                    </SelectItem>
+                                    <SelectItem value="annule">
+                                      <span className="flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-gray-500"></span>
+                                        Annulé
+                                      </span>
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
                               </div>
                               {jalon.description && <p className="text-sm text-gray-600 mb-2">{jalon.description}</p>}
                               <div className="flex gap-3 text-xs text-gray-500">
