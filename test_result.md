@@ -1,7 +1,7 @@
 # Test Result Log
 
 ## Current Testing Phase
-Testing the RSVP Links feature for "My Events Church" section - COMPLETED ✅
+Testing the "Modifier les informations de la promo" dialog on Dashboard - COMPLETED ✅
 
 ## Test Results Summary
 
