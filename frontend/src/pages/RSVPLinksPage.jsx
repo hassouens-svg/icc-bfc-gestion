@@ -164,7 +164,7 @@ const RSVPLinksPage = () => {
 
       toast.success('✅ Événement créé avec succès !');
       setIsDialogOpen(false);
-      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
+      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false });
       loadEvents();
     } catch (error) {
       console.error('Create event error:', error);
