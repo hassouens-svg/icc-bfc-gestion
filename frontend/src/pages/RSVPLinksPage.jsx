@@ -341,7 +341,7 @@ const RSVPLinksPage = () => {
               <Card key={event.id} className="overflow-hidden">
                 {event.image_url ? (
                   <img 
-                    src={event.image_url} 
+                    src={event.image_url.startsWith('http') ? event.image_url : `${backendUrl}${event.image_url}`}
                     alt={event.title} 
                     className="w-full h-48 object-cover"
                     onError={(e) => {
