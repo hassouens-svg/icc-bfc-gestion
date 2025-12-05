@@ -214,7 +214,7 @@ const RSVPLinksPage = () => {
       setIsDialogOpen(false);
       setIsEditMode(false);
       setEditingEventId(null);
-      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
+      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false });
       loadEvents();
     } catch (error) {
       console.error('Update event error:', error);
