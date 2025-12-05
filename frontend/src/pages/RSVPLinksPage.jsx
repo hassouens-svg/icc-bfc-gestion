@@ -538,11 +538,11 @@ const RSVPLinksPage = () => {
       {/* Stats Dialog */}
       {selectedEvent && (
         <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>Statistiques: {selectedEvent.title}</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto flex-1">
               {eventStats ? (
                 <>
                   <div className="space-y-3">
