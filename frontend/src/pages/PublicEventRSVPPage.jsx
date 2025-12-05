@@ -157,7 +157,7 @@ const PublicEventRSVPPage = () => {
             {event.image_url && (
               <div className="w-full overflow-hidden">
                 <img 
-                  src={event.image_url} 
+                  src={event.image_url.startsWith('http') ? event.image_url : `${process.env.REACT_APP_BACKEND_URL}${event.image_url}`}
                   alt={event.title}
                   className="w-full h-80 object-cover"
                   style={{ objectPosition: 'center' }}
