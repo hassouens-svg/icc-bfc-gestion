@@ -181,7 +181,8 @@ const RSVPLinksPage = () => {
       date: event.date,
       time: event.time || '',
       location: event.location || '',
-      image_url: event.image_url || ''
+      image_url: event.image_url || '',
+      require_names: event.require_names || false
     });
     setIsDialogOpen(true);
   };
