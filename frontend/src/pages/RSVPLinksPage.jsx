@@ -43,6 +43,20 @@ const RSVPLinksPage = () => {
   }
 
   // Check access
+  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
+  if (!allowedRoles.includes(user?.role)) {
+    return (
+      <EventsLayout>
+        <div className="p-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center space-y-4">
+                <div className="text-6xl">🔒</div>
+                <h2 className="text-2xl font-bold">Accès Réservé</h2>
+                <p className="text-gray-600">
+                  Ce module est réservé aux pasteurs, super admins, responsables d'église et gestion projet.
+                </p>
+                <Button onClick={() => navigate('/dashboard')}>
                   Retour au Dashboard
                 </Button>
               </div>
@@ -104,7 +118,7 @@ const RSVPLinksPage = () => {
       const response = await fetch(`${backendUrl}/api/upload-event-image`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token'}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: formData
       });
@@ -136,7 +150,7 @@ const RSVPLinksPage = () => {
       const response = await fetch(`${backendUrl}/api/events`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token'}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(eventData)
@@ -187,7 +201,7 @@ const RSVPLinksPage = () => {
       const response = await fetch(`${backendUrl}/api/events/${editingEventId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token'}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(eventData)
@@ -216,7 +230,7 @@ const RSVPLinksPage = () => {
       const response = await fetch(`${backendUrl}/api/events/${eventId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token'}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
 
@@ -272,7 +286,7 @@ const RSVPLinksPage = () => {
     try {
       const response = await fetch(`${backendUrl}/api/events/${eventId}/rsvp`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token'}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       const data = await response.json();
@@ -303,7 +317,7 @@ const RSVPLinksPage = () => {
             </h1>
             <p className="text-gray-500 mt-1">Créez des liens partageables pour vos événements</p>
           </div>
-          <Button onClick={() => setIsDialogOpen(true}>
+          <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Nouvel Événement
           </Button>
@@ -315,7 +329,7 @@ const RSVPLinksPage = () => {
               <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucun événement</h3>
               <p className="text-gray-500 mb-4">Créez votre premier événement avec lien RSVP</p>
-              <Button onClick={() => setIsDialogOpen(true}>
+              <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Créer un Événement
               </Button>
@@ -340,7 +354,7 @@ const RSVPLinksPage = () => {
                   <div className="w-full h-48 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
                     <Calendar className="h-16 w-16 text-indigo-300" />
                   </div>
-                }
+                )}
                 <div className="hidden w-full h-48 bg-gradient-to-br from-indigo-100 to-purple-100 items-center justify-center">
                   <Calendar className="h-16 w-16 text-indigo-300" />
                 </div>
@@ -358,20 +372,20 @@ const RSVPLinksPage = () => {
                         <Clock className="h-4 w-4" />
                         <span>{event.time}</span>
                       </div>
-                    }
+                    )}
                     {event.location && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPin className="h-4 w-4" />
                         <span>{event.location}</span>
                       </div>
-                    }
+                    )}
                   </div>
 
                   <div className="pt-3 border-t space-y-3">
                     <div className="bg-gray-50 p-3 rounded-lg">
                       <p className="text-xs text-gray-500 mb-1">Lien de partage:</p>
                       <a 
-                        href={getPublicRSVPLink(event.id}
+                        href={getPublicRSVPLink(event.id)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-indigo-600 hover:text-indigo-800 underline break-all"
@@ -380,34 +394,34 @@ const RSVPLinksPage = () => {
                       </a>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => copyToClipboard(getPublicRSVPLink(event.id)}>
+                      <Button size="sm" variant="outline" className="flex-1" onClick={() => copyToClipboard(getPublicRSVPLink(event.id))}>
                         <Copy className="h-4 w-4 mr-1" />
                         Copier
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => shareViaWhatsApp(event}>
+                      <Button size="sm" variant="outline" onClick={() => shareViaWhatsApp(event)}>
                         <Share2 className="h-4 w-4" />
                       </Button>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => viewStats(event}>
+                      <Button size="sm" variant="outline" className="flex-1" onClick={() => viewStats(event)}>
                         <BarChart className="h-4 w-4 mr-1" />
                         Stats
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleEditEvent(event}>
+                      <Button size="sm" variant="outline" onClick={() => handleEditEvent(event)}>
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
                       </Button>
-                      <Button size="sm" variant="destructive" onClick={() => handleDeleteEvent(event.id}>
+                      <Button size="sm" variant="destructive" onClick={() => handleDeleteEvent(event.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            )}
+            ))}
           </div>
-        }
+        )}
       </div>
 
       {/* Create/Edit Dialog */}
@@ -426,32 +440,32 @@ const RSVPLinksPage = () => {
           <form onSubmit={isEditMode ? handleUpdateEvent : handleCreateEvent} className="space-y-4">
             <div className="space-y-2">
               <Label>Titre *</Label>
-              <Input required value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value }} placeholder="Culte Spécial" />
+              <Input required value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} placeholder="Culte Spécial" />
             </div>
             <div className="space-y-2">
               <Label>Description</Label>
-              <Textarea value={newEvent.description} onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value }} rows={3} />
+              <Textarea value={newEvent.description} onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} rows={3} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Date *</Label>
-                <Input type="date" required value={newEvent.date} onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value }} />
+                <Input type="date" required value={newEvent.date} onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })} />
               </div>
               <div className="space-y-2">
                 <Label>Heure</Label>
-                <Input type="time" value={newEvent.time} onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value }} />
+                <Input type="time" value={newEvent.time} onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })} />
               </div>
             </div>
             <div className="space-y-2">
               <Label>Lieu</Label>
-              <Input value={newEvent.location} onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value }} />
+              <Input value={newEvent.location} onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })} />
             </div>
             <div className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
               <input
                 type="checkbox"
                 id="require_names"
                 checked={newEvent.require_names}
-                onChange={(e) => setNewEvent({ ...newEvent, require_names: e.target.checked }}
+                onChange={(e) => setNewEvent({ ...newEvent, require_names: e.target.checked })}
                 className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
               />
               <label htmlFor="require_names" className="text-sm font-medium text-gray-700 cursor-pointer">
@@ -472,7 +486,7 @@ const RSVPLinksPage = () => {
                     size="sm"
                     variant="outline"
                     className="absolute top-2 right-2 bg-white/90 hover:bg-white"
-                    onClick={() => document.getElementById('imageUploadInput').click(}
+                    onClick={() => document.getElementById('imageUploadInput').click()}
                     disabled={uploadingImage}
                   >
                     <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -499,10 +513,10 @@ const RSVPLinksPage = () => {
                   />
                   <p className="text-xs text-gray-500 mt-1">Ajoutez une image pour votre événement</p>
                 </div>
-              }
+              )}
               {uploadingImage && (
                 <p className="text-sm text-blue-600">Téléchargement en cours...</p>
-              }
+              )}
             </div>
             <div className="flex gap-2">
               <Button type="submit" className="flex-1" disabled={uploadingImage}>
@@ -523,7 +537,7 @@ const RSVPLinksPage = () => {
 
       {/* Stats Dialog */}
       {selectedEvent && (
-        <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null}>
+        <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
           <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>Statistiques: {selectedEvent.title}</DialogTitle>
@@ -618,20 +632,20 @@ const RSVPLinksPage = () => {
                                   </span>
                                 </td>
                               </tr>
-                            )}
+                            ))}
                           </tbody>
                         </table>
                       </div>
                     </div>
-                  }
+                  )}
                 </>
               ) : (
                 <p className="text-center text-gray-500">Chargement...</p>
-              }
+              )}
             </div>
           </DialogContent>
         </Dialog>
-      }
+      )}
     </EventsLayout>
   );
 };
