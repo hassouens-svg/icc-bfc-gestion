@@ -26,7 +26,8 @@ const RSVPLinksPage = () => {
     date: '',
     time: '',
     location: '',
-    image_url: ''
+    image_url: '',
+    require_names: false
   });
   const [uploadingImage, setUploadingImage] = useState(false);
   const [eventStats, setEventStats] = useState(null);
