@@ -261,7 +261,7 @@ const GestionAccesPage = () => {
         const monthStr = month.toString().padStart(2, '0');
         months.push({
           value: `${year}-${monthStr}`,
-          label: `${getMonthName(month} ${year}`
+          label: `${getMonthName(month)} ${year}`
         });
       }
     }
@@ -278,7 +278,7 @@ const GestionAccesPage = () => {
     setNewUser(prev => {
       const months = Array.isArray(prev.assigned_month) ? prev.assigned_month : [];
       if (months.includes(month)) {
-        return {...prev, assigned_month: months.filter(m => m !== month};
+        return {...prev, assigned_month: months.filter(m => m !== month)};
       } else {
         return {...prev, assigned_month: [...months, month]};
       }
@@ -308,13 +308,13 @@ const GestionAccesPage = () => {
             {user?.role === 'super_admin' && (
               <Button 
                 variant="outline" 
-                onClick={() => setShowPasswords(!showPasswords}
+                onClick={() => setShowPasswords(!showPasswords)}
                 className="flex items-center gap-2"
               >
                 <Eye className="h-4 w-4" />
                 {showPasswords ? 'Masquer les mots de passe' : 'Voir les mots de passe'}
               </Button>
-            }
+            )}
             {user?.role === 'super_admin' && (
               <Button 
                 variant="outline" 
@@ -336,7 +336,7 @@ const GestionAccesPage = () => {
                 <Download className="h-4 w-4" />
                 Exporter les identifiants
               </Button>
-            }
+            )}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -354,7 +354,7 @@ const GestionAccesPage = () => {
                   <Label>Nom d'utilisateur *</Label>
                   <Input
                     value={newUser.username}
-                    onChange={(e) => setNewUser({...newUser, username: e.target.value}}
+                    onChange={(e) => setNewUser({...newUser, username: e.target.value})}
                     required
                   />
                 </div>
@@ -364,7 +364,7 @@ const GestionAccesPage = () => {
                   <Input
                     type="password"
                     value={newUser.password}
-                    onChange={(e) => setNewUser({...newUser, password: e.target.value}}
+                    onChange={(e) => setNewUser({...newUser, password: e.target.value})}
                     required
                   />
                 </div>
@@ -376,32 +376,32 @@ const GestionAccesPage = () => {
                   <Input
                     type="tel"
                     value={newUser.telephone || ''}
-                    onChange={(e) => setNewUser({...newUser, telephone: e.target.value}}
+                    onChange={(e) => setNewUser({...newUser, telephone: e.target.value})}
                     placeholder="0612345678"
                     required={newUser.role === 'pilote_fi'}
                   />
                   {newUser.role === 'pilote_fi' && !newUser.telephone && (
                     <p className="text-xs text-red-500">Le numéro de téléphone est obligatoire pour les pilotes</p>
-                  }
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Ville *</Label>
-                  <Select value={newUser.city} onValueChange={(val) => setNewUser({...newUser, city: val}}>
+                  <Select value={newUser.city} onValueChange={(val) => setNewUser({...newUser, city: val})}>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionnez une ville" />
                     </SelectTrigger>
                     <SelectContent>
                       {[...cities].filter(c => c.name && c.name.trim() !== '').sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
                         <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
-                      )}
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Rôle *</Label>
-                  <Select value={newUser.role} onValueChange={(val) => setNewUser({...newUser, role: val}}>
+                  <Select value={newUser.role} onValueChange={(val) => setNewUser({...newUser, role: val})}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -430,23 +430,23 @@ const GestionAccesPage = () => {
                               <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
                               <SelectItem value="gestion_projet">Gestion de Projet</SelectItem>
                             </>
-                          }
+                          )}
                         </>
-                      }
+                      )}
                     </SelectContent>
                   </Select>
                   {user?.role === 'superviseur_promos' && (
                     <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Responsable de Promos</p>
-                  }
+                  )}
                   {user?.role === 'superviseur_fi' && (
                     <p className="text-xs text-gray-500">Vous pouvez créer: Pilote FI et Responsable Secteur</p>
-                  }
+                  )}
                   {user?.role === 'responsable_secteur' && (
                     <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Pilote FI</p>
-                  }
+                  )}
                   {user?.role === 'responsable_secteur' && (
                     <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Pilote FI</p>
-                  }
+                  )}
                 </div>
 
                 {(newUser.role === 'referent' || newUser.role === 'promotions') && (
@@ -454,14 +454,14 @@ const GestionAccesPage = () => {
                     <Label>Nom de la promo (optionnel)</Label>
                     <Input
                       value={newUser.promo_name || ''}
-                      onChange={(e) => setNewUser({...newUser, promo_name: e.target.value}}
+                      onChange={(e) => setNewUser({...newUser, promo_name: e.target.value})}
                       placeholder="Ex: Promo Excellence, Novembre 2024..."
                     />
                     <p className="text-xs text-gray-500">
                       Remplace l'affichage du mois assigné dans les dashboards
                     </p>
                   </div>
-                }
+                )}
 
                 {newUser.role === 'referent' && (
                   <div className="space-y-2">
@@ -472,13 +472,13 @@ const GestionAccesPage = () => {
                           <label key={month.value} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
                             <input
                               type="checkbox"
-                              checked={Array.isArray(newUser.assigned_month) && newUser.assigned_month.includes(month.value}
-                              onChange={() => toggleMonth(month.value}
+                              checked={Array.isArray(newUser.assigned_month) && newUser.assigned_month.includes(month.value)}
+                              onChange={() => toggleMonth(month.value)}
                               className="rounded"
                             />
                             <span className="text-sm">{month.label}</span>
                           </label>
-                        )}
+                        ))}
                       </div>
                     </div>
                     <p className="text-xs text-gray-500">
@@ -487,7 +487,7 @@ const GestionAccesPage = () => {
                         : 'Aucun mois sélectionné'}
                     </p>
                   </div>
-                }
+                )}
                 </div>
 
                 {/* Bouton fixe en bas */}
@@ -521,7 +521,7 @@ const GestionAccesPage = () => {
                           <div className="text-sm text-gray-500">{pilote.city}</div>
                           {pilote.assigned_fi_ids && pilote.assigned_fi_ids.length > 0 && (
                             <div className="text-xs text-gray-400">FI assignées: {pilote.assigned_fi_ids.length}</div>
-                          }
+                          )}
                         </div>
                         <div className="flex gap-2">
                           <Button size="sm" variant="outline" onClick={() => { setSelectedUser(pilote); setIsEditDialogOpen(true); }}>
@@ -529,13 +529,13 @@ const GestionAccesPage = () => {
                           </Button>
                         </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                }
+                )}
               </div>
             </CardContent>
           </Card>
-        }
+        )}
 
         {/* Liste des utilisateurs */}
         <Card>
@@ -544,7 +544,7 @@ const GestionAccesPage = () => {
           </CardHeader>
           <CardContent>
             {/* Filtre ville pour superadmin et pasteur */}
-            { 
+            {(user?.role === 'super_admin' || user?.role === 'pasteur') && (
               <div className="mb-4 flex gap-4 items-end">
                 <div className="flex-1">
                   <Label>Filtrer par ville</Label>
@@ -556,12 +556,12 @@ const GestionAccesPage = () => {
                       <SelectItem value="all">Toutes les villes</SelectItem>
                       {cities.filter(city => city.name && city.name.trim() !== '').map((city) => (
                         <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
-                      )}
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-            }
+            )}
 
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -572,7 +572,7 @@ const GestionAccesPage = () => {
                     <th className="text-left p-2">Rôle</th>
                     {user?.role === 'super_admin' && (
                       <th className="text-left p-2">Mot de passe</th>
-                    }
+                    )}
                     <th className="text-left p-2">Statut</th>
                     <th className="text-right p-2">Actions</th>
                   </tr>
@@ -584,7 +584,7 @@ const GestionAccesPage = () => {
                       <td className="p-2">{u.city}</td>
                       <td className="p-2">
                         <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">
-                          {getRoleLabel(u.role}
+                          {getRoleLabel(u.role)}
                         </span>
                       </td>
                       {user?.role === 'super_admin' && (
@@ -594,11 +594,11 @@ const GestionAccesPage = () => {
                               <code className="text-xs bg-gray-100 px-2 py-1 rounded">{u.plain_password || '***'}</code>
                             ) : (
                               <span className="text-gray-400 text-xs">•••••••</span>
-                            }
+                            )}
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => togglePasswordVisibility(u.id}
+                              onClick={() => togglePasswordVisibility(u.id)}
                               title={visiblePasswords[u.id] ? "Masquer" : "Afficher"}
                               className="h-6 w-6 p-0"
                             >
@@ -606,13 +606,13 @@ const GestionAccesPage = () => {
                             </Button>
                           </div>
                         </td>
-                      }
+                      )}
                       <td className="p-2">
                         {u.is_blocked ? (
                           <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Bloqué</span>
                         ) : (
                           <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Actif</span>
-                        }
+                        )}
                       </td>
                       <td className="p-2 text-right">
                         <div className="flex gap-1 justify-end">
@@ -620,12 +620,12 @@ const GestionAccesPage = () => {
                             <Button 
                               size="sm" 
                               variant="default"
-                              onClick={() => handleImpersonate(u}
+                              onClick={() => handleImpersonate(u)}
                               title="Se connecter en tant que cet utilisateur"
                             >
                               <Eye className="h-3 w-3" />
                             </Button>
-                          }
+                          )}
                           <Button 
                             size="sm" 
                             variant="outline"
@@ -643,7 +643,7 @@ const GestionAccesPage = () => {
                           <Button 
                             size="sm" 
                             variant="outline"
-                            onClick={() => handleBlockUser(u.id}
+                            onClick={() => handleBlockUser(u.id)}
                           >
                             {u.is_blocked ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
                           </Button>
@@ -659,11 +659,11 @@ const GestionAccesPage = () => {
                             >
                               <Trash2 className="h-3 w-3" />
                             </Button>
-                          }
+                          )}
                         </div>
                       </td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -682,7 +682,7 @@ const GestionAccesPage = () => {
                   <Label>Nom d'utilisateur</Label>
                   <Input
                     value={selectedUser?.username || ''}
-                    onChange={(e) => setSelectedUser({...selectedUser, username: e.target.value}}
+                    onChange={(e) => setSelectedUser({...selectedUser, username: e.target.value})}
                     required
                   />
                 </div>
@@ -690,7 +690,7 @@ const GestionAccesPage = () => {
                   <Label>Téléphone</Label>
                   <Input
                     value={selectedUser?.telephone || ''}
-                    onChange={(e) => setSelectedUser({...selectedUser, telephone: e.target.value}}
+                    onChange={(e) => setSelectedUser({...selectedUser, telephone: e.target.value})}
                   />
                 </div>
               </div>
@@ -699,7 +699,7 @@ const GestionAccesPage = () => {
                   <Label>Ville</Label>
                   <Select 
                     value={selectedUser?.city || ''} 
-                    onValueChange={(val) => setSelectedUser({...selectedUser, city: val}}
+                    onValueChange={(val) => setSelectedUser({...selectedUser, city: val})}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner" />
@@ -713,7 +713,7 @@ const GestionAccesPage = () => {
                             {cityValue}
                           </SelectItem>
                         );
-                      }}
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -721,7 +721,7 @@ const GestionAccesPage = () => {
                   <Label>Rôle</Label>
                   <Select 
                     value={selectedUser?.role || ''} 
-                    onValueChange={(val) => setSelectedUser({...selectedUser, role: val}}
+                    onValueChange={(val) => setSelectedUser({...selectedUser, role: val})}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner" />
@@ -743,7 +743,7 @@ const GestionAccesPage = () => {
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
-                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false}>
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                   Annuler
                 </Button>
                 <Button type="submit">Enregistrer</Button>
@@ -765,12 +765,12 @@ const GestionAccesPage = () => {
                 <Input
                   type="password"
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   required
                 />
               </div>
               <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsResetPasswordDialogOpen(false}>
+                <Button type="button" variant="outline" onClick={() => setIsResetPasswordDialogOpen(false)}>
                   Annuler
                 </Button>
                 <Button type="submit">Réinitialiser</Button>
