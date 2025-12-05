@@ -5309,9 +5309,8 @@ async def upload_event_image(file: UploadFile = File(...), current_user: dict = 
     with open(file_path, "wb") as f:
         f.write(contents)
     
-    # Return public URL
-    backend_url = os.environ['REACT_APP_BACKEND_URL']
-    public_url = f"{backend_url}/api/uploads/{new_filename}"
+    # Return public URL (relative path - frontend will use REACT_APP_BACKEND_URL)
+    public_url = f"/api/uploads/{new_filename}"
     
     return {"image_url": public_url}
 
