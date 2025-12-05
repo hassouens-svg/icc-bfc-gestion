@@ -5260,8 +5260,13 @@ async def get_event_rsvps(event_id: str, current_user: dict = Depends(get_curren
     if current_user["role"] not in allowed_roles:
         raise HTTPException(status_code=403, detail="Access denied")
     
-    # Verify event belongs to user
-    event = await db.church_events.find_one({"id": event_id, "created_by": current_user["id"]})
+    # Pasteur et super_admin peuvent voir tous les événements
+    if current_user["role"] in ["super_admin", "pasteur"]:
+        event = await db.church_events.find_one({"id": event_id})
+    else:
+        # Les autres ne voient que leurs propres événements
+        event = await db.church_events.find_one({"id": event_id, "created_by": current_user["id"]})
+    
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     
