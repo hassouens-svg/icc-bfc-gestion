@@ -477,7 +477,7 @@ const RSVPLinksPage = () => {
               {newEvent.image_url ? (
                 <div className="relative">
                   <img 
-                    src={newEvent.image_url} 
+                    src={newEvent.image_url.startsWith('http') ? newEvent.image_url : `${backendUrl}${newEvent.image_url}`}
                     alt="Image de l'événement" 
                     className="w-full h-48 object-cover rounded-lg"
                   />
