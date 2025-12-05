@@ -295,22 +295,26 @@ const PublicEventRSVPPage = () => {
                             placeholder="Votre nom"
                           />
                         </div>
-                        <div className="flex items-center gap-2 bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                          <input
-                            type="checkbox"
-                            id="is_star"
-                            checked={formData.is_star}
-                            onChange={(e) => setFormData({...formData, is_star: e.target.checked})}
-                            className="h-5 w-5 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
-                          />
-                          <label htmlFor="is_star" className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-2">
-                            <span className="text-xl">⭐</span>
-                            <span>STAR (Serviteurs Travaillant Activement pour le Royaume)</span>
-                          </label>
-                        </div>
                       </div>
                     </div>
                   )}
+                  
+                  {/* Checkbox STAR - Toujours visible */}
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="is_star"
+                        checked={formData.is_star}
+                        onChange={(e) => setFormData({...formData, is_star: e.target.checked})}
+                        className="h-5 w-5 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="is_star" className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-2">
+                        <span className="text-2xl">⭐</span>
+                        <span>Êtes-vous STAR (Serviteurs Travaillant Activement pour le Royaume) ?</span>
+                      </label>
+                    </div>
+                  </div>
                   <div className="flex gap-3">
                     <Button
                       onClick={() => {
