@@ -601,39 +601,41 @@ const RSVPLinksPage = () => {
 
                   {eventStats.responses && eventStats.responses.length > 0 && (
                     <div className="border rounded-lg overflow-hidden">
-                      <table className="w-full">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="text-left p-3 text-sm">Prénom</th>
-                            <th className="text-left p-3 text-sm">Nom</th>
-                            <th className="text-center p-3 text-sm">⭐</th>
-                            <th className="text-left p-3 text-sm">Contact</th>
-                            <th className="text-left p-3 text-sm">Statut</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {eventStats.responses.map((rsvp, idx) => (
-                            <tr key={idx} className="border-t hover:bg-gray-50">
-                              <td className="p-3">{rsvp.first_name || '-'}</td>
-                              <td className="p-3">{rsvp.last_name || '-'}</td>
-                              <td className="p-3 text-center">
-                                {rsvp.is_star && <span className="text-xl">⭐</span>}
-                              </td>
-                              <td className="p-3 text-sm">{rsvp.email || rsvp.phone || '-'}</td>
-                              <td className="p-3">
-                                <span className={`px-2 py-1 rounded text-xs ${
-                                  rsvp.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
-                                  rsvp.status === 'declined' ? 'bg-red-100 text-red-800' : 
-                                  rsvp.status === 'maybe' ? 'bg-orange-100 text-orange-800' : 
-                                  'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {rsvp.status === 'confirmed' ? 'Oui' : rsvp.status === 'declined' ? 'Non' : rsvp.status === 'maybe' ? 'Peut-être' : rsvp.status}
-                                </span>
-                              </td>
+                      <div className="max-h-[400px] overflow-y-auto">
+                        <table className="w-full">
+                          <thead className="bg-gray-50 sticky top-0 z-10">
+                            <tr>
+                              <th className="text-left p-3 text-sm bg-gray-50">Prénom</th>
+                              <th className="text-left p-3 text-sm bg-gray-50">Nom</th>
+                              <th className="text-center p-3 text-sm bg-gray-50">⭐</th>
+                              <th className="text-left p-3 text-sm bg-gray-50">Contact</th>
+                              <th className="text-left p-3 text-sm bg-gray-50">Statut</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {eventStats.responses.map((rsvp, idx) => (
+                              <tr key={idx} className="border-t hover:bg-gray-50">
+                                <td className="p-3">{rsvp.first_name || '-'}</td>
+                                <td className="p-3">{rsvp.last_name || '-'}</td>
+                                <td className="p-3 text-center">
+                                  {rsvp.is_star && <span className="text-xl">⭐</span>}
+                                </td>
+                                <td className="p-3 text-sm">{rsvp.email || rsvp.phone || '-'}</td>
+                                <td className="p-3">
+                                  <span className={`px-2 py-1 rounded text-xs ${
+                                    rsvp.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                                    rsvp.status === 'declined' ? 'bg-red-100 text-red-800' : 
+                                    rsvp.status === 'maybe' ? 'bg-orange-100 text-orange-800' : 
+                                    'bg-gray-100 text-gray-800'
+                                  }`}>
+                                    {rsvp.status === 'confirmed' ? 'Oui' : rsvp.status === 'declined' ? 'Non' : rsvp.status === 'maybe' ? 'Peut-être' : rsvp.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </>
