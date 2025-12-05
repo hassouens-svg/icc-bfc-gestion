@@ -746,8 +746,6 @@ async def update_user(user_id: str, update_data: UserUpdate, current_user: dict 
         return {"message": "User updated successfully"}
     
     # Sinon, vérifier les permissions normales
-    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin", "superviseur_fi", "responsable_secteur"]:
-        raise HTTPException(status_code=403, detail="Only admin can update users")
     
     # Super admin can update users from any city, others only from their city
     if current_user["role"] == "super_admin":
@@ -967,8 +965,6 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
         raise HTTPException(status_code=403, detail="Accueil role is read-only, cannot create visitors")
     
     # Only superviseur_promos, responsable_promo, referent, super_admin, pasteur can create
-    if current_user["role"] not in ["superviseur_promos", "responsable_promo", "referent", "promotions", "super_admin", "pasteur"]:
-        raise HTTPException(status_code=403, detail="Permission denied to create visitors")
     
     # Calculate assigned_month
     try:
@@ -987,8 +983,6 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
 @api_router.post("/visitors/bulk-ancien")
 async def create_bulk_ancien_visitors(visitors_data: List[VisitorCreate], current_user: dict = Depends(get_current_user)):
     # Only superviseur_promos, responsable_promo, referent, super_admin, pasteur can create
-    if current_user["role"] not in ["superviseur_promos", "responsable_promo", "referent", "promotions", "super_admin", "pasteur"]:
-        raise HTTPException(status_code=403, detail="Permission denied to create visitors")
     
     if len(visitors_data) > 40:
         raise HTTPException(status_code=400, detail="Maximum 40 visitors can be added at once")
@@ -1076,8 +1070,6 @@ async def get_visitors(
 @api_router.get("/visitors/stopped")
 async def get_stopped_visitors(current_user: dict = Depends(get_current_user)):
     # Admin, pasteur, responsable_eglise, superviseur_promos can see stopped visitors
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "superviseur_promos", "promotions"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Pour responsable_eglise, filtrer par leur ville
     if current_user["role"] == "responsable_eglise":
@@ -1135,9 +1127,6 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
 @api_router.put("/visitors/{visitor_id}")
 async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_user: dict = Depends(get_current_user)):
     # Allow promotions, accueil, admin, super_admin, referent, and responsable_promo to update visitors
-    allowed_roles = ["promotions", "accueil", "admin", "super_admin", "referent", "responsable_promo"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Permission denied")
     
     visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
     
@@ -1180,9 +1169,6 @@ async def delete_visitor(visitor_id: str, current_user: dict = Depends(get_curre
         raise HTTPException(status_code=404, detail="Visitor not found")
     
     # Check permissions based on role
-    allowed_roles = ["super_admin", "responsable_eglise", "superviseur_promos", "promotions", "referent", "responsable_promo"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Permission denied")
     
     # Les responsables de promo peuvent supprimer tous leurs visiteurs
     # Pas de restriction supplémentaire pour eux
@@ -1345,8 +1331,6 @@ async def stop_tracking(visitor_id: str, stop_data: StopTracking, current_user: 
 
 @api_router.post("/cities")
 async def create_city(city_data: CityCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin"]:
-        raise HTTPException(status_code=403, detail="Only admin can create cities")
     
     # Check if city already exists
     existing = await db.cities.find_one({"name": city_data.name})
@@ -1366,8 +1350,6 @@ async def get_cities():
 @api_router.post("/cities/initialize")
 async def initialize_cities(current_user: dict = Depends(get_current_user)):
     """Initialize all cities with their countries - Creates cities if they don't exist"""
-    if current_user["role"] not in ["super_admin"]:
-        raise HTTPException(status_code=403, detail="Only super_admin can initialize cities")
     
     from uuid import uuid4
     
@@ -1424,8 +1406,6 @@ async def initialize_cities(current_user: dict = Depends(get_current_user)):
 @api_router.put("/cities/{city_id}")
 async def update_city(city_id: str, city_data: CityCreate, current_user: dict = Depends(get_current_user)):
     """Update city name (Admin only)"""
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
-        raise HTTPException(status_code=403, detail="Only admin can update cities")
     
     # Check if new name already exists (excluding current city)
     existing = await db.cities.find_one({
@@ -1468,8 +1448,6 @@ async def update_city(city_id: str, city_data: CityCreate, current_user: dict = 
 @api_router.delete("/cities/{city_id}")
 async def delete_city(city_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a city (Admin only)"""
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
-        raise HTTPException(status_code=403, detail="Only admin can delete cities")
     
     city = await db.cities.find_one({"id": city_id})
     if not city:
@@ -1500,8 +1478,6 @@ async def get_city_stats(
     current_user: dict = Depends(get_current_user)
 ):
     """Get comprehensive statistics for a specific city with year/month filters"""
-    if current_user["role"] not in ["superviseur_promos", "promotions", "super_admin", "pasteur"]:
-        raise HTTPException(status_code=403, detail="Only admin can view city stats")
     
     city = await db.cities.find_one({"id": city_id})
     if not city:
@@ -1755,8 +1731,6 @@ async def get_stats(
 
 @api_router.get("/analytics/export")
 async def export_excel(current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["superviseur_promos", "promotions"]:
-        raise HTTPException(status_code=403, detail="Only admin can export data")
     
     visitors = await db.visitors.find({"city": current_user["city"]}, {"_id": 0}).to_list(10000)
     
@@ -1822,9 +1796,6 @@ def get_weeks_in_month(year, month):
 @api_router.get("/fidelisation/referent")
 async def get_referent_fidelisation(current_user: dict = Depends(get_current_user)):
     """Get fidelisation rate for referent, responsable_promo, superviseur_promos, and promotions roles"""
-    allowed_roles = ["referent", "responsable_promo", "superviseur_promos", "promotions", "super_admin", "pasteur"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     assigned_month = current_user.get("assigned_month")
     # Pour les rôles sans assigned_month, utiliser tous les visiteurs de la ville
@@ -1942,8 +1913,6 @@ async def get_referent_fidelisation(current_user: dict = Depends(get_current_use
 @api_router.get("/fidelisation/admin")
 async def get_admin_fidelisation(week: int = None, month: str = None, current_user: dict = Depends(get_current_user)):
     """Get fidelisation rates for all referents (admin view)"""
-    if current_user["role"] not in ["superviseur_promos", "superviseur_fi", "promotions", "super_admin", "pasteur"]:
-        raise HTTPException(status_code=403, detail="Permission denied")
     
     # Get all referents (all cities for pasteur/super_admin, own city for responsable_eglise and others)
     ref_query = {"role": "referent"}
@@ -2972,8 +2941,6 @@ async def mark_notification_read(
 @api_router.post("/notifications/generate")
 async def generate_notifications(current_user: dict = Depends(get_current_user)):
     """Generate automated notifications (Admin/Supervisor only)"""
-    if current_user["role"] not in ["super_admin", "superviseur_fi", "superviseur_promos"]:
-        raise HTTPException(status_code=403, detail="Permission denied")
     
     notifications_created = []
     
@@ -3112,8 +3079,6 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     import calendar
     
     # Only super_admin, pasteur, and responsable_eglise can access
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Get all visitors INCLUDING tracking_stopped (pour compter les suivis arrêtés)
     base_query = {}
@@ -3347,8 +3312,6 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
 async def get_visitors_table(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get complete visitors table with all details for Super Admin/Pasteur"""
     # Only super_admin, pasteur, and responsable_eglise can access
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Filtrer par ville si spécifié
     query = {}
@@ -3394,8 +3357,6 @@ async def get_fi_detailed(ville: str = None, date: str = None, current_user: dic
     - Fidélisation par FI (filtrée par date si spécifiée)
     """
     # Only super_admin, pasteur, and responsable_eglise can access
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Filtrer par ville si spécifié
     query = {}
@@ -3491,8 +3452,6 @@ async def get_fi_detailed(ville: str = None, date: str = None, current_user: dic
 async def get_membres_table(ville: str = None, current_user: dict = Depends(get_current_user)):
     """Get complete membres table with presences for Super Admin/Pasteur"""
     # Only super_admin, pasteur, and responsable_eglise can access
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # For responsable_eglise, force filter by their city
     if current_user["role"] == "responsable_eglise":
@@ -3548,8 +3507,6 @@ async def get_presences_dimanche(
 ):
     """Get presences dimanche aggregated by date with NA/NC breakdown"""
     # Only super_admin, pasteur, and responsable_eglise can access
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Get all visitors with presences_dimanche
     query = {"tracking_stopped": False}
@@ -3639,8 +3596,6 @@ async def create_culte_stats(stats: CulteStatsCreate, current_user: dict = Depen
         raise HTTPException(status_code=403, detail="Can only create stats for your city")
     
     # Check role permissions
-    if current_user["role"] not in ["accueil", "super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Not authorized to create culte stats")
     
     culte_stat = CulteStats(
         **stats.model_dump(),
@@ -3727,8 +3682,6 @@ async def update_culte_stats(
         raise HTTPException(status_code=403, detail="Can only update stats for your city")
     
     # Only accueil, pasteur, responsable_eglise and super_admin can update
-    if current_user["role"] not in ["accueil", "super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     update_dict = {k: v for k, v in updates.dict(exclude_unset=True).items() if v is not None}
     update_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
@@ -3741,8 +3694,6 @@ async def update_culte_stats(
 @api_router.delete("/culte-stats/{stat_id}")
 async def delete_culte_stats(stat_id: str, current_user: dict = Depends(get_current_user)):
     """Delete culte statistics - Super Admin and Pasteur"""
-    if current_user["role"] not in ["super_admin", "pasteur"]:
-        raise HTTPException(status_code=403, detail="Only super_admin and pasteur can delete stats")
     
     result = await db.culte_stats.delete_one({"id": stat_id})
     
@@ -3760,8 +3711,6 @@ async def get_culte_stats_summary(
 ):
     """Get aggregated summary of culte stats for dashboards"""
     # Only pasteur, super_admin, responsable_eglise and accueil can access summary
-    if current_user["role"] not in ["pasteur", "super_admin", "accueil", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Build query
     query = {}
@@ -3963,8 +3912,6 @@ async def get_age_distribution(
 ):
     """Get age range distribution for visitors"""
     # Permissions
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "promotions", "superviseur_promos"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Build query
     query = {}
@@ -4010,8 +3957,6 @@ async def get_arrival_channel_distribution(
 ):
     """Get arrival channel distribution for visitors"""
     # Permissions
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "responsable_promo", "promotions", "superviseur_promos"]:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Build query
     query = {}
@@ -4266,9 +4211,6 @@ async def migrate_presences(current_user: dict = Depends(get_current_user)):
 @api_router.get("/events/projets")
 async def get_projets(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     """Get all projects - filtered by city for non-super_admin"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     query = {}
     # Super admin can see all, others only their city
@@ -4294,9 +4236,6 @@ async def get_projets(ville: Optional[str] = None, current_user: dict = Depends(
 @api_router.post("/events/projets")
 async def create_projet(projet: ProjetCreate, current_user: dict = Depends(get_current_user)):
     """Create a new project"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     projet_dict = projet.model_dump()
     projet_dict["id"] = str(uuid.uuid4())
@@ -4310,9 +4249,6 @@ async def create_projet(projet: ProjetCreate, current_user: dict = Depends(get_c
 @api_router.get("/events/projets/{projet_id}")
 async def get_projet(projet_id: str, current_user: dict = Depends(get_current_user)):
     """Get project details"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     projet = await db.projets.find_one({"id": projet_id}, {"_id": 0})
     if not projet:
@@ -4336,9 +4272,6 @@ async def get_projet(projet_id: str, current_user: dict = Depends(get_current_us
 @api_router.put("/events/projets/{projet_id}")
 async def update_projet(projet_id: str, updates: ProjetUpdate, current_user: dict = Depends(get_current_user)):
     """Update a project"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     projet = await db.projets.find_one({"id": projet_id})
     if not projet:
@@ -4357,9 +4290,6 @@ async def update_projet(projet_id: str, updates: ProjetUpdate, current_user: dic
 @api_router.delete("/events/projets/{projet_id}")
 async def delete_projet(projet_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a project"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     projet = await db.projets.find_one({"id": projet_id})
     if not projet:
@@ -4380,9 +4310,6 @@ async def delete_projet(projet_id: str, current_user: dict = Depends(get_current
 @api_router.get("/events/taches")
 async def get_taches(projet_id: Optional[str] = None, statut: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     """Get tasks with auto-update for overdue status"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     query = {}
     if projet_id:
@@ -4412,9 +4339,6 @@ async def get_taches(projet_id: Optional[str] = None, statut: Optional[str] = No
 @api_router.put("/events/projets/{projet_id}/archive")
 async def archive_projet(projet_id: str, current_user: dict = Depends(get_current_user)):
     """Archive/Unarchive a project"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     projet = await db.projets.find_one({"id": projet_id})
     if not projet:
@@ -4433,9 +4357,6 @@ async def archive_projet(projet_id: str, current_user: dict = Depends(get_curren
 @api_router.post("/events/taches")
 async def create_tache(tache: TacheCreate, current_user: dict = Depends(get_current_user)):
     """Create a task"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     tache_dict = tache.model_dump()
     tache_dict["id"] = str(uuid.uuid4())
@@ -4448,9 +4369,6 @@ async def create_tache(tache: TacheCreate, current_user: dict = Depends(get_curr
 @api_router.put("/events/taches/{tache_id}")
 async def update_tache(tache_id: str, updates: TacheUpdate, current_user: dict = Depends(get_current_user)):
     """Update a task"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     update_dict = {k: v for k, v in updates.model_dump().items() if v is not None}
     await db.taches.update_one({"id": tache_id}, {"$set": update_dict})
@@ -4459,9 +4377,6 @@ async def update_tache(tache_id: str, updates: TacheUpdate, current_user: dict =
 @api_router.delete("/events/taches/{tache_id}")
 async def delete_tache(tache_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a task"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     await db.taches.delete_one({"id": tache_id})
     return {"message": "Tâche supprimée"}
@@ -4470,9 +4385,6 @@ async def delete_tache(tache_id: str, current_user: dict = Depends(get_current_u
 @api_router.get("/events/commentaires")
 async def get_commentaires(projet_id: str, current_user: dict = Depends(get_current_user)):
     """Get project comments"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     commentaires = await db.commentaires_projet.find(
         {"projet_id": projet_id}, 
@@ -4483,9 +4395,6 @@ async def get_commentaires(projet_id: str, current_user: dict = Depends(get_curr
 @api_router.post("/events/commentaires")
 async def create_commentaire(commentaire: CommentaireProjetCreate, current_user: dict = Depends(get_current_user)):
     """Add a comment"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     commentaire_dict = commentaire.model_dump()
     commentaire_dict["id"] = str(uuid.uuid4())
@@ -4499,9 +4408,6 @@ async def create_commentaire(commentaire: CommentaireProjetCreate, current_user:
 @api_router.get("/events/depenses")
 async def get_depenses(projet_id: str, current_user: dict = Depends(get_current_user)):
     """Get project expenses"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     depenses = await db.depenses_projet.find(
         {"projet_id": projet_id}, 
@@ -4512,9 +4418,6 @@ async def get_depenses(projet_id: str, current_user: dict = Depends(get_current_
 @api_router.post("/events/depenses")
 async def create_depense(depense: DepenseCreate, current_user: dict = Depends(get_current_user)):
     """Add an expense"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Get current budget_reel from projet
     projet = await db.projets.find_one({"id": depense.projet_id})
@@ -4544,9 +4447,6 @@ async def create_depense(depense: DepenseCreate, current_user: dict = Depends(ge
 @api_router.delete("/events/depenses/{depense_id}")
 async def delete_depense(depense_id: str, current_user: dict = Depends(get_current_user)):
     """Delete an expense"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Get depense to retrieve montant and projet_id
     depense = await db.depenses_projet.find_one({"id": depense_id})
@@ -4571,9 +4471,6 @@ async def delete_depense(depense_id: str, current_user: dict = Depends(get_curre
 @api_router.get("/events/jalons")
 async def get_jalons(projet_id: str, current_user: dict = Depends(get_current_user)):
     """Get all milestones for a project"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     jalons = await db.jalons.find({"projet_id": projet_id}, {"_id": 0}).sort("date_debut", 1).to_list(1000)
     
@@ -4597,9 +4494,6 @@ async def get_jalons(projet_id: str, current_user: dict = Depends(get_current_us
 @api_router.post("/events/jalons")
 async def create_jalon(jalon: JalonCreate, current_user: dict = Depends(get_current_user)):
     """Create a new milestone"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     jalon_dict = jalon.model_dump()
     jalon_dict["id"] = str(uuid.uuid4())
@@ -4613,9 +4507,6 @@ async def create_jalon(jalon: JalonCreate, current_user: dict = Depends(get_curr
 @api_router.put("/events/jalons/{jalon_id}")
 async def update_jalon(jalon_id: str, jalon: JalonUpdate, current_user: dict = Depends(get_current_user)):
     """Update a milestone"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     existing = await db.jalons.find_one({"id": jalon_id}, {"_id": 0})
     if not existing:
@@ -4630,9 +4521,6 @@ async def update_jalon(jalon_id: str, jalon: JalonUpdate, current_user: dict = D
 @api_router.delete("/events/jalons/{jalon_id}")
 async def delete_jalon(jalon_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a milestone"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     result = await db.jalons.delete_one({"id": jalon_id})
     if result.deleted_count == 0:
@@ -4644,9 +4532,6 @@ async def delete_jalon(jalon_id: str, current_user: dict = Depends(get_current_u
 @api_router.get("/events/poles")
 async def get_poles(projet_id: str, current_user: dict = Depends(get_current_user)):
     """Get all poles for a project"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     poles = await db.poles.find({"projet_id": projet_id}, {"_id": 0}).sort("created_at", 1).to_list(1000)
     
@@ -4664,9 +4549,6 @@ async def get_poles(projet_id: str, current_user: dict = Depends(get_current_use
 @api_router.post("/events/poles")
 async def create_pole(pole: PoleCreate, current_user: dict = Depends(get_current_user)):
     """Create a new pole"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Verify project exists
     projet = await db.projets.find_one({"id": pole.projet_id}, {"_id": 0})
@@ -4684,9 +4566,6 @@ async def create_pole(pole: PoleCreate, current_user: dict = Depends(get_current
 @api_router.put("/events/poles/{pole_id}")
 async def update_pole(pole_id: str, pole: PoleUpdate, current_user: dict = Depends(get_current_user)):
     """Update a pole"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     existing = await db.poles.find_one({"id": pole_id}, {"_id": 0})
     if not existing:
@@ -4701,9 +4580,6 @@ async def update_pole(pole_id: str, pole: PoleUpdate, current_user: dict = Depen
 @api_router.delete("/events/poles/{pole_id}")
 async def delete_pole(pole_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a pole"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Check if pole has tasks
     taches = await db.taches.find({"pole_id": pole_id}, {"_id": 0}).to_list(1)
@@ -4720,9 +4596,6 @@ async def delete_pole(pole_id: str, current_user: dict = Depends(get_current_use
 @api_router.get("/events/campagnes")
 async def get_campagnes(current_user: dict = Depends(get_current_user)):
     """Get communication campaigns"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     campagnes = await db.campagnes_communication.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return campagnes
@@ -4730,9 +4603,6 @@ async def get_campagnes(current_user: dict = Depends(get_current_user)):
 @api_router.post("/events/campagnes")
 async def create_campagne(campagne: CampagneCommunicationCreate, current_user: dict = Depends(get_current_user)):
     """Create a communication campaign"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     campagne_dict = campagne.model_dump()
     campagne_dict["id"] = str(uuid.uuid4())
@@ -4747,9 +4617,6 @@ async def create_campagne(campagne: CampagneCommunicationCreate, current_user: d
 @api_router.put("/events/campagnes/{campagne_id}/archive")
 async def archive_campagne(campagne_id: str, current_user: dict = Depends(get_current_user)):
     """Archiver/désarchiver une campagne"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     campagne = await db.campagnes_communication.find_one({"id": campagne_id})
     if not campagne:
@@ -4767,9 +4634,6 @@ async def archive_campagne(campagne_id: str, current_user: dict = Depends(get_cu
 @api_router.delete("/events/campagnes/{campagne_id}")
 async def delete_campagne(campagne_id: str, current_user: dict = Depends(get_current_user)):
     """Supprimer une campagne"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     await db.campagnes_communication.delete_one({"id": campagne_id})
     return {"message": "Campagne supprimée"}
@@ -4777,9 +4641,6 @@ async def delete_campagne(campagne_id: str, current_user: dict = Depends(get_cur
 @api_router.post("/events/campagnes/{campagne_id}/envoyer")
 async def envoyer_campagne(campagne_id: str, current_user: dict = Depends(get_current_user)):
     """Send a communication campaign"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     campagne = await db.campagnes_communication.find_one({"id": campagne_id})
     if not campagne:
@@ -5019,9 +4880,6 @@ async def enregistrer_rsvp(data: dict):
 @api_router.post("/events/upload-image")
 async def upload_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     """Upload an image and save it to backend uploads folder"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Check file type
     if not file.content_type.startswith('image/'):
@@ -5100,9 +4958,6 @@ async def get_uploaded_image(filename: str):
 @api_router.get("/events/campagnes/{campagne_id}/rsvp")
 async def get_rsvp_stats(campagne_id: str, current_user: dict = Depends(get_current_user)):
     """Get RSVP responses for a campaign"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     responses = await db.rsvp.find(
         {"campagne_id": campagne_id},
@@ -5114,9 +4969,6 @@ async def get_rsvp_stats(campagne_id: str, current_user: dict = Depends(get_curr
 @api_router.delete("/events/rsvp/{reponse_id}")
 async def delete_rsvp_response(reponse_id: str, current_user: dict = Depends(get_current_user)):
     """Delete an RSVP response"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     result = await db.rsvp.delete_one({"id": reponse_id})
     
@@ -5131,9 +4983,6 @@ async def delete_rsvp_response(reponse_id: str, current_user: dict = Depends(get
 @api_router.post("/events")
 async def create_event(event: ChurchEventCreate, current_user: dict = Depends(get_current_user)):
     """Create a new event with RSVP link"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     event_data = event.model_dump()
     event_data["id"] = str(uuid.uuid4())
@@ -5160,9 +5009,6 @@ async def create_event(event: ChurchEventCreate, current_user: dict = Depends(ge
 @api_router.get("/events")
 async def get_events(current_user: dict = Depends(get_current_user)):
     """Get all events - visibility based on role"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Tous les rôles voient tous les événements RSVP
     # Note: responsable_eglise pourrait être filtré par ville si les événements avaient un champ "city"
@@ -5184,9 +5030,6 @@ async def get_event(event_id: str):
 @api_router.put("/events/{event_id}")
 async def update_event(event_id: str, event: ChurchEventCreate, current_user: dict = Depends(get_current_user)):
     """Update an existing event"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Check if event exists and belongs to user
     existing_event = await db.church_events.find_one({"id": event_id})
@@ -5210,9 +5053,6 @@ async def update_event(event_id: str, event: ChurchEventCreate, current_user: di
 @api_router.delete("/events/{event_id}")
 async def delete_event(event_id: str, current_user: dict = Depends(get_current_user)):
     """Delete an event"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     result = await db.church_events.delete_one({"id": event_id, "created_by": current_user["id"]})
     
@@ -5281,9 +5121,6 @@ async def get_event_rsvps(event_id: str, current_user: dict = Depends(get_curren
 @api_router.post("/upload-event-image")
 async def upload_event_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     """Upload an image for an event"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Check file type
     if not file.content_type.startswith('image/'):
@@ -5355,9 +5192,6 @@ async def create_berger_presences_batch(
     current_user: dict = Depends(get_current_user)
 ):
     """Enregistrer plusieurs présences de bergers en une fois"""
-    allowed_roles = ["superviseur_promos", "super_admin"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     created_count = 0
     for presence in batch.presences:
@@ -5392,9 +5226,6 @@ async def get_berger_presences(
     current_user: dict = Depends(get_current_user)
 ):
     """Obtenir les présences des bergers pour une date donnée"""
-    allowed_roles = ["superviseur_promos", "super_admin"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     presences = await db.berger_presences.find({
         "date": date,
@@ -5423,9 +5254,6 @@ async def get_latest_berger_presences(
     current_user: dict = Depends(get_current_user)
 ):
     """Obtenir les dernières présences des bergers par promo pour pré-remplissage"""
-    allowed_roles = ["superviseur_promos", "super_admin"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Récupérer toutes les présences de cette ville, triées par date décroissante
     all_presences = await db.berger_presences.find({
@@ -5771,8 +5599,6 @@ class EvangelisationRecord(BaseModel):
 @api_router.post("/evangelisation")
 async def create_evangelisation_record(record: EvangelisationRecord, current_user: dict = Depends(get_current_user)):
     """Create evangelisation record"""
-    if current_user["role"] not in ["responsable_evangelisation", "super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Permission denied")
     
     # Set ville and created_by
     record.ville = current_user.get("city", record.ville)
@@ -5792,8 +5618,6 @@ async def get_evangelisation_records(
     current_user: dict = Depends(get_current_user)
 ):
     """Get evangelisation records with filters"""
-    if current_user["role"] not in ["responsable_evangelisation", "super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Permission denied")
     
     query = {}
     
@@ -5822,8 +5646,6 @@ async def get_evangelisation_stats(
     current_user: dict = Depends(get_current_user)
 ):
     """Get evangelisation statistics"""
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise"]:
-        raise HTTPException(status_code=403, detail="Permission denied")
     
     query = {}
     
