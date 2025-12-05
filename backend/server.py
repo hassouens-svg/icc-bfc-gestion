@@ -5256,16 +5256,8 @@ async def create_event_rsvp_public(event_id: str, rsvp: EventRSVPCreate):
 @api_router.get("/events/{event_id}/rsvp")
 async def get_event_rsvps(event_id: str, current_user: dict = Depends(get_current_user)):
     """Get all RSVPs for an event with statistics"""
-    allowed_roles = ["super_admin", "pasteur", "responsable_eglise", "gestion_projet"]
-    if current_user["role"] not in allowed_roles:
-        raise HTTPException(status_code=403, detail="Access denied")
-    
-    # Pasteur et super_admin peuvent voir tous les événements
-    if current_user["role"] in ["super_admin", "pasteur"]:
-        event = await db.church_events.find_one({"id": event_id})
-    else:
-        # Les autres ne voient que leurs propres événements
-        event = await db.church_events.find_one({"id": event_id, "created_by": current_user["id"]})
+    # Tous les utilisateurs peuvent voir tous les événements
+    event = await db.church_events.find_one({"id": event_id})
     
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
