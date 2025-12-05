@@ -49,15 +49,19 @@ const PublicEventRSVPPage = () => {
   };
 
   const handleSubmitResponse = async () => {
-    if (!formData.first_name || !formData.last_name) {
-      toast.error('Nom et prénom requis');
+    // Valider uniquement si l'événement demande les noms
+    if (event.require_names && (!formData.first_name || !formData.last_name)) {
+      toast.error('Veuillez remplir votre nom et prénom');
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const fullName = `${formData.first_name} ${formData.last_name}`;
+      const fullName = event.require_names 
+        ? `${formData.first_name} ${formData.last_name}`.trim()
+        : 'Anonyme';
+      
       const response = await fetch(`${backendUrl}/api/events/${eventId}/rsvp-public`, {
         method: 'POST',
         headers: {
@@ -65,8 +69,8 @@ const PublicEventRSVPPage = () => {
         },
         body: JSON.stringify({
           name: fullName,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
+          first_name: event.require_names ? formData.first_name : null,
+          last_name: event.require_names ? formData.last_name : null,
           is_star: formData.is_star,
           status: selectedStatus,
           guests_count: 1
