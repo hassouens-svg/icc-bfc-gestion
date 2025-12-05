@@ -22,15 +22,6 @@ const RSVPCampaignsListPage = () => {
     return null;
   }
 
-  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
-  if (!allowedRoles.includes(user?.role)) {
-    return (
-      <EventsLayout>
-        <div className="p-6">
-          <Card>
-            <CardContent className="pt-6 text-center">
-              <h2 className="text-xl font-bold">Accès Réservé</h2>
-              <Button onClick={() => navigate('/dashboard')} className="mt-4">Retour</Button>
             </CardContent>
           </Card>
         </div>
@@ -90,7 +81,7 @@ const RSVPCampaignsListPage = () => {
     try {
       const response = await fetch(`${backendUrl}/api/events/${eventId}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token'}` }
       });
 
       if (!response.ok) throw new Error('Suppression échouée');
@@ -176,7 +167,7 @@ const RSVPCampaignsListPage = () => {
               <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucune campagne</h3>
               <p className="text-gray-500 mb-4">Créez votre première campagne RSVP</p>
-              <Button onClick={() => navigate('/events/rsvp-links')}>
+              <Button onClick={() => navigate('/events/rsvp-links'}>
                 Créer une Campagne
               </Button>
             </CardContent>
@@ -195,19 +186,19 @@ const RSVPCampaignsListPage = () => {
                             alt={campaign.title}
                             className="w-20 h-20 object-cover rounded"
                           />
-                        )}
+                        }
                         <div>
                           <h3 className="text-xl font-semibold">{campaign.title}</h3>
                           <p className="text-sm text-gray-500">{campaign.date} {campaign.time && `• ${campaign.time}`}</p>
                           {campaign.location && (
                             <p className="text-sm text-gray-500">📍 {campaign.location}</p>
-                          )}
+                          }
                         </div>
                       </div>
 
                       {campaign.description && (
                         <p className="text-gray-600 mb-4">{campaign.description}</p>
-                      )}
+                      }
 
                       {campaign.stats ? (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -230,13 +221,13 @@ const RSVPCampaignsListPage = () => {
                         </div>
                       ) : (
                         <p className="text-gray-400 mb-4">Aucune statistique disponible</p>
-                      )}
+                      }
 
                       <div className="flex gap-2">
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => navigate('/events/rsvp-links')}
+                          onClick={() => navigate('/events/rsvp-links'}
                         >
                           <Eye className="h-4 w-4 mr-1" />
                           Voir Détails
@@ -244,7 +235,7 @@ const RSVPCampaignsListPage = () => {
                         <Button 
                           size="sm" 
                           variant="destructive"
-                          onClick={() => handleDelete(campaign.id)}
+                          onClick={() => handleDelete(campaign.id}
                         >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Supprimer
@@ -254,12 +245,12 @@ const RSVPCampaignsListPage = () => {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
-        )}
+        }
 
         <div className="text-center pt-6">
-          <Button onClick={() => navigate('/events/rsvp-links')} size="lg">
+          <Button onClick={() => navigate('/events/rsvp-links'} size="lg">
             Créer une Nouvelle Campagne
           </Button>
         </div>
