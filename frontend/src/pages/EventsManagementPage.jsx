@@ -19,53 +19,7 @@ const EventsManagementPage = () => {
     return null;
   }
 
-  // Check access - ONLY super_admin, pasteur, responsable_eglise, gestion_projet
-  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
-  if (!allowedRoles.includes(user?.role)) {
-    return (
-      <EventsLayout>
-        <div className="p-6">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center space-y-4">
-                <div className="text-6xl">🔒</div>
-                <h2 className="text-2xl font-bold text-gray-800">Accès réservé</h2>
-                <p className="text-gray-600">
-                  Vous êtes actuellement connecté en tant que <strong>{user.role}</strong>.
-                </p>
-                <p className="text-gray-600">
-                  Ce module est réservé aux rôles suivants :
-                </p>
-                <div className="bg-blue-50 p-4 rounded-lg inline-block">
-                  <ul className="text-sm text-blue-800 space-y-1">
-                    <li>✓ Pasteur</li>
-                    <li>✓ Super Admin</li>
-                    <li>✓ Responsable d'Église</li>
-                    <li>✓ Gestion Projet</li>
-                  </ul>
-                </div>
-                <p className="text-sm text-gray-500 mt-4">
-                  Veuillez vous déconnecter et vous reconnecter avec un compte autorisé.
-                </p>
-                <div className="flex gap-3 justify-center mt-6">
-                  <Button 
-                    onClick={() => {
-                      localStorage.clear();
-                      navigate('/events-login');
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Se déconnecter
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </EventsLayout>
-    );
-  }
+  // Tous les utilisateurs ont accès
 
   return (
     <EventsLayout>
