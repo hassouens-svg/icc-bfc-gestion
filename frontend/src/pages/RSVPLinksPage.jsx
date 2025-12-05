@@ -42,30 +42,7 @@ const RSVPLinksPage = () => {
     return null;
   }
 
-  // Check access
-  const allowedRoles = ['super_admin', 'pasteur', 'responsable_eglise', 'gestion_projet'];
-  if (!allowedRoles.includes(user?.role)) {
-    return (
-      <EventsLayout>
-        <div className="p-6">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center space-y-4">
-                <div className="text-6xl">🔒</div>
-                <h2 className="text-2xl font-bold">Accès Réservé</h2>
-                <p className="text-gray-600">
-                  Ce module est réservé aux pasteurs, super admins, responsables d'église et gestion projet.
-                </p>
-                <Button onClick={() => navigate('/dashboard')}>
-                  Retour au Dashboard
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </EventsLayout>
-    );
-  }
+  // Tous les utilisateurs ont accès
 
   useEffect(() => {
     loadEvents();
