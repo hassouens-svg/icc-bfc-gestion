@@ -895,6 +895,7 @@ class ChurchEvent(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     rsvp_enabled: bool = True
     max_participants: Optional[int] = None
+    require_names: bool = False  # Demander noms/prénoms dans le formulaire RSVP
 
 class ChurchEventCreate(BaseModel):
     title: str
@@ -905,6 +906,7 @@ class ChurchEventCreate(BaseModel):
     image_url: Optional[str] = None
     rsvp_enabled: bool = True
     max_participants: Optional[int] = None
+    require_names: bool = False  # Demander noms/prénoms dans le formulaire RSVP
 
 class EventRSVP(BaseModel):
     model_config = ConfigDict(extra="ignore")
