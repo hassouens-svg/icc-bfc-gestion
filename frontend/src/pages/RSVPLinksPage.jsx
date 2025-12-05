@@ -459,6 +459,18 @@ const RSVPLinksPage = () => {
               <Label>Lieu</Label>
               <Input value={newEvent.location} onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })} />
             </div>
+            <div className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <input
+                type="checkbox"
+                id="require_names"
+                checked={newEvent.require_names}
+                onChange={(e) => setNewEvent({ ...newEvent, require_names: e.target.checked })}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label htmlFor="require_names" className="text-sm font-medium text-gray-700 cursor-pointer">
+                Demander noms et prénoms dans le formulaire RSVP
+              </label>
+            </div>
             <div className="space-y-2">
               <Label>Image de l'événement</Label>
               {newEvent.image_url ? (
