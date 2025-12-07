@@ -162,7 +162,10 @@ const RSVPLinksPage = () => {
       time: event.time || '',
       location: event.location || '',
       image_url: event.image_url || '',
-      require_names: event.require_names || false
+      require_names: event.require_names || false,
+      require_payment_method: event.require_payment_method || false,
+      custom_link_title: event.custom_link_title || '',
+      custom_link_url: event.custom_link_url || ''
     });
     setIsDialogOpen(true);
   };
