@@ -144,7 +144,7 @@ const RSVPLinksPage = () => {
 
       toast.success('✅ Événement créé avec succès !');
       setIsDialogOpen(false);
-      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false });
+      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '' });
       loadEvents();
     } catch (error) {
       console.error('Create event error:', error);
@@ -195,7 +195,7 @@ const RSVPLinksPage = () => {
       setIsDialogOpen(false);
       setIsEditMode(false);
       setEditingEventId(null);
-      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false });
+      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '' });
       loadEvents();
     } catch (error) {
       console.error('Update event error:', error);
@@ -410,7 +410,7 @@ const RSVPLinksPage = () => {
         if (!open) {
           setIsEditMode(false);
           setEditingEventId(null);
-          setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
+          setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '' });
         }
       }}>
         <DialogContent className="max-w-2xl">
@@ -534,7 +534,7 @@ const RSVPLinksPage = () => {
                 setIsDialogOpen(false);
                 setIsEditMode(false);
                 setEditingEventId(null);
-                setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '' });
+                setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '' });
               }}>
                 Annuler
               </Button>
