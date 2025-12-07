@@ -73,6 +73,7 @@ const PublicEventRSVPPage = () => {
           first_name: event.require_names ? formData.first_name : null,
           last_name: event.require_names ? formData.last_name : null,
           is_star: formData.is_star,
+          payment_method: formData.payment_method || null,
           status: selectedStatus,
           guests_count: 1
         })
