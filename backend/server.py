@@ -894,6 +894,9 @@ class ChurchEvent(BaseModel):
     rsvp_enabled: bool = True
     max_participants: Optional[int] = None
     require_names: bool = False  # Demander noms/prénoms dans le formulaire RSVP
+    require_payment_method: bool = False  # Demander le moyen de paiement
+    custom_link_title: Optional[str] = None  # Titre du lien personnalisé
+    custom_link_url: Optional[str] = None  # URL du lien personnalisé
 
 class ChurchEventCreate(BaseModel):
     title: str
@@ -905,6 +908,9 @@ class ChurchEventCreate(BaseModel):
     rsvp_enabled: bool = True
     max_participants: Optional[int] = None
     require_names: bool = False  # Demander noms/prénoms dans le formulaire RSVP
+    require_payment_method: bool = False  # Demander le moyen de paiement
+    custom_link_title: Optional[str] = None  # Titre du lien personnalisé
+    custom_link_url: Optional[str] = None  # URL du lien personnalisé
 
 class EventRSVP(BaseModel):
     model_config = ConfigDict(extra="ignore")
