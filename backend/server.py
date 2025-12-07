@@ -925,6 +925,7 @@ class EventRSVP(BaseModel):
     status: str = "confirmed"  # confirmed, declined, maybe
     guests_count: int = 1
     message: Optional[str] = None
+    payment_method: Optional[str] = None  # "card" ou "cash"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     source: Optional[str] = None  # whatsapp, email, sms, facebook, direct
 
@@ -938,6 +939,7 @@ class EventRSVPCreate(BaseModel):
     status: str = "confirmed"
     guests_count: int = 1
     message: Optional[str] = None
+    payment_method: Optional[str] = None  # "card" ou "cash"
     source: Optional[str] = None
 
 @api_router.put("/users/{user_id}/reset-password")
