@@ -16,7 +16,8 @@ const PublicEventRSVPPage = () => {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
-    is_star: false
+    is_star: false,
+    payment_method: ''
   });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
