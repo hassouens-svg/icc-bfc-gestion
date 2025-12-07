@@ -452,6 +452,34 @@ const RSVPLinksPage = () => {
                 Demander noms et prénoms dans le formulaire RSVP
               </label>
             </div>
+            <div className="flex items-center space-x-2 p-3 bg-green-50 rounded-lg border border-green-200">
+              <input
+                type="checkbox"
+                id="require_payment_method"
+                checked={newEvent.require_payment_method}
+                onChange={(e) => setNewEvent({ ...newEvent, require_payment_method: e.target.checked })}
+                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+              />
+              <label htmlFor="require_payment_method" className="text-sm font-medium text-gray-700 cursor-pointer">
+                Demander le moyen de paiement
+              </label>
+            </div>
+            <div className="space-y-2 p-3 bg-purple-50 rounded-lg border border-purple-200">
+              <Label>Lien personnalisé (optionnel)</Label>
+              <div className="space-y-2">
+                <Input 
+                  value={newEvent.custom_link_title} 
+                  onChange={(e) => setNewEvent({ ...newEvent, custom_link_title: e.target.value })}
+                  placeholder="Titre du lien (ex: Inscription, Billetterie...)"
+                />
+                <Input 
+                  value={newEvent.custom_link_url} 
+                  onChange={(e) => setNewEvent({ ...newEvent, custom_link_url: e.target.value })}
+                  placeholder="URL du lien (ex: https://...)"
+                  type="url"
+                />
+              </div>
+            </div>
             <div className="space-y-2">
               <Label>Image de l'événement</Label>
               {newEvent.image_url ? (
