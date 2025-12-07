@@ -619,6 +619,7 @@ const RSVPLinksPage = () => {
                               <th className="text-left p-3 text-sm bg-gray-50">Prénom</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Nom</th>
                               <th className="text-center p-3 text-sm bg-gray-50">⭐</th>
+                              <th className="text-left p-3 text-sm bg-gray-50">Paiement</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Contact</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Statut</th>
                             </tr>
@@ -630,6 +631,11 @@ const RSVPLinksPage = () => {
                                 <td className="p-3">{rsvp.last_name || '-'}</td>
                                 <td className="p-3 text-center">
                                   {rsvp.is_star && <span className="text-xl">⭐</span>}
+                                </td>
+                                <td className="p-3 text-sm">
+                                  {rsvp.payment_method === 'card' && <span>💳 Carte</span>}
+                                  {rsvp.payment_method === 'cash' && <span>💵 Espèces</span>}
+                                  {!rsvp.payment_method && <span className="text-gray-400">-</span>}
                                 </td>
                                 <td className="p-3 text-sm">{rsvp.email || rsvp.phone || '-'}</td>
                                 <td className="p-3">
