@@ -939,6 +939,7 @@ class EventRSVPCreate(BaseModel):
     is_star: bool = False
     email: Optional[str] = None
     phone: Optional[str] = None
+    city: Optional[str] = None  # Ville (église) choisie
     status: str = "confirmed"
     guests_count: int = 1
     message: Optional[str] = None
