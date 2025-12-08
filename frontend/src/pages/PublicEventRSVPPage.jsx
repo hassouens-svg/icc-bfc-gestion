@@ -301,6 +301,25 @@ const PublicEventRSVPPage = () => {
                     </div>
                   )}
 
+                  {/* Champ Ville (Église) - Si activé */}
+                  {event.require_city && (
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <p className="text-sm font-medium text-gray-700 mb-3">Ville (Église)</p>
+                      <select
+                        value={formData.city}
+                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                      >
+                        <option value="">Sélectionnez une ville...</option>
+                        {cities.map((city) => (
+                          <option key={city.id} value={city.city}>
+                            {city.city}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   {/* Champs Email et Contact - Si activé */}
                   {event.require_email_contact && (
                     <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
