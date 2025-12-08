@@ -85,11 +85,12 @@ const PublicEventRSVPPage = () => {
         })
       });
 
-      const responseData = await response.json();
-
       if (!response.ok) {
-        throw new Error(responseData.detail || 'Erreur');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Erreur');
       }
+
+      const responseData = await response.json();
 
       setEmailSent(responseData.email_sent || false);
       
