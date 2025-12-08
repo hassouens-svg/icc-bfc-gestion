@@ -5123,11 +5123,11 @@ async def create_event_rsvp_public(event_id: str, rsvp: EventRSVPCreate):
                 
                 # Personnaliser le message
                 message = event.get("confirmation_message", "")
-                prenom = rsvp_data.get("first_name", "")
-                nom = rsvp_data.get("last_name", "")
-                evenement = event.get("title", "")
-                date = event.get("date", "")
-                lieu = event.get("location", "")
+                prenom = rsvp_data.get("first_name") or ""
+                nom = rsvp_data.get("last_name") or ""
+                evenement = event.get("title") or ""
+                date = event.get("date") or ""
+                lieu = event.get("location") or ""
                 
                 message = message.replace("{prenom}", prenom)
                 message = message.replace("{nom}", nom)
