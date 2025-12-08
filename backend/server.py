@@ -914,6 +914,7 @@ class ChurchEventCreate(BaseModel):
     require_email_contact: bool = False  # Demander email et contact
     confirmation_message: Optional[str] = None  # Message de confirmation personnalisé
     require_city: bool = False  # Demander de choisir la ville (église)
+    city_options: Optional[str] = None  # Liste des villes séparées par des points-virgules
 
 class EventRSVP(BaseModel):
     model_config = ConfigDict(extra="ignore")
