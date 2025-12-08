@@ -551,7 +551,7 @@ const RSVPLinksPage = () => {
                 </div>
               )}
             </div>
-            <div className="space-y-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="space-y-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -564,6 +564,19 @@ const RSVPLinksPage = () => {
                   Demander de choisir Ville (Église)
                 </label>
               </div>
+              {newEvent.require_city && (
+                <div className="space-y-2 pt-2">
+                  <Label>Liste des villes (séparées par des points-virgules)</Label>
+                  <Input
+                    value={newEvent.city_options}
+                    onChange={(e) => setNewEvent({ ...newEvent, city_options: e.target.value })}
+                    placeholder="Dijon; Besançon; Lyon; Paris..."
+                  />
+                  <p className="text-xs text-gray-600">
+                    💡 Exemple: Dijon; Besançon; Lyon; Paris
+                  </p>
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label>Image de l'événement</Label>
