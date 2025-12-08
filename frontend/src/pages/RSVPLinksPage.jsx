@@ -696,6 +696,7 @@ const RSVPLinksPage = () => {
                               <th className="text-left p-3 text-sm bg-gray-50">Nom</th>
                               <th className="text-center p-3 text-sm bg-gray-50">⭐</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Paiement</th>
+                              <th className="text-left p-3 text-sm bg-gray-50">Email</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Contact</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Statut</th>
                             </tr>
@@ -713,7 +714,8 @@ const RSVPLinksPage = () => {
                                   {rsvp.payment_method === 'cash' && <span>💵 Espèces</span>}
                                   {!rsvp.payment_method && <span className="text-gray-400">-</span>}
                                 </td>
-                                <td className="p-3 text-sm">{rsvp.email || rsvp.phone || '-'}</td>
+                                <td className="p-3 text-sm">{rsvp.email || '-'}</td>
+                                <td className="p-3 text-sm">{rsvp.phone || '-'}</td>
                                 <td className="p-3">
                                   <span className={`px-2 py-1 rounded text-xs ${
                                     rsvp.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
