@@ -616,7 +616,18 @@ const RSVPLinksPage = () => {
         <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
           <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
             <DialogHeader>
-              <DialogTitle>Statistiques: {selectedEvent.title}</DialogTitle>
+              <div className="flex items-center justify-between">
+                <DialogTitle>Statistiques: {selectedEvent.title}</DialogTitle>
+                <Button 
+                  onClick={exportToExcel}
+                  variant="outline"
+                  size="sm"
+                  className="ml-4"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Exporter Excel
+                </Button>
+              </div>
             </DialogHeader>
             <div className="space-y-4 overflow-y-auto flex-1">
               {eventStats ? (
