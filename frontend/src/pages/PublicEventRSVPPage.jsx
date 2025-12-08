@@ -86,12 +86,17 @@ const PublicEventRSVPPage = () => {
       const responseData = await response.json();
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Erreur');
+        throw new Error(responseData.detail || 'Erreur');
       }
 
       setSubmitted(true);
-      toast.success('Réponse enregistrée avec succès !');
+      
+      // Afficher un message différent si un email a été envoyé
+      if (responseData.email_sent) {
+        toast.success('Réponse enregistrée avec succès ! Un mail de confirmation vous a été envoyé.');
+      } else {
+        toast.success('Réponse enregistrée avec succès !');
+      }
     } catch (error) {
       console.error('Erreur:', error);
       toast.error(error.message || 'Erreur lors de l\'envoi');
