@@ -709,6 +709,7 @@ const RSVPLinksPage = () => {
                             <tr>
                               <th className="text-left p-3 text-sm bg-gray-50">Prénom</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Nom</th>
+                              <th className="text-left p-3 text-sm bg-gray-50">Ville</th>
                               <th className="text-center p-3 text-sm bg-gray-50">⭐</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Paiement</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Email</th>
@@ -721,6 +722,7 @@ const RSVPLinksPage = () => {
                               <tr key={idx} className="border-t hover:bg-gray-50">
                                 <td className="p-3">{rsvp.first_name || '-'}</td>
                                 <td className="p-3">{rsvp.last_name || '-'}</td>
+                                <td className="p-3 text-sm">{rsvp.city || '-'}</td>
                                 <td className="p-3 text-center">
                                   {rsvp.is_star && <span className="text-xl">⭐</span>}
                                 </td>
