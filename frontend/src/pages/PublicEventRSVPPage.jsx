@@ -90,6 +90,7 @@ const PublicEventRSVPPage = () => {
         throw new Error(responseData.detail || 'Erreur');
       }
 
+      setEmailSent(responseData.email_sent || false);
       setSubmitted(true);
       
       // Afficher un message différent si un email a été envoyé
