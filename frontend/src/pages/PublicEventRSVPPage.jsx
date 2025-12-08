@@ -420,7 +420,7 @@ const PublicEventRSVPPage = () => {
                     <Button
                       onClick={() => {
                         setShowForm(false);
-                        setFormData({first_name: '', last_name: '', is_star: false});
+                        setFormData({first_name: '', last_name: '', is_star: false, payment_method: '', email: '', phone: ''});
                       }}
                       variant="outline"
                       className="flex-1"
