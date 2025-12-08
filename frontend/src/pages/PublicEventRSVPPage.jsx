@@ -440,6 +440,40 @@ const PublicEventRSVPPage = () => {
         </Card>
       </div>
 
+      {/* Dialog de confirmation avec message conditionnel */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="h-12 w-12 text-green-600" />
+            </div>
+            <DialogTitle className="text-center text-2xl">Enregistrement pris en compte !</DialogTitle>
+          </DialogHeader>
+          <div className="text-center space-y-4">
+            <p className="text-gray-600">
+              Votre participation a été enregistrée avec succès.
+            </p>
+            {emailSent && (
+              <p className="text-green-600 font-medium">
+                ✉️ Un mail de confirmation vous a été envoyé.
+              </p>
+            )}
+            {event.custom_link_url && (
+              <p className="text-orange-600 font-medium">
+                👉 Cliquez sur Fermer puis passez à l'étape suivante
+              </p>
+            )}
+            <Button 
+              onClick={() => {
+                setShowSuccessDialog(false);
+              }}
+              className="w-full bg-indigo-600 hover:bg-indigo-700"
+            >
+              Fermer
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
