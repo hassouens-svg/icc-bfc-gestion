@@ -450,7 +450,7 @@ const RSVPLinksPage = () => {
         if (!open) {
           setIsEditMode(false);
           setEditingEventId(null);
-          setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '' });
+          setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '', require_email_contact: false, confirmation_message: '' });
         }
       }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
