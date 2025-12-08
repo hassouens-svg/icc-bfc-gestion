@@ -11,8 +11,6 @@ const PublicEventRSVPPage = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [formData, setFormData] = useState({
