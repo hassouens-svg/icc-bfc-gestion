@@ -129,35 +129,6 @@ const PublicEventRSVPPage = () => {
     );
   }
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-4">
-        <Card className="max-w-md w-full shadow-lg">
-          <CardContent className="pt-8 pb-8 text-center space-y-6">
-            <div className="mx-auto w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center">
-              <Calendar className="h-10 w-10 text-purple-600" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Merci !</h2>
-              <p className="text-gray-600">
-                Votre réponse a été enregistrée avec succès.
-              </p>
-              {emailSent && (
-                <p className="text-green-600 font-medium mt-2">
-                  ✉️ Un mail de confirmation vous a été envoyé.
-                </p>
-              )}
-            </div>
-            <div className="text-center text-sm text-gray-400 pt-4">
-              <p>Impact Centre Chrétien BFC-Italie</p>
-              <p>My Events Church</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
