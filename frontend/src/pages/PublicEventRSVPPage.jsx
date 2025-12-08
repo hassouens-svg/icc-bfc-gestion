@@ -142,6 +142,11 @@ const PublicEventRSVPPage = () => {
               <p className="text-gray-600">
                 Votre réponse a été enregistrée avec succès.
               </p>
+              {emailSent && (
+                <p className="text-green-600 font-medium mt-2">
+                  ✉️ Un mail de confirmation vous a été envoyé.
+                </p>
+              )}
             </div>
             <div className="text-center text-sm text-gray-400 pt-4">
               <p>Impact Centre Chrétien BFC-Italie</p>
