@@ -7,9 +7,10 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Plus, LinkIcon, Share2, Copy, Users, Calendar, MapPin, Clock, Trash2, BarChart, CheckCircle } from 'lucide-react';
+import { Plus, LinkIcon, Share2, Copy, Users, Calendar, MapPin, Clock, Trash2, BarChart, CheckCircle, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { getUser } from '../utils/api';
+import * as XLSX from 'xlsx';
 
 const RSVPLinksPage = () => {
   const user = getUser();
