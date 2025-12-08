@@ -282,6 +282,38 @@ const RSVPLinksPage = () => {
     }
   };
 
+  const exportToExcel = () => {
+    if (!eventStats || !eventStats.responses || eventStats.responses.length === 0) {
+      toast.error('Aucune donnée à exporter');
+      return;
+    }
+
+    // Préparer les données pour l'export
+    const exportData = eventStats.responses.map(rsvp => ({
+      'Prénom': rsvp.first_name || '-',
+      'Nom': rsvp.last_name || '-',
+      'STAR': rsvp.is_star ? '⭐ Oui' : 'Non',
+      'Paiement': rsvp.payment_method === 'card' ? 'Carte' : rsvp.payment_method === 'cash' ? 'Espèces' : '-',
+      'Email': rsvp.email || '-',
+      'Contact': rsvp.phone || '-',
+      'Statut': rsvp.status === 'confirmed' ? 'Oui' : rsvp.status === 'declined' ? 'Non' : rsvp.status === 'maybe' ? 'Peut-être' : rsvp.status
+    }));
+
+    // Créer le worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    
+    // Créer le workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Participants');
+    
+    // Générer le nom de fichier
+    const fileName = `${selectedEvent?.title || 'evenement'}_participants_${new Date().toISOString().split('T')[0]}.xlsx`;
+    
+    // Télécharger le fichier
+    XLSX.writeFile(wb, fileName);
+    toast.success('Fichier Excel téléchargé !');
+  };
+
   if (loading) {
     return (
       <EventsLayout>
