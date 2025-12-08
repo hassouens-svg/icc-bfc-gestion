@@ -92,13 +92,16 @@ const PublicEventRSVPPage = () => {
 
       const responseData = await response.json();
 
-      setEmailSent(responseData.email_sent || false);
-      
-      // Afficher le pop-up de confirmation au lieu de changer de page
-      setShowSuccessDialog(true);
+      // Afficher un toast de confirmation au lieu d'un modal
+      if (responseData.email_sent) {
+        toast.success('✅ Enregistrement pris en compte ! Un mail de confirmation vous a été envoyé.');
+      } else {
+        toast.success('✅ Enregistrement pris en compte !');
+      }
       
       // Réinitialiser le formulaire
       setShowForm(false);
+      setSelectedStatus(null);
       setFormData({first_name: '', last_name: '', is_star: false, payment_method: '', email: '', phone: ''});
     } catch (error) {
       console.error('Erreur:', error);
