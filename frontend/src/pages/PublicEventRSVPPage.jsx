@@ -483,7 +483,7 @@ const PublicEventRSVPPage = () => {
               }}
               className="w-full bg-gray-600 hover:bg-gray-700"
             >
-              {event.custom_link_url ? 'Fermer (je paierai plus tard)' : 'Fermer'}
+              Fermer
             </Button>
           </div>
         </DialogContent>
