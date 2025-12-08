@@ -96,10 +96,7 @@ const PublicEventRSVPPage = () => {
         toast.success('✅ Enregistrement pris en compte !');
       }
       
-      // Réinitialiser le formulaire
-      setShowForm(false);
-      setSelectedStatus(null);
-      setFormData({first_name: '', last_name: '', is_star: false, payment_method: '', email: '', phone: ''});
+      // NE PAS réinitialiser le formulaire - l'utilisateur doit pouvoir cliquer sur le lien de paiement après
     } catch (error) {
       console.error('Erreur:', error);
       toast.error(error.message || 'Erreur lors de l\'envoi');
