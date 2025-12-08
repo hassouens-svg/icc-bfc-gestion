@@ -311,6 +311,39 @@ const PublicEventRSVPPage = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* Champs Email et Contact - Si activé */}
+                  {event.require_email_contact && (
+                    <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                      <p className="text-sm font-medium text-gray-700 mb-3">Coordonnées de contact</p>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Email
+                          </label>
+                          <input
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="votre@email.com"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Contact / Téléphone
+                          </label>
+                          <input
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="+33 6 12 34 56 78"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   {/* Checkbox STAR - Toujours visible */}
                   <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
