@@ -76,10 +76,14 @@ const PublicEventRSVPPage = () => {
           last_name: event.require_names ? formData.last_name : null,
           is_star: formData.is_star,
           payment_method: formData.payment_method || null,
+          email: event.require_email_contact ? formData.email : null,
+          phone: event.require_email_contact ? formData.phone : null,
           status: selectedStatus,
           guests_count: 1
         })
       });
+
+      const responseData = await response.json();
 
       if (!response.ok) {
         const error = await response.json();
