@@ -295,6 +295,7 @@ const RSVPLinksPage = () => {
     const exportData = eventStats.responses.map(rsvp => ({
       'Prénom': rsvp.first_name || '-',
       'Nom': rsvp.last_name || '-',
+      'Ville': rsvp.city || '-',
       'STAR': rsvp.is_star ? '⭐ Oui' : 'Non',
       'Paiement': rsvp.payment_method === 'card' ? 'Carte' : rsvp.payment_method === 'cash' ? 'Espèces' : '-',
       'Email': rsvp.email || '-',
