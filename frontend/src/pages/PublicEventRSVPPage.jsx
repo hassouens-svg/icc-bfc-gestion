@@ -17,7 +17,9 @@ const PublicEventRSVPPage = () => {
     first_name: '',
     last_name: '',
     is_star: false,
-    payment_method: ''
+    payment_method: '',
+    email: '',
+    phone: ''
   });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
