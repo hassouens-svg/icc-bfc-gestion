@@ -94,12 +94,9 @@ const PublicEventRSVPPage = () => {
 
       const responseData = await response.json();
 
-      // Afficher un toast de confirmation au lieu d'un modal
-      if (responseData.email_sent) {
-        toast.success('✅ Enregistrement pris en compte ! Un mail de confirmation vous a été envoyé.');
-      } else {
-        toast.success('✅ Enregistrement pris en compte !');
-      }
+      // Afficher le Dialog de confirmation
+      setEmailSent(responseData.email_sent || false);
+      setShowSuccessDialog(true);
       
       // NE PAS réinitialiser le formulaire - l'utilisateur doit pouvoir cliquer sur le lien de paiement après
     } catch (error) {
