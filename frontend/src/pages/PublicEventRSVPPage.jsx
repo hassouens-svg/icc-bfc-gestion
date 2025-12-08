@@ -92,14 +92,13 @@ const PublicEventRSVPPage = () => {
       }
 
       setEmailSent(responseData.email_sent || false);
-      setSubmitted(true);
       
-      // Afficher un message différent si un email a été envoyé
-      if (responseData.email_sent) {
-        toast.success('Réponse enregistrée avec succès ! Un mail de confirmation vous a été envoyé.');
-      } else {
-        toast.success('Réponse enregistrée avec succès !');
-      }
+      // Afficher le pop-up de confirmation au lieu de changer de page
+      setShowSuccessDialog(true);
+      
+      // Réinitialiser le formulaire
+      setShowForm(false);
+      setFormData({first_name: '', last_name: '', is_star: false, payment_method: '', email: '', phone: ''});
     } catch (error) {
       console.error('Erreur:', error);
       toast.error(error.message || 'Erreur lors de l\'envoi');
