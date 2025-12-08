@@ -440,7 +440,7 @@ const PublicEventRSVPPage = () => {
         </Card>
       </div>
 
-      {/* Dialog de confirmation avec message conditionnel */}
+      {/* Dialog de confirmation avec lien de paiement */}
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -458,18 +458,32 @@ const PublicEventRSVPPage = () => {
                 ✉️ Un mail de confirmation vous a été envoyé.
               </p>
             )}
+            
             {event.custom_link_url && (
-              <p className="text-orange-600 font-medium">
-                👉 Cliquez sur Fermer puis passez à l'étape suivante
-              </p>
+              <div className="bg-orange-50 p-4 rounded-lg border border-orange-200 space-y-3">
+                <p className="text-orange-800 font-medium">
+                  👉 Passez maintenant à l'étape de paiement
+                </p>
+                <a 
+                  href={event.custom_link_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors"
+                >
+                  <span>🔗</span>
+                  <span>{event.custom_link_title || 'Lien de paiement'}</span>
+                  <span className="text-xs">↗</span>
+                </a>
+              </div>
             )}
+
             <Button 
               onClick={() => {
                 setShowSuccessDialog(false);
               }}
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              className="w-full bg-gray-600 hover:bg-gray-700"
             >
-              Fermer
+              {event.custom_link_url ? 'Fermer (je paierai plus tard)' : 'Fermer'}
             </Button>
           </div>
         </DialogContent>
