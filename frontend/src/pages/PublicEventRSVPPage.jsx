@@ -368,11 +368,27 @@ const PublicEventRSVPPage = () => {
                       </label>
                     </div>
                   </div>
+
+                  {/* Lien personnalisé - Si configuré - DÉPLACÉ ICI */}
+                  {event.custom_link_url && (
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                      <a 
+                        href={event.custom_link_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-purple-700 hover:text-purple-900 font-medium"
+                      >
+                        <span>🔗</span>
+                        <span>{event.custom_link_title || 'Plus d\'informations'}</span>
+                        <span className="text-xs">↗</span>
+                      </a>
+                    </div>
+                  )}
                   
                   {/* Options de paiement - Si activé */}
                   {event.require_payment_method && (
                     <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                      <p className="text-sm font-medium text-gray-700 mb-3">Moyen de paiement (optionnel)</p>
+                      <p className="text-sm font-medium text-gray-700 mb-3">Moyen de paiement</p>
                       <div className="space-y-2">
                         <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-green-100 rounded">
                           <input
