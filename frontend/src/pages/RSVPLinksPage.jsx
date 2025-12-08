@@ -34,7 +34,8 @@ const RSVPLinksPage = () => {
     custom_link_url: '',
     require_email_contact: false,
     confirmation_message: '',
-    require_city: false
+    require_city: false,
+    city_options: ''
   });
   const [uploadingImage, setUploadingImage] = useState(false);
   const [eventStats, setEventStats] = useState(null);
