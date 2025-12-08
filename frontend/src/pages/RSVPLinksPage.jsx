@@ -168,7 +168,9 @@ const RSVPLinksPage = () => {
       require_names: event.require_names || false,
       require_payment_method: event.require_payment_method || false,
       custom_link_title: event.custom_link_title || '',
-      custom_link_url: event.custom_link_url || ''
+      custom_link_url: event.custom_link_url || '',
+      require_email_contact: event.require_email_contact || false,
+      confirmation_message: event.confirmation_message || ''
     });
     setIsDialogOpen(true);
   };
