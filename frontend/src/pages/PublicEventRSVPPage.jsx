@@ -373,7 +373,7 @@ const PublicEventRSVPPage = () => {
                             onChange={(e) => setFormData({...formData, payment_method: e.target.value})}
                             className="h-4 w-4 text-green-600"
                           />
-                          <span className="text-sm">💳 J'ai payé par carte</span>
+                          <span className="text-sm">💳 Je payes par carte</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-green-100 rounded">
                           <input
