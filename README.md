@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://shepherd-track.preview.emergentagent.com/login
-- **Inscription Publique**: https://shepherd-track.preview.emergentagent.com/register
+- **Connexion**: https://event-dashboard-25.preview.emergentagent.com/login
+- **Inscription Publique**: https://event-dashboard-25.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**
