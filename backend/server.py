@@ -1138,7 +1138,11 @@ async def get_visitor(visitor_id: str, current_user: dict = Depends(get_current_
 async def update_visitor(visitor_id: str, update_data: VisitorUpdate, current_user: dict = Depends(get_current_user)):
     # Allow promotions, accueil, admin, super_admin, referent, and responsable_promo to update visitors
     
-    visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
+    # Super admin et pasteur peuvent modifier tous les visiteurs
+    if current_user["role"] in ["super_admin", "pasteur"]:
+        visitor = await db.visitors.find_one({"id": visitor_id})
+    else:
+        visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
     
     if not visitor:
         raise HTTPException(status_code=404, detail="Visitor not found")
