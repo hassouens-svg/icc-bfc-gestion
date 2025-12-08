@@ -5013,7 +5013,13 @@ async def create_event(event: ChurchEventCreate, current_user: dict = Depends(ge
         "created_by": event_data["created_by"],
         "created_at": event_data["created_at"],
         "rsvp_enabled": event_data.get("rsvp_enabled", True),
-        "max_participants": event_data.get("max_participants")
+        "max_participants": event_data.get("max_participants"),
+        "require_names": event_data.get("require_names", False),
+        "require_payment_method": event_data.get("require_payment_method", False),
+        "custom_link_title": event_data.get("custom_link_title"),
+        "custom_link_url": event_data.get("custom_link_url"),
+        "require_email_contact": event_data.get("require_email_contact", False),
+        "confirmation_message": event_data.get("confirmation_message")
     }
 
 @api_router.get("/events")
