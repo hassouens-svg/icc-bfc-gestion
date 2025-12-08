@@ -549,6 +549,20 @@ const RSVPLinksPage = () => {
                 </div>
               )}
             </div>
+            <div className="space-y-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="require_city"
+                  checked={newEvent.require_city}
+                  onChange={(e) => setNewEvent({ ...newEvent, require_city: e.target.checked })}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="require_city" className="text-sm font-medium text-gray-700 cursor-pointer">
+                  Demander de choisir Ville (Église)
+                </label>
+              </div>
+            </div>
             <div className="space-y-2">
               <Label>Image de l'événement</Label>
               {newEvent.image_url ? (
