@@ -5070,7 +5070,8 @@ async def update_event(event_id: str, event: ChurchEventCreate, current_user: di
 async def delete_event(event_id: str, current_user: dict = Depends(get_current_user)):
     """Delete an event"""
     
-    result = await db.church_events.delete_one({"id": event_id, "created_by": current_user["id"]})
+    # Tous les utilisateurs peuvent supprimer les événements (accès universel)
+    result = await db.church_events.delete_one({"id": event_id})
     
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Event not found")
