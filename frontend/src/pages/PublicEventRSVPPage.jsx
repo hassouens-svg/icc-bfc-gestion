@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Calendar, X, HelpCircle } from 'lucide-react';
+import { Calendar, CheckCircle, X, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PublicEventRSVPPage = () => {
