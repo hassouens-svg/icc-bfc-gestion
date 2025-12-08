@@ -1385,6 +1385,75 @@ All test scenarios provided by the user have been successfully executed:
 
 ---
 
+## 🎯 2 CORRECTIONS SPÉCIFIQUES TESTING - 8 Décembre 2024
+
+### 📋 Agent: Testing Agent
+**Date**: 8 Décembre 2024  
+**Task**: Testing 2 Specific Corrections - PARTIAL SUCCESS ✅❌
+
+**Message to Main Agent**:
+Testing of the 2 specific corrections completed with **PARTIAL SUCCESS**. One correction is working correctly, but the second has an API key issue.
+
+**✅ CORRECTION 1 - VISITOR MODIFICATION BY SUPERADMIN: SUCCESS**
+- ✅ Login as superadmin → SUCCESS
+- ✅ Find "nouveau arrivant" visitor → SUCCESS  
+- ✅ Modify visitor without permission errors → SUCCESS
+- ✅ Verify modifications were applied → SUCCESS
+- ✅ Restore original data → SUCCESS
+
+**❌ CORRECTION 2 - RSVP EMAIL CONFIRMATION WITH BREVO API: FAILED**
+- ✅ Event creation with require_email_contact=true → SUCCESS
+- ✅ RSVP submission with email and status="confirmed" → SUCCESS
+- ❌ Email sending via Brevo API → FAILED (API Key not enabled)
+- ✅ RSVP data persistence → SUCCESS
+
+**🔧 CRITICAL ISSUE IDENTIFIED**:
+**Brevo API Key Problem**: The API key `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` is returning:
+- Status: 401 Unauthorized
+- Message: "API Key is not enabled"
+- This indicates the API key is either invalid, expired, or not properly activated
+
+**✅ TECHNICAL VALIDATION**:
+- Backend code correctly implements email sending logic ✅
+- API key is properly loaded from .env file ✅
+- Email sending conditions are correctly checked ✅
+- Error handling is working (email_sent: false returned) ✅
+- Direct API test confirms the key is not working ✅
+
+**RECOMMENDATION**: The first correction (visitor modification) is **READY FOR PRODUCTION**. The second correction requires **API KEY INVESTIGATION** - either:
+1. ✅ Verify the Brevo API key is active and has email permissions
+2. ✅ Generate a new API key from Brevo dashboard
+3. ✅ Update the BREVO_API_KEY in .env file
+4. ✅ Test email sending functionality again
+
+### 📊 DETAILED TEST RESULTS:
+
+#### Authentication & Authorization ✅
+- **Login Test**: Successfully authenticated as superadmin user
+- **Role Verification**: Confirmed super_admin role has access to visitor modification
+
+#### Visitor Modification Testing ✅
+- **Visitor Selection**: Found "nouveau arrivant" visitor for testing
+- **Modification Request**: PUT /visitors/{id} with new data → SUCCESS (200)
+- **Permission Check**: No permission errors encountered → SUCCESS
+- **Data Verification**: Changes correctly applied and retrievable → SUCCESS
+- **Data Restoration**: Original data successfully restored → SUCCESS
+
+#### RSVP Email Confirmation Testing ❌
+- **Event Creation**: POST /events with require_email_contact=true → SUCCESS (200)
+- **RSVP Submission**: POST /events/{id}/rsvp-public with email → SUCCESS (200)
+- **Email Sending**: Brevo API call → FAILED (401 Unauthorized)
+- **Response Verification**: email_sent: false correctly returned → SUCCESS
+- **Backend Logs**: Clear error messages showing API key issue → SUCCESS
+
+#### API Key Investigation ✅
+- **Environment Loading**: API key correctly loaded from .env → SUCCESS
+- **Direct API Test**: GET https://api.brevo.com/v3/account → FAILED (401)
+- **Error Message**: "API Key is not enabled" → CONFIRMED ISSUE
+- **Key Format**: 89 characters, proper xkeysib- prefix → CORRECT FORMAT
+
+---
+
 ## 🎯 3 CORRECTED ISSUES TESTING - 4 Décembre 2024
 
 ### 📋 Agent: Testing Agent
