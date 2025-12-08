@@ -913,6 +913,7 @@ class ChurchEventCreate(BaseModel):
     custom_link_url: Optional[str] = None  # URL du lien personnalisé
     require_email_contact: bool = False  # Demander email et contact
     confirmation_message: Optional[str] = None  # Message de confirmation personnalisé
+    require_city: bool = False  # Demander de choisir la ville (église)
 
 class EventRSVP(BaseModel):
     model_config = ConfigDict(extra="ignore")
