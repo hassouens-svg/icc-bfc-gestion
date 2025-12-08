@@ -421,6 +421,22 @@ const PublicEventRSVPPage = () => {
                       {submitting ? 'Envoi...' : 'Confirmer'}
                     </Button>
                   </div>
+
+                  {/* Lien personnalisé - DÉPLACÉ EN DERNIER */}
+                  {event.custom_link_url && (
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-200 mt-4">
+                      <a 
+                        href={event.custom_link_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-purple-700 hover:text-purple-900 font-medium"
+                      >
+                        <span>🔗</span>
+                        <span>{event.custom_link_title || 'Plus d\'informations'}</span>
+                        <span className="text-xs">↗</span>
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
 
