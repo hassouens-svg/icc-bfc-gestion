@@ -203,7 +203,7 @@ const RSVPLinksPage = () => {
       setIsDialogOpen(false);
       setIsEditMode(false);
       setEditingEventId(null);
-      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '' });
+      setNewEvent({ title: '', description: '', date: '', time: '', location: '', image_url: '', require_names: false, require_payment_method: false, custom_link_title: '', custom_link_url: '', require_email_contact: false, confirmation_message: '' });
       loadEvents();
     } catch (error) {
       console.error('Update event error:', error);
