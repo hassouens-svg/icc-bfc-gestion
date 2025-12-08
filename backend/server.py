@@ -911,6 +911,8 @@ class ChurchEventCreate(BaseModel):
     require_payment_method: bool = False  # Demander le moyen de paiement
     custom_link_title: Optional[str] = None  # Titre du lien personnalisé
     custom_link_url: Optional[str] = None  # URL du lien personnalisé
+    require_email_contact: bool = False  # Demander email et contact
+    confirmation_message: Optional[str] = None  # Message de confirmation personnalisé
 
 class EventRSVP(BaseModel):
     model_config = ConfigDict(extra="ignore")
