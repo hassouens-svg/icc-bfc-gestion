@@ -925,6 +925,7 @@ class EventRSVP(BaseModel):
     is_star: bool = False  # Personne VIP/importante
     email: Optional[str] = None
     phone: Optional[str] = None
+    city: Optional[str] = None  # Ville (église) choisie
     status: str = "confirmed"  # confirmed, declined, maybe
     guests_count: int = 1
     message: Optional[str] = None
