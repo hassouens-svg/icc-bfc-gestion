@@ -21,7 +21,6 @@ const PublicEventRSVPPage = () => {
     email: '',
     phone: ''
   });
-  const [cities, setCities] = useState([]);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
