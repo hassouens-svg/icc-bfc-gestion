@@ -26,18 +26,7 @@ const PublicEventRSVPPage = () => {
 
   useEffect(() => {
     loadEvent();
-    loadCities();
   }, [eventId]);
-
-  const loadCities = async () => {
-    try {
-      const response = await fetch(`${backendUrl}/api/cities`);
-      const data = await response.json();
-      setCities(data);
-    } catch (error) {
-      console.error('Error loading cities:', error);
-    }
-  };
 
   const loadEvent = async () => {
     setLoading(true);
