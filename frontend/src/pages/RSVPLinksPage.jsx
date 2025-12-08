@@ -520,6 +520,34 @@ const RSVPLinksPage = () => {
                 />
               </div>
             </div>
+            <div className="space-y-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="require_email_contact"
+                  checked={newEvent.require_email_contact}
+                  onChange={(e) => setNewEvent({ ...newEvent, require_email_contact: e.target.checked })}
+                  className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                />
+                <label htmlFor="require_email_contact" className="text-sm font-medium text-gray-700 cursor-pointer">
+                  Demander mail et contact + envoyer confirmation automatique
+                </label>
+              </div>
+              {newEvent.require_email_contact && (
+                <div className="space-y-2 pt-2">
+                  <Label>Message de confirmation (optionnel)</Label>
+                  <Textarea
+                    value={newEvent.confirmation_message}
+                    onChange={(e) => setNewEvent({ ...newEvent, confirmation_message: e.target.value })}
+                    placeholder="Bonjour {prenom},&#10;&#10;Votre participation à {evenement} le {date} est confirmée !&#10;&#10;Lieu: {lieu}&#10;&#10;À bientôt !"
+                    rows={6}
+                  />
+                  <p className="text-xs text-gray-600">
+                    💡 Variables disponibles: {'{prenom}'}, {'{nom}'}, {'{evenement}'}, {'{date}'}, {'{lieu}'}
+                  </p>
+                </div>
+              )}
+            </div>
             <div className="space-y-2">
               <Label>Image de l'événement</Label>
               {newEvent.image_url ? (
