@@ -5101,7 +5101,89 @@ async def create_event_rsvp_public(event_id: str, rsvp: EventRSVPCreate):
     
     await db.event_rsvps.insert_one(rsvp_data)
     
-    return {"message": "RSVP submitted", "id": rsvp_data["id"]}
+    # Send confirmation email if conditions are met
+    email_sent = False
+    if (event.get("require_email_contact") and 
+        rsvp_data.get("status") == "confirmed" and 
+        rsvp_data.get("email")):
+        
+        try:
+            import sib_api_v3_sdk
+            from sib_api_v3_sdk.rest import ApiException
+            
+            brevo_api_key = os.getenv('BREVO_API_KEY')
+            if brevo_api_key and event.get("confirmation_message"):
+                configuration = sib_api_v3_sdk.Configuration()
+                configuration.api_key['api-key'] = brevo_api_key
+                api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+                
+                # Personnaliser le message
+                message = event.get("confirmation_message", "")
+                prenom = rsvp_data.get("first_name", "")
+                nom = rsvp_data.get("last_name", "")
+                evenement = event.get("title", "")
+                date = event.get("date", "")
+                lieu = event.get("location", "")
+                
+                message = message.replace("{prenom}", prenom)
+                message = message.replace("{nom}", nom)
+                message = message.replace("{evenement}", evenement)
+                message = message.replace("{date}", date)
+                message = message.replace("{lieu}", lieu)
+                
+                message_html = message.replace('\n', '<br>')
+                
+                # Logo ICC
+                logo_url = "https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png"
+                
+                # Ajouter l'image de l'événement si présente
+                image_html = ""
+                image_url = (event.get("image_url") or "").strip()
+                if image_url:
+                    image_html = f'''
+                    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                        <img src="{image_url}" alt="Événement" style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto;" />
+                    </div>
+                    '''
+                
+                html_content = f'''
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <img src="{logo_url}" alt="ICC BFC-Italie" style="width: 120px; height: 120px; border-radius: 60px; border: 4px solid white;" />
+                        <h2 style="color: white; margin-top: 10px;">Impact Centre Chrétien BFC-Italie</h2>
+                    </div>
+                    <div style="padding: 30px; background-color: #f9fafb;">
+                        {message_html}
+                        {image_html}
+                    </div>
+                    <div style="padding: 20px; text-align: center; background-color: #667eea; color: white; font-size: 12px;">
+                        <p>© {datetime.now().year} Impact Centre Chrétien BFC-Italie</p>
+                        <p>My Events Church - Gestion d'Événements</p>
+                    </div>
+                </div>
+                '''
+                
+                sender_email = os.environ.get('SENDER_EMAIL', 'impactcentrechretienbfcitalie@gmail.com')
+                sender_name = os.environ.get('SENDER_NAME', 'Impact Centre Chrétien BFC-Italie')
+                
+                send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                    to=[{"email": rsvp_data.get("email"), "name": f"{prenom} {nom}"}],
+                    subject=f"Confirmation: {evenement}",
+                    html_content=html_content,
+                    sender={"name": sender_name, "email": sender_email}
+                )
+                
+                api_instance.send_transac_email(send_smtp_email)
+                email_sent = True
+        except Exception as e:
+            # Log error but don't fail the RSVP submission
+            print(f"Error sending confirmation email: {e}")
+    
+    return {
+        "message": "RSVP submitted",
+        "id": rsvp_data["id"],
+        "email_sent": email_sent
+    }
 
 @api_router.get("/events/{event_id}/rsvp")
 async def get_event_rsvps(event_id: str, current_user: dict = Depends(get_current_user)):
