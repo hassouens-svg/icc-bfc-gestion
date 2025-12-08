@@ -5051,13 +5051,12 @@ async def get_event(event_id: str):
 async def update_event(event_id: str, event: ChurchEventCreate, current_user: dict = Depends(get_current_user)):
     """Update an existing event"""
     
-    # Check if event exists and belongs to user
+    # Check if event exists
     existing_event = await db.church_events.find_one({"id": event_id})
     if not existing_event:
         raise HTTPException(status_code=404, detail="Event not found")
     
-    if existing_event["created_by"] != current_user["id"] and current_user["role"] != "super_admin":
-        raise HTTPException(status_code=403, detail="Not authorized to update this event")
+    # Tous les utilisateurs peuvent modifier les événements (accès universel)
     
     # Update the event
     event_data = event.model_dump()
