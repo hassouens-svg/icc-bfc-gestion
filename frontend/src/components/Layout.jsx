@@ -179,6 +179,17 @@ const Layout = ({ children }) => {
               </PopoverContent>
             </Popover>
 
+            {/* Bouton Retour universel */}
+            <Button 
+              onClick={() => navigate(-1)} 
+              variant="outline"
+              className="hover:bg-gray-100"
+              title="Retour à la page précédente"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour
+            </Button>
+
             {localStorage.getItem('is_impersonating') === 'true' && (
               <Button 
                 onClick={() => {
