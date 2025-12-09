@@ -36,22 +36,6 @@ const Layout = ({ children }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Vérifier si les notifications push sont déjà activées
-  useEffect(() => {
-    const checkPushStatus = () => {
-      const enabled = localStorage.getItem('push_notifications_enabled') === 'true';
-      setPushEnabled(enabled);
-      
-      // Afficher le prompt seulement si pas déjà activé et pas déjà refusé
-      const dismissed = localStorage.getItem('push_notifications_dismissed') === 'true';
-      if (!enabled && !dismissed) {
-        setShowPushPrompt(true);
-      }
-    };
-    
-    checkPushStatus();
-  }, []);
-
   const handleMarkAsRead = async (notificationId) => {
     try {
       await markNotificationRead(notificationId);
