@@ -6044,7 +6044,7 @@ async def get_my_notifications(current_user: dict = Depends(get_current_user)):
 @api_router.delete("/notifications/{notification_id}")
 async def delete_notification(notification_id: str, current_user: dict = Depends(get_current_user)):
     """Supprimer une notification"""
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    if current_user["role"] != "super_admin":
         raise HTTPException(status_code=403, detail="Permission denied")
     
     result = await db.notifications.delete_one({"id": notification_id})
