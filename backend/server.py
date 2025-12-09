@@ -30,29 +30,9 @@ warnings.filterwarnings('ignore', category=DeprecationWarning)
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Initialize Firebase Admin SDK
-try:
-    # Configuration minimale pour Firebase (utilise l'API Key du projet)
-    firebase_config = {
-        "type": "service_account",
-        "project_id": "icc-bfc-app-notifications",
-        "private_key_id": "dummy",
-        "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCdum\n-----END PRIVATE KEY-----\n",
-        "client_email": "firebase-adminsdk@icc-bfc-app-notifications.iam.gserviceaccount.com",
-        "client_id": "1",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs"
-    }
-    
-    # Ne pas initialiser si déjà fait
-    if not firebase_admin._apps:
-        cred = credentials.Certificate(firebase_config)
-        firebase_admin.initialize_app(cred)
-        print("✅ Firebase Admin initialized")
-except Exception as e:
-    print(f"⚠️ Firebase initialization warning: {e}")
-    # On continue sans Firebase pour ne pas bloquer l'app
+# Firebase FCM configuration
+FIREBASE_API_KEY = "AIzaSyC_oHqQRFPoJ2NmO-7OVCq3boYyc6VkFWE"
+FIREBASE_PROJECT_ID = "icc-bfc-app-notifications"
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
