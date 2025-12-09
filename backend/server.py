@@ -6054,3 +6054,7 @@ async def delete_notification(notification_id: str, current_user: dict = Depends
     
     return {"message": "Notification deleted"}
 
+
+# Include the router in the main app (must be at the end after all endpoints are defined)
+app.include_router(api_router)
+
