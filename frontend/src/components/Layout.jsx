@@ -76,7 +76,10 @@ const Layout = ({ children }) => {
         setPushEnabled(true);
         setShowPushPrompt(false);
         localStorage.setItem('push_notifications_enabled', 'true');
-        toast.success('✅ Notifications push activées !');
+        toast.success('✅ Notifications push activées !', {
+          description: 'Vous recevrez maintenant les annonces importantes',
+          duration: 4000,
+        });
         
         // Écouter les messages en foreground
         listenToForegroundMessages((payload) => {
@@ -86,10 +89,17 @@ const Layout = ({ children }) => {
           });
         });
       } else {
-        toast.error('❌ ' + result.message);
+        // Message d'erreur plus explicatif
+        toast.error('❌ Permission refusée', {
+          description: 'Pour activer : Cliquez sur le 🔒 à côté de l\'URL → Autorisations → Notifications → Autoriser. Puis rechargez la page.',
+          duration: 8000,
+        });
       }
     } catch (error) {
-      toast.error('Erreur lors de l\'activation des notifications');
+      toast.error('❌ Permission refusée', {
+        description: 'Pour activer : Cliquez sur le 🔒 à côté de l\'URL → Autorisations → Notifications → Autoriser. Puis rechargez la page.',
+        duration: 8000,
+      });
     }
   };
 
