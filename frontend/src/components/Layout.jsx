@@ -48,48 +48,6 @@ const Layout = ({ children }) => {
     }
   };
 
-  const handleEnablePushNotifications = async () => {
-    try {
-      toast.info('Demande de permission en cours...');
-      
-      const result = await initializeNotifications();
-      
-      if (result.success) {
-        setPushEnabled(true);
-        setShowPushPrompt(false);
-        localStorage.setItem('push_notifications_enabled', 'true');
-        toast.success('✅ Notifications push activées !', {
-          description: 'Vous recevrez maintenant les annonces importantes',
-          duration: 4000,
-        });
-        
-        // Écouter les messages en foreground
-        listenToForegroundMessages((payload) => {
-          toast.info(payload.notification?.title || 'Nouvelle notification', {
-            description: payload.notification?.body,
-            duration: 5000,
-          });
-        });
-      } else {
-        // Message d'erreur plus explicatif
-        toast.error('❌ Permission refusée', {
-          description: 'Pour activer : Cliquez sur le 🔒 à côté de l\'URL → Autorisations → Notifications → Autoriser. Puis rechargez la page.',
-          duration: 8000,
-        });
-      }
-    } catch (error) {
-      toast.error('❌ Permission refusée', {
-        description: 'Pour activer : Cliquez sur le 🔒 à côté de l\'URL → Autorisations → Notifications → Autoriser. Puis rechargez la page.',
-        duration: 8000,
-      });
-    }
-  };
-
-  const handleDismissPushPrompt = () => {
-    setShowPushPrompt(false);
-    localStorage.setItem('push_notifications_dismissed', 'true');
-  };
-
   // Déterminer le département actif depuis localStorage
   const activeDepartment = localStorage.getItem('selected_department');
 
