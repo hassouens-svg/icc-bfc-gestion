@@ -66,36 +66,8 @@ import AdminDataPage from './pages/AdminDataPage';
 import AffectationPilotesFIPage from './pages/AffectationPilotesFIPage';
 import AffectationResponsablesSecteurPage from './pages/AffectationResponsablesSecteurPage';
 import NotificationsPage from './pages/NotificationsPage';
-import { useEffect } from 'react';
-import { initializeNotifications, listenToForegroundMessages } from './services/firebaseService';
-import { toast } from 'sonner';
 
 function App() {
-  // Initialiser les notifications Firebase au chargement de l'app
-  useEffect(() => {
-    const setupNotifications = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) return; // N'initialiser que si l'utilisateur est connecté
-      
-      try {
-        const result = await initializeNotifications();
-        if (result.success) {
-          console.log('✅ Notifications activées');
-          
-          // Écouter les messages en foreground
-          listenToForegroundMessages((payload) => {
-            toast.info(payload.notification?.title || 'Nouvelle notification', {
-              description: payload.notification?.body
-            });
-          });
-        }
-      } catch (error) {
-        console.log('ℹ️ Notifications non activées:', error.message);
-      }
-    };
-    
-    setupNotifications();
-  }, []);
   return (
     <div className="App">
       <CitiesProvider>
