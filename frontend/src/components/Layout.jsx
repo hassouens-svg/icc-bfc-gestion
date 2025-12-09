@@ -125,38 +125,6 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Bannière pour activer les notifications push */}
-      {showPushPrompt && (
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <BellRing className="h-6 w-6 animate-pulse" />
-              <div>
-                <p className="font-semibold">🔔 Recevez les notifications importantes de l'église</p>
-                <p className="text-sm text-indigo-100">Activez les notifications push pour rester informé des événements et annonces</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                onClick={handleEnablePushNotifications}
-                className="bg-white text-indigo-600 hover:bg-indigo-50"
-              >
-                <Bell className="h-4 w-4 mr-2" />
-                Activer
-              </Button>
-              <Button 
-                onClick={handleDismissPushPrompt}
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/20"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
