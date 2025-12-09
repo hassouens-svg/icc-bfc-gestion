@@ -66,6 +66,38 @@ const Layout = ({ children }) => {
     }
   };
 
+  const handleEnablePushNotifications = async () => {
+    try {
+      toast.info('Demande de permission en cours...');
+      
+      const result = await initializeNotifications();
+      
+      if (result.success) {
+        setPushEnabled(true);
+        setShowPushPrompt(false);
+        localStorage.setItem('push_notifications_enabled', 'true');
+        toast.success('✅ Notifications push activées !');
+        
+        // Écouter les messages en foreground
+        listenToForegroundMessages((payload) => {
+          toast.info(payload.notification?.title || 'Nouvelle notification', {
+            description: payload.notification?.body,
+            duration: 5000,
+          });
+        });
+      } else {
+        toast.error('❌ ' + result.message);
+      }
+    } catch (error) {
+      toast.error('Erreur lors de l\'activation des notifications');
+    }
+  };
+
+  const handleDismissPushPrompt = () => {
+    setShowPushPrompt(false);
+    localStorage.setItem('push_notifications_dismissed', 'true');
+  };
+
   // Déterminer le département actif depuis localStorage
   const activeDepartment = localStorage.getItem('selected_department');
 
