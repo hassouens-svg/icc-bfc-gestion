@@ -179,6 +179,32 @@ const NotificationsPage = () => {
     }
   };
 
+  const [deploymentEnabled, setDeploymentEnabled] = useState(false);
+
+  useEffect(() => {
+    // Vérifier si le système est déployé
+    const isDeployed = localStorage.getItem('notifications_system_deployed') === 'true';
+    setDeploymentEnabled(isDeployed);
+  }, []);
+
+  const handleDeployNotificationSystem = () => {
+    if (window.confirm('⚠️ ATTENTION : Cela va activer le système de notifications pour TOUS les utilisateurs.\n\nIls verront la bannière pour activer les notifications.\n\nVoulez-vous continuer ?')) {
+      localStorage.setItem('notifications_system_deployed', 'true');
+      setDeploymentEnabled(true);
+      toast.success('✅ Système de notifications déployé pour tous les utilisateurs !', {
+        duration: 5000,
+      });
+    }
+  };
+
+  const handleDisableNotificationSystem = () => {
+    if (window.confirm('Désactiver le système de notifications pour tous les utilisateurs ?')) {
+      localStorage.setItem('notifications_system_deployed', 'false');
+      setDeploymentEnabled(false);
+      toast.info('🔕 Système de notifications désactivé');
+    }
+  };
+
   return (
     <Layout>
       <div className="p-6">
@@ -187,11 +213,54 @@ const NotificationsPage = () => {
             <Bell className="h-8 w-8" />
             Notifications Push
           </h1>
-          <Button onClick={() => setIsDialogOpen(true)} className="bg-indigo-600">
-            <Bell className="h-4 w-4 mr-2" />
-            Nouvelle Notification
-          </Button>
+          <div className="flex gap-2">
+            {!deploymentEnabled ? (
+              <Button 
+                onClick={handleDeployNotificationSystem} 
+                className="bg-green-600 hover:bg-green-700"
+              >
+                🚀 Déployer le système
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleDisableNotificationSystem} 
+                variant="outline"
+                className="border-red-300 text-red-600 hover:bg-red-50"
+              >
+                🔕 Désactiver le système
+              </Button>
+            )}
+            <Button onClick={() => setIsDialogOpen(true)} className="bg-indigo-600">
+              <Bell className="h-4 w-4 mr-2" />
+              Nouvelle Notification
+            </Button>
+          </div>
         </div>
+
+        {/* Info sur l'état du déploiement */}
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              {deploymentEnabled ? (
+                <>
+                  <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse"></div>
+                  <div>
+                    <p className="font-medium text-green-700">✅ Système déployé</p>
+                    <p className="text-sm text-gray-600">Les utilisateurs peuvent activer les notifications</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="h-3 w-3 rounded-full bg-gray-400"></div>
+                  <div>
+                    <p className="font-medium text-gray-700">⏸️ Système en attente</p>
+                    <p className="text-sm text-gray-600">Les utilisateurs ne voient pas encore les notifications. Cliquez sur "Déployer" quand vous êtes prêt.</p>
+                  </div>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Historique des notifications */}
         <Card>
