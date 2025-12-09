@@ -28,10 +28,37 @@ try {
 }
 
 /**
+ * Vérifier si on est sur iOS
+ */
+const isIOS = () => {
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+};
+
+/**
+ * Vérifier si on est en mode standalone (PWA installée)
+ */
+const isStandalone = () => {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true;
+};
+
+/**
  * Demander la permission pour les notifications
  */
 export const requestNotificationPermission = async () => {
   try {
+    // Sur iOS, vérifier si l'app est installée
+    if (isIOS() && !isStandalone()) {
+      console.log('iOS: App must be installed on home screen first');
+      return false;
+    }
+
+    // Vérifier si les notifications sont supportées
+    if (!('Notification' in window)) {
+      console.log('Notifications not supported');
+      return false;
+    }
+
     const permission = await Notification.requestPermission();
     
     if (permission === 'granted') {
