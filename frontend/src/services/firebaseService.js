@@ -133,10 +133,32 @@ export const registerTokenOnServer = async (token) => {
  */
 export const initializeNotifications = async () => {
   try {
+    // Sur iOS, vérifier d'abord que l'app est installée
+    if (isIOS() && !isStandalone()) {
+      return { 
+        success: false, 
+        message: 'Sur iPhone : Installez l\'app sur votre écran d\'accueil d\'abord (bouton Partager → Sur l\'écran d\'accueil)' 
+      };
+    }
+
+    // Vérifier le support des notifications
+    if (!('Notification' in window)) {
+      return { 
+        success: false, 
+        message: 'Les notifications ne sont pas supportées sur cet appareil' 
+      };
+    }
+
     // Demander la permission
     const hasPermission = await requestNotificationPermission();
     
     if (!hasPermission) {
+      if (Notification.permission === 'denied') {
+        return { 
+          success: false, 
+          message: 'Permission refusée. Réinitialisez les permissions dans les paramètres de votre navigateur.' 
+        };
+      }
       return { success: false, message: 'Permission refusée' };
     }
 
@@ -144,20 +166,20 @@ export const initializeNotifications = async () => {
     const token = await getFCMToken();
     
     if (!token) {
-      return { success: false, message: 'Token non disponible' };
+      return { success: false, message: 'Impossible d\'obtenir le token FCM' };
     }
 
     // Enregistrer sur le serveur
     const registered = await registerTokenOnServer(token);
     
     if (!registered) {
-      return { success: false, message: 'Erreur enregistrement serveur' };
+      return { success: false, message: 'Erreur lors de l\'enregistrement du token' };
     }
 
     return { success: true, token };
   } catch (error) {
     console.error('Error initializing notifications:', error);
-    return { success: false, message: error.message };
+    return { success: false, message: error.message || 'Erreur inconnue' };
   }
 };
 
