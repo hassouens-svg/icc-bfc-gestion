@@ -5964,7 +5964,7 @@ async def send_notification(notification_id: str, current_user: dict = Depends(g
     failed_count = 0
     fcm_url = "https://fcm.googleapis.com/fcm/send"
     headers = {
-        "Authorization": f"Bearer {FIREBASE_SERVER_KEY}",
+        "Authorization": f"key={FIREBASE_SERVER_KEY}",
         "Content-Type": "application/json"
     }
     
