@@ -8,10 +8,15 @@ import { toast } from 'sonner';
 
 const SelectAccountPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const currentUser = getUser();
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [departments, setDepartments] = useState({});
+  
+  // Récupérer les infos de navigation
+  const fromCity = location.state?.fromCity;
+  const department = location.state?.department;
 
   useEffect(() => {
     // Vérifier que l'utilisateur est pasteur ou superadmin
