@@ -2,18 +2,19 @@
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
-// Configuration Firebase (sera remplacée avec les vraies clés)
+// Configuration Firebase
 const firebaseConfig = {
-  apiKey: "PLACEHOLDER_API_KEY",
-  authDomain: "PLACEHOLDER_AUTH_DOMAIN",
-  projectId: "PLACEHOLDER_PROJECT_ID",
-  storageBucket: "PLACEHOLDER_STORAGE_BUCKET",
-  messagingSenderId: "PLACEHOLDER_SENDER_ID",
-  appId: "PLACEHOLDER_APP_ID"
+  apiKey: "AIzaSyC_oHqQRFPoJ2NmO-7OVCq3boYyc6VkFWE",
+  authDomain: "icc-bfc-app-notifications.firebaseapp.com",
+  projectId: "icc-bfc-app-notifications",
+  storageBucket: "icc-bfc-app-notifications.firebasestorage.app",
+  messagingSenderId: "673228594584",
+  appId: "1:673228594584:web:f53ec58d5d78b7edf39fed",
+  measurementId: "G-GW8V18FSX7"
 };
 
-// VAPID Key (sera remplacée)
-const vapidKey = "PLACEHOLDER_VAPID_KEY";
+// VAPID Key (clé publique Web Push)
+const vapidKey = "BP__eZMG9I9rb5augPteT6oV498jxWndzSJNX774cf7GBm7HcjNT7R6_4FOB0-cmGWXWGUmYY9zTlpRFIsNts08";
 
 // Initialize Firebase
 let app;
