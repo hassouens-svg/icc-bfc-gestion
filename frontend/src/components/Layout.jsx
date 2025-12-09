@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { logout, getUser, getNotifications, markNotificationRead } from '../utils/api';
 import { Button } from './ui/button';
-import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table, Heart, Shield, Bell, Database, ArrowLeft } from 'lucide-react';
+import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table, Heart, Shield, Bell, Database, ArrowLeft, BellRing, X } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { initializeNotifications, listenToForegroundMessages } from '../services/firebaseService';
+import { toast } from 'sonner';
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
