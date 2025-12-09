@@ -227,6 +227,28 @@ const Layout = ({ children }) => {
           </div>
           
           <div className="flex items-center space-x-2">
+            {/* Bouton activer notifications push (si pas encore activé) */}
+            {!pushEnabled && (
+              <Button 
+                onClick={handleEnablePushNotifications}
+                variant="outline"
+                size="sm"
+                className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+                title="Activer les notifications push"
+              >
+                <BellRing className="h-4 w-4 mr-2" />
+                Activer les notifications
+              </Button>
+            )}
+
+            {/* Badge si activé */}
+            {pushEnabled && (
+              <div className="flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-300 rounded-lg">
+                <Bell className="h-4 w-4 text-green-600" />
+                <span className="text-xs text-green-700 font-medium">Notifications activées</span>
+              </div>
+            )}
+
             {/* Notifications */}
             <Popover>
               <PopoverTrigger asChild>
