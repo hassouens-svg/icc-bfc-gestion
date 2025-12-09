@@ -5634,8 +5634,7 @@ async def delete_activite(activite_id: str, user: dict = Depends(get_current_use
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Include the router in the main app
-app.include_router(api_router)
+# Router will be included at the end of the file after all endpoints are defined
 
 app.add_middleware(
     CORSMiddleware,
