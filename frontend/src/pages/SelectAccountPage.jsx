@@ -132,16 +132,70 @@ const SelectAccountPage = () => {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-3xl">Sélection de Compte</CardTitle>
+                <CardTitle className="text-3xl">Accès Spécifiques - Gestion</CardTitle>
                 <p className="text-gray-600 mt-2">
                   Connecté en tant que <strong>{currentUser.username}</strong> ({getRoleLabel(currentUser.role)})
                 </p>
+                {fromCity && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Vue sélectionnée : <strong>{fromCity === 'all' ? 'Toutes les villes' : fromCity}</strong>
+                  </p>
+                )}
               </div>
-              <Button variant="outline" onClick={() => navigate('/dashboard')}>
+              <Button variant="outline" onClick={() => navigate('/select-ville')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Mon Dashboard
+                Retour
               </Button>
             </div>
+          </CardHeader>
+        </Card>
+
+        {/* Options principales de gestion */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card 
+            className="cursor-pointer hover:scale-105 transition-all duration-300 bg-gradient-to-br from-indigo-600 to-blue-700 shadow-lg hover:shadow-indigo-500/50 border-0 group"
+            onClick={() => navigate('/dashboard-superadmin-complet')}
+          >
+            <CardContent className="p-8 text-center">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <BarChart3 className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                📊 Voir les Statistiques
+              </h3>
+              <p className="text-indigo-100 text-sm">
+                Accéder au tableau de bord et aux données
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:scale-105 transition-all duration-300 bg-gradient-to-br from-purple-600 to-pink-700 shadow-lg hover:shadow-purple-500/50 border-0 group"
+            onClick={() => navigate('/notifications')}
+          >
+            <CardContent className="p-8 text-center">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Bell className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                🔔 Notifications Push
+              </h3>
+              <p className="text-purple-100 text-sm">
+                Créer et gérer les notifications pour les utilisateurs
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Section Impersonation (optionnelle) */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-xl">
+              👥 Se connecter en tant qu'un autre utilisateur (Impersonation)
+            </CardTitle>
+            <p className="text-sm text-gray-600">
+              Uniquement pour le support et le débogage
+            </p>
           </CardHeader>
         </Card>
 
