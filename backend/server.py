@@ -22,6 +22,7 @@ import base64
 import mimetypes
 import firebase_admin
 from firebase_admin import credentials, messaging
+import requests
 
 # Suppress warnings
 warnings.filterwarnings('ignore', message='.*bcrypt.*')
