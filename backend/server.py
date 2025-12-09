@@ -33,6 +33,7 @@ load_dotenv(ROOT_DIR / '.env')
 # Firebase FCM configuration
 FIREBASE_API_KEY = "AIzaSyC_oHqQRFPoJ2NmO-7OVCq3boYyc6VkFWE"
 FIREBASE_PROJECT_ID = "icc-bfc-app-notifications"
+FIREBASE_SERVER_KEY = "AAAAg-BLWmM:APA91bE3qZt9wkF1rRCsNzfq__dCAhBrFsIgjjRXEUmOJXEH9mK6CUKtA9khppJW0Qa4pQdTKoiT7ZVaPpqSoQUdRkQkJpO97rG4RXnUuM8XRcHgPWaAJfgVSWy33eIGDbdbXQzY4wN1"
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
