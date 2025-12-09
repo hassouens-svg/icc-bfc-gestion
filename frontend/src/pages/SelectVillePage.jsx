@@ -49,13 +49,15 @@ const SelectVillePage = () => {
     localStorage.setItem('selected_city_view', cityName);
     localStorage.setItem('selected_department', department);
     
-    // Rediriger selon le rôle et département
-    if (user.role === 'super_admin') {
+    // Pour superadmin et pasteur, montrer les options de gestion
+    if (['super_admin', 'pasteur'].includes(user.role)) {
+      navigate('/select-account', { state: { fromCity: cityName, department } });
+      return;
+    }
+    
+    // Pour les autres rôles, rediriger directement
+    if (user.role === 'responsable_eglise') {
       navigate('/dashboard-superadmin-complet');
-    } else if (user.role === 'pasteur') {
-      navigate('/dashboard-superadmin-complet'); // Même dashboard, mais en lecture seule
-    } else if (user.role === 'responsable_eglise') {
-      navigate('/dashboard-superadmin-complet'); // Même dashboard, mais filtré par sa ville
     } else if (department === 'familles-impact') {
       navigate('/familles-impact/dashboard-superviseur');
     } else {
