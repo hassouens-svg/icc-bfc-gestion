@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://event-dashboard-25.preview.emergentagent.com/api"
+BASE_URL = "https://event-rsvp-11.preview.emergentagent.com/api"
 
 def test_fi_public_endpoint_with_time_fields():
     """

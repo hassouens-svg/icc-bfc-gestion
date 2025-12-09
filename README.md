@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://event-dashboard-25.preview.emergentagent.com/login
-- **Inscription Publique**: https://event-dashboard-25.preview.emergentagent.com/register
+- **Connexion**: https://event-rsvp-11.preview.emergentagent.com/login
+- **Inscription Publique**: https://event-rsvp-11.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**

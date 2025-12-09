@@ -3,7 +3,7 @@
 ## ⚠️ IMPORTANT : Configuration des URLs
 
 ### Problème actuel
-- L'URL actuelle dans `.env` est : `https://event-dashboard-25.preview.emergentagent.com`
+- L'URL actuelle dans `.env` est : `https://event-rsvp-11.preview.emergentagent.com`
 - Ceci est l'URL de **PREVIEW/TEST**, pas de PRODUCTION
 - Les liens RSVP dans les emails pointent vers cette URL preview
 

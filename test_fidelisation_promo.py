@@ -154,7 +154,7 @@ def test_api_fidelisation():
     
     # Login avec superadmin pour tester l'API (car le hash password ne fonctionne pas)
     login_response = requests.post(
-        "https://event-dashboard-25.preview.emergentagent.com/api/auth/login",
+        "https://event-rsvp-11.preview.emergentagent.com/api/auth/login",
         json={"username": "superadmin", "password": "superadmin123", "city": "Dijon"}
     )
     
@@ -169,7 +169,7 @@ def test_api_fidelisation():
     # Appeler l'API de promotions pour voir les données de novembre
     headers = {"Authorization": f"Bearer {token}"}
     promo_response = requests.get(
-        "https://event-dashboard-25.preview.emergentagent.com/api/analytics/promotions-detailed?ville=Dijon&mois=11&annee=2024",
+        "https://event-rsvp-11.preview.emergentagent.com/api/analytics/promotions-detailed?ville=Dijon&mois=11&annee=2024",
         headers=headers
     )
     
@@ -190,7 +190,7 @@ def test_api_fidelisation():
     
     # Fallback: Appeler l'API de fidélisation générale
     fid_response = requests.get(
-        "https://event-dashboard-25.preview.emergentagent.com/api/fidelisation/referent",
+        "https://event-rsvp-11.preview.emergentagent.com/api/fidelisation/referent",
         headers=headers
     )
     
@@ -244,7 +244,7 @@ def main():
     if success:
         print("\n✅✅✅ TEST RÉUSSI!")
         print(f"\nPour tester dans le navigateur:")
-        print(f"  URL: https://event-dashboard-25.preview.emergentagent.com/login")
+        print(f"  URL: https://event-rsvp-11.preview.emergentagent.com/login")
         print(f"  Username: test_promo_responsable")
         print(f"  Password: test123")
         print(f"  Ville: Dijon")

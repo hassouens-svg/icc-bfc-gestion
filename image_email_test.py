@@ -13,7 +13,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://event-dashboard-25.preview.emergentagent.com/api"
+BASE_URL = "https://event-rsvp-11.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 # Test account

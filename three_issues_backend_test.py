@@ -18,7 +18,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BACKEND_URL = "https://event-dashboard-25.preview.emergentagent.com/api"
+BACKEND_URL = "https://event-rsvp-11.preview.emergentagent.com/api"
 USERNAME = "superadmin"
 PASSWORD = "superadmin123"
 CITY = "Dijon"

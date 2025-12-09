@@ -2,7 +2,7 @@
 """
 COMPREHENSIVE PRODUCTION BACKEND TEST
 ICC BFC-ITALIE - Pre-Production Testing
-Backend URL: https://event-dashboard-25.preview.emergentagent.com/api
+Backend URL: https://event-rsvp-11.preview.emergentagent.com/api
 """
 
 import requests
@@ -10,7 +10,7 @@ import json
 from datetime import datetime, timedelta
 
 # Backend URL
-BASE_URL = "https://event-dashboard-25.preview.emergentagent.com/api"
+BASE_URL = "https://event-rsvp-11.preview.emergentagent.com/api"
 
 # Test accounts
 TEST_ACCOUNTS = {

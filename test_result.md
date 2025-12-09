@@ -60,7 +60,7 @@ Testing the "Modifier les informations de la promo" dialog on Dashboard - COMPLE
 5. Test clicking on markers and viewing details
 
 ## Test Environment Details
-- Backend URL: https://event-dashboard-25.preview.emergentagent.com
+- Backend URL: https://event-rsvp-11.preview.emergentagent.com
 - Database: test_database
 - Test users created:
   - superadmin / superadmin123 (super_admin)
@@ -1889,7 +1889,7 @@ Testing of the Edit Dialog functionality in Gestion des Accès completed with **
 ### ✅ TECHNICAL VALIDATION:
 
 **Application Access**: ✅ CONFIRMED
-- Application accessible at https://event-dashboard-25.preview.emergentagent.com
+- Application accessible at https://event-rsvp-11.preview.emergentagent.com
 - Login page displays correctly with required fields
 - Gestion des Accès route properly configured in App.js (line 136)
 
@@ -2243,7 +2243,7 @@ All French review requirements are **FULLY FUNCTIONAL** and ready for production
 ### 📋 TEST DATA USED:
 - **Test User**: superadmin with super_admin role
 - **Test Credentials**: superadmin / superadmin123
-- **Test Environment**: https://event-dashboard-25.preview.emergentagent.com
+- **Test Environment**: https://event-rsvp-11.preview.emergentagent.com
 - **Test Database**: test_database
 - **Validation**: All CRUD operations, permissions, and data integrity verified
 
@@ -2458,7 +2458,7 @@ Both corrections are **FULLY FUNCTIONAL** and ready for production use:
 ### 📋 TEST DATA USED:
 - **Test User**: superadmin with super_admin role
 - **Test Credentials**: superadmin / superadmin123
-- **Test Environment**: https://event-dashboard-25.preview.emergentagent.com
+- **Test Environment**: https://event-rsvp-11.preview.emergentagent.com
 - **Test Method**: Browser automation with Playwright
 - **Pages Tested**: `/events/rsvp-links`, `/dashboard-superadmin`, `/visitors`
 
