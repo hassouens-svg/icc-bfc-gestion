@@ -19,8 +19,8 @@ const SelectAccountPage = () => {
   const department = location.state?.department;
 
   useEffect(() => {
-    // Vérifier que l'utilisateur est pasteur ou superadmin
-    if (!currentUser || !['pasteur', 'super_admin'].includes(currentUser.role)) {
+    // Vérifier que l'utilisateur est super_admin seulement
+    if (!currentUser || currentUser.role !== 'super_admin') {
       navigate('/dashboard');
       return;
     }
