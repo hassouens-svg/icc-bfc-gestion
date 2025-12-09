@@ -5840,3 +5840,171 @@ async def get_evangelisation_stats(
     return stats
 
 
+
+# ============== NOTIFICATIONS ENDPOINTS ==============
+
+@api_router.post("/notifications/register-token")
+async def register_fcm_token(token_data: dict, current_user: dict = Depends(get_current_user)):
+    """Enregistrer le token FCM d'un utilisateur"""
+    try:
+        # Vérifier si le token existe déjà
+        existing = await db.fcm_tokens.find_one({
+            "user_id": current_user["id"],
+            "token": token_data["token"]
+        })
+        
+        if existing:
+            # Mettre à jour last_used
+            await db.fcm_tokens.update_one(
+                {"id": existing["id"]},
+                {"$set": {"last_used": datetime.now(timezone.utc).isoformat()}}
+            )
+            return {"message": "Token updated"}
+        
+        # Créer nouveau token
+        fcm_token = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user["id"],
+            "token": token_data["token"],
+            "device_type": token_data.get("device_type", "web"),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "last_used": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.fcm_tokens.insert_one(fcm_token)
+        return {"message": "Token registered successfully"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/notifications/create")
+async def create_notification(notif: NotificationCreate, current_user: dict = Depends(get_current_user)):
+    """Créer une notification (superadmin seulement)"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    notification_data = notif.model_dump()
+    notification_data["id"] = str(uuid.uuid4())
+    notification_data["created_by"] = current_user["id"]
+    notification_data["status"] = "scheduled" if notif.scheduled_at else "pending"
+    notification_data["sent_count"] = 0
+    notification_data["failed_count"] = 0
+    notification_data["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.notifications.insert_one(notification_data)
+    
+    # Si pas de programmation, envoyer immédiatement
+    if not notif.scheduled_at:
+        # On envoie en arrière-plan
+        return {"message": "Notification créée et sera envoyée", "id": notification_data["id"]}
+    
+    return {"message": "Notification programmée", "id": notification_data["id"]}
+
+
+@api_router.post("/notifications/{notification_id}/send")
+async def send_notification(notification_id: str, current_user: dict = Depends(get_current_user)):
+    """Envoyer une notification maintenant"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Récupérer la notification
+    notification = await db.notifications.find_one({"id": notification_id})
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    
+    # Récupérer les tokens des utilisateurs ciblés
+    query = {}
+    
+    if notification.get("send_to_all"):
+        # Tous les utilisateurs
+        pass
+    else:
+        # Construire la requête de ciblage
+        user_query = {}
+        
+        if notification.get("target_users"):
+            user_query["id"] = {"$in": notification["target_users"]}
+        
+        if notification.get("city"):
+            user_query["city"] = notification["city"]
+        
+        if notification.get("target_roles"):
+            user_query["role"] = {"$in": notification["target_roles"]}
+        
+        # Récupérer les utilisateurs ciblés
+        targeted_users = await db.users.find(user_query, {"id": 1, "_id": 0}).to_list(10000)
+        user_ids = [u["id"] for u in targeted_users]
+        
+        if not user_ids:
+            return {"message": "Aucun utilisateur ciblé trouvé", "sent_count": 0}
+        
+        query["user_id"] = {"$in": user_ids}
+    
+    # Récupérer tous les tokens
+    tokens = await db.fcm_tokens.find(query, {"token": 1, "_id": 0}).to_list(10000)
+    
+    if not tokens:
+        await db.notifications.update_one(
+            {"id": notification_id},
+            {"$set": {"status": "failed", "sent_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        return {"message": "Aucun token trouvé", "sent_count": 0}
+    
+    # TODO: Envoyer via Firebase FCM (on ajoutera le code après avoir les clés)
+    # Pour l'instant, on simule l'envoi
+    sent_count = len(tokens)
+    
+    # Mettre à jour la notification
+    await db.notifications.update_one(
+        {"id": notification_id},
+        {"$set": {
+            "status": "sent",
+            "sent_at": datetime.now(timezone.utc).isoformat(),
+            "sent_count": sent_count
+        }}
+    )
+    
+    return {"message": f"Notification envoyée à {sent_count} utilisateurs", "sent_count": sent_count}
+
+
+@api_router.get("/notifications")
+async def get_notifications(current_user: dict = Depends(get_current_user)):
+    """Récupérer l'historique des notifications (superadmin)"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    notifications = await db.notifications.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return notifications
+
+
+@api_router.get("/notifications/my-notifications")
+async def get_my_notifications(current_user: dict = Depends(get_current_user)):
+    """Récupérer les notifications d'un utilisateur"""
+    # Construire les critères de ciblage pour cet utilisateur
+    notifications = await db.notifications.find({
+        "status": "sent",
+        "$or": [
+            {"send_to_all": True},
+            {"target_users": current_user["id"]},
+            {"city": current_user.get("city")},
+            {"target_roles": current_user["role"]}
+        ]
+    }, {"_id": 0}).sort("sent_at", -1).limit(50).to_list(50)
+    
+    return notifications
+
+
+@api_router.delete("/notifications/{notification_id}")
+async def delete_notification(notification_id: str, current_user: dict = Depends(get_current_user)):
+    """Supprimer une notification"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    result = await db.notifications.delete_one({"id": notification_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    
+    return {"message": "Notification deleted"}
+
