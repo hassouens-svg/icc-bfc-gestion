@@ -6016,8 +6016,8 @@ async def send_notification(notification_id: str, current_user: dict = Depends(g
 
 @api_router.get("/notifications")
 async def get_notifications(current_user: dict = Depends(get_current_user)):
-    """Récupérer l'historique des notifications (superadmin)"""
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    """Récupérer l'historique des notifications (superadmin uniquement)"""
+    if current_user["role"] != "super_admin":
         raise HTTPException(status_code=403, detail="Permission denied")
     
     notifications = await db.notifications.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
