@@ -85,6 +85,7 @@ const Layout = ({ children }) => {
     { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin', 'responsable_eglise'], department: null },
     { path: '/affectation-pilotes-fi', label: 'Attribution Pilotes FI', icon: UserPlus, roles: ['responsable_secteur', 'superviseur_fi', 'super_admin'], department: 'familles-impact' },
     { path: '/admin-data', label: 'Gestion des Données', icon: Database, roles: ['super_admin'], department: null },
+    { path: '/notifications', label: 'Notifications Push', icon: Bell, roles: ['super_admin', 'pasteur'], department: null },
     
     // AFFECTATIONS SUPERVISEUR FI
     { path: '/affectation-responsables-secteur', label: 'Attribution Responsables Secteurs', icon: UserPlus, roles: ['super_admin', 'superviseur_fi'], department: null },
