@@ -948,6 +948,50 @@ class EventRSVPCreate(BaseModel):
     payment_method: Optional[str] = None  # "card" ou "cash"
     source: Optional[str] = None
 
+# ============== NOTIFICATIONS MODELS ==============
+
+class FCMToken(BaseModel):
+    """Modèle pour stocker les tokens FCM des utilisateurs"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    token: str
+    device_type: Optional[str] = None  # "android", "ios", "web"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_used: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class NotificationCreate(BaseModel):
+    """Modèle pour créer une notification"""
+    title: str
+    message: str
+    department: Optional[str] = None  # Département cible
+    city: Optional[str] = None  # Ville cible
+    event_id: Optional[str] = None  # Événement associé (optionnel)
+    target_users: Optional[List[str]] = None  # IDs utilisateurs spécifiques
+    target_roles: Optional[List[str]] = None  # Rôles ciblés
+    send_to_all: bool = False  # Envoyer à tous
+    scheduled_at: Optional[str] = None  # Date/heure programmée (ISO format)
+    
+class Notification(BaseModel):
+    """Modèle de notification stockée"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    message: str
+    department: Optional[str] = None
+    city: Optional[str] = None
+    event_id: Optional[str] = None
+    target_users: Optional[List[str]] = None
+    target_roles: Optional[List[str]] = None
+    send_to_all: bool = False
+    scheduled_at: Optional[str] = None
+    sent_at: Optional[str] = None
+    status: str = "pending"  # pending, sent, failed, scheduled
+    sent_count: int = 0
+    failed_count: int = 0
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 @api_router.put("/users/{user_id}/reset-password")
 async def reset_user_password(user_id: str, password_data: PasswordReset, current_user: dict = Depends(get_current_user)):
     """Reset user password (Super Admin only)"""
