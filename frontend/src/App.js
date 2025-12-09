@@ -169,6 +169,7 @@ function App() {
           <Route path="/admin-data" element={<AdminDataPage />} />
           <Route path="/affectation-pilotes-fi" element={<AffectationPilotesFIPage />} />
           <Route path="/affectation-responsables-secteur" element={<AffectationResponsablesSecteurPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
         </Routes>
       </BrowserRouter>
       </CitiesProvider>
