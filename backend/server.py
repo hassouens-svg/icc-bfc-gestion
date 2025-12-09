@@ -5888,7 +5888,7 @@ async def register_fcm_token(token_data: dict, current_user: dict = Depends(get_
 @api_router.post("/notifications/create")
 async def create_notification(notif: NotificationCreate, current_user: dict = Depends(get_current_user)):
     """Créer une notification (superadmin seulement)"""
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    if current_user["role"] != "super_admin":
         raise HTTPException(status_code=403, detail="Permission denied")
     
     notification_data = notif.model_dump()
