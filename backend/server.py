@@ -5959,21 +5959,60 @@ async def send_notification(notification_id: str, current_user: dict = Depends(g
         )
         return {"message": "Aucun token trouvé", "sent_count": 0}
     
-    # TODO: Envoyer via Firebase FCM (on ajoutera le code après avoir les clés)
-    # Pour l'instant, on simule l'envoi
-    sent_count = len(tokens)
+    # Envoyer via Firebase FCM API
+    sent_count = 0
+    failed_count = 0
+    fcm_url = "https://fcm.googleapis.com/fcm/send"
+    headers = {
+        "Authorization": f"Bearer {FIREBASE_SERVER_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    for token_doc in tokens:
+        try:
+            payload = {
+                "to": token_doc["token"],
+                "notification": {
+                    "title": notification["title"],
+                    "body": notification["message"],
+                    "icon": "/logo192.png",
+                    "click_action": "/"
+                },
+                "data": {
+                    "notification_id": notification_id,
+                    "created_at": notification["created_at"]
+                }
+            }
+            
+            response = requests.post(fcm_url, json=payload, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                sent_count += 1
+            else:
+                failed_count += 1
+                print(f"FCM Error: {response.status_code} - {response.text}")
+        
+        except Exception as e:
+            failed_count += 1
+            print(f"Error sending to token: {str(e)}")
     
     # Mettre à jour la notification
+    status_value = "sent" if sent_count > 0 else "failed"
     await db.notifications.update_one(
         {"id": notification_id},
         {"$set": {
-            "status": "sent",
+            "status": status_value,
             "sent_at": datetime.now(timezone.utc).isoformat(),
-            "sent_count": sent_count
+            "sent_count": sent_count,
+            "failed_count": failed_count
         }}
     )
     
-    return {"message": f"Notification envoyée à {sent_count} utilisateurs", "sent_count": sent_count}
+    return {
+        "message": f"Notification envoyée à {sent_count} utilisateurs ({failed_count} échecs)",
+        "sent_count": sent_count,
+        "failed_count": failed_count
+    }
 
 
 @api_router.get("/notifications")
