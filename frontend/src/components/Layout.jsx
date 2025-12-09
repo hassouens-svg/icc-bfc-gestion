@@ -13,8 +13,6 @@ const Layout = ({ children }) => {
   const user = getUser();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [pushEnabled, setPushEnabled] = useState(false);
-  const [showPushPrompt, setShowPushPrompt] = useState(false);
 
   const handleLogout = () => {
     logout();
