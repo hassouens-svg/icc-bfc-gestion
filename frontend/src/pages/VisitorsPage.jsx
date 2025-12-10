@@ -762,18 +762,20 @@ const VisitorsPage = () => {
                     data-testid={`visitor-item-${visitor.id}`}
                   >
                     <div className="flex-1" onClick={() => navigate(`/visitor/${visitor.id}`)} className="cursor-pointer">
-                      <p className="font-medium text-lg">{visitor.firstname} {visitor.lastname}</p>
+                      <div className="flex items-center gap-2">
+                        {visitor.ejp && (
+                          <span className="inline-flex items-center px-3 py-2 rounded-full text-sm font-bold bg-purple-600 text-white shadow-lg">
+                            EJP
+                          </span>
+                        )}
+                        <p className="font-medium text-lg">{visitor.firstname} {visitor.lastname}</p>
+                      </div>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {visitor.types.map((type, idx) => (
                           <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
                             {type}
                           </span>
                         ))}
-                        {visitor.ejp && (
-                          <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-xs font-bold">
-                            EJP
-                          </span>
-                        )}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">
                         {visitor.arrival_channel} • {visitor.visit_date}
