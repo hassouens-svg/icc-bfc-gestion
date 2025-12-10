@@ -66,6 +66,10 @@ import AdminDataPage from './pages/AdminDataPage';
 import AffectationPilotesFIPage from './pages/AffectationPilotesFIPage';
 import AffectationResponsablesSecteurPage from './pages/AffectationResponsablesSecteurPage';
 import NotificationsPage from './pages/NotificationsPage';
+import MinistereStarsLoginPage from './pages/MinistereStarsLoginPage';
+import MinistereStarsDashboardPage from './pages/MinistereStarsDashboardPage';
+import MinistereStarsDepartementPage from './pages/MinistereStarsDepartementPage';
+import RecensementStarsPage from './pages/RecensementStarsPage';
 
 function App() {
   return (
