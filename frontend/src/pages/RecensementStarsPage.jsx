@@ -14,9 +14,25 @@ const RecensementStarsPage = () => {
     nom: '',
     jour_naissance: '',
     mois_naissance: '',
+    ville: '',
     departements: []
   });
   const [loading, setLoading] = useState(false);
+  const [cities, setCities] = useState([]);
+
+  React.useEffect(() => {
+    loadCities();
+  }, []);
+
+  const loadCities = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities`);
+      const data = await response.json();
+      setCities(data || []);
+    } catch (error) {
+      console.error('Error loading cities:', error);
+    }
+  };
 
   const departements = [
     'MLA',
