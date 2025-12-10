@@ -126,6 +126,20 @@ const MarquerPresenceBergersPage = () => {
     setPromos(newPromos);
   };
 
+  const handleUnchecksAll = () => {
+    if (window.confirm('⚠️ Êtes-vous sûr de vouloir décocher toutes les présences ?')) {
+      const newPromos = promos.map(promo => ({
+        ...promo,
+        present: false,
+        absent: false,
+        priere: 'Non',
+        commentaire: ''
+      }));
+      setPromos(newPromos);
+      toast.info('Toutes les cases ont été décochées');
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
