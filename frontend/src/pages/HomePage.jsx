@@ -111,24 +111,47 @@ const HomePage = () => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Anniversaires Banner */}
+      {/* Anniversaires Banner - Très visible en haut */}
       {anniversaires.length > 0 && (
-        <div className="relative z-10 mb-6 animate-fade-in">
-          <Card className="bg-gradient-to-r from-yellow-400 to-orange-500 border-0 shadow-2xl">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="text-5xl">🎂</div>
-                <div className="flex-1">
+        <div className="relative z-10 mb-8 animate-bounce-slow">
+          <Card className="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 border-0 shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+            <CardContent className="relative p-8">
+              <div className="flex items-start gap-6">
+                <div className="text-6xl animate-pulse">🎂</div>
+                <div className="flex-1 space-y-3">
+                  <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    🎉 Anniversaires à Venir
+                  </h3>
                   {anniversaires.map((anniv, idx) => (
-                    <div key={idx} className="text-white">
+                    <div 
+                      key={idx} 
+                      className="bg-white/20 backdrop-blur-md rounded-lg p-4 border border-white/30 shadow-lg"
+                    >
                       {anniv.days_until === 0 ? (
-                        <p className="text-xl font-bold">
-                          🎉 Aujourd'hui c'est l'anniversaire de {anniv.prenom} {anniv.nom} !
-                        </p>
+                        <div className="flex items-center gap-3">
+                          <span className="text-3xl">🎊</span>
+                          <div>
+                            <p className="text-2xl font-bold text-white">
+                              AUJOURD'HUI !
+                            </p>
+                            <p className="text-xl text-white/90">
+                              C'est l'anniversaire de <span className="font-bold">{anniv.prenom} {anniv.nom}</span>
+                            </p>
+                          </div>
+                        </div>
                       ) : (
-                        <p className="text-lg font-semibold">
-                          ⭐ Dans {anniv.days_until} jour{anniv.days_until > 1 ? 's' : ''} : {anniv.prenom} {anniv.nom} ({anniv.date})
-                        </p>
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">⭐</span>
+                          <div>
+                            <p className="text-lg font-bold text-white">
+                              Dans {anniv.days_until} jour{anniv.days_until > 1 ? 's' : ''}
+                            </p>
+                            <p className="text-white/90">
+                              {anniv.prenom} {anniv.nom} - <span className="font-semibold">{anniv.date}</span>
+                            </p>
+                          </div>
+                        </div>
                       )}
                     </div>
                   ))}
