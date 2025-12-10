@@ -7,6 +7,7 @@ import { Users, TrendingUp, UserCheck, Shield, Church, Heart } from 'lucide-reac
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [anniversaires, setAnniversaires] = React.useState([]);
 
   const handleDepartmentChoice = (deptId) => {
     // Handle special access pages
