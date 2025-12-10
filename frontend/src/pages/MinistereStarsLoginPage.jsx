@@ -44,8 +44,11 @@ const MinistereStarsLoginPage = () => {
         return;
       }
 
-      // Mettre à jour l'utilisateur avec la ville sélectionnée
-      const updatedUser = { ...result.user, city: formData.city };
+      // Mettre à jour l'utilisateur avec la ville sélectionnée (si fournie)
+      const updatedUser = { 
+        ...result.user, 
+        city: formData.city || result.user.city || 'all' 
+      };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       
       toast.success('Connexion réussie !');
