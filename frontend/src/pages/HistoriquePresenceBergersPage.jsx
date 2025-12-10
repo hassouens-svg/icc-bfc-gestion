@@ -193,6 +193,7 @@ const HistoriquePresenceBergersPage = () => {
                   Présences du {new Date(dateSelectionnee).toLocaleDateString('fr-FR', { 
                     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
                   })}
+                  {selectedPromo !== 'all' && ` - ${selectedPromo}`}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -210,7 +211,7 @@ const HistoriquePresenceBergersPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {promos.map((promo, index) => (
+                      {promos.filter(p => selectedPromo === 'all' || p.nom === selectedPromo).map((promo, index) => (
                         <tr key={index} className={`border-b hover:bg-gray-50 ${(promo.present || promo.absent) ? 'bg-blue-50' : ''}`}>
                           <td className="py-4 px-4 font-medium text-purple-700">{promo.nom}</td>
                           
