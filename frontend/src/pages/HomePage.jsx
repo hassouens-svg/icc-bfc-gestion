@@ -9,6 +9,19 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [anniversaires, setAnniversaires] = React.useState([]);
 
+  React.useEffect(() => {
+    const loadAnniversaires = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/anniversaires`);
+        const data = await response.json();
+        setAnniversaires(data);
+      } catch (error) {
+        console.error('Erreur chargement anniversaires', error);
+      }
+    };
+    loadAnniversaires();
+  }, []);
+
   const handleDepartmentChoice = (deptId) => {
     // Handle special access pages
     if (deptId === 'acces-specifiques') {
