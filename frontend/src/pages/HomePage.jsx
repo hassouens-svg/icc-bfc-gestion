@@ -105,12 +105,39 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+      {/* Gradient circles for background decoration */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
       </div>
+
+      {/* Anniversaires Banner */}
+      {anniversaires.length > 0 && (
+        <div className="relative z-10 mb-6 animate-fade-in">
+          <Card className="bg-gradient-to-r from-yellow-400 to-orange-500 border-0 shadow-2xl">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="text-5xl">🎂</div>
+                <div className="flex-1">
+                  {anniversaires.map((anniv, idx) => (
+                    <div key={idx} className="text-white">
+                      {anniv.days_until === 0 ? (
+                        <p className="text-xl font-bold">
+                          🎉 Aujourd'hui c'est l'anniversaire de {anniv.prenom} {anniv.nom} !
+                        </p>
+                      ) : (
+                        <p className="text-lg font-semibold">
+                          ⭐ Dans {anniv.days_until} jour{anniv.days_until > 1 ? 's' : ''} : {anniv.prenom} {anniv.nom} ({anniv.date})
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       {/* Content */}
       <div className="relative z-10 w-full max-w-5xl">
