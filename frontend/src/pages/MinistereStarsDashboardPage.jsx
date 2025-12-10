@@ -15,14 +15,26 @@ const MinistereStarsDashboardPage = () => {
   const [loading, setLoading] = useState(true);
 
   const departements = [
-    'Accueil Intégration',
-    'Bergerie',
-    'Familles d\'Impact',
-    'Accès Spécifiques',
-    'Accès Bergers',
-    'Dynamique Évangélisation',
-    'My Event Church',
-    'Ministère des STARS'
+    'MLA',
+    'Accueil',
+    'Soins pastoraux',
+    'Régie',
+    'Sono',
+    'Sainte cène',
+    'Impact junior',
+    'Navette',
+    'Prière',
+    'Protocole',
+    'Sécurité',
+    'Communication',
+    'Coordination',
+    'Ministère des promotions',
+    'Formation',
+    'Finance',
+    'Ministère des femmes (bureau)',
+    'Ministère des hommes (bureau)',
+    'Impact santé',
+    'Évènementiel/Restauration'
   ];
 
   useEffect(() => {
