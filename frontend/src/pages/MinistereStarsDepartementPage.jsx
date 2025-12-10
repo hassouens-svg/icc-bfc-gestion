@@ -196,7 +196,7 @@ const MinistereStarsDepartementPage = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </LayoutMinistereStars>
   );
 };
 
