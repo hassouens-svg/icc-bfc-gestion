@@ -416,7 +416,16 @@ const VisitorsPage = () => {
                           className="border-b hover:bg-gray-50"
                           data-testid={`visitor-item-${visitor.id}`}
                         >
-                          <td className="py-3 px-4 font-medium">{visitor.lastname}</td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2">
+                              {visitor.ejp && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-purple-600 text-white">
+                                  EJP
+                                </span>
+                              )}
+                              <span className="font-medium">{visitor.lastname}</span>
+                            </div>
+                          </td>
                           <td className="py-3 px-4">{visitor.firstname}</td>
                           <td className="py-3 px-4">{visitor.arrival_channel}</td>
                           <td className="py-3 px-4">
