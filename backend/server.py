@@ -6193,7 +6193,10 @@ async def get_anniversaires():
         # Calculer les jours jusqu'à l'anniversaire
         days_until = (anniv_date - today).days
         
+        print(f"  {star.get('prenom')} {star.get('nom')}: {jour}/{mois} - jours restants: {days_until}")
+        
         if 0 <= days_until <= 7:
+            print(f"    ✅ Ajouté aux anniversaires!")
             anniversaires.append({
                 "prenom": star.get("prenom"),
                 "nom": star.get("nom"),
