@@ -590,7 +590,6 @@ const VisitorsPage = () => {
                 </DialogContent>
               </Dialog>
               )}
-            </Dialog>
             
             {/* Ancien Visiteur Dialog */}
             <Dialog open={isBulkDialogOpen} onOpenChange={setIsBulkDialogOpen}>
