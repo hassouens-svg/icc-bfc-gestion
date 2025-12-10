@@ -226,7 +226,7 @@ const MinistereStarsDashboardPage = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </LayoutMinistereStars>
   );
 };
 
