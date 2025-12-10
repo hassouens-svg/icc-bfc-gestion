@@ -574,11 +574,13 @@ const VisitorsPage = () => {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" data-testid="submit-new-visitor">
-                    Créer le nouveaux arrivants et nouveaux convertis
-                  </Button>
-                </form>
-              </DialogContent>
+                    <Button type="submit" className="w-full" data-testid="submit-new-visitor">
+                      Créer le nouveaux arrivants et nouveaux convertis
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+              )}
             </Dialog>
             
             {/* Ancien Visiteur Dialog */}
