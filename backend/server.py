@@ -6086,6 +6086,196 @@ async def delete_notification(notification_id: str, current_user: dict = Depends
     return {"message": "Notification deleted"}
 
 
+# ==================== MINISTERE STARS ENDPOINTS ====================
+
+@api_router.post("/stars")
+async def create_star(star: StarCreate, current_user: dict = Depends(get_current_user)):
+    """Créer une star (recensement public ou admin)"""
+    # Si ville non fournie, utiliser celle de l'utilisateur connecté
+    ville = star.ville if star.ville else current_user.get("city", "")
+    
+    star_obj = Star(
+        prenom=star.prenom,
+        nom=star.nom,
+        jour_naissance=star.jour_naissance,
+        mois_naissance=star.mois_naissance,
+        departements=star.departements,
+        ville=ville,
+        statut="actif"
+    )
+    
+    await db.stars.insert_one(star_obj.model_dump())
+    return {"message": "Star créée avec succès", "id": star_obj.id}
+
+
+@api_router.get("/stars")
+async def get_stars(current_user: dict = Depends(get_current_user)):
+    """Récupérer toutes les stars (avec permissions)"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    
+    # Responsable d'église voit seulement sa ville
+    if current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    
+    stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    return stars
+
+
+@api_router.get("/stars/departement/{departement}")
+async def get_stars_by_departement(departement: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer les stars d'un département spécifique"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {"departements": departement}
+    
+    if current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    
+    stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    return stars
+
+
+@api_router.get("/stars/multi-departements")
+async def get_stars_multi_departements(current_user: dict = Depends(get_current_user)):
+    """Récupérer les stars qui servent dans plusieurs départements"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    if current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    
+    all_stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    # Filtrer ceux qui ont plus d'un département
+    multi_dept_stars = [s for s in all_stars if len(s.get("departements", [])) > 1]
+    
+    return multi_dept_stars
+
+
+@api_router.get("/stars/anniversaires")
+async def get_anniversaires():
+    """Récupérer les anniversaires à venir (accessible publiquement)"""
+    from datetime import datetime, timedelta
+    
+    today = datetime.now()
+    today_day = today.day
+    today_month = today.month
+    
+    # Anniversaires dans les 7 prochains jours
+    anniversaires = []
+    all_stars = await db.stars.find({}, {"_id": 0}).to_list(1000)
+    
+    for star in all_stars:
+        jour = star.get("jour_naissance")
+        mois = star.get("mois_naissance")
+        
+        if not jour or not mois:
+            continue
+        
+        # Créer une date d'anniversaire pour cette année
+        try:
+            anniv_date = datetime(today.year, mois, jour)
+        except ValueError:
+            continue
+        
+        # Si l'anniversaire est passé cette année, vérifier l'année prochaine
+        if anniv_date < today:
+            try:
+                anniv_date = datetime(today.year + 1, mois, jour)
+            except ValueError:
+                continue
+        
+        # Calculer les jours jusqu'à l'anniversaire
+        days_until = (anniv_date - today).days
+        
+        if 0 <= days_until <= 7:
+            anniversaires.append({
+                "prenom": star.get("prenom"),
+                "nom": star.get("nom"),
+                "jour": jour,
+                "mois": mois,
+                "days_until": days_until,
+                "date": anniv_date.strftime("%d/%m")
+            })
+    
+    # Trier par jours jusqu'à l'anniversaire
+    anniversaires.sort(key=lambda x: x["days_until"])
+    
+    return anniversaires
+
+
+@api_router.put("/stars/{star_id}")
+async def update_star(star_id: str, update: StarUpdate, current_user: dict = Depends(get_current_user)):
+    """Mettre à jour une star"""
+    if current_user["role"] not in ["super_admin", "pasteur", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Récupérer les champs non-null
+    update_data = {k: v for k, v in update.model_dump().items() if v is not None}
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    result = await db.stars.update_one(
+        {"id": star_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Star not found")
+    
+    return {"message": "Star mise à jour"}
+
+
+@api_router.delete("/stars/{star_id}")
+async def delete_star(star_id: str, current_user: dict = Depends(get_current_user)):
+    """Supprimer une star"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    result = await db.stars.delete_one({"id": star_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Star not found")
+    
+    return {"message": "Star supprimée"}
+
+
+@api_router.get("/stars/stats/overview")
+async def get_stars_stats(current_user: dict = Depends(get_current_user)):
+    """Statistiques globales des stars"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    if current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    
+    all_stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    total = len(all_stars)
+    actifs = len([s for s in all_stars if s.get("statut") == "actif"])
+    non_actifs = len([s for s in all_stars if s.get("statut") == "non_actif"])
+    
+    # Compter par département
+    dept_counts = {}
+    for star in all_stars:
+        for dept in star.get("departements", []):
+            dept_counts[dept] = dept_counts.get(dept, 0) + 1
+    
+    return {
+        "total": total,
+        "actifs": actifs,
+        "non_actifs": non_actifs,
+        "par_departement": dept_counts
+    }
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
