@@ -6165,7 +6165,7 @@ async def get_anniversaires():
     today = date.today()  # Utiliser date au lieu de datetime pour éviter les problèmes d'heures
     print(f"🎂 Date du jour: {today}")
     
-    # Anniversaires dans les 7 prochains jours
+    # Anniversaires dans les 30 prochains jours
     anniversaires = []
     all_stars = await db.stars.find({}, {"_id": 0}).to_list(1000)
     print(f"📋 Nombre de stars en base: {len(all_stars)}")
