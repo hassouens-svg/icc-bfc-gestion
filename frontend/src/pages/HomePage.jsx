@@ -16,6 +16,25 @@ const HomePage = () => {
         const data = await response.json();
         console.log('🎂 Anniversaires chargés:', data);
         setAnniversaires(data);
+        
+        // Afficher les toasts pour les anniversaires
+        if (data && data.length > 0) {
+          data.forEach((anniv, idx) => {
+            setTimeout(() => {
+              if (anniv.days_until === 0) {
+                toast.info(`🎉 Aujourd'hui c'est l'anniversaire de ${anniv.prenom} ${anniv.nom} !`, {
+                  duration: 5000,
+                  position: 'top-center',
+                });
+              } else {
+                toast(`⭐ Dans ${anniv.days_until} jour${anniv.days_until > 1 ? 's' : ''} : ${anniv.prenom} ${anniv.nom} (${anniv.date})`, {
+                  duration: 4000,
+                  position: 'top-center',
+                });
+              }
+            }, idx * 1000); // Décaler chaque toast de 1 seconde
+          });
+        }
       } catch (error) {
         console.error('Erreur chargement anniversaires', error);
       }
