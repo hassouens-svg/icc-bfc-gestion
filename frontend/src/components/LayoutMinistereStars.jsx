@@ -1,16 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logout, getUser } from '../utils/api';
 import { Button } from './ui/button';
 import { LogOut, ArrowLeft, Star } from 'lucide-react';
 
-const LayoutMinistereStars = ({ children }) => {
+const LayoutMinistereStars = ({ children, onCityChange }) => {
   const navigate = useNavigate();
   const user = getUser();
+  const [cities, setCities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState(user?.city || 'all');
+
+  useEffect(() => {
+    loadCities();
+  }, []);
+
+  const loadCities = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities`);
+      const data = await response.json();
+      setCities(data || []);
+    } catch (error) {
+      console.error('Error loading cities:', error);
+    }
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleCityChange = (city) => {
+    setSelectedCity(city);
+    // Mettre à jour l'utilisateur avec la nouvelle ville
+    const updatedUser = { ...user, city };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Notifier le parent (dashboard) du changement
+    if (onCityChange) {
+      onCityChange(city);
+    }
+    
+    // Recharger la page pour appliquer les changements
+    window.location.reload();
   };
 
   return (
