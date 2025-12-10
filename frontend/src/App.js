@@ -146,6 +146,12 @@ function App() {
           <Route path="/affectation-pilotes-fi" element={<AffectationPilotesFIPage />} />
           <Route path="/affectation-responsables-secteur" element={<AffectationResponsablesSecteurPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          
+          {/* Ministère des STARS */}
+          <Route path="/ministere-stars-login" element={<MinistereStarsLoginPage />} />
+          <Route path="/ministere-stars/dashboard" element={<MinistereStarsDashboardPage />} />
+          <Route path="/ministere-stars/departement/:departement" element={<MinistereStarsDepartementPage />} />
+          <Route path="/recensement-stars" element={<RecensementStarsPage />} />
         </Routes>
       </BrowserRouter>
       </CitiesProvider>
