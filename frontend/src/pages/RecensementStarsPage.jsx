@@ -159,7 +159,7 @@ const RecensementStarsPage = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Prénom et Nom */}
+            {/* Prénom, Nom et Ville */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="prenom">Prénom *</Label>
@@ -181,6 +181,23 @@ const RecensementStarsPage = () => {
                   required
                 />
               </div>
+            </div>
+
+            {/* Ville */}
+            <div className="space-y-2">
+              <Label htmlFor="ville">Ville *</Label>
+              <select
+                id="ville"
+                value={formData.ville}
+                onChange={(e) => setFormData({...formData, ville: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500"
+                required
+              >
+                <option value="">Sélectionnez votre ville</option>
+                {cities.map((city, idx) => (
+                  <option key={idx} value={city.name}>{city.name}</option>
+                ))}
+              </select>
             </div>
 
             {/* Date de naissance */}
