@@ -228,6 +228,15 @@ const MarquerPresenceBergersPage = () => {
               </div>
               <div className="flex-1"></div>
               <Button 
+                onClick={handleUnchecksAll}
+                variant="outline"
+                className="border-red-300 text-red-600 hover:bg-red-50"
+                size="lg"
+              >
+                <X className="h-5 w-5 mr-2" />
+                Décocher Tout
+              </Button>
+              <Button 
                 onClick={handleSave}
                 disabled={saving}
                 className="bg-purple-600 hover:bg-purple-700"
