@@ -760,7 +760,7 @@ const VisitorsPage = () => {
                     className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 transition"
                     data-testid={`visitor-item-${visitor.id}`}
                   >
-                    <div className="flex-1" onClick={() => navigate(`/visitor/${visitor.id}`)} className="cursor-pointer">
+                    <div className="flex-1 cursor-pointer" onClick={() => navigate(`/visitor/${visitor.id}`)}>
                       <div className="flex items-center gap-2">
                         {visitor.ejp && (
                           <span className="inline-flex items-center px-3 py-2 rounded-full text-sm font-bold bg-purple-600 text-white shadow-lg">
