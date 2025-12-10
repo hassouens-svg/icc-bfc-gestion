@@ -298,7 +298,7 @@ const RSVPLinksPage = () => {
       'Nom': rsvp.last_name || '-',
       'Ville': rsvp.city || '-',
       'STAR': rsvp.is_star ? '⭐ Oui' : 'Non',
-      'Paiement': rsvp.payment_method === 'card' ? 'Carte' : rsvp.payment_method === 'cash' ? 'Espèces' : '-',
+      'Paiement': rsvp.payment_method === 'card' ? 'Carte' : rsvp.payment_method === 'cash' ? 'Espèces' : rsvp.payment_method === 'wero' ? 'Wero' : '-',
       'Email': rsvp.email || '-',
       'Contact': rsvp.phone || '-',
       'Statut': rsvp.status === 'confirmed' ? 'Oui' : rsvp.status === 'declined' ? 'Non' : rsvp.status === 'maybe' ? 'Peut-être' : rsvp.status
