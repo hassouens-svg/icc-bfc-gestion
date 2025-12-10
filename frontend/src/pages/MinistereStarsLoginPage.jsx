@@ -44,15 +44,10 @@ const MinistereStarsLoginPage = () => {
         return;
       }
 
-      // Si c'est responsable_eglise ou ministere_stars, demander la ville
-      if (['responsable_eglise', 'ministere_stars'].includes(result.user.role)) {
-        setTempUser(result.user);
-        setShowCitySelect(true);
-        setLoading(false);
-        return;
-      }
-
-      // Pour superadmin et pasteur, connexion directe
+      // Mettre à jour l'utilisateur avec la ville sélectionnée
+      const updatedUser = { ...result.user, city: formData.city };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
       toast.success('Connexion réussie !');
       navigate('/ministere-stars/dashboard');
     } catch (error) {
