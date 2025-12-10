@@ -14,6 +14,7 @@ const HistoriquePresenceBergersPage = () => {
   const [loading, setLoading] = useState(false);
   const [dateSelectionnee, setDateSelectionnee] = useState(new Date().toISOString().split('T')[0]);
   const [promos, setPromos] = useState([]);
+  const [selectedPromo, setSelectedPromo] = useState('all');
 
   useEffect(() => {
     if (!user || (user.role !== 'superviseur_promos' && user.role !== 'super_admin')) {
