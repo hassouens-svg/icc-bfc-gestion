@@ -121,7 +121,7 @@ const RecensementStarsPage = () => {
           jour_naissance: jour,
           mois_naissance: mois,
           departements: formData.departements,
-          ville: null
+          ville: formData.ville
         })
       });
 
