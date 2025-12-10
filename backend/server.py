@@ -5745,6 +5745,37 @@ class EvangelisationRecord(BaseModel):
     familles_impact: Optional[EvangelisationData] = None
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
+# ==================== MINISTERE STARS MODELS ====================
+
+class StarCreate(BaseModel):
+    prenom: str
+    nom: str
+    jour_naissance: int  # 1-31
+    mois_naissance: int  # 1-12
+    departements: List[str]  # Liste des départements (peut être multiple)
+    ville: Optional[str] = None
+
+class Star(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    prenom: str
+    nom: str
+    jour_naissance: int
+    mois_naissance: int
+    departements: List[str]
+    ville: str
+    statut: str = "actif"  # actif ou non_actif
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class StarUpdate(BaseModel):
+    prenom: Optional[str] = None
+    nom: Optional[str] = None
+    jour_naissance: Optional[int] = None
+    mois_naissance: Optional[int] = None
+    departements: Optional[List[str]] = None
+    statut: Optional[str] = None
+
 # ==================== EVANGELISATION ENDPOINTS ====================
 
 @api_router.post("/evangelisation")
