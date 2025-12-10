@@ -447,13 +447,15 @@ const VisitorsPage = () => {
           </div>
           {(user?.role !== 'accueil') && (
             <div className="flex gap-2">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button data-testid="add-visitor-button">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouveau Visiteur
-                  </Button>
-                </DialogTrigger>
+              {/* Bouton Nouveau Visiteur - PAS pour responsable_promo */}
+              {user?.role !== 'responsable_promo' && (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button data-testid="add-visitor-button">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Nouveau Visiteur
+                    </Button>
+                  </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Ajouter un nouveau nouveaux arrivants et nouveaux convertis</DialogTitle>
