@@ -129,6 +129,23 @@ const MinistereStarsLoginPage = () => {
                 required
               />
             </div>
+            
+            {/* Sélection ville - visible pour tous */}
+            <div className="space-y-2">
+              <Label htmlFor="city">Ville</Label>
+              <select
+                id="city"
+                value={formData.city}
+                onChange={(e) => setFormData({...formData, city: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500"
+                required
+              >
+                <option value="">Sélectionnez votre ville</option>
+                {cities.map((city, idx) => (
+                  <option key={idx} value={city.name}>{city.name}</option>
+                ))}
+              </select>
+            </div>
             <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={loading}>
               {loading ? 'Connexion...' : 'Se connecter'}
             </Button>
