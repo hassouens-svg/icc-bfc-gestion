@@ -9,8 +9,25 @@ import { toast } from 'sonner';
 
 const MinistereStarsLoginPage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', password: '', city: '' });
   const [loading, setLoading] = useState(false);
+  const [cities, setCities] = useState([]);
+  const [showCitySelect, setShowCitySelect] = useState(false);
+  const [tempUser, setTempUser] = useState(null);
+
+  useEffect(() => {
+    loadCities();
+  }, []);
+
+  const loadCities = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities`);
+      const data = await response.json();
+      setCities(data || []);
+    } catch (error) {
+      console.error('Error loading cities:', error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,15 +40,35 @@ const MinistereStarsLoginPage = () => {
         toast.error('Accès refusé - Rôle non autorisé');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        setLoading(false);
         return;
       }
 
+      // Si c'est responsable_eglise ou ministere_stars, demander la ville
+      if (['responsable_eglise', 'ministere_stars'].includes(result.user.role)) {
+        setTempUser(result.user);
+        setShowCitySelect(true);
+        setLoading(false);
+        return;
+      }
+
+      // Pour superadmin et pasteur, connexion directe
       toast.success('Connexion réussie !');
       navigate('/ministere-stars/dashboard');
     } catch (error) {
       toast.error('Identifiants incorrects');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCitySelect = (city) => {
+    if (tempUser) {
+      // Mettre à jour l'utilisateur avec la ville sélectionnée
+      const updatedUser = { ...tempUser, city };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      toast.success('Connexion réussie !');
+      navigate('/ministere-stars/dashboard');
     }
   };
 
