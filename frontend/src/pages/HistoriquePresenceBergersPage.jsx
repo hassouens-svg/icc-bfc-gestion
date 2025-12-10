@@ -148,17 +148,36 @@ const HistoriquePresenceBergersPage = () => {
 
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <Calendar className="h-6 w-6 text-indigo-600" />
-              <div>
-                <label className="block text-sm font-medium mb-1">Date</label>
-                <Input
-                  type="date"
-                  value={dateSelectionnee}
-                  onChange={(e) => setDateSelectionnee(e.target.value)}
-                  className="w-48"
-                />
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-6 w-6 text-indigo-600" />
+                <div>
+                  <label className="block text-sm font-medium mb-1">Date</label>
+                  <Input
+                    type="date"
+                    value={dateSelectionnee}
+                    onChange={(e) => setDateSelectionnee(e.target.value)}
+                    className="w-48"
+                  />
+                </div>
               </div>
+              
+              {promos.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">Filtrer par Promo</label>
+                  <select
+                    value={selectedPromo}
+                    onChange={(e) => setSelectedPromo(e.target.value)}
+                    className="w-48 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="all">Toutes les promos</option>
+                    {promos.map((promo, idx) => (
+                      <option key={idx} value={promo.nom}>{promo.nom}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
               <Button onClick={loadPresences} disabled={loading} className="mt-6">
                 {loading ? 'Chargement...' : 'Afficher'}
               </Button>
