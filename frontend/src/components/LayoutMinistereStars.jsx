@@ -51,12 +51,36 @@ const LayoutMinistereStars = ({ children, onCityChange }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo et titre */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Star className="h-8 w-8 text-white" />
               <div>
                 <h1 className="text-xl font-bold text-white">Ministère des STARS</h1>
-                <p className="text-xs text-orange-100">{user?.city || 'Toutes les villes'}</p>
               </div>
+              
+              {/* Sélecteur de ville - uniquement pour superadmin/pasteur */}
+              {['super_admin', 'pasteur'].includes(user?.role) && (
+                <div className="ml-4">
+                  <select
+                    value={selectedCity}
+                    onChange={(e) => handleCityChange(e.target.value)}
+                    className="px-3 py-1.5 bg-white/20 border border-white/30 rounded-lg text-white text-sm focus:ring-2 focus:ring-white/50 focus:outline-none backdrop-blur-sm hover:bg-white/30 transition-colors cursor-pointer"
+                  >
+                    <option value="all" className="text-gray-900">Toutes les villes</option>
+                    {cities.map((city, idx) => (
+                      <option key={idx} value={city.name} className="text-gray-900">
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
+              {/* Affichage ville pour responsable_eglise/ministere_stars */}
+              {['responsable_eglise', 'ministere_stars'].includes(user?.role) && (
+                <div className="ml-4 px-3 py-1.5 bg-white/20 rounded-lg text-white text-sm border border-white/30">
+                  📍 {user?.city}
+                </div>
+              )}
             </div>
 
             {/* Actions */}
