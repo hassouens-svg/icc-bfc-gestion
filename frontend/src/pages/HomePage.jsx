@@ -14,6 +14,7 @@ const HomePage = () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/anniversaires`);
         const data = await response.json();
+        console.log('🎂 Anniversaires chargés:', data);
         setAnniversaires(data);
       } catch (error) {
         console.error('Erreur chargement anniversaires', error);
