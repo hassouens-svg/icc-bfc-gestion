@@ -67,16 +67,16 @@ const MinistereStarsDashboardPage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <LayoutMinistereStars>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
         </div>
-      </Layout>
+      </LayoutMinistereStars>
     );
   }
 
   return (
-    <Layout>
+    <LayoutMinistereStars>
       <div className="space-y-6 p-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
