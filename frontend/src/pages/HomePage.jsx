@@ -259,29 +259,26 @@ const HomePage = () => {
           </Card>
         </div>
 
-        {/* Ministère des STARS Section */}
-        <div className="mt-12 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
-          <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 border-0 shadow-2xl">
-            <CardContent className="p-8 text-center">
-              <div className="flex items-center justify-center mb-4">
-                <div className="text-5xl">⭐</div>
+        {/* Ministère des STARS Section - Version compacte */}
+        <div className="mt-8 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
+          <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">⭐</div>
+                  <div className="text-left">
+                    <h3 className="text-lg font-bold text-white">Ministère des STARS</h3>
+                    <p className="text-xs text-white/80">Suivi et bien-être des stars</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => navigate('/ministere-stars-login')}
+                  size="sm"
+                  className="bg-white text-orange-700 hover:bg-gray-100 font-semibold shadow-lg"
+                >
+                  Accéder →
+                </Button>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">
-                Ministère des STARS
-              </h3>
-              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-                Suivi des stars de l'église, leur bien-être et leur engagement dans les différents ministères.
-              </p>
-              <Button
-                onClick={() => navigate('/ministere-stars-login')}
-                size="lg"
-                className="bg-white text-orange-700 hover:bg-gray-100 font-semibold px-8 py-6 text-lg shadow-lg"
-              >
-                Accéder au Ministère des STARS →
-              </Button>
-              <p className="text-xs text-white/70 mt-4">
-                Accès réservé : Pasteur, Super Admin, Responsable d'Église, Ministère des STARS
-              </p>
             </CardContent>
           </Card>
         </div>
