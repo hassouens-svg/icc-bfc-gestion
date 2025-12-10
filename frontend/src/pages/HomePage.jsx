@@ -166,16 +166,29 @@ const HomePage = () => {
         </div>
 
         {/* Footer Links */}
-        <div className="mt-16 text-center animate-fade-in" style={{animationDelay: '0.4s'}}>
-          <p className="text-white/90 mb-3 text-lg">Nouveau nouveaux arrivants et nouveaux convertis?</p>
-          <Button
-            variant="outline"
-            className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-xl px-8 py-6 text-lg font-medium shadow-lg"
-            onClick={() => navigate('/register')}
-            data-testid="register-link-home"
-          >
-            S'inscrire ici
-          </Button>
+        <div className="mt-16 text-center animate-fade-in space-y-6" style={{animationDelay: '0.4s'}}>
+          <div>
+            <p className="text-white/90 mb-3 text-lg">Nouveau nouveaux arrivants et nouveaux convertis?</p>
+            <Button
+              variant="outline"
+              className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-xl px-8 py-6 text-lg font-medium shadow-lg"
+              onClick={() => navigate('/register')}
+              data-testid="register-link-home"
+            >
+              S'inscrire ici
+            </Button>
+          </div>
+          
+          <div>
+            <p className="text-white/90 mb-3 text-lg">⭐ Vous servez dans un ministère?</p>
+            <Button
+              variant="outline"
+              className="bg-yellow-500/20 hover:bg-yellow-500/30 text-white border-yellow-300/50 backdrop-blur-xl px-8 py-6 text-lg font-medium shadow-lg"
+              onClick={() => navigate('/recensement-stars')}
+            >
+              Recensement des STARS ⭐
+            </Button>
+          </div>
         </div>
 
         {/* My Events Church Section */}
