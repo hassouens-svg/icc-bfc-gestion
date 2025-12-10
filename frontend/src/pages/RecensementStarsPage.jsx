@@ -135,6 +135,7 @@ const RecensementStarsPage = () => {
         nom: '',
         jour_naissance: '',
         mois_naissance: '',
+        ville: '',
         departements: []
       });
 
