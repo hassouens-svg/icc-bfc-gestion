@@ -744,6 +744,7 @@ const RSVPLinksPage = () => {
                                 <td className="p-3 text-sm">
                                   {rsvp.payment_method === 'card' && <span>💳 Carte</span>}
                                   {rsvp.payment_method === 'cash' && <span>💵 Espèces</span>}
+                                  {rsvp.payment_method === 'wero' && <span>💰 Wero</span>}
                                   {!rsvp.payment_method && <span className="text-gray-400">-</span>}
                                 </td>
                                 <td className="p-3 text-sm">{rsvp.email || '-'}</td>
