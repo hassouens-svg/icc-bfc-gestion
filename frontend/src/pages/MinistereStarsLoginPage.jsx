@@ -67,34 +67,6 @@ const MinistereStarsLoginPage = () => {
     }
   };
 
-  if (showCitySelect) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-100 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="text-6xl mb-4">🏙️</div>
-            <CardTitle className="text-2xl font-bold text-orange-600">Sélectionnez votre ville</CardTitle>
-            <CardDescription>Choisissez la ville pour laquelle vous souhaitez voir les données</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {cities.map((city, idx) => (
-                <Button
-                  key={idx}
-                  onClick={() => handleCitySelect(city.name)}
-                  variant="outline"
-                  className="w-full h-auto py-4 text-lg hover:bg-orange-50 hover:border-orange-300"
-                >
-                  {city.name}
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-100 p-4">
       <Card className="w-full max-w-md">
