@@ -84,7 +84,7 @@ const RecensementStarsPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.prenom || !formData.nom || !formData.jour_naissance || !formData.mois_naissance) {
+    if (!formData.prenom || !formData.nom || !formData.jour_naissance || !formData.mois_naissance || !formData.ville) {
       toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
