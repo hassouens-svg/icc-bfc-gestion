@@ -456,11 +456,11 @@ const VisitorsPage = () => {
                       Nouveau Visiteur
                     </Button>
                   </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Ajouter un nouveau nouveaux arrivants et nouveaux convertis</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleCreateVisitor} className="space-y-4">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Ajouter un nouveau nouveaux arrivants et nouveaux convertis</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleCreateVisitor} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="new-firstname">Prénom *</Label>
