@@ -6160,11 +6160,9 @@ async def get_stars_multi_departements(current_user: dict = Depends(get_current_
 @api_router.get("/stars/anniversaires")
 async def get_anniversaires():
     """Récupérer les anniversaires à venir (accessible publiquement)"""
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, date
     
-    today = datetime.now()
-    today_day = today.day
-    today_month = today.month
+    today = date.today()  # Utiliser date au lieu de datetime pour éviter les problèmes d'heures
     
     # Anniversaires dans les 7 prochains jours
     anniversaires = []
@@ -6179,14 +6177,14 @@ async def get_anniversaires():
         
         # Créer une date d'anniversaire pour cette année
         try:
-            anniv_date = datetime(today.year, mois, jour)
+            anniv_date = date(today.year, mois, jour)
         except ValueError:
             continue
         
         # Si l'anniversaire est passé cette année, vérifier l'année prochaine
         if anniv_date < today:
             try:
-                anniv_date = datetime(today.year + 1, mois, jour)
+                anniv_date = date(today.year + 1, mois, jour)
             except ValueError:
                 continue
         
