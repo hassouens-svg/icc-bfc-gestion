@@ -101,6 +101,50 @@ const MinistereStarsDepartementPage = () => {
     }
   };
 
+  const handleAddStar = async (e) => {
+    e.preventDefault();
+    
+    if (!newStar.prenom || !newStar.nom || !newStar.jour_naissance || !newStar.mois_naissance || !newStar.ville) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    const jour = parseInt(newStar.jour_naissance);
+    const moisVal = parseInt(newStar.mois_naissance);
+
+    if (jour < 1 || jour > 31) {
+      toast.error('Jour invalide (1-31)');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          prenom: newStar.prenom,
+          nom: newStar.nom,
+          jour_naissance: jour,
+          mois_naissance: moisVal,
+          departements: [decodeURIComponent(departement)],
+          ville: newStar.ville
+        })
+      });
+
+      if (!response.ok) throw new Error('Erreur');
+
+      toast.success('⭐ Star ajoutée avec succès !');
+      setShowAddDialog(false);
+      setNewStar({ prenom: '', nom: '', jour_naissance: '', mois_naissance: '', ville: '' });
+      loadStars();
+    } catch (error) {
+      toast.error('Erreur lors de l\'ajout');
+    }
+  };
+
   const actifs = stars.filter(s => s.statut === 'actif').length;
   const nonActifs = stars.filter(s => s.statut === 'non_actif').length;
 
