@@ -751,7 +751,6 @@ const RSVPLinksPage = () => {
                         <table className="w-full">
                           <thead className="bg-gray-50 sticky top-0 z-10">
                             <tr>
-                              <th className="text-left p-3 text-sm bg-gray-50">Prénom</th>
                               <th className="text-center p-3 text-sm bg-gray-50 sticky left-0 z-10">🗑️</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Prénom</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Nom</th>
