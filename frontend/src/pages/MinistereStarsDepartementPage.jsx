@@ -145,6 +145,28 @@ const MinistereStarsDepartementPage = () => {
     }
   };
 
+  const handleDeleteStar = async (starId, starName) => {
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer ${starName} ?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/${starId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Erreur');
+
+      toast.success('Star supprimée');
+      loadStars();
+    } catch (error) {
+      toast.error('Erreur lors de la suppression');
+    }
+  };
+
   const actifs = stars.filter(s => s.statut === 'actif').length;
   const nonActifs = stars.filter(s => s.statut === 'non_actif').length;
 
