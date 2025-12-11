@@ -759,6 +759,7 @@ const RSVPLinksPage = () => {
                               <th className="text-left p-3 text-sm bg-gray-50">Email</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Contact</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Statut</th>
+                              <th className="text-center p-3 text-sm bg-gray-50">🗑️</th>
                             </tr>
                           </thead>
                           <tbody>
