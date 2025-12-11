@@ -419,7 +419,9 @@ const VisitorsPage = () => {
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-2">
                               {visitor.ejp && (
-                                <span className="w-4 h-4 rounded-full bg-purple-600 inline-block flex-shrink-0" title="EJP - Église des Jeunes Prodiges"></span>
+                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold bg-purple-600 text-white shadow-lg flex-shrink-0" title="EJP - Église des Jeunes Prodiges">
+                                  EJP
+                                </span>
                               )}
                               <span className="font-medium">{visitor.lastname}</span>
                             </div>
@@ -761,7 +763,9 @@ const VisitorsPage = () => {
                     <div className="flex-1 cursor-pointer" onClick={() => navigate(`/visitor/${visitor.id}`)}>
                       <div className="flex items-center gap-2">
                         {visitor.ejp && (
-                          <span className="w-4 h-4 rounded-full bg-purple-600 inline-block flex-shrink-0" title="EJP - Église des Jeunes Prodiges"></span>
+                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold bg-purple-600 text-white shadow-lg flex-shrink-0" title="EJP - Église des Jeunes Prodiges">
+                            EJP
+                          </span>
                         )}
                         <p className="font-medium text-lg">{visitor.firstname} {visitor.lastname}</p>
                       </div>
