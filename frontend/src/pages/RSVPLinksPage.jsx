@@ -790,13 +790,15 @@ const RSVPLinksPage = () => {
                                   </span>
                                 </td>
                                 <td className="p-3 text-center">
-                                  <button
+                                  <Button
                                     onClick={() => deleteRsvp(rsvp.id)}
-                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2"
                                     title="Supprimer cette réponse"
                                   >
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
+                                    <Trash2 className="h-5 w-5" />
+                                  </Button>
                                 </td>
                               </tr>
                             ))}
