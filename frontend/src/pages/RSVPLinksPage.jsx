@@ -319,6 +319,35 @@ const RSVPLinksPage = () => {
     toast.success('Fichier Excel téléchargé !');
   };
 
+  // Fonction pour supprimer un RSVP (doublon)
+  const deleteRsvp = async (rsvpId) => {
+    if (!selectedEvent) return;
+    
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${backendUrl}/api/events/${selectedEvent.id}/rsvp/${rsvpId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la suppression');
+      }
+
+      toast.success('Réponse supprimée');
+      // Rafraîchir les stats
+      loadEventStats(selectedEvent.id);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erreur lors de la suppression');
+    }
+  };
+
   if (loading) {
     return (
       <EventsLayout>
