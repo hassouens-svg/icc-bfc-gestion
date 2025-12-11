@@ -27,13 +27,39 @@ const MinistereStarsDepartementPage = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const mois = [
+    { value: 1, label: 'Janvier' },
+    { value: 2, label: 'Février' },
+    { value: 3, label: 'Mars' },
+    { value: 4, label: 'Avril' },
+    { value: 5, label: 'Mai' },
+    { value: 6, label: 'Juin' },
+    { value: 7, label: 'Juillet' },
+    { value: 8, label: 'Août' },
+    { value: 9, label: 'Septembre' },
+    { value: 10, label: 'Octobre' },
+    { value: 11, label: 'Novembre' },
+    { value: 12, label: 'Décembre' }
+  ];
+
   useEffect(() => {
     if (!user || !['super_admin', 'pasteur', 'responsable_eglise', 'ministere_stars'].includes(user.role)) {
       navigate('/');
       return;
     }
     loadStars();
+    loadCities();
   }, [departement]);
+
+  const loadCities = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities`);
+      const data = await response.json();
+      setCities(data || []);
+    } catch (error) {
+      console.error('Error loading cities:', error);
+    }
+  };
 
   const loadStars = async () => {
     try {
