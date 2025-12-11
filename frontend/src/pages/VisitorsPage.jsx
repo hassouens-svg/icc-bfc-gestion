@@ -120,46 +120,6 @@ const VisitorsPage = () => {
     }
   };
 
-  const handleTypeToggle = (type) => {
-    setNewVisitor(prev => ({
-      ...prev,
-      types: prev.types.includes(type)
-        ? prev.types.filter(t => t !== type)
-        : [...prev.types, type]
-    }));
-  };
-
-  const handleCreateVisitor = async (e) => {
-    e.preventDefault();
-    
-    if (!newVisitor.firstname || !newVisitor.lastname || newVisitor.types.length === 0 || !newVisitor.arrival_channel || !newVisitor.phone) {
-      toast.error('Veuillez remplir tous les champs obligatoires');
-      return;
-    }
-
-    try {
-      await createVisitor(newVisitor);
-      toast.success('Visiteur créé avec succès!');
-      setIsDialogOpen(false);
-      setNewVisitor({
-        firstname: '',
-        lastname: '',
-        city: user?.city || '',
-        types: [],
-        phone: '',
-        email: '',
-        address: '',
-        arrival_channel: '',
-        age_range: '',
-        visit_date: new Date().toISOString().split('T')[0],
-        ejp: false,
-      });
-      loadVisitors();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Erreur lors de la création');
-    }
-  };
-
   const handleDeleteVisitor = async () => {
     try {
       await deleteVisitor(selectedVisitor.id);
