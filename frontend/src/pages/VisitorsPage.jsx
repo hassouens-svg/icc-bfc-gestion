@@ -169,6 +169,7 @@ const VisitorsPage = () => {
         arrival_channel: '',
         age_range: '',
         visit_date: new Date().toISOString().split('T')[0],
+        ejp: false,
       });
       loadVisitors();
     } catch (error) {
