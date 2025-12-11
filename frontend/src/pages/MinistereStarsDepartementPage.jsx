@@ -4,8 +4,11 @@ import LayoutMinistereStars from '../components/LayoutMinistereStars';
 import { getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { ArrowLeft, Users, CheckCircle, XCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { ArrowLeft, Users, CheckCircle, XCircle, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const MinistereStarsDepartementPage = () => {
@@ -13,6 +16,15 @@ const MinistereStarsDepartementPage = () => {
   const { departement } = useParams();
   const user = getUser();
   const [stars, setStars] = useState([]);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [cities, setCities] = useState([]);
+  const [newStar, setNewStar] = useState({
+    prenom: '',
+    nom: '',
+    jour_naissance: '',
+    mois_naissance: '',
+    ville: ''
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
