@@ -213,8 +213,12 @@ const MinistereStarsDepartementPage = () => {
 
         {/* Tableau des stars */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Liste des Stars</CardTitle>
+            <Button onClick={() => setShowAddDialog(true)} className="bg-orange-600 hover:bg-orange-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
