@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
 import { Input } from '../components/ui/input';
-import { Calendar, Save } from 'lucide-react';
+import { Calendar, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const MarquerPresencesPage = () => {
@@ -19,7 +19,7 @@ const MarquerPresencesPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || !['referent', 'promotions', 'berger', 'admin', 'super_admin'].includes(user.role)) {
+    if (!user || !['referent', 'promotions', 'berger', 'admin', 'super_admin', 'responsable_promo', 'responsable_promos', 'superviseur_promos'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
