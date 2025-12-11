@@ -789,6 +789,15 @@ const RSVPLinksPage = () => {
                                     {rsvp.status === 'confirmed' ? 'Oui' : rsvp.status === 'declined' ? 'Non' : rsvp.status === 'maybe' ? 'Peut-être' : rsvp.status}
                                   </span>
                                 </td>
+                                <td className="p-3 text-center">
+                                  <button
+                                    onClick={() => deleteRsvp(rsvp.id)}
+                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                                    title="Supprimer cette réponse"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
