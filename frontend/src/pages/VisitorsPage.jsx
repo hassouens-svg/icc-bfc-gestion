@@ -27,24 +27,9 @@ const VisitorsPage = () => {
   const [filterPromo, setFilterPromo] = useState('all');
   const [sortOrder, setSortOrder] = useState('date_arrivee'); // 'date_arrivee' ou 'date_creation'
   const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isBulkDialogOpen, setIsBulkDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedVisitor, setSelectedVisitor] = useState(null);
-  
-  const [newVisitor, setNewVisitor] = useState({
-    firstname: '',
-    lastname: '',
-    city: user?.city || '',
-    types: [],
-    phone: '',
-    email: '',
-    address: '',
-    arrival_channel: '',
-    age_range: '',
-    visit_date: new Date().toISOString().split('T')[0],
-    ejp: false,
-  });
 
   // Bulk ancien visitors
   const [bulkVisitors, setBulkVisitors] = useState([
@@ -52,8 +37,6 @@ const VisitorsPage = () => {
   ]);
 
   const visitorTypes = ['Nouveau Arrivant', 'Nouveau Converti', 'De Passage'];
-  const arrivalChannels = ['Evangelisation', 'Réseaux sociaux', 'Invitation par un membre (hors evangelisation)', 'Par soi même'];
-  const ageRanges = ['13-18 ans', '18-25 ans', '25-35 ans', '35-50 ans', '+50 ans'];
 
   useEffect(() => {
     if (!user) {
