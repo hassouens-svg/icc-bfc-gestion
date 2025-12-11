@@ -5270,6 +5270,14 @@ async def get_event_rsvps(event_id: str, current_user: dict = Depends(get_curren
         "responses": rsvps
     }
 
+@api_router.delete("/events/{event_id}/rsvp/{rsvp_id}")
+async def delete_event_rsvp(event_id: str, rsvp_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a specific RSVP response"""
+    result = await db.event_rsvps.delete_one({"id": rsvp_id, "event_id": event_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="RSVP not found")
+    return {"message": "RSVP deleted successfully"}
+
 @api_router.post("/upload-event-image")
 async def upload_event_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     """Upload an image for an event"""
