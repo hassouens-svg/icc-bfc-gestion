@@ -456,8 +456,8 @@ const VisitorsPage = () => {
           </div>
           {(user?.role !== 'accueil') && (
             <div className="flex gap-2">
-              {/* Bouton Nouveau Visiteur - PAS pour responsable_promo */}
-              {!['responsable_promo', 'responsable_promos'].includes(user?.role) && (
+              {/* Bouton Nouveau Visiteur - PAS pour responsable_promo ni berger */}
+              {!['responsable_promo', 'responsable_promos', 'berger'].includes(user?.role) && (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <Button data-testid="add-visitor-button">

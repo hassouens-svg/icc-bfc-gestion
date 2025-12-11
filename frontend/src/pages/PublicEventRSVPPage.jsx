@@ -496,7 +496,7 @@ const PublicEventRSVPPage = () => {
                   <span>Paiement en espèces</span>
                 </p>
                 <p className="text-green-700 text-sm">
-                  Merci de prévoir votre participation en espèces le jour de l'événement ou de contacter un responsable.
+                  Merci de vous rapprocher du référent espèces pour donner votre participation.
                 </p>
               </div>
             )}
