@@ -282,6 +282,90 @@ const MinistereStarsDepartementPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialog pour ajouter une star */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>⭐ Ajouter une Star à {decodeURIComponent(departement)}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddStar} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="prenom">Prénom *</Label>
+                <Input
+                  id="prenom"
+                  value={newStar.prenom}
+                  onChange={(e) => setNewStar({...newStar, prenom: e.target.value})}
+                  placeholder="Prénom"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="nom">Nom *</Label>
+                <Input
+                  id="nom"
+                  value={newStar.nom}
+                  onChange={(e) => setNewStar({...newStar, nom: e.target.value})}
+                  placeholder="Nom"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="jour">Jour de naissance *</Label>
+                <Input
+                  id="jour"
+                  type="number"
+                  min="1"
+                  max="31"
+                  value={newStar.jour_naissance}
+                  onChange={(e) => setNewStar({...newStar, jour_naissance: e.target.value})}
+                  placeholder="1-31"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mois">Mois de naissance *</Label>
+                <select
+                  id="mois"
+                  value={newStar.mois_naissance}
+                  onChange={(e) => setNewStar({...newStar, mois_naissance: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="">Sélectionner...</option>
+                  {mois.map(m => (
+                    <option key={m.value} value={m.value}>{m.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="ville">Ville *</Label>
+              <select
+                id="ville"
+                value={newStar.ville}
+                onChange={(e) => setNewStar({...newStar, ville: e.target.value})}
+                className="w-full px-3 py-2 border rounded-md"
+              >
+                <option value="">Sélectionner une ville...</option>
+                {cities.map(city => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)} className="flex-1">
+                Annuler
+              </Button>
+              <Button type="submit" className="flex-1 bg-orange-600 hover:bg-orange-700">
+                Enregistrer
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </LayoutMinistereStars>
   );
 };
