@@ -91,6 +91,15 @@ const MarquerPresencesPage = () => {
     });
   };
 
+  // Fonction pour décocher toutes les présences
+  const handleUncheckAll = () => {
+    if (window.confirm('⚠️ Êtes-vous sûr de vouloir décocher toutes les présences ?')) {
+      setPresences({});
+      setComments({});
+      toast.info('Toutes les cases ont été décochées');
+    }
+  };
+
   // Fonction pour vérifier si tous les visiteurs ont au moins une présence ou un commentaire
   const canSave = () => {
     // Pour chaque visiteur, vérifier qu'il a soit une présence cochée, soit un commentaire
