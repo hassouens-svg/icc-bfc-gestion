@@ -350,7 +350,7 @@ const MinistereStarsDepartementPage = () => {
               >
                 <option value="">Sélectionner une ville...</option>
                 {cities.map(city => (
-                  <option key={city} value={city}>{city}</option>
+                  <option key={city.id || city} value={city.name || city}>{city.name || city}</option>
                 ))}
               </select>
             </div>
