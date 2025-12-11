@@ -154,7 +154,7 @@ const RecensementStarsPage = () => {
       <Card className="w-full max-w-3xl">
         <CardHeader className="text-center">
           <div className="text-6xl mb-4">⭐</div>
-          <CardTitle className="text-3xl font-bold text-orange-600">Recensement des STARS</CardTitle>
+          <CardTitle className="text-3xl font-bold text-orange-600">Recensement des Stars</CardTitle>
           <CardDescription>Enregistrez-vous pour faire partie des stars de l'église</CardDescription>
         </CardHeader>
         <CardContent>
@@ -265,7 +265,7 @@ const RecensementStarsPage = () => {
               className="w-full bg-orange-600 hover:bg-orange-700 text-lg py-6" 
               disabled={loading}
             >
-              {loading ? 'Enregistrement...' : '⭐ S\'inscrire comme STAR'}
+              {loading ? 'Enregistrement...' : '⭐ S\'inscrire'}
             </Button>
 
             <Button 
