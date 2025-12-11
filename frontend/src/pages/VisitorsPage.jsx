@@ -585,6 +585,20 @@ const VisitorsPage = () => {
                     />
                   </div>
 
+                  {/* Checkbox EJP */}
+                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="new-ejp"
+                        checked={newVisitor.ejp}
+                        onCheckedChange={(checked) => setNewVisitor({...newVisitor, ejp: checked})}
+                      />
+                      <Label htmlFor="new-ejp" className="font-medium cursor-pointer text-purple-900">
+                        ⭐ EJP (Église des Jeunes Prodiges)
+                      </Label>
+                    </div>
+                  </div>
+
                     <Button type="submit" className="w-full" data-testid="submit-new-visitor">
                       Créer le nouveaux arrivants et nouveaux convertis
                     </Button>
