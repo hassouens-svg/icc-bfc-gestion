@@ -25,7 +25,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://event-rsvp-11.preview.emergentagent.com/api"
+BASE_URL = "https://ministery-stars.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class ComprehensiveFCMTest:
