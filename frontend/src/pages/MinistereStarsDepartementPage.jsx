@@ -247,6 +247,7 @@ const MinistereStarsDepartementPage = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b bg-gray-50">
+                    <th className="text-center py-3 px-4 bg-gray-50">🗑️</th>
                     <th className="text-left py-3 px-4">Prénom</th>
                     <th className="text-left py-3 px-4">Nom</th>
                     <th className="text-center py-3 px-4">Date de Naissance</th>
@@ -257,13 +258,24 @@ const MinistereStarsDepartementPage = () => {
                 <tbody>
                   {stars.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="text-center py-8 text-gray-500">
+                      <td colSpan="6" className="text-center py-8 text-gray-500">
                         Aucune star dans ce département
                       </td>
                     </tr>
                   ) : (
                     stars.map((star, idx) => (
                       <tr key={idx} className="border-b hover:bg-gray-50">
+                        <td className="text-center py-3 px-4">
+                          <Button
+                            onClick={() => handleDeleteStar(star.id, `${star.prenom} ${star.nom}`)}
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2"
+                            title="Supprimer cette star"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </Button>
+                        </td>
                         <td className="py-3 px-4 font-medium">{star.prenom}</td>
                         <td className="py-3 px-4">{star.nom}</td>
                         <td className="text-center py-3 px-4">
