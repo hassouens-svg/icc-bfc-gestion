@@ -437,7 +437,7 @@ const PublicEventRSVPPage = () => {
         </Card>
       </div>
 
-      {/* Dialog de confirmation avec lien de paiement */}
+      {/* Dialog de confirmation avec lien de paiement conditionnel */}
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -456,7 +456,8 @@ const PublicEventRSVPPage = () => {
               </p>
             )}
             
-            {event.custom_link_url && (
+            {/* Lien de paiement - UNIQUEMENT si paiement par carte */}
+            {formData.payment_method === 'card' && event.custom_link_url && (
               <div className="bg-orange-50 p-4 rounded-lg border border-orange-200 space-y-3">
                 <p className="text-orange-800 font-medium">
                   👉 Passez maintenant à l'étape de paiement
@@ -467,10 +468,36 @@ const PublicEventRSVPPage = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors"
                 >
-                  <span>🔗</span>
-                  <span>{event.custom_link_title || 'Lien de paiement'}</span>
+                  <span>💳</span>
+                  <span>{event.custom_link_title || 'Payer par carte'}</span>
                   <span className="text-xs">↗</span>
                 </a>
+              </div>
+            )}
+
+            {/* Message pour paiement Wero */}
+            {formData.payment_method === 'wero' && (
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-2">
+                <p className="text-blue-800 font-medium flex items-center justify-center gap-2">
+                  <span>💰</span>
+                  <span>Paiement par Wero</span>
+                </p>
+                <p className="text-blue-700 text-sm">
+                  Si ce n'est pas déjà fait, merci de contacter le référent Wero et lui envoyer votre participation.
+                </p>
+              </div>
+            )}
+
+            {/* Message pour paiement en espèces */}
+            {formData.payment_method === 'cash' && (
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200 space-y-2">
+                <p className="text-green-800 font-medium flex items-center justify-center gap-2">
+                  <span>💵</span>
+                  <span>Paiement en espèces</span>
+                </p>
+                <p className="text-green-700 text-sm">
+                  Merci de prévoir votre participation en espèces le jour de l'événement ou de contacter un responsable.
+                </p>
               </div>
             )}
 
