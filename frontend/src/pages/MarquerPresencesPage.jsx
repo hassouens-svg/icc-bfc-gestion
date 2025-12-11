@@ -211,6 +211,14 @@ const MarquerPresencesPage = () => {
                   />
                 </div>
                 <Button 
+                  onClick={handleUncheckAll}
+                  variant="outline"
+                  className="border-red-300 text-red-600 hover:bg-red-50"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Décocher Tout
+                </Button>
+                <Button 
                   onClick={handleSaveAll} 
                   disabled={!canSave()}
                   className="bg-indigo-600 hover:bg-indigo-700"
