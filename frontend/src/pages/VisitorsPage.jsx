@@ -419,9 +419,7 @@ const VisitorsPage = () => {
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-2">
                               {visitor.ejp && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-purple-600 text-white">
-                                  EJP
-                                </span>
+                                <span className="w-4 h-4 rounded-full bg-purple-600 inline-block flex-shrink-0" title="EJP - Église des Jeunes Prodiges"></span>
                               )}
                               <span className="font-medium">{visitor.lastname}</span>
                             </div>
@@ -457,7 +455,7 @@ const VisitorsPage = () => {
           {(user?.role !== 'accueil') && (
             <div className="flex gap-2">
               {/* Bouton Nouveau Visiteur - PAS pour responsable_promo */}
-              {user?.role !== 'responsable_promo' && (
+              {!['responsable_promo', 'responsable_promos'].includes(user?.role) && (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <Button data-testid="add-visitor-button">
@@ -763,9 +761,7 @@ const VisitorsPage = () => {
                     <div className="flex-1 cursor-pointer" onClick={() => navigate(`/visitor/${visitor.id}`)}>
                       <div className="flex items-center gap-2">
                         {visitor.ejp && (
-                          <span className="inline-flex items-center px-3 py-2 rounded-full text-sm font-bold bg-purple-600 text-white shadow-lg">
-                            EJP
-                          </span>
+                          <span className="w-4 h-4 rounded-full bg-purple-600 inline-block flex-shrink-0" title="EJP - Église des Jeunes Prodiges"></span>
                         )}
                         <p className="font-medium text-lg">{visitor.firstname} {visitor.lastname}</p>
                       </div>
