@@ -19,7 +19,7 @@ const MarquerPresenceBergersPage = () => {
   const [editingRow, setEditingRow] = useState(null);
 
   useEffect(() => {
-    if (!user || (user.role !== 'superviseur_promos' && user.role !== 'super_admin')) {
+    if (!user || !['superviseur_promos', 'super_admin', 'responsable_promo', 'responsable_promos'].includes(user.role)) {
       navigate('/dashboard');
       return;
     }
