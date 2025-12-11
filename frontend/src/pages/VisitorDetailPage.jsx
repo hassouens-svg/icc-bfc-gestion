@@ -143,7 +143,14 @@ const VisitorDetailPage = () => {
 
   const handleSaveEdit = async () => {
     try {
-      await updateVisitor(id, editData);
+      // Clean up empty strings to null for optional fields
+      const cleanedData = {
+        ...editData,
+        email: editData.email?.trim() || null,
+        address: editData.address?.trim() || null,
+        age_range: editData.age_range?.trim() || null
+      };
+      await updateVisitor(id, cleanedData);
       toast.success('Informations mises à jour');
       await loadVisitor();
       setIsEditDialogOpen(false);
