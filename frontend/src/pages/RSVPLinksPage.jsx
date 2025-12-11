@@ -752,6 +752,8 @@ const RSVPLinksPage = () => {
                           <thead className="bg-gray-50 sticky top-0 z-10">
                             <tr>
                               <th className="text-left p-3 text-sm bg-gray-50">Prénom</th>
+                              <th className="text-center p-3 text-sm bg-gray-50 sticky left-0 z-10">🗑️</th>
+                              <th className="text-left p-3 text-sm bg-gray-50">Prénom</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Nom</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Ville</th>
                               <th className="text-center p-3 text-sm bg-gray-50">⭐</th>
@@ -759,12 +761,22 @@ const RSVPLinksPage = () => {
                               <th className="text-left p-3 text-sm bg-gray-50">Email</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Contact</th>
                               <th className="text-left p-3 text-sm bg-gray-50">Statut</th>
-                              <th className="text-center p-3 text-sm bg-gray-50">🗑️</th>
                             </tr>
                           </thead>
                           <tbody>
                             {eventStats.responses.map((rsvp, idx) => (
                               <tr key={idx} className="border-t hover:bg-gray-50">
+                                <td className="p-3 text-center bg-white sticky left-0 z-10">
+                                  <Button
+                                    onClick={() => deleteRsvp(rsvp.id)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2"
+                                    title="Supprimer cette réponse"
+                                  >
+                                    <Trash2 className="h-5 w-5" />
+                                  </Button>
+                                </td>
                                 <td className="p-3">{rsvp.first_name || '-'}</td>
                                 <td className="p-3">{rsvp.last_name || '-'}</td>
                                 <td className="p-3 text-sm">{rsvp.city || '-'}</td>
@@ -788,17 +800,6 @@ const RSVPLinksPage = () => {
                                   }`}>
                                     {rsvp.status === 'confirmed' ? 'Oui' : rsvp.status === 'declined' ? 'Non' : rsvp.status === 'maybe' ? 'Peut-être' : rsvp.status}
                                   </span>
-                                </td>
-                                <td className="p-3 text-center">
-                                  <Button
-                                    onClick={() => deleteRsvp(rsvp.id)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2"
-                                    title="Supprimer cette réponse"
-                                  >
-                                    <Trash2 className="h-5 w-5" />
-                                  </Button>
                                 </td>
                               </tr>
                             ))}
