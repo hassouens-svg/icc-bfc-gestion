@@ -2675,3 +2675,63 @@ Tous les éléments critiques du flux RSVP avec email de confirmation sont prés
 **PRÊT POUR UTILISATION EN PRODUCTION**
 
 ---
+---
+
+## 🔧 BERGERIE FIXES - 11 Décembre 2024
+
+### 📋 Agent: E1 Fork
+**Date**: 11 Décembre 2024
+
+### ✅ CORRECTIONS APPLIQUÉES
+
+#### 1. Badge EJP visible (gros cercle violet avec texte 'EJP') - CORRIGÉ
+**Demande utilisateur**: Badge EJP en gros point violet AVANT le nom du visiteur avec le texte EJP visible
+**Fichiers modifiés**: 
+- `/app/frontend/src/pages/VisitorsPage.jsx` (2 endroits - vue tableau et vue liste)
+**Implementation**: Badge rond violet 40x40px avec texte 'EJP' centré, positionné avant le nom
+
+#### 2. Bouton 'Nouveau Visiteur' caché pour responsable_promo - CORRIGÉ
+**Demande utilisateur**: Le rôle responsable_promo ne doit voir que le bouton 'Ancien Visiteur'
+**Fichier modifié**: `/app/frontend/src/pages/VisitorsPage.jsx`
+**Implementation**: Condition ajustée pour inclure les deux variantes du rôle (responsable_promo et responsable_promos)
+
+#### 3. Bouton 'Décocher Tout' sur page marquage présence nouveaux arrivants - AJOUTÉ
+**Demande utilisateur**: Ajouter bouton pour décocher toutes les présences (pas seulement pour bergers)
+**Fichier modifié**: `/app/frontend/src/pages/MarquerPresencesPage.jsx`
+**Implementation**: Bouton rouge avec confirmation, réinitialise presences et commentaires
+
+#### 4. Accès pages de présence pour responsable_promo - CORRIGÉ
+**Fichiers modifiés**: 
+- `/app/frontend/src/pages/MarquerPresencesPage.jsx`
+- `/app/frontend/src/pages/MarquerPresenceBergersPage.jsx`
+- `/app/frontend/src/pages/HistoriquePresenceBergersPage.jsx`
+**Implementation**: Ajout du rôle responsable_promo (et responsable_promos) à la liste des rôles autorisés
+
+### 🧪 TESTS EFFECTUÉS
+
+**Test 1: Badge EJP** ✅
+- Visiteur avec ejp=true trouvé (Modified_Richy Bihounga)
+- Badge EJP violet affiché AVANT le nom
+- Texte 'EJP' visible dans le badge
+
+**Test 2: Bouton caché pour responsable_promo** ✅
+- Connexion: respo_aout / test123 / Dijon
+- Page /visitors: Seul bouton 'Ancien Visiteur' visible
+- Bouton 'Nouveau Visiteur' correctement masqué
+
+**Test 3: Bouton Décocher Tout** ✅
+- Page /marquer-presences accessible
+- Bouton 'Décocher Tout' visible en rouge
+- Page /berger-presences: Bouton également présent
+
+**Test 4: Accès responsable_promo aux pages de présence** ✅
+- Page /marquer-presences accessible par responsable_promo
+- Données des visiteurs affichées correctement
+
+### 📊 STATUT FINAL
+✅ **Toutes les 4 tâches sont complétées et testées**
+
+**Credentials de test utilisés**:
+- superadmin / superadmin123 (super_admin)
+- respo_aout / test123 / Dijon (responsable_promo)
+
