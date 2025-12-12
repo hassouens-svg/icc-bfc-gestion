@@ -735,13 +735,16 @@ const GestionAccesPage = () => {
                       <SelectItem value="pasteur">Pasteur</SelectItem>
                       <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
                       <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
+                      <SelectItem value="superviseur_fi">Superviseur Familles d'Impact</SelectItem>
                       <SelectItem value="resp_bergers">Responsable Bergers</SelectItem>
                       <SelectItem value="berger">Berger</SelectItem>
                       <SelectItem value="gestion_projet">Gestion Projet</SelectItem>
-                      <SelectItem value="accueil_integration">Accueil et Intégration</SelectItem>
+                      <SelectItem value="accueil">Accueil et Intégration</SelectItem>
                       <SelectItem value="referent">Référent</SelectItem>
-                      <SelectItem value="responsable_promos">Responsable de Promos</SelectItem>
-                      <SelectItem value="pilote">Pilote</SelectItem>
+                      <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
+                      <SelectItem value="pilote_fi">Pilote FI</SelectItem>
+                      <SelectItem value="respo_departement">Responsable Département (Stars)</SelectItem>
+                      <SelectItem value="star">Star (Lecture seule)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
