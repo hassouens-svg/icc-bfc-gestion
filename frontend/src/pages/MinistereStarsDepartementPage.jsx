@@ -8,13 +8,16 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { ArrowLeft, Users, CheckCircle, XCircle, Plus, Trash2, Calendar } from 'lucide-react';
+import { Checkbox } from '../components/ui/checkbox';
+import { ArrowLeft, Users, CheckCircle, XCircle, Plus, Trash2, Calendar, Eye, Edit } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSelectedCity } from '../contexts/SelectedCityContext';
 
 const MinistereStarsDepartementPage = () => {
   const navigate = useNavigate();
   const { departement } = useParams();
   const user = getUser();
+  const { selectedCity } = useSelectedCity();
   const [stars, setStars] = useState([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showPlanningDialog, setShowPlanningDialog] = useState(false);
@@ -47,17 +50,21 @@ const MinistereStarsDepartementPage = () => {
     { value: 12, label: 'Décembre' }
   ];
 
-  const typesCulte = ['Culte 1', 'Culte 2', 'EJP', 'Tout les cultes'];
+  const typesCulte = ['Culte 1', 'Culte 2', 'EJP', 'Tous les cultes'];
+
+  // Vérifier les permissions
+  const canEdit = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement'].includes(user.role);
+  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star', 'ministere_stars'].includes(user.role);
 
   useEffect(() => {
-    if (!user || !['super_admin', 'pasteur', 'responsable_eglise', 'ministere_stars'].includes(user.role)) {
+    if (!user || !canView) {
       navigate('/');
       return;
     }
     loadStars();
     loadCities();
     loadPlannings();
-  }, [departement]);
+  }, [departement, selectedCity]);
 
   const loadCities = async () => {
     try {
@@ -84,10 +91,15 @@ const MinistereStarsDepartementPage = () => {
 
   const loadStars = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/departement/${encodeURIComponent(departement)}`,
-        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
-      );
+      // Filtrer par ville si sélectionnée
+      let url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/departement/${encodeURIComponent(departement)}`;
+      if (selectedCity && selectedCity !== 'all') {
+        url += `?ville=${encodeURIComponent(selectedCity)}`;
+      }
+      
+      const response = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       const data = await response.json();
       setStars(data);
     } catch (error) {
@@ -98,6 +110,10 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const handleStatutChange = async (starId, newStatut) => {
+    if (!canEdit) {
+      toast.error('Vous n\'avez pas les droits pour modifier');
+      return;
+    }
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/stars/${starId}`,
@@ -120,6 +136,10 @@ const MinistereStarsDepartementPage = () => {
 
   const handleAddStar = async (e) => {
     e.preventDefault();
+    if (!canEdit) {
+      toast.error('Vous n\'avez pas les droits pour ajouter');
+      return;
+    }
     if (!newStar.prenom || !newStar.nom || !newStar.jour_naissance || !newStar.mois_naissance || !newStar.ville) {
       toast.error('Veuillez remplir tous les champs');
       return;
@@ -157,6 +177,10 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const handleDeleteStar = async (starId, starName) => {
+    if (!canEdit) {
+      toast.error('Vous n\'avez pas les droits pour supprimer');
+      return;
+    }
     if (!window.confirm(`Êtes-vous sûr de vouloir supprimer ${starName} ?`)) return;
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/${starId}`, {
@@ -189,28 +213,59 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const addPlanningEntry = () => {
+    if (!canEdit) return;
     setCurrentPlanning(prev => ({
       ...prev,
-      entries: [...(prev.entries || []), { type_culte: '', pole1: '', pole2: '', membre_id: '', membre_nom: '', commentaire: '' }]
+      entries: [...(prev.entries || []), { 
+        type_culte: '', 
+        role: '', 
+        membre_ids: [], 
+        membres_noms: [],
+        commentaire: '' 
+      }]
     }));
   };
 
   const updatePlanningEntry = (index, field, value) => {
+    if (!canEdit) return;
     setCurrentPlanning(prev => {
       const newEntries = [...prev.entries];
       newEntries[index] = { ...newEntries[index], [field]: value };
-      // Si on sélectionne un membre, mettre à jour aussi le nom
-      if (field === 'membre_id') {
-        const star = stars.find(s => s.id === value);
-        if (star) {
-          newEntries[index].membre_nom = `${star.prenom} ${star.nom}`;
-        }
+      return { ...prev, entries: newEntries };
+    });
+  };
+
+  // Fonction pour gérer la sélection multiple de membres
+  const toggleMemberSelection = (index, starId, starName) => {
+    if (!canEdit) return;
+    setCurrentPlanning(prev => {
+      const newEntries = [...prev.entries];
+      const entry = newEntries[index];
+      const memberIds = entry.membre_ids || [];
+      const memberNames = entry.membres_noms || [];
+      
+      const existingIndex = memberIds.indexOf(starId);
+      if (existingIndex > -1) {
+        // Remove member
+        memberIds.splice(existingIndex, 1);
+        memberNames.splice(existingIndex, 1);
+      } else {
+        // Add member
+        memberIds.push(starId);
+        memberNames.push(starName);
       }
+      
+      newEntries[index] = { 
+        ...entry, 
+        membre_ids: memberIds,
+        membres_noms: memberNames
+      };
       return { ...prev, entries: newEntries };
     });
   };
 
   const removePlanningEntry = (index) => {
+    if (!canEdit) return;
     setCurrentPlanning(prev => ({
       ...prev,
       entries: prev.entries.filter((_, i) => i !== index)
@@ -218,6 +273,10 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const savePlanning = async () => {
+    if (!canEdit) {
+      toast.error('Vous n\'avez pas les droits pour modifier le planning');
+      return;
+    }
     const currentYear = new Date().getFullYear();
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/planning`, {
@@ -243,6 +302,10 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const deletePlanning = async (week) => {
+    if (!canEdit) {
+      toast.error('Vous n\'avez pas les droits pour supprimer');
+      return;
+    }
     if (!window.confirm(`Supprimer le planning de la semaine ${week} ?`)) return;
     const currentYear = new Date().getFullYear();
     try {
@@ -269,6 +332,28 @@ const MinistereStarsDepartementPage = () => {
   const actifs = stars.filter(s => s.statut === 'actif').length;
   const nonActifs = stars.filter(s => s.statut === 'non_actif').length;
 
+  // Liste des rôles possibles dans le planning
+  const rolesPlanning = [
+    'Équipe de Prière', 
+    'Équipe Technique (Son)', 
+    'Équipe Technique (Vidéo)', 
+    'Équipe Technique (Lumière)',
+    'Accueil',
+    'Service d\'ordre',
+    'Louange',
+    'Choristes',
+    'Musiciens',
+    'Animation',
+    'Protocole',
+    'Intercession',
+    'Communion',
+    'Quête',
+    'École du Dimanche',
+    'Nursery',
+    'Média/Communication',
+    'Autre'
+  ];
+
   if (loading) {
     return (
       <LayoutMinistereStars>
@@ -282,10 +367,20 @@ const MinistereStarsDepartementPage = () => {
   return (
     <LayoutMinistereStars>
       <div className="space-y-6 p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">⭐ {decodeURIComponent(departement)}</h1>
-            <p className="text-gray-500 mt-1">Liste des stars du département</p>
+            <p className="text-gray-500 mt-1">
+              Liste des stars du département
+              {selectedCity && selectedCity !== 'all' && (
+                <span className="ml-2 text-indigo-600 font-medium">({selectedCity})</span>
+              )}
+            </p>
+            {!canEdit && (
+              <p className="text-amber-600 text-sm mt-1 flex items-center gap-1">
+                <Eye className="h-4 w-4" /> Mode lecture seule
+              </p>
+            )}
           </div>
           <Button variant="outline" onClick={() => navigate('/ministere-stars/dashboard')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -299,7 +394,7 @@ const MinistereStarsDepartementPage = () => {
           className="bg-purple-600 hover:bg-purple-700 w-full md:w-auto"
         >
           <Calendar className="h-4 w-4 mr-2" />
-          📅 Voir Planning
+          📅 {canEdit ? 'Gérer le Planning' : 'Voir le Planning'}
         </Button>
 
         {/* KPI Cards */}
@@ -345,20 +440,23 @@ const MinistereStarsDepartementPage = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Liste des Stars</CardTitle>
-            <Button onClick={() => setShowAddDialog(true)} className="bg-orange-600 hover:bg-orange-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter
-            </Button>
+            {canEdit && (
+              <Button onClick={() => setShowAddDialog(true)} className="bg-orange-600 hover:bg-orange-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter
+              </Button>
+            )}
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b bg-gray-50">
-                    <th className="text-center py-3 px-4 bg-gray-50">🗑️</th>
+                    {canEdit && <th className="text-center py-3 px-4 bg-gray-50">🗑️</th>}
                     <th className="text-left py-3 px-4">Prénom</th>
                     <th className="text-left py-3 px-4">Nom</th>
                     <th className="text-center py-3 px-4">Date de Naissance</th>
+                    <th className="text-left py-3 px-4">Ville</th>
                     <th className="text-left py-3 px-4">Autres Départements</th>
                     <th className="text-center py-3 px-4">Statut</th>
                   </tr>
@@ -366,50 +464,63 @@ const MinistereStarsDepartementPage = () => {
                 <tbody>
                   {stars.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="text-center py-8 text-gray-500">
+                      <td colSpan={canEdit ? 7 : 6} className="text-center py-8 text-gray-500">
                         Aucune star dans ce département
                       </td>
                     </tr>
                   ) : (
                     stars.map((star, idx) => (
                       <tr key={idx} className="border-b hover:bg-gray-50">
-                        <td className="text-center py-3 px-4">
-                          <Button
-                            onClick={() => handleDeleteStar(star.id, `${star.prenom} ${star.nom}`)}
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2"
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </Button>
-                        </td>
+                        {canEdit && (
+                          <td className="text-center py-3 px-4">
+                            <Button
+                              onClick={() => handleDeleteStar(star.id, `${star.prenom} ${star.nom}`)}
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </Button>
+                          </td>
+                        )}
                         <td className="py-3 px-4 font-medium">{star.prenom}</td>
                         <td className="py-3 px-4">{star.nom}</td>
                         <td className="text-center py-3 px-4">
                           {String(star.jour_naissance).padStart(2, '0')}/{String(star.mois_naissance).padStart(2, '0')}
                         </td>
                         <td className="py-3 px-4">
+                          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded">
+                            {star.ville || '-'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
                           <div className="flex flex-wrap gap-1">
-                            {star.departements.filter(d => d !== departement).map((dept, i) => (
+                            {star.departements.filter(d => d !== decodeURIComponent(departement)).map((dept, i) => (
                               <span key={i} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
                                 {dept}
                               </span>
                             ))}
-                            {star.departements.filter(d => d !== departement).length === 0 && (
+                            {star.departements.filter(d => d !== decodeURIComponent(departement)).length === 0 && (
                               <span className="text-gray-400 text-sm">-</span>
                             )}
                           </div>
                         </td>
                         <td className="text-center py-3 px-4">
-                          <Select value={star.statut} onValueChange={(value) => handleStatutChange(star.id, value)}>
-                            <SelectTrigger className={`w-32 ${star.statut === 'actif' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="actif">✅ Actif</SelectItem>
-                              <SelectItem value="non_actif">❌ Non Actif</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          {canEdit ? (
+                            <Select value={star.statut} onValueChange={(value) => handleStatutChange(star.id, value)}>
+                              <SelectTrigger className={`w-32 ${star.statut === 'actif' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="actif">✅ Actif</SelectItem>
+                                <SelectItem value="non_actif">❌ Non Actif</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <span className={`px-2 py-1 rounded text-xs ${star.statut === 'actif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                              {star.statut === 'actif' ? '✅ Actif' : '❌ Non Actif'}
+                            </span>
+                          )}
                         </td>
                       </tr>
                     ))
@@ -422,49 +533,51 @@ const MinistereStarsDepartementPage = () => {
       </div>
 
       {/* Dialog pour ajouter une star */}
-      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>⭐ Ajouter une Star à {decodeURIComponent(departement)}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleAddStar} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Prénom *</Label>
-                <Input value={newStar.prenom} onChange={(e) => setNewStar({...newStar, prenom: e.target.value})} placeholder="Prénom" />
+      {canEdit && (
+        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>⭐ Ajouter une Star à {decodeURIComponent(departement)}</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddStar} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Prénom *</Label>
+                  <Input value={newStar.prenom} onChange={(e) => setNewStar({...newStar, prenom: e.target.value})} placeholder="Prénom" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Nom *</Label>
+                  <Input value={newStar.nom} onChange={(e) => setNewStar({...newStar, nom: e.target.value})} placeholder="Nom" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Jour de naissance *</Label>
+                  <Input type="number" min="1" max="31" value={newStar.jour_naissance} onChange={(e) => setNewStar({...newStar, jour_naissance: e.target.value})} placeholder="1-31" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Mois de naissance *</Label>
+                  <select value={newStar.mois_naissance} onChange={(e) => setNewStar({...newStar, mois_naissance: e.target.value})} className="w-full px-3 py-2 border rounded-md">
+                    <option value="">Sélectionner...</option>
+                    {mois.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+                  </select>
+                </div>
               </div>
               <div className="space-y-2">
-                <Label>Nom *</Label>
-                <Input value={newStar.nom} onChange={(e) => setNewStar({...newStar, nom: e.target.value})} placeholder="Nom" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Jour de naissance *</Label>
-                <Input type="number" min="1" max="31" value={newStar.jour_naissance} onChange={(e) => setNewStar({...newStar, jour_naissance: e.target.value})} placeholder="1-31" />
-              </div>
-              <div className="space-y-2">
-                <Label>Mois de naissance *</Label>
-                <select value={newStar.mois_naissance} onChange={(e) => setNewStar({...newStar, mois_naissance: e.target.value})} className="w-full px-3 py-2 border rounded-md">
+                <Label>Ville *</Label>
+                <select value={newStar.ville} onChange={(e) => setNewStar({...newStar, ville: e.target.value})} className="w-full px-3 py-2 border rounded-md">
                   <option value="">Sélectionner...</option>
-                  {mois.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+                  {cities.map(city => <option key={city.id || city} value={city.name || city}>{city.name || city}</option>)}
                 </select>
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Ville *</Label>
-              <select value={newStar.ville} onChange={(e) => setNewStar({...newStar, ville: e.target.value})} className="w-full px-3 py-2 border rounded-md">
-                <option value="">Sélectionner...</option>
-                {cities.map(city => <option key={city.id || city} value={city.name || city}>{city.name || city}</option>)}
-              </select>
-            </div>
-            <div className="flex gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)} className="flex-1">Annuler</Button>
-              <Button type="submit" className="flex-1 bg-orange-600 hover:bg-orange-700">Enregistrer</Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+              <div className="flex gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)} className="flex-1">Annuler</Button>
+                <Button type="submit" className="flex-1 bg-orange-600 hover:bg-orange-700">Enregistrer</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Dialog Planning - Sélection des semaines */}
       <Dialog open={showPlanningDialog} onOpenChange={setShowPlanningDialog}>
@@ -473,11 +586,15 @@ const MinistereStarsDepartementPage = () => {
             <DialogTitle>📅 Planning - {decodeURIComponent(departement)}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-gray-600 mb-4">Sélectionnez une semaine pour créer ou modifier le planning :</p>
+            <p className="text-gray-600 mb-4">
+              {canEdit 
+                ? 'Sélectionnez une semaine pour créer ou modifier le planning :'
+                : 'Sélectionnez une semaine pour consulter le planning :'}
+            </p>
             <div className="grid grid-cols-8 md:grid-cols-13 gap-2">
               {Array.from({ length: 52 }, (_, i) => i + 1).map(week => (
                 <div key={week} className="relative group">
-                  {hasPlanning(week) && (
+                  {canEdit && hasPlanning(week) && (
                     <button
                       onClick={() => deletePlanning(week)}
                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity z-10"
@@ -504,94 +621,175 @@ const MinistereStarsDepartementPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Planning - Édition d'une semaine */}
+      {/* Dialog Planning - Édition d'une semaine avec tableau propre */}
       <Dialog open={showWeekPlanningDialog} onOpenChange={setShowWeekPlanningDialog}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>📅 Planning Semaine {selectedWeek} - {decodeURIComponent(departement)}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              {canEdit ? <Edit className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              📅 Planning Semaine {selectedWeek} - {decodeURIComponent(departement)}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+            {/* Tableau propre */}
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-purple-50">
                   <tr>
-                    <th className="p-2 text-left">Type Culte</th>
-                    <th className="p-2 text-left">Pôle 1</th>
-                    <th className="p-2 text-left">Pôle 2</th>
-                    <th className="p-2 text-left">Membre</th>
-                    <th className="p-2 text-left">Commentaire</th>
-                    <th className="p-2">🗑️</th>
+                    <th className="p-3 text-left font-semibold text-purple-800 w-36">Type Culte</th>
+                    <th className="p-3 text-left font-semibold text-purple-800 w-44">Rôle/Service</th>
+                    <th className="p-3 text-left font-semibold text-purple-800">Membres assignés</th>
+                    <th className="p-3 text-left font-semibold text-purple-800 w-48">Commentaire</th>
+                    {canEdit && <th className="p-3 text-center font-semibold text-purple-800 w-16">🗑️</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {(currentPlanning.entries || []).map((entry, idx) => (
-                    <tr key={idx} className="border-b">
-                      <td className="p-2">
-                        <select
-                          value={entry.type_culte}
-                          onChange={(e) => updatePlanningEntry(idx, 'type_culte', e.target.value)}
-                          className="w-full p-2 border rounded"
-                        >
-                          <option value="">Sélectionner...</option>
-                          {typesCulte.map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
-                      </td>
-                      <td className="p-2">
-                        <Input
-                          value={entry.pole1 || ''}
-                          onChange={(e) => updatePlanningEntry(idx, 'pole1', e.target.value)}
-                          placeholder="Pôle 1"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <Input
-                          value={entry.pole2 || ''}
-                          onChange={(e) => updatePlanningEntry(idx, 'pole2', e.target.value)}
-                          placeholder="Pôle 2"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <select
-                          value={entry.membre_id || ''}
-                          onChange={(e) => updatePlanningEntry(idx, 'membre_id', e.target.value)}
-                          className="w-full p-2 border rounded"
-                        >
-                          <option value="">Sélectionner...</option>
-                          {stars.filter(s => s.statut === 'actif').map(s => (
-                            <option key={s.id} value={s.id}>{s.prenom} {s.nom}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="p-2">
-                        <Input
-                          value={entry.commentaire || ''}
-                          onChange={(e) => updatePlanningEntry(idx, 'commentaire', e.target.value)}
-                          placeholder="Commentaire"
-                        />
-                      </td>
-                      <td className="p-2 text-center">
-                        <Button variant="ghost" size="sm" onClick={() => removePlanningEntry(idx)} className="text-red-500">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                  {(currentPlanning.entries || []).length === 0 ? (
+                    <tr>
+                      <td colSpan={canEdit ? 5 : 4} className="p-8 text-center text-gray-500">
+                        Aucune entrée dans le planning pour cette semaine
+                        {canEdit && (
+                          <p className="text-sm mt-2">Cliquez sur "Ajouter une ligne" pour commencer</p>
+                        )}
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    (currentPlanning.entries || []).map((entry, idx) => (
+                      <tr key={idx} className="border-t hover:bg-gray-50">
+                        <td className="p-3">
+                          {canEdit ? (
+                            <Select
+                              value={entry.type_culte || ''}
+                              onValueChange={(val) => updatePlanningEntry(idx, 'type_culte', val)}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Type..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {typesCulte.map(t => (
+                                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <span className="font-medium">{entry.type_culte || '-'}</span>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          {canEdit ? (
+                            <Select
+                              value={entry.role || ''}
+                              onValueChange={(val) => updatePlanningEntry(idx, 'role', val)}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Rôle..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {rolesPlanning.map(r => (
+                                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <span className="font-medium">{entry.role || '-'}</span>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          {canEdit ? (
+                            <div className="space-y-2">
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {(entry.membres_noms || []).map((nom, i) => (
+                                  <span key={i} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                                    {nom}
+                                    <button
+                                      onClick={() => {
+                                        const star = stars.find(s => `${s.prenom} ${s.nom}` === nom);
+                                        if (star) toggleMemberSelection(idx, star.id, nom);
+                                      }}
+                                      className="ml-1 text-purple-500 hover:text-purple-700"
+                                    >
+                                      ×
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                              <div className="max-h-32 overflow-y-auto border rounded p-2 bg-gray-50">
+                                {stars.filter(s => s.statut === 'actif').map(s => {
+                                  const fullName = `${s.prenom} ${s.nom}`;
+                                  const isSelected = (entry.membre_ids || []).includes(s.id);
+                                  return (
+                                    <label key={s.id} className="flex items-center gap-2 py-1 hover:bg-gray-100 px-1 rounded cursor-pointer">
+                                      <Checkbox
+                                        checked={isSelected}
+                                        onCheckedChange={() => toggleMemberSelection(idx, s.id, fullName)}
+                                      />
+                                      <span className="text-sm">{fullName}</span>
+                                    </label>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-wrap gap-1">
+                              {(entry.membres_noms || []).length > 0 ? (
+                                entry.membres_noms.map((nom, i) => (
+                                  <span key={i} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+                                    {nom}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          {canEdit ? (
+                            <Input
+                              value={entry.commentaire || ''}
+                              onChange={(e) => updatePlanningEntry(idx, 'commentaire', e.target.value)}
+                              placeholder="Note..."
+                              className="text-sm"
+                            />
+                          ) : (
+                            <span className="text-sm text-gray-600">{entry.commentaire || '-'}</span>
+                          )}
+                        </td>
+                        {canEdit && (
+                          <td className="p-3 text-center">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => removePlanningEntry(idx)} 
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
             
-            <Button onClick={addPlanningEntry} variant="outline" className="w-full">
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter une ligne
-            </Button>
+            {canEdit && (
+              <Button onClick={addPlanningEntry} variant="outline" className="w-full border-dashed">
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter une ligne
+              </Button>
+            )}
 
-            <div className="flex gap-2 pt-4">
+            <div className="flex gap-2 pt-4 border-t">
               <Button variant="outline" onClick={() => setShowWeekPlanningDialog(false)} className="flex-1">
-                Annuler
+                {canEdit ? 'Annuler' : 'Fermer'}
               </Button>
-              <Button onClick={savePlanning} className="flex-1 bg-purple-600 hover:bg-purple-700">
-                Enregistrer le planning
-              </Button>
+              {canEdit && (
+                <Button onClick={savePlanning} className="flex-1 bg-purple-600 hover:bg-purple-700">
+                  Enregistrer le planning
+                </Button>
+              )}
             </div>
           </div>
         </DialogContent>
