@@ -36,7 +36,7 @@ const MinistereStarsLoginPage = () => {
     try {
       const result = await login(formData.username, formData.password);
       
-      if (!['super_admin', 'pasteur', 'responsable_eglise', 'ministere_stars'].includes(result.user.role)) {
+      if (!['super_admin', 'pasteur', 'responsable_eglise', 'ministere_stars', 'respo_departement', 'star'].includes(result.user.role)) {
         toast.error('Accès refusé - Rôle non autorisé');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
