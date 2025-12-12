@@ -717,8 +717,10 @@ const VisitorsTablePage = () => {
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-indigo-600" />
                 {filters.date 
-                  ? `Fidélisation - Semaine du ${filters.date}` 
-                  : 'Taux de Fidélisation par Semaine (52 semaines)'}
+                  ? `Fidélisation - Semaine du ${filters.date}${filters.promo !== 'all' ? ` (Promo ${filters.promo})` : ''}` 
+                  : filters.promo !== 'all'
+                    ? `Taux de Fidélisation - Promo ${filters.promo}`
+                    : 'Taux de Fidélisation par Semaine (52 semaines)'}
               </CardTitle>
             </CardHeader>
             <CardContent>
