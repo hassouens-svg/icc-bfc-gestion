@@ -791,7 +791,14 @@ const VisitorsTablePage = () => {
                   <div className="mt-4 text-center">
                     {!filters.date && (
                       <p className="text-sm text-gray-600">
-                        Moyenne globale: <span className="font-bold text-indigo-600 text-lg">{fidelisationData.monthly_average}%</span>
+                        {filters.promo !== 'all' 
+                          ? `Moyenne promo ${filters.promo}: `
+                          : 'Moyenne globale: '}
+                        <span className="font-bold text-indigo-600 text-lg">
+                          {filters.promo !== 'all' 
+                            ? `${tauxFidelisation}%`
+                            : `${fidelisationData.monthly_average}%`}
+                        </span>
                       </p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
