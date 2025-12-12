@@ -23,6 +23,7 @@ const MinistereStarsDepartementPage = () => {
   const [showPlanningDialog, setShowPlanningDialog] = useState(false);
   const [showWeekPlanningDialog, setShowWeekPlanningDialog] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [cities, setCities] = useState([]);
   const [plannings, setPlannings] = useState([]);
   const [currentPlanning, setCurrentPlanning] = useState({ entries: [] });
@@ -59,9 +60,11 @@ const MinistereStarsDepartementPage = () => {
     'Événements spéciaux'
   ];
 
-  // Vérifier les permissions
+  const years = [2025, 2026, 2027, 2028, 2029, 2030];
+
+  // Permissions: pasteur/superadmin = tout, responsable_eglise = sa ville, respo_departement = tout, star = lecture
   const canEdit = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement'].includes(user.role);
-  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star', 'ministere_stars'].includes(user.role);
+  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role);
 
   // Liste des rôles/services possibles dans le planning
   const rolesPlanning = [
@@ -86,6 +89,20 @@ const MinistereStarsDepartementPage = () => {
     'Autre'
   ];
 
+  // Déterminer la ville effective pour le filtrage
+  const getEffectiveCity = () => {
+    // responsable_eglise voit seulement sa ville
+    if (user?.role === 'responsable_eglise') {
+      return user.city;
+    }
+    // pasteur/superadmin/respo_departement utilisent le filtre global
+    if (['super_admin', 'pasteur', 'respo_departement'].includes(user?.role)) {
+      return selectedCity && selectedCity !== 'all' ? selectedCity : null;
+    }
+    // star: lecture seule, pas de filtre
+    return null;
+  };
+
   useEffect(() => {
     if (!user || !canView) {
       navigate('/');
@@ -93,8 +110,13 @@ const MinistereStarsDepartementPage = () => {
     }
     loadStars();
     loadCities();
-    loadPlannings();
   }, [departement, selectedCity]);
+
+  useEffect(() => {
+    if (showPlanningDialog) {
+      loadPlannings();
+    }
+  }, [selectedYear, showPlanningDialog]);
 
   const loadCities = async () => {
     try {
@@ -109,7 +131,7 @@ const MinistereStarsDepartementPage = () => {
   const loadPlannings = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/planning/${encodeURIComponent(departement)}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/planning/${encodeURIComponent(departement)}?annee=${selectedYear}`,
         { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
       const data = await response.json();
@@ -121,9 +143,10 @@ const MinistereStarsDepartementPage = () => {
 
   const loadStars = async () => {
     try {
+      const effectiveCity = getEffectiveCity();
       let url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/departement/${encodeURIComponent(departement)}`;
-      if (selectedCity && selectedCity !== 'all') {
-        url += `?ville=${encodeURIComponent(selectedCity)}`;
+      if (effectiveCity) {
+        url += `?ville=${encodeURIComponent(effectiveCity)}`;
       }
       
       const response = await fetch(url, {
@@ -227,15 +250,14 @@ const MinistereStarsDepartementPage = () => {
   // Planning functions
   const openWeekPlanning = async (week) => {
     setSelectedWeek(week);
-    const currentYear = new Date().getFullYear();
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/planning/${encodeURIComponent(departement)}/${week}/${currentYear}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/planning/${encodeURIComponent(departement)}/${week}/${selectedYear}`,
         { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
       const data = await response.json();
       setCurrentPlanning(data || { entries: [] });
-      setIsEditMode(false); // Start in view mode
+      setIsEditMode(false);
     } catch (error) {
       setCurrentPlanning({ entries: [] });
       setIsEditMode(false);
@@ -250,7 +272,7 @@ const MinistereStarsDepartementPage = () => {
       entries: [...(prev.entries || []), { 
         type_culte: '', 
         role: '', 
-        poles: [], // Multiple poles
+        poles: [],
         membre_ids: [], 
         membres_noms: [],
         commentaire: '' 
@@ -267,7 +289,6 @@ const MinistereStarsDepartementPage = () => {
     });
   };
 
-  // Fonction pour ajouter un pôle
   const addPole = (index) => {
     if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => {
@@ -279,7 +300,6 @@ const MinistereStarsDepartementPage = () => {
     });
   };
 
-  // Fonction pour mettre à jour un pôle
   const updatePole = (entryIndex, poleIndex, value) => {
     if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => {
@@ -291,7 +311,6 @@ const MinistereStarsDepartementPage = () => {
     });
   };
 
-  // Fonction pour supprimer un pôle
   const removePole = (entryIndex, poleIndex) => {
     if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => {
@@ -303,7 +322,6 @@ const MinistereStarsDepartementPage = () => {
     });
   };
 
-  // Fonction pour gérer la sélection multiple de membres
   const toggleMemberSelection = (index, starId, starName) => {
     if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => {
@@ -343,7 +361,6 @@ const MinistereStarsDepartementPage = () => {
       toast.error('Vous n\'avez pas les droits pour modifier le planning');
       return;
     }
-    const currentYear = new Date().getFullYear();
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/planning`, {
         method: 'POST',
@@ -354,7 +371,7 @@ const MinistereStarsDepartementPage = () => {
         body: JSON.stringify({
           departement: decodeURIComponent(departement),
           semaine: selectedWeek,
-          annee: currentYear,
+          annee: selectedYear,
           entries: currentPlanning.entries
         })
       });
@@ -373,10 +390,9 @@ const MinistereStarsDepartementPage = () => {
       return;
     }
     if (!window.confirm(`Supprimer le planning de la semaine ${week} ?`)) return;
-    const currentYear = new Date().getFullYear();
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/planning/${encodeURIComponent(departement)}/${week}/${currentYear}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/planning/${encodeURIComponent(departement)}/${week}/${selectedYear}`,
         {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -391,8 +407,7 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const hasPlanning = (week) => {
-    const currentYear = new Date().getFullYear();
-    return plannings.some(p => p.semaine === week && p.annee === currentYear);
+    return plannings.some(p => p.semaine === week && p.annee === selectedYear);
   };
 
   // Calculer les KPIs du planning
@@ -447,11 +462,14 @@ const MinistereStarsDepartementPage = () => {
             <h1 className="text-3xl font-bold text-gray-900">⭐ {decodeURIComponent(departement)}</h1>
             <p className="text-gray-500 mt-1">
               Liste des stars du département
-              {selectedCity && selectedCity !== 'all' && (
+              {user?.role === 'responsable_eglise' && user?.city && (
+                <span className="ml-2 text-indigo-600 font-medium">({user.city})</span>
+              )}
+              {['super_admin', 'pasteur', 'respo_departement'].includes(user?.role) && selectedCity && selectedCity !== 'all' && (
                 <span className="ml-2 text-indigo-600 font-medium">({selectedCity})</span>
               )}
             </p>
-            {!canEdit && (
+            {user?.role === 'star' && (
               <p className="text-amber-600 text-sm mt-1 flex items-center gap-1">
                 <Eye className="h-4 w-4" /> Mode lecture seule
               </p>
@@ -654,11 +672,23 @@ const MinistereStarsDepartementPage = () => {
         </Dialog>
       )}
 
-      {/* Dialog Planning - Sélection des semaines */}
+      {/* Dialog Planning - Sélection des semaines avec année */}
       <Dialog open={showPlanningDialog} onOpenChange={setShowPlanningDialog}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>📅 Planning - {decodeURIComponent(departement)}</DialogTitle>
+            <DialogTitle className="flex items-center justify-between">
+              <span>📅 Planning - {decodeURIComponent(departement)}</span>
+              <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
+                <SelectTrigger className="w-28">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map(y => (
+                    <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-gray-600 mb-4">
@@ -705,9 +735,9 @@ const MinistereStarsDepartementPage = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
-                📅 Planning Semaine {selectedWeek} - {decodeURIComponent(departement)}
+                📅 Planning Semaine {selectedWeek} / {selectedYear} - {decodeURIComponent(departement)}
               </span>
-              {canEdit && !isEditMode && (currentPlanning.entries?.length > 0 || true) && (
+              {canEdit && !isEditMode && (
                 <Button onClick={() => setIsEditMode(true)} size="sm" className="bg-blue-600 hover:bg-blue-700">
                   <Edit className="h-4 w-4 mr-2" />
                   Modifier
@@ -716,26 +746,20 @@ const MinistereStarsDepartementPage = () => {
             </DialogTitle>
           </DialogHeader>
 
-          {/* KPIs Stars en service */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
+          {/* KPIs Stars en service - PLUS COMPACTS */}
+          <div className="flex flex-wrap gap-2 mb-3">
             {typesCulte.map(type => (
-              <Card key={type} className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-                <CardContent className="p-3 text-center">
-                  <p className="text-xs text-purple-600 font-medium truncate">{type}</p>
-                  <p className="text-2xl font-bold text-purple-800">{planningKPIs.kpisByType[type]?.count || 0}</p>
-                  <p className="text-xs text-purple-500">stars</p>
-                </CardContent>
-              </Card>
+              <div key={type} className="bg-purple-50 border border-purple-200 rounded px-3 py-1 text-center min-w-[80px]">
+                <p className="text-[10px] text-purple-600 font-medium truncate">{type}</p>
+                <p className="text-lg font-bold text-purple-800">{planningKPIs.kpisByType[type]?.count || 0}</p>
+              </div>
             ))}
-            <Card className="bg-gradient-to-br from-orange-100 to-orange-200 border-orange-300">
-              <CardContent className="p-3 text-center">
-                <p className="text-xs text-orange-700 font-medium flex items-center justify-center gap-1">
-                  <UserCheck className="h-3 w-3" /> Total
-                </p>
-                <p className="text-2xl font-bold text-orange-800">{planningKPIs.totalStarsEnService}</p>
-                <p className="text-xs text-orange-600">en service</p>
-              </CardContent>
-            </Card>
+            <div className="bg-orange-100 border border-orange-300 rounded px-3 py-1 text-center min-w-[90px]">
+              <p className="text-[10px] text-orange-700 font-medium flex items-center justify-center gap-1">
+                <UserCheck className="h-3 w-3" /> Total
+              </p>
+              <p className="text-lg font-bold text-orange-800">{planningKPIs.totalStarsEnService}</p>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -745,17 +769,17 @@ const MinistereStarsDepartementPage = () => {
                 <table className="w-full">
                   <thead className="bg-purple-50">
                     <tr>
-                      <th className="p-3 text-left font-semibold text-purple-800">Type Culte</th>
-                      <th className="p-3 text-left font-semibold text-purple-800">Rôle/Service</th>
-                      <th className="p-3 text-left font-semibold text-purple-800">Pôle(s)</th>
-                      <th className="p-3 text-left font-semibold text-purple-800">Membres assignés</th>
-                      <th className="p-3 text-left font-semibold text-purple-800">Commentaire</th>
+                      <th className="p-2 text-left font-semibold text-purple-800 text-sm">Type Culte</th>
+                      <th className="p-2 text-left font-semibold text-purple-800 text-sm">Rôle/Service</th>
+                      <th className="p-2 text-left font-semibold text-purple-800 text-sm">Pôle(s)</th>
+                      <th className="p-2 text-left font-semibold text-purple-800 text-sm">Membres assignés</th>
+                      <th className="p-2 text-left font-semibold text-purple-800 text-sm">Note</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(currentPlanning.entries || []).length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-8 text-center text-gray-500">
+                        <td colSpan={5} className="p-6 text-center text-gray-500">
                           Aucune entrée dans le planning pour cette semaine
                           {canEdit && (
                             <p className="text-sm mt-2">Cliquez sur "Modifier" pour ajouter des entrées</p>
@@ -765,43 +789,39 @@ const MinistereStarsDepartementPage = () => {
                     ) : (
                       (currentPlanning.entries || []).map((entry, idx) => (
                         <tr key={idx} className="border-t hover:bg-gray-50">
-                          <td className="p-3">
-                            <span className="font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                          <td className="p-2">
+                            <span className="font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
                               {entry.type_culte || '-'}
                             </span>
                           </td>
-                          <td className="p-3">
-                            <span className="text-gray-700">{entry.role || '-'}</span>
-                          </td>
-                          <td className="p-3">
+                          <td className="p-2 text-sm">{entry.role || '-'}</td>
+                          <td className="p-2">
                             <div className="flex flex-wrap gap-1">
                               {(entry.poles || []).length > 0 ? (
                                 entry.poles.filter(p => p).map((pole, i) => (
-                                  <span key={i} className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+                                  <span key={i} className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">
                                     {pole}
                                   </span>
                                 ))
                               ) : (
-                                <span className="text-gray-400">-</span>
+                                <span className="text-gray-400 text-xs">-</span>
                               )}
                             </div>
                           </td>
-                          <td className="p-3">
+                          <td className="p-2">
                             <div className="flex flex-wrap gap-1">
                               {(entry.membres_noms || []).length > 0 ? (
                                 entry.membres_noms.map((nom, i) => (
-                                  <span key={i} className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
+                                  <span key={i} className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
                                     {nom}
                                   </span>
                                 ))
                               ) : (
-                                <span className="text-gray-400">-</span>
+                                <span className="text-gray-400 text-xs">-</span>
                               )}
                             </div>
                           </td>
-                          <td className="p-3">
-                            <span className="text-sm text-gray-600">{entry.commentaire || '-'}</span>
-                          </td>
+                          <td className="p-2 text-xs text-gray-600">{entry.commentaire || '-'}</td>
                         </tr>
                       ))
                     )}
@@ -817,30 +837,30 @@ const MinistereStarsDepartementPage = () => {
                   <table className="w-full">
                     <thead className="bg-purple-50">
                       <tr>
-                        <th className="p-3 text-left font-semibold text-purple-800 w-36">Type Culte</th>
-                        <th className="p-3 text-left font-semibold text-purple-800 w-40">Rôle/Service</th>
-                        <th className="p-3 text-left font-semibold text-purple-800 w-48">Pôle(s)</th>
-                        <th className="p-3 text-left font-semibold text-purple-800">Membres</th>
-                        <th className="p-3 text-left font-semibold text-purple-800 w-36">Commentaire</th>
-                        <th className="p-3 text-center font-semibold text-purple-800 w-12">🗑️</th>
+                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Type Culte</th>
+                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Rôle</th>
+                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Pôle(s)</th>
+                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Membres</th>
+                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Note</th>
+                        <th className="p-2 text-center font-semibold text-purple-800 text-xs w-10">🗑️</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(currentPlanning.entries || []).length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="p-8 text-center text-gray-500">
+                          <td colSpan={6} className="p-6 text-center text-gray-500">
                             Cliquez sur "Ajouter une ligne" pour commencer
                           </td>
                         </tr>
                       ) : (
                         (currentPlanning.entries || []).map((entry, idx) => (
                           <tr key={idx} className="border-t">
-                            <td className="p-2">
+                            <td className="p-1">
                               <Select
                                 value={entry.type_culte || ''}
                                 onValueChange={(val) => updatePlanningEntry(idx, 'type_culte', val)}
                               >
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger className="w-full text-xs h-8">
                                   <SelectValue placeholder="Type..." />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -850,12 +870,12 @@ const MinistereStarsDepartementPage = () => {
                                 </SelectContent>
                               </Select>
                             </td>
-                            <td className="p-2">
+                            <td className="p-1">
                               <Select
                                 value={entry.role || ''}
                                 onValueChange={(val) => updatePlanningEntry(idx, 'role', val)}
                               >
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger className="w-full text-xs h-8">
                                   <SelectValue placeholder="Rôle..." />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -865,7 +885,7 @@ const MinistereStarsDepartementPage = () => {
                                 </SelectContent>
                               </Select>
                             </td>
-                            <td className="p-2">
+                            <td className="p-1">
                               <div className="space-y-1">
                                 {(entry.poles || []).map((pole, poleIdx) => (
                                   <div key={poleIdx} className="flex gap-1">
@@ -873,13 +893,13 @@ const MinistereStarsDepartementPage = () => {
                                       value={pole}
                                       onChange={(e) => updatePole(idx, poleIdx, e.target.value)}
                                       placeholder={`Pôle ${poleIdx + 1}`}
-                                      className="text-sm"
+                                      className="text-xs h-7"
                                     />
                                     <Button
                                       variant="ghost"
                                       size="sm"
                                       onClick={() => removePole(idx, poleIdx)}
-                                      className="text-red-500 px-2"
+                                      className="text-red-500 px-1 h-7"
                                     >
                                       ×
                                     </Button>
@@ -889,61 +909,62 @@ const MinistereStarsDepartementPage = () => {
                                   variant="outline"
                                   size="sm"
                                   onClick={() => addPole(idx)}
-                                  className="w-full text-xs"
+                                  className="w-full text-[10px] h-6"
                                 >
                                   + Pôle
                                 </Button>
                               </div>
                             </td>
-                            <td className="p-2">
-                              <div className="space-y-2">
+                            <td className="p-1">
+                              <div className="space-y-1">
                                 <div className="flex flex-wrap gap-1 mb-1">
                                   {(entry.membres_noms || []).map((nom, i) => (
-                                    <span key={i} className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                                    <span key={i} className="bg-green-100 text-green-700 px-1 py-0.5 rounded-full text-[10px] flex items-center gap-1">
                                       {nom}
                                       <button
                                         onClick={() => {
                                           const star = stars.find(s => `${s.prenom} ${s.nom}` === nom);
                                           if (star) toggleMemberSelection(idx, star.id, nom);
                                         }}
-                                        className="ml-1 text-green-500 hover:text-green-700"
+                                        className="ml-0.5 text-green-500 hover:text-green-700"
                                       >
                                         ×
                                       </button>
                                     </span>
                                   ))}
                                 </div>
-                                <div className="max-h-24 overflow-y-auto border rounded p-1 bg-gray-50">
+                                <div className="max-h-20 overflow-y-auto border rounded p-1 bg-gray-50">
                                   {stars.filter(s => s.statut === 'actif').map(s => {
                                     const fullName = `${s.prenom} ${s.nom}`;
                                     const isSelected = (entry.membre_ids || []).includes(s.id);
                                     return (
-                                      <label key={s.id} className="flex items-center gap-2 py-1 px-1 hover:bg-gray-100 rounded cursor-pointer">
+                                      <label key={s.id} className="flex items-center gap-1 py-0.5 px-1 hover:bg-gray-100 rounded cursor-pointer">
                                         <Checkbox
                                           checked={isSelected}
                                           onCheckedChange={() => toggleMemberSelection(idx, s.id, fullName)}
+                                          className="h-3 w-3"
                                         />
-                                        <span className="text-xs">{fullName}</span>
+                                        <span className="text-[10px]">{fullName}</span>
                                       </label>
                                     );
                                   })}
                                 </div>
                               </div>
                             </td>
-                            <td className="p-2">
+                            <td className="p-1">
                               <Input
                                 value={entry.commentaire || ''}
                                 onChange={(e) => updatePlanningEntry(idx, 'commentaire', e.target.value)}
                                 placeholder="Note..."
-                                className="text-sm"
+                                className="text-xs h-7"
                               />
                             </td>
-                            <td className="p-2 text-center">
+                            <td className="p-1 text-center">
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
                                 onClick={() => removePlanningEntry(idx)} 
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 w-7 p-0"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -966,7 +987,7 @@ const MinistereStarsDepartementPage = () => {
               <Button variant="outline" onClick={() => {
                 if (isEditMode) {
                   setIsEditMode(false);
-                  openWeekPlanning(selectedWeek); // Reload data
+                  openWeekPlanning(selectedWeek);
                 } else {
                   setShowWeekPlanningDialog(false);
                 }
