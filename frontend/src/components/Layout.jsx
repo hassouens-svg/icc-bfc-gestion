@@ -4,6 +4,9 @@ import { logout, getUser, getNotifications, markNotificationRead } from '../util
 import { Button } from './ui/button';
 import { Home, Users, UserPlus, MapPin, BarChart3, LogOut, UserX, TrendingUp, Table, Heart, Shield, Bell, Database, ArrowLeft } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useCities } from '../contexts/CitiesContext';
+import { useSelectedCity } from '../contexts/SelectedCityContext';
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
