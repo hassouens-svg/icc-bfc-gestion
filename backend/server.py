@@ -106,6 +106,7 @@ class UserCreate(BaseModel):
     telephone: Optional[str] = None
     assigned_month: Optional[Union[str, List[str]]] = None
     permissions: Optional[Dict[str, bool]] = None
+    assigned_departement: Optional[str] = None  # For respo_departement
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
