@@ -6326,15 +6326,16 @@ class PlanningCreate(BaseModel):
     entries: List[PlanningEntry]
 
 @api_router.get("/stars/planning/{departement}")
-async def get_department_plannings(departement: str, current_user: dict = Depends(get_current_user)):
-    """Récupérer tous les plannings d'un département"""
+async def get_department_plannings(departement: str, annee: Optional[int] = None, current_user: dict = Depends(get_current_user)):
+    """Récupérer tous les plannings d'un département (avec filtre année optionnel)"""
     if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
-    plannings = await db.stars_planning.find(
-        {"departement": departement},
-        {"_id": 0}
-    ).to_list(1000)
+    query = {"departement": departement}
+    if annee:
+        query["annee"] = annee
+    
+    plannings = await db.stars_planning.find(query, {"_id": 0}).to_list(1000)
     
     return plannings
 
