@@ -6301,11 +6301,15 @@ async def get_stars_stats(current_user: dict = Depends(get_current_user)):
 # ==================== PLANNINGS STARS ====================
 
 class PlanningEntry(BaseModel):
-    type_culte: str  # "Culte 1", "Culte 2", "EJP", "Tout les cultes"
+    type_culte: Optional[str] = None  # "Culte 1", "Culte 2", "EJP", "Tous les cultes"
+    role: Optional[str] = None  # Rôle/Service dans le planning
+    membre_ids: Optional[List[str]] = []  # IDs des membres assignés (sélection multiple)
+    membres_noms: Optional[List[str]] = []  # Noms des membres assignés
+    # Legacy fields pour rétro-compatibilité
     pole1: Optional[str] = None
     pole2: Optional[str] = None
-    membre_id: str
-    membre_nom: str
+    membre_id: Optional[str] = None
+    membre_nom: Optional[str] = None
     commentaire: Optional[str] = None
 
 class PlanningCreate(BaseModel):
