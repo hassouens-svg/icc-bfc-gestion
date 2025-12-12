@@ -6269,13 +6269,19 @@ async def delete_star(star_id: str, current_user: dict = Depends(get_current_use
 
 
 @api_router.get("/stars/stats/overview")
-async def get_stars_stats(current_user: dict = Depends(get_current_user)):
+async def get_stars_stats(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     """Statistiques globales des stars"""
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     query = {}
-    if current_user["role"] == "responsable_eglise":
+    
+    # Filtrer par ville si spécifié
+    if ville and ville != 'all':
+        query["ville"] = ville
+    elif current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    elif current_user["role"] == "respo_departement":
         query["ville"] = current_user["city"]
     
     all_stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
