@@ -2813,3 +2813,76 @@ Tous les éléments critiques du flux RSVP avec email de confirmation sont prés
 - superadmin / superadmin123 (super_admin)
 - respo_aout / test123 / Dijon (responsable_promo)
 
+
+---
+
+## 🎯 NOUVELLES FONCTIONNALITÉS IMPLÉMENTÉES - 12 Décembre 2024
+
+### 📋 Fonctionnalités à tester :
+
+**1. Sélecteur de ville global (Layout.jsx)**
+- Pour les rôles `super_admin` et `pasteur`
+- Dropdown dans le header avec icône MapPin
+- Filtre les données dans toutes les pages STARS
+
+**2. Nouveaux rôles (Ministère des STARS)**
+- `respo_departement` : Responsable Département - Peut créer, modifier, supprimer le planning
+- `star` : Star - Mode lecture seule, ne peut que consulter
+
+**3. Planning amélioré (MinistereStarsDepartementPage.jsx)**
+- Sélection multiple de membres par ligne (au lieu d'un seul)
+- Nouveau champ "Rôle/Service" dans le tableau
+- Tableau propre avec colonnes: Type Culte, Rôle, Membres assignés (multi-select), Commentaire
+- Permissions basées sur rôle (mode lecture seule pour `star`)
+
+**4. Filtrage par ville (Dashboard STARS)**
+- Les stats sont filtrées par la ville sélectionnée
+- Endpoint `/api/stars/stats/overview?ville=X` supporte le paramètre
+
+### 🧪 Tests à effectuer :
+
+**Test 1: Sélecteur de ville**
+```
+1. Se connecter en tant que superadmin
+2. Vérifier qu'un sélecteur de ville apparaît dans le header
+3. Changer de ville et vérifier que les données se mettent à jour
+```
+
+**Test 2: Nouveaux rôles**
+```
+1. Aller dans Gestion des Accès
+2. Créer un utilisateur avec rôle "Responsable Département (Stars)"
+3. Créer un utilisateur avec rôle "Star (Lecture seule)"
+4. Vérifier que ces rôles sont disponibles dans le dropdown
+```
+
+**Test 3: Planning avec sélection multiple**
+```
+1. Aller sur /ministere-stars/dashboard
+2. Cliquer sur un département (ex: Accueil)
+3. Cliquer sur "Gérer le Planning"
+4. Sélectionner une semaine
+5. Ajouter une ligne
+6. Vérifier la sélection multiple de membres (checkboxes)
+7. Enregistrer et vérifier que les membres multiples sont sauvegardés
+```
+
+**Test 4: Mode lecture seule (rôle star)**
+```
+1. Se connecter avec le rôle "star"
+2. Accéder au module STARS
+3. Vérifier que "Mode lecture seule" est affiché
+4. Vérifier qu'on ne peut pas modifier le planning
+```
+
+### 📊 Utilisateurs de test créés :
+- `test_respo_dept` / `test123` - Rôle: respo_departement
+- `test_star_user` / `test123` - Rôle: star
+
+### ✅ Tests backend réussis :
+- Création utilisateur respo_departement: ✅
+- Création utilisateur star: ✅
+- Lecture planning (star): ✅
+- Écriture planning (star): ✅ Bloqué comme prévu
+- Écriture planning (respo_departement): ✅
+
