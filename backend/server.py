@@ -6137,14 +6137,20 @@ async def get_stars(current_user: dict = Depends(get_current_user)):
 
 
 @api_router.get("/stars/departement/{departement}")
-async def get_stars_by_departement(departement: str, current_user: dict = Depends(get_current_user)):
+async def get_stars_by_departement(departement: str, ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     """Récupérer les stars d'un département spécifique"""
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     query = {"departements": departement}
     
-    if current_user["role"] == "responsable_eglise":
+    # Filtrer par ville si spécifié
+    if ville and ville != 'all':
+        query["ville"] = ville
+    elif current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    elif current_user["role"] == "respo_departement":
+        # Respo_departement voit seulement sa ville
         query["ville"] = current_user["city"]
     
     stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
