@@ -134,20 +134,40 @@ const Layout = ({ children }) => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-indigo-600">ICC BFC-ITALIE {user?.city}</h1>
-            <p className="text-sm text-gray-500">
-              {user?.username} ({user?.role === 'superviseur_promos' ? 'Superviseur Promotions' : 
-                user?.role === 'superviseur_fi' ? 'Superviseur FI' :
-                user?.role === 'super_admin' ? 'Super Administrateur' :
-                user?.role === 'pasteur' ? 'Pasteur' :
-                user?.role === 'responsable_eglise' ? 'Responsable d\'Église' :
-                user?.role === 'accueil' ? 'Accueil et Intégration' :
-                user?.role === 'promotions' ? 'Promotions' : 
-                user?.role === 'pilote_fi' ? 'Pilote FI' :
-                user?.role === 'responsable_secteur' ? 'Responsable Secteur' :
-                'Berger'})
-            </p>
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-indigo-600">ICC BFC-ITALIE {canSelectCity ? '' : user?.city}</h1>
+              <p className="text-sm text-gray-500">
+                {user?.username} ({user?.role === 'superviseur_promos' ? 'Superviseur Promotions' : 
+                  user?.role === 'superviseur_fi' ? 'Superviseur FI' :
+                  user?.role === 'super_admin' ? 'Super Administrateur' :
+                  user?.role === 'pasteur' ? 'Pasteur' :
+                  user?.role === 'responsable_eglise' ? 'Responsable d\'Église' :
+                  user?.role === 'accueil' ? 'Accueil et Intégration' :
+                  user?.role === 'promotions' ? 'Promotions' : 
+                  user?.role === 'pilote_fi' ? 'Pilote FI' :
+                  user?.role === 'responsable_secteur' ? 'Responsable Secteur' :
+                  user?.role === 'respo_departement' ? 'Responsable Département' :
+                  user?.role === 'star' ? 'Star' :
+                  'Berger'})
+              </p>
+            </div>
+            
+            {/* Sélecteur de ville pour super_admin et pasteur */}
+            {canSelectCity && (
+              <Select value={selectedCity} onValueChange={setSelectedCity}>
+                <SelectTrigger className="w-[180px] bg-indigo-50 border-indigo-200">
+                  <MapPin className="h-4 w-4 mr-2 text-indigo-600" />
+                  <SelectValue placeholder="Sélectionner une ville" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">🌍 Toutes les villes</SelectItem>
+                  {cities.filter(c => c.name && c.name.trim() !== '').sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
+                    <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
           
           <div className="flex items-center space-x-2">
