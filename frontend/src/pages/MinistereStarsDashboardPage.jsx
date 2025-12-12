@@ -4,12 +4,17 @@ import LayoutMinistereStars from '../components/LayoutMinistereStars';
 import { getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Users, TrendingUp, Star, Calendar } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Users, TrendingUp, Star, Calendar, MapPin, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSelectedCity } from '../contexts/SelectedCityContext';
+import { useCities } from '../contexts/CitiesContext';
 
 const MinistereStarsDashboardPage = () => {
   const navigate = useNavigate();
   const user = getUser();
+  const { selectedCity, setSelectedCity } = useSelectedCity();
+  const { cities } = useCities();
   const [stats, setStats] = useState(null);
   const [multiDeptStars, setMultiDeptStars] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,21 +42,28 @@ const MinistereStarsDashboardPage = () => {
     'Évènementiel/Restauration'
   ];
 
+  // Vérifier les permissions
+  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'ministere_stars', 'respo_departement', 'star'].includes(user.role);
+  const canSelectCity = user?.role && ['super_admin', 'pasteur'].includes(user.role);
+
   useEffect(() => {
-    if (!user || !['super_admin', 'pasteur', 'responsable_eglise', 'ministere_stars'].includes(user.role)) {
+    if (!user || !canView) {
       navigate('/');
       return;
     }
     loadData();
-  }, []);
+  }, [selectedCity]);
 
   const loadData = async () => {
     try {
+      // Ajouter le filtre ville si sélectionné
+      const villeParam = selectedCity && selectedCity !== 'all' ? `?ville=${encodeURIComponent(selectedCity)}` : '';
+      
       const [statsRes, multiRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/stats/overview`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/stats/overview${villeParam}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         }),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/multi-departements`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/multi-departements${villeParam}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         })
       ]);
