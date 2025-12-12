@@ -76,6 +76,7 @@ function App() {
   return (
     <div className="App">
       <CitiesProvider>
+        <SelectedCityProvider>
         <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
