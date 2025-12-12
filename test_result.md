@@ -1463,6 +1463,30 @@ Testing of the 4 Bergerie module corrections completed with **COMPREHENSIVE SUCC
 
 ---
 
+## 🎯 STARS PLANNING FEATURES TESTING - 12 Décembre 2024
+
+### 📋 Agent: Testing Agent
+**Date**: 12 Décembre 2024  
+**Task**: Testing new STARS planning features on the frontend - IN PROGRESS
+
+**Test Credentials Verified**:
+- ✅ superadmin / superadmin123 (super_admin - can edit) - Working
+- ✅ test_star_user / test123 (star role - read-only) - Working
+
+**Test Data Available**:
+- ✅ Sono department has 1 star: Jean Martin (actif)
+- ✅ Week 1 has existing planning data with multiple poles and members
+- ✅ Planning includes "Événements spéciaux" type and multiple member selection
+
+**Tests to perform**:
+1. **Test Planning with Multiple Poles (as superadmin)** - PENDING
+2. **Test KPIs in Planning Dialog** - PENDING  
+3. **Test "Stars en service" Button on Dashboard** - PENDING
+4. **Test Read-Only Mode (as star role)** - PENDING
+5. **Test City Selector (as superadmin)** - PENDING
+
+---
+
 ## 🎯 2 CORRECTIONS SPÉCIFIQUES TESTING - 8 Décembre 2024
 
 ### 📋 Agent: Testing Agent
