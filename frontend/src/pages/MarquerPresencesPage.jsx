@@ -106,21 +106,6 @@ const MarquerPresencesPage = () => {
   };
 
   const handleSaveAll = async () => {
-    // Vérifier que tous les visiteurs ont soit une présence soit un commentaire
-    const allValid = canSave();
-    
-    if (!allValid) {
-      const missingVisitors = visitors.filter(v => {
-        const hasPresenceChecked = presences[v.id] !== undefined;
-        const hasComment = comments[v.id]?.trim();
-        return !hasPresenceChecked && !hasComment;
-      });
-      
-      const names = missingVisitors.map(v => `${v.firstname} ${v.lastname}`).join(', ');
-      toast.error(`Veuillez cocher "présent" ou "absent", ou ajouter un commentaire pour: ${names}`);
-      return;
-    }
-
     try {
       // Déterminer si c'est un dimanche ou un jeudi
       // Parser la date en ajoutant un timestamp pour éviter les problèmes UTC
