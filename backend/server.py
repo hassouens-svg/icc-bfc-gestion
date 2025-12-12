@@ -6289,6 +6289,83 @@ async def get_stars_stats(current_user: dict = Depends(get_current_user)):
     }
 
 
+# ==================== PLANNINGS STARS ====================
+
+class PlanningEntry(BaseModel):
+    type_culte: str  # "Culte 1", "Culte 2", "EJP", "Tout les cultes"
+    pole1: Optional[str] = None
+    pole2: Optional[str] = None
+    membre_id: str
+    membre_nom: str
+    commentaire: Optional[str] = None
+
+class PlanningCreate(BaseModel):
+    departement: str
+    semaine: int  # 1-52
+    annee: int
+    entries: List[PlanningEntry]
+
+@api_router.get("/stars/planning/{departement}")
+async def get_department_plannings(departement: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer tous les plannings d'un département"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    plannings = await db.stars_planning.find(
+        {"departement": departement},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    return plannings
+
+@api_router.get("/stars/planning/{departement}/{semaine}/{annee}")
+async def get_planning(departement: str, semaine: int, annee: int, current_user: dict = Depends(get_current_user)):
+    """Récupérer le planning d'une semaine spécifique"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    planning = await db.stars_planning.find_one(
+        {"departement": departement, "semaine": semaine, "annee": annee},
+        {"_id": 0}
+    )
+    
+    return planning or {"departement": departement, "semaine": semaine, "annee": annee, "entries": []}
+
+@api_router.post("/stars/planning")
+async def create_or_update_planning(planning: PlanningCreate, current_user: dict = Depends(get_current_user)):
+    """Créer ou mettre à jour un planning"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    planning_data = planning.model_dump()
+    planning_data["id"] = f"{planning.departement}_{planning.semaine}_{planning.annee}"
+    planning_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    planning_data["updated_by"] = current_user["username"]
+    
+    await db.stars_planning.update_one(
+        {"departement": planning.departement, "semaine": planning.semaine, "annee": planning.annee},
+        {"$set": planning_data},
+        upsert=True
+    )
+    
+    return {"message": "Planning enregistré"}
+
+@api_router.delete("/stars/planning/{departement}/{semaine}/{annee}")
+async def delete_planning(departement: str, semaine: int, annee: int, current_user: dict = Depends(get_current_user)):
+    """Supprimer un planning"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    result = await db.stars_planning.delete_one(
+        {"departement": departement, "semaine": semaine, "annee": annee}
+    )
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Planning not found")
+    
+    return {"message": "Planning supprimé"}
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
