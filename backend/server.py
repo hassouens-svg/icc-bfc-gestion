@@ -6317,7 +6317,7 @@ class PlanningCreate(BaseModel):
 @api_router.get("/stars/planning/{departement}")
 async def get_department_plannings(departement: str, current_user: dict = Depends(get_current_user)):
     """Récupérer tous les plannings d'un département"""
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     plannings = await db.stars_planning.find(
@@ -6330,7 +6330,7 @@ async def get_department_plannings(departement: str, current_user: dict = Depend
 @api_router.get("/stars/planning/{departement}/{semaine}/{annee}")
 async def get_planning(departement: str, semaine: int, annee: int, current_user: dict = Depends(get_current_user)):
     """Récupérer le planning d'une semaine spécifique"""
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     planning = await db.stars_planning.find_one(
@@ -6342,8 +6342,8 @@ async def get_planning(departement: str, semaine: int, annee: int, current_user:
 
 @api_router.post("/stars/planning")
 async def create_or_update_planning(planning: PlanningCreate, current_user: dict = Depends(get_current_user)):
-    """Créer ou mettre à jour un planning"""
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+    """Créer ou mettre à jour un planning - respo_departement peut modifier"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     planning_data = planning.model_dump()
@@ -6361,8 +6361,8 @@ async def create_or_update_planning(planning: PlanningCreate, current_user: dict
 
 @api_router.delete("/stars/planning/{departement}/{semaine}/{annee}")
 async def delete_planning(departement: str, semaine: int, annee: int, current_user: dict = Depends(get_current_user)):
-    """Supprimer un planning"""
-    if current_user["role"] not in ["super_admin", "pasteur"]:
+    """Supprimer un planning - respo_departement peut supprimer"""
+    if current_user["role"] not in ["super_admin", "pasteur", "respo_departement"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     result = await db.stars_planning.delete_one(
