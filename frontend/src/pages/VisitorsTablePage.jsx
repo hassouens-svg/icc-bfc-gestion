@@ -473,9 +473,11 @@ const VisitorsTablePage = () => {
                   {fidelisationData ? `${calculateFidelisationRate().toFixed(1)}%` : '0.0%'}
                 </h3>
                 <p className="text-green-100 text-sm mt-1">
-                  {filters.date 
-                    ? `Semaine du ${filters.date}` 
-                    : 'Moyenne globale (toutes les semaines)'
+                  {filters.promo !== 'all'
+                    ? `Promo ${filters.promo}`
+                    : filters.date 
+                      ? `Semaine du ${filters.date}` 
+                      : 'Moyenne globale (toutes les semaines)'
                   }
                 </p>
                 <p className="text-green-50 text-xs mt-1">
