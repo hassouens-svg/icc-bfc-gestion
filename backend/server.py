@@ -6209,6 +6209,7 @@ async def get_anniversaires():
             anniversaires.append({
                 "prenom": star.get("prenom"),
                 "nom": star.get("nom"),
+                "ville": star.get("ville", ""),
                 "jour": jour,
                 "mois": mois,
                 "days_until": days_until,
