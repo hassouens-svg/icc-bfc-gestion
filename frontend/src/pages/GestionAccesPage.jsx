@@ -248,7 +248,9 @@ const GestionAccesPage = () => {
       'pasteur': 'Pasteur',
       'super_admin': 'Super Administrateur',
       'responsable_eglise': 'Responsable d\'Église',
-      'gestion_projet': 'Gestion de Projet'
+      'gestion_projet': 'Gestion de Projet',
+      'respo_departement': 'Responsable Département (Stars)',
+      'star': 'Star (Lecture seule)'
     };
     return labels[role] || role;
   };
