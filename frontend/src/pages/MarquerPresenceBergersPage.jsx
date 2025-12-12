@@ -165,7 +165,7 @@ const MarquerPresenceBergersPage = () => {
       });
 
       if (presencesToSave.length === 0) {
-        toast.error('Veuillez cocher au moins une présence');
+        toast.info('Aucune présence à enregistrer. Pour effacer des données déjà enregistrées, veuillez contacter un administrateur.');
         return;
       }
 
