@@ -14,6 +14,11 @@ const Layout = ({ children }) => {
   const user = getUser();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { cities } = useCities();
+  const { selectedCity, setSelectedCity } = useSelectedCity();
+
+  // Vérifier si l'utilisateur peut sélectionner une ville
+  const canSelectCity = user?.role && ['super_admin', 'pasteur'].includes(user.role);
 
   const handleLogout = () => {
     logout();
