@@ -96,6 +96,11 @@ const VisitorsTablePage = () => {
 
   // Calculer le taux de fidélisation en fonction de la date sélectionnée
   const calculateFidelisationRate = () => {
+    // Si on filtre par promo, utiliser le taux calculé à partir des visiteurs filtrés
+    if (filters.promo !== 'all') {
+      return tauxFidelisation;
+    }
+
     if (!fidelisationData) return 0;
 
     // Si une date est sélectionnée, calculer pour cette semaine uniquement
