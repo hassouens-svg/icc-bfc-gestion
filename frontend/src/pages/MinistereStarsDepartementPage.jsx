@@ -66,48 +66,30 @@ const MinistereStarsDepartementPage = () => {
   const canEdit = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement'].includes(user.role);
   const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role);
 
-  // Liste des rôles/services possibles dans le planning
-  const rolesPlanning = [
-    'Équipe de Prière', 
-    'Équipe Technique (Son)', 
-    'Équipe Technique (Vidéo)', 
-    'Équipe Technique (Lumière)',
-    'Accueil',
-    'Service d\'ordre',
-    'Louange',
-    'Choristes',
-    'Musiciens',
-    'Animation',
-    'Protocole',
-    'Intercession',
-    'Communion',
-    'Quête',
-    'École du Dimanche',
-    'Nursery',
-    'Média/Communication',
-    'Coordination',
-    'Autre'
-  ];
-
   // Déterminer la ville effective pour le filtrage
   const getEffectiveCity = () => {
     // responsable_eglise voit seulement sa ville
     if (user?.role === 'responsable_eglise') {
       return user.city;
     }
-    // pasteur/superadmin/respo_departement utilisent le filtre global
+    // pasteur/superadmin/respo_departement utilisent le filtre global selectedCity
     if (['super_admin', 'pasteur', 'respo_departement'].includes(user?.role)) {
       return selectedCity && selectedCity !== 'all' ? selectedCity : null;
     }
-    // star: lecture seule, pas de filtre
+    // star: utilise aussi le filtre global
+    if (user?.role === 'star') {
+      return selectedCity && selectedCity !== 'all' ? selectedCity : null;
+    }
     return null;
   };
 
+  // Recharger quand selectedCity change
   useEffect(() => {
     if (!user || !canView) {
       navigate('/');
       return;
     }
+    setLoading(true);
     loadStars();
     loadCities();
   }, [departement, selectedCity]);
@@ -271,8 +253,7 @@ const MinistereStarsDepartementPage = () => {
       ...prev,
       entries: [...(prev.entries || []), { 
         type_culte: '', 
-        role: '', 
-        poles: [],
+        role: '', // Rôle libre (saisie manuelle)
         membre_ids: [], 
         membres_noms: [],
         commentaire: '' 
@@ -285,39 +266,6 @@ const MinistereStarsDepartementPage = () => {
     setCurrentPlanning(prev => {
       const newEntries = [...prev.entries];
       newEntries[index] = { ...newEntries[index], [field]: value };
-      return { ...prev, entries: newEntries };
-    });
-  };
-
-  const addPole = (index) => {
-    if (!canEdit || !isEditMode) return;
-    setCurrentPlanning(prev => {
-      const newEntries = [...prev.entries];
-      const entry = newEntries[index];
-      const poles = entry.poles || [];
-      newEntries[index] = { ...entry, poles: [...poles, ''] };
-      return { ...prev, entries: newEntries };
-    });
-  };
-
-  const updatePole = (entryIndex, poleIndex, value) => {
-    if (!canEdit || !isEditMode) return;
-    setCurrentPlanning(prev => {
-      const newEntries = [...prev.entries];
-      const poles = [...(newEntries[entryIndex].poles || [])];
-      poles[poleIndex] = value;
-      newEntries[entryIndex] = { ...newEntries[entryIndex], poles };
-      return { ...prev, entries: newEntries };
-    });
-  };
-
-  const removePole = (entryIndex, poleIndex) => {
-    if (!canEdit || !isEditMode) return;
-    setCurrentPlanning(prev => {
-      const newEntries = [...prev.entries];
-      const poles = [...(newEntries[entryIndex].poles || [])];
-      poles.splice(poleIndex, 1);
-      newEntries[entryIndex] = { ...newEntries[entryIndex], poles };
       return { ...prev, entries: newEntries };
     });
   };
@@ -442,6 +390,10 @@ const MinistereStarsDepartementPage = () => {
   const actifs = stars.filter(s => s.statut === 'actif').length;
   const nonActifs = stars.filter(s => s.statut === 'non_actif').length;
 
+  // Ville affichée
+  const effectiveCity = getEffectiveCity();
+  const cityDisplay = user?.role === 'responsable_eglise' ? user.city : effectiveCity;
+
   if (loading) {
     return (
       <LayoutMinistereStars>
@@ -462,11 +414,8 @@ const MinistereStarsDepartementPage = () => {
             <h1 className="text-3xl font-bold text-gray-900">⭐ {decodeURIComponent(departement)}</h1>
             <p className="text-gray-500 mt-1">
               Liste des stars du département
-              {user?.role === 'responsable_eglise' && user?.city && (
-                <span className="ml-2 text-indigo-600 font-medium">({user.city})</span>
-              )}
-              {['super_admin', 'pasteur', 'respo_departement'].includes(user?.role) && selectedCity && selectedCity !== 'all' && (
-                <span className="ml-2 text-indigo-600 font-medium">({selectedCity})</span>
+              {cityDisplay && (
+                <span className="ml-2 text-indigo-600 font-medium">({cityDisplay})</span>
               )}
             </p>
             {user?.role === 'star' && (
@@ -548,9 +497,9 @@ const MinistereStarsDepartementPage = () => {
                     {canEdit && <th className="text-center py-3 px-4 bg-gray-50">🗑️</th>}
                     <th className="text-left py-3 px-4">Prénom</th>
                     <th className="text-left py-3 px-4">Nom</th>
-                    <th className="text-center py-3 px-4">Date de Naissance</th>
+                    <th className="text-center py-3 px-4">Anniversaire</th>
                     <th className="text-left py-3 px-4">Ville</th>
-                    <th className="text-left py-3 px-4">Autres Départements</th>
+                    <th className="text-left py-3 px-4">Autres Dép.</th>
                     <th className="text-center py-3 px-4">Statut</th>
                   </tr>
                 </thead>
@@ -558,7 +507,7 @@ const MinistereStarsDepartementPage = () => {
                   {stars.length === 0 ? (
                     <tr>
                       <td colSpan={canEdit ? 7 : 6} className="text-center py-8 text-gray-500">
-                        Aucune star dans ce département
+                        Aucune star dans ce département {cityDisplay && `pour ${cityDisplay}`}
                       </td>
                     </tr>
                   ) : (
@@ -593,15 +542,13 @@ const MinistereStarsDepartementPage = () => {
                                 {dept}
                               </span>
                             ))}
-                            {star.departements.filter(d => d !== decodeURIComponent(departement)).length === 0 && (
-                              <span className="text-gray-400 text-sm">-</span>
-                            )}
+                            {star.departements.filter(d => d !== decodeURIComponent(departement)).length === 0 && '-'}
                           </div>
                         </td>
                         <td className="text-center py-3 px-4">
                           {canEdit ? (
                             <Select value={star.statut} onValueChange={(value) => handleStatutChange(star.id, value)}>
-                              <SelectTrigger className={`w-32 ${star.statut === 'actif' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                              <SelectTrigger className={`w-28 ${star.statut === 'actif' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -630,28 +577,28 @@ const MinistereStarsDepartementPage = () => {
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>⭐ Ajouter une Star à {decodeURIComponent(departement)}</DialogTitle>
+              <DialogTitle>⭐ Ajouter une Star</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleAddStar} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Prénom *</Label>
-                  <Input value={newStar.prenom} onChange={(e) => setNewStar({...newStar, prenom: e.target.value})} placeholder="Prénom" />
+                  <Input value={newStar.prenom} onChange={(e) => setNewStar({...newStar, prenom: e.target.value})} />
                 </div>
                 <div className="space-y-2">
                   <Label>Nom *</Label>
-                  <Input value={newStar.nom} onChange={(e) => setNewStar({...newStar, nom: e.target.value})} placeholder="Nom" />
+                  <Input value={newStar.nom} onChange={(e) => setNewStar({...newStar, nom: e.target.value})} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Jour de naissance *</Label>
-                  <Input type="number" min="1" max="31" value={newStar.jour_naissance} onChange={(e) => setNewStar({...newStar, jour_naissance: e.target.value})} placeholder="1-31" />
+                  <Label>Jour *</Label>
+                  <Input type="number" min="1" max="31" value={newStar.jour_naissance} onChange={(e) => setNewStar({...newStar, jour_naissance: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Mois de naissance *</Label>
+                  <Label>Mois *</Label>
                   <select value={newStar.mois_naissance} onChange={(e) => setNewStar({...newStar, mois_naissance: e.target.value})} className="w-full px-3 py-2 border rounded-md">
-                    <option value="">Sélectionner...</option>
+                    <option value="">...</option>
                     {mois.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
                   </select>
                 </div>
@@ -659,8 +606,8 @@ const MinistereStarsDepartementPage = () => {
               <div className="space-y-2">
                 <Label>Ville *</Label>
                 <select value={newStar.ville} onChange={(e) => setNewStar({...newStar, ville: e.target.value})} className="w-full px-3 py-2 border rounded-md">
-                  <option value="">Sélectionner...</option>
-                  {cities.map(city => <option key={city.id || city} value={city.name || city}>{city.name || city}</option>)}
+                  <option value="">...</option>
+                  {cities.map(city => <option key={city.id} value={city.name}>{city.name}</option>)}
                 </select>
               </div>
               <div className="flex gap-2 pt-4">
@@ -672,7 +619,7 @@ const MinistereStarsDepartementPage = () => {
         </Dialog>
       )}
 
-      {/* Dialog Planning - Sélection des semaines avec année */}
+      {/* Dialog Planning - Sélection des semaines */}
       <Dialog open={showPlanningDialog} onOpenChange={setShowPlanningDialog}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
@@ -683,18 +630,14 @@ const MinistereStarsDepartementPage = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {years.map(y => (
-                    <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
-                  ))}
+                  {years.map(y => <SelectItem key={y} value={y.toString()}>{y}</SelectItem>)}
                 </SelectContent>
               </Select>
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-gray-600 mb-4">
-              {canEdit 
-                ? 'Sélectionnez une semaine pour créer ou modifier le planning :'
-                : 'Sélectionnez une semaine pour consulter le planning :'}
+              {canEdit ? 'Sélectionnez une semaine :' : 'Consultez le planning :'}
             </p>
             <div className="grid grid-cols-8 md:grid-cols-13 gap-2">
               {Array.from({ length: 52 }, (_, i) => i + 1).map(week => (
@@ -702,8 +645,7 @@ const MinistereStarsDepartementPage = () => {
                   {canEdit && hasPlanning(week) && (
                     <button
                       onClick={() => deletePlanning(week)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                      title="Supprimer ce planning"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 z-10"
                     >
                       ×
                     </button>
@@ -726,36 +668,33 @@ const MinistereStarsDepartementPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Planning - Affichage/Édition d'une semaine */}
+      {/* Dialog Planning - Affichage/Édition */}
       <Dialog open={showWeekPlanningDialog} onOpenChange={(open) => {
         setShowWeekPlanningDialog(open);
         if (!open) setIsEditMode(false);
       }}>
-        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                📅 Planning Semaine {selectedWeek} / {selectedYear} - {decodeURIComponent(departement)}
-              </span>
+              <span>📅 Semaine {selectedWeek} / {selectedYear} - {decodeURIComponent(departement)}</span>
               {canEdit && !isEditMode && (
                 <Button onClick={() => setIsEditMode(true)} size="sm" className="bg-blue-600 hover:bg-blue-700">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Modifier
+                  <Edit className="h-4 w-4 mr-2" /> Modifier
                 </Button>
               )}
             </DialogTitle>
           </DialogHeader>
 
-          {/* KPIs Stars en service - PLUS COMPACTS */}
+          {/* KPIs compacts */}
           <div className="flex flex-wrap gap-2 mb-3">
             {typesCulte.map(type => (
-              <div key={type} className="bg-purple-50 border border-purple-200 rounded px-3 py-1 text-center min-w-[80px]">
-                <p className="text-[10px] text-purple-600 font-medium truncate">{type}</p>
+              <div key={type} className="bg-purple-50 border border-purple-200 rounded px-3 py-1 text-center min-w-[70px]">
+                <p className="text-[10px] text-purple-600 truncate">{type}</p>
                 <p className="text-lg font-bold text-purple-800">{planningKPIs.kpisByType[type]?.count || 0}</p>
               </div>
             ))}
-            <div className="bg-orange-100 border border-orange-300 rounded px-3 py-1 text-center min-w-[90px]">
-              <p className="text-[10px] text-orange-700 font-medium flex items-center justify-center gap-1">
+            <div className="bg-orange-100 border border-orange-300 rounded px-3 py-1 text-center min-w-[80px]">
+              <p className="text-[10px] text-orange-700 flex items-center justify-center gap-1">
                 <UserCheck className="h-3 w-3" /> Total
               </p>
               <p className="text-lg font-bold text-orange-800">{planningKPIs.totalStarsEnService}</p>
@@ -771,7 +710,6 @@ const MinistereStarsDepartementPage = () => {
                     <tr>
                       <th className="p-2 text-left font-semibold text-purple-800 text-sm">Type Culte</th>
                       <th className="p-2 text-left font-semibold text-purple-800 text-sm">Rôle/Service</th>
-                      <th className="p-2 text-left font-semibold text-purple-800 text-sm">Pôle(s)</th>
                       <th className="p-2 text-left font-semibold text-purple-800 text-sm">Membres assignés</th>
                       <th className="p-2 text-left font-semibold text-purple-800 text-sm">Note</th>
                     </tr>
@@ -779,35 +717,19 @@ const MinistereStarsDepartementPage = () => {
                   <tbody>
                     {(currentPlanning.entries || []).length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-6 text-center text-gray-500">
-                          Aucune entrée dans le planning pour cette semaine
-                          {canEdit && (
-                            <p className="text-sm mt-2">Cliquez sur "Modifier" pour ajouter des entrées</p>
-                          )}
+                        <td colSpan={4} className="p-6 text-center text-gray-500">
+                          Aucune entrée {canEdit && '- Cliquez sur "Modifier" pour ajouter'}
                         </td>
                       </tr>
                     ) : (
                       (currentPlanning.entries || []).map((entry, idx) => (
                         <tr key={idx} className="border-t hover:bg-gray-50">
                           <td className="p-2">
-                            <span className="font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+                            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
                               {entry.type_culte || '-'}
                             </span>
                           </td>
-                          <td className="p-2 text-sm">{entry.role || '-'}</td>
-                          <td className="p-2">
-                            <div className="flex flex-wrap gap-1">
-                              {(entry.poles || []).length > 0 ? (
-                                entry.poles.filter(p => p).map((pole, i) => (
-                                  <span key={i} className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">
-                                    {pole}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="text-gray-400 text-xs">-</span>
-                              )}
-                            </div>
-                          </td>
+                          <td className="p-2 text-sm font-medium">{entry.role || '-'}</td>
                           <td className="p-2">
                             <div className="flex flex-wrap gap-1">
                               {(entry.membres_noms || []).length > 0 ? (
@@ -816,9 +738,7 @@ const MinistereStarsDepartementPage = () => {
                                     {nom}
                                   </span>
                                 ))
-                              ) : (
-                                <span className="text-gray-400 text-xs">-</span>
-                              )}
+                              ) : '-'}
                             </div>
                           </td>
                           <td className="p-2 text-xs text-gray-600">{entry.commentaire || '-'}</td>
@@ -838,18 +758,17 @@ const MinistereStarsDepartementPage = () => {
                     <thead className="bg-purple-50">
                       <tr>
                         <th className="p-2 text-left font-semibold text-purple-800 text-xs">Type Culte</th>
-                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Rôle</th>
-                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Pôle(s)</th>
+                        <th className="p-2 text-left font-semibold text-purple-800 text-xs">Rôle/Service (saisie libre)</th>
                         <th className="p-2 text-left font-semibold text-purple-800 text-xs">Membres</th>
                         <th className="p-2 text-left font-semibold text-purple-800 text-xs">Note</th>
-                        <th className="p-2 text-center font-semibold text-purple-800 text-xs w-10">🗑️</th>
+                        <th className="p-2 w-10">🗑️</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(currentPlanning.entries || []).length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="p-6 text-center text-gray-500">
-                            Cliquez sur "Ajouter une ligne" pour commencer
+                          <td colSpan={5} className="p-6 text-center text-gray-500">
+                            Cliquez sur "Ajouter une ligne"
                           </td>
                         </tr>
                       ) : (
@@ -864,72 +783,28 @@ const MinistereStarsDepartementPage = () => {
                                   <SelectValue placeholder="Type..." />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {typesCulte.map(t => (
-                                    <SelectItem key={t} value={t}>{t}</SelectItem>
-                                  ))}
+                                  {typesCulte.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                                 </SelectContent>
                               </Select>
                             </td>
                             <td className="p-1">
-                              <Select
+                              <Input
                                 value={entry.role || ''}
-                                onValueChange={(val) => updatePlanningEntry(idx, 'role', val)}
-                              >
-                                <SelectTrigger className="w-full text-xs h-8">
-                                  <SelectValue placeholder="Rôle..." />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {rolesPlanning.map(r => (
-                                    <SelectItem key={r} value={r}>{r}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </td>
-                            <td className="p-1">
-                              <div className="space-y-1">
-                                {(entry.poles || []).map((pole, poleIdx) => (
-                                  <div key={poleIdx} className="flex gap-1">
-                                    <Input
-                                      value={pole}
-                                      onChange={(e) => updatePole(idx, poleIdx, e.target.value)}
-                                      placeholder={`Pôle ${poleIdx + 1}`}
-                                      className="text-xs h-7"
-                                    />
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => removePole(idx, poleIdx)}
-                                      className="text-red-500 px-1 h-7"
-                                    >
-                                      ×
-                                    </Button>
-                                  </div>
-                                ))}
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => addPole(idx)}
-                                  className="w-full text-[10px] h-6"
-                                >
-                                  + Pôle
-                                </Button>
-                              </div>
+                                onChange={(e) => updatePlanningEntry(idx, 'role', e.target.value)}
+                                placeholder="Saisissez le rôle..."
+                                className="text-xs h-8"
+                              />
                             </td>
                             <td className="p-1">
                               <div className="space-y-1">
                                 <div className="flex flex-wrap gap-1 mb-1">
                                   {(entry.membres_noms || []).map((nom, i) => (
-                                    <span key={i} className="bg-green-100 text-green-700 px-1 py-0.5 rounded-full text-[10px] flex items-center gap-1">
+                                    <span key={i} className="bg-green-100 text-green-700 px-1 py-0.5 rounded-full text-[10px] flex items-center">
                                       {nom}
-                                      <button
-                                        onClick={() => {
-                                          const star = stars.find(s => `${s.prenom} ${s.nom}` === nom);
-                                          if (star) toggleMemberSelection(idx, star.id, nom);
-                                        }}
-                                        className="ml-0.5 text-green-500 hover:text-green-700"
-                                      >
-                                        ×
-                                      </button>
+                                      <button onClick={() => {
+                                        const star = stars.find(s => `${s.prenom} ${s.nom}` === nom);
+                                        if (star) toggleMemberSelection(idx, star.id, nom);
+                                      }} className="ml-1">×</button>
                                     </span>
                                   ))}
                                 </div>
@@ -939,11 +814,7 @@ const MinistereStarsDepartementPage = () => {
                                     const isSelected = (entry.membre_ids || []).includes(s.id);
                                     return (
                                       <label key={s.id} className="flex items-center gap-1 py-0.5 px-1 hover:bg-gray-100 rounded cursor-pointer">
-                                        <Checkbox
-                                          checked={isSelected}
-                                          onCheckedChange={() => toggleMemberSelection(idx, s.id, fullName)}
-                                          className="h-3 w-3"
-                                        />
+                                        <Checkbox checked={isSelected} onCheckedChange={() => toggleMemberSelection(idx, s.id, fullName)} className="h-3 w-3" />
                                         <span className="text-[10px]">{fullName}</span>
                                       </label>
                                     );
@@ -956,16 +827,11 @@ const MinistereStarsDepartementPage = () => {
                                 value={entry.commentaire || ''}
                                 onChange={(e) => updatePlanningEntry(idx, 'commentaire', e.target.value)}
                                 placeholder="Note..."
-                                className="text-xs h-7"
+                                className="text-xs h-8"
                               />
                             </td>
                             <td className="p-1 text-center">
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => removePlanningEntry(idx)} 
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 w-7 p-0"
-                              >
+                              <Button variant="ghost" size="sm" onClick={() => removePlanningEntry(idx)} className="text-red-500 h-7 w-7 p-0">
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </td>
@@ -977,8 +843,7 @@ const MinistereStarsDepartementPage = () => {
                 </div>
                 
                 <Button onClick={addPlanningEntry} variant="outline" className="w-full border-dashed">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter une ligne
+                  <Plus className="h-4 w-4 mr-2" /> Ajouter une ligne
                 </Button>
               </>
             )}
@@ -996,7 +861,7 @@ const MinistereStarsDepartementPage = () => {
               </Button>
               {isEditMode && canEdit && (
                 <Button onClick={savePlanning} className="flex-1 bg-purple-600 hover:bg-purple-700">
-                  Enregistrer le planning
+                  Enregistrer
                 </Button>
               )}
             </div>
