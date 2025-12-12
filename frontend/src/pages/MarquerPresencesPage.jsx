@@ -127,6 +127,11 @@ const MarquerPresencesPage = () => {
         ...Object.keys(comments).filter(id => comments[id]?.trim())
       ]);
 
+      if (visitorIdsToSave.size === 0) {
+        toast.info('Aucune présence ou commentaire à enregistrer.');
+        return;
+      }
+
       const promises = Array.from(visitorIdsToSave).map(visitorId => {
         return addPresence(
           visitorId,
