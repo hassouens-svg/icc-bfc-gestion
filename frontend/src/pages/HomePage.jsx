@@ -22,12 +22,12 @@ const HomePage = () => {
           data.forEach((anniv, idx) => {
             setTimeout(() => {
               if (anniv.days_until === 0) {
-                toast.info(`🎉 Aujourd'hui c'est l'anniversaire de ${anniv.prenom} ${anniv.nom} !`, {
+                toast.info(`🎂 Aujourd'hui : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
                   duration: 5000,
                   position: 'top-center',
                 });
               } else {
-                toast(`⭐ Dans ${anniv.days_until} jour${anniv.days_until > 1 ? 's' : ''} : ${anniv.prenom} ${anniv.nom} (${anniv.date})`, {
+                toast(`🎂 Dans ${anniv.days_until} jour${anniv.days_until > 1 ? 's' : ''} : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
                   duration: 4000,
                   position: 'top-center',
                 });
