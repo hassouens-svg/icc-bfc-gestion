@@ -90,12 +90,40 @@ const MinistereStarsDashboardPage = () => {
   return (
     <LayoutMinistereStars>
       <div className="space-y-6 p-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <Star className="h-8 w-8 text-yellow-500" />
-            Ministère des STARS
-          </h1>
-          <p className="text-gray-500 mt-1">Dashboard de suivi des stars</p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+              <Star className="h-8 w-8 text-yellow-500" />
+              Ministère des STARS
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Dashboard de suivi des stars
+              {selectedCity && selectedCity !== 'all' && (
+                <span className="ml-2 text-indigo-600 font-medium">({selectedCity})</span>
+              )}
+              {user?.role === 'star' && (
+                <span className="ml-2 text-amber-600 flex items-center gap-1 inline-flex">
+                  <Eye className="h-4 w-4" /> Mode lecture seule
+                </span>
+              )}
+            </p>
+          </div>
+          
+          {/* Sélecteur de ville pour les admins */}
+          {canSelectCity && (
+            <Select value={selectedCity} onValueChange={setSelectedCity}>
+              <SelectTrigger className="w-[200px] bg-white border-orange-200">
+                <MapPin className="h-4 w-4 mr-2 text-orange-600" />
+                <SelectValue placeholder="Filtrer par ville" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">🌍 Toutes les villes</SelectItem>
+                {cities.filter(c => c.name && c.name.trim() !== '').sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
+                  <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
 
         {/* KPI Cards */}
