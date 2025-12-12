@@ -582,8 +582,8 @@ async def login(user_login: UserLogin):
     # Chercher d'abord par username seul pour vérifier le rôle
     user_by_username = await db.users.find_one(query, {"_id": 0})
     
-    # Si l'utilisateur existe et est pasteur/superadmin, pas besoin de ville
-    if user_by_username and user_by_username["role"] in ["pasteur", "super_admin"]:
+    # Si l'utilisateur existe et est pasteur/superadmin/respo_departement/star, pas besoin de ville pour la connexion
+    if user_by_username and user_by_username["role"] in ["pasteur", "super_admin", "respo_departement", "star"]:
         user = user_by_username
     else:
         # Pour les autres rôles, la ville est obligatoire
