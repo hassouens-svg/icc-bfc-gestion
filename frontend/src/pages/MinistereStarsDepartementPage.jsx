@@ -9,7 +9,7 @@ import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Checkbox } from '../components/ui/checkbox';
-import { ArrowLeft, Users, CheckCircle, XCircle, Plus, Trash2, Calendar, Eye, Edit } from 'lucide-react';
+import { ArrowLeft, Users, CheckCircle, XCircle, Plus, Trash2, Calendar, Eye, Edit, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSelectedCity } from '../contexts/SelectedCityContext';
 
@@ -26,6 +26,7 @@ const MinistereStarsDepartementPage = () => {
   const [cities, setCities] = useState([]);
   const [plannings, setPlannings] = useState([]);
   const [currentPlanning, setCurrentPlanning] = useState({ entries: [] });
+  const [isEditMode, setIsEditMode] = useState(false);
   const [newStar, setNewStar] = useState({
     prenom: '',
     nom: '',
@@ -50,11 +51,40 @@ const MinistereStarsDepartementPage = () => {
     { value: 12, label: 'Décembre' }
   ];
 
-  const typesCulte = ['Culte 1', 'Culte 2', 'EJP', 'Tous les cultes'];
+  const typesCulte = [
+    'Culte 1', 
+    'Culte 2', 
+    'EJP', 
+    'Tous les cultes',
+    'Événements spéciaux'
+  ];
 
   // Vérifier les permissions
   const canEdit = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement'].includes(user.role);
   const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star', 'ministere_stars'].includes(user.role);
+
+  // Liste des rôles/services possibles dans le planning
+  const rolesPlanning = [
+    'Équipe de Prière', 
+    'Équipe Technique (Son)', 
+    'Équipe Technique (Vidéo)', 
+    'Équipe Technique (Lumière)',
+    'Accueil',
+    'Service d\'ordre',
+    'Louange',
+    'Choristes',
+    'Musiciens',
+    'Animation',
+    'Protocole',
+    'Intercession',
+    'Communion',
+    'Quête',
+    'École du Dimanche',
+    'Nursery',
+    'Média/Communication',
+    'Coordination',
+    'Autre'
+  ];
 
   useEffect(() => {
     if (!user || !canView) {
@@ -91,7 +121,6 @@ const MinistereStarsDepartementPage = () => {
 
   const loadStars = async () => {
     try {
-      // Filtrer par ville si sélectionnée
       let url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/departement/${encodeURIComponent(departement)}`;
       if (selectedCity && selectedCity !== 'all') {
         url += `?ville=${encodeURIComponent(selectedCity)}`;
@@ -206,19 +235,22 @@ const MinistereStarsDepartementPage = () => {
       );
       const data = await response.json();
       setCurrentPlanning(data || { entries: [] });
+      setIsEditMode(false); // Start in view mode
     } catch (error) {
       setCurrentPlanning({ entries: [] });
+      setIsEditMode(false);
     }
     setShowWeekPlanningDialog(true);
   };
 
   const addPlanningEntry = () => {
-    if (!canEdit) return;
+    if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => ({
       ...prev,
       entries: [...(prev.entries || []), { 
         type_culte: '', 
         role: '', 
+        poles: [], // Multiple poles
         membre_ids: [], 
         membres_noms: [],
         commentaire: '' 
@@ -227,7 +259,7 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const updatePlanningEntry = (index, field, value) => {
-    if (!canEdit) return;
+    if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => {
       const newEntries = [...prev.entries];
       newEntries[index] = { ...newEntries[index], [field]: value };
@@ -235,22 +267,56 @@ const MinistereStarsDepartementPage = () => {
     });
   };
 
-  // Fonction pour gérer la sélection multiple de membres
-  const toggleMemberSelection = (index, starId, starName) => {
-    if (!canEdit) return;
+  // Fonction pour ajouter un pôle
+  const addPole = (index) => {
+    if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => {
       const newEntries = [...prev.entries];
       const entry = newEntries[index];
-      const memberIds = entry.membre_ids || [];
-      const memberNames = entry.membres_noms || [];
+      const poles = entry.poles || [];
+      newEntries[index] = { ...entry, poles: [...poles, ''] };
+      return { ...prev, entries: newEntries };
+    });
+  };
+
+  // Fonction pour mettre à jour un pôle
+  const updatePole = (entryIndex, poleIndex, value) => {
+    if (!canEdit || !isEditMode) return;
+    setCurrentPlanning(prev => {
+      const newEntries = [...prev.entries];
+      const poles = [...(newEntries[entryIndex].poles || [])];
+      poles[poleIndex] = value;
+      newEntries[entryIndex] = { ...newEntries[entryIndex], poles };
+      return { ...prev, entries: newEntries };
+    });
+  };
+
+  // Fonction pour supprimer un pôle
+  const removePole = (entryIndex, poleIndex) => {
+    if (!canEdit || !isEditMode) return;
+    setCurrentPlanning(prev => {
+      const newEntries = [...prev.entries];
+      const poles = [...(newEntries[entryIndex].poles || [])];
+      poles.splice(poleIndex, 1);
+      newEntries[entryIndex] = { ...newEntries[entryIndex], poles };
+      return { ...prev, entries: newEntries };
+    });
+  };
+
+  // Fonction pour gérer la sélection multiple de membres
+  const toggleMemberSelection = (index, starId, starName) => {
+    if (!canEdit || !isEditMode) return;
+    setCurrentPlanning(prev => {
+      const newEntries = [...prev.entries];
+      const entry = newEntries[index];
+      const memberIds = [...(entry.membre_ids || [])];
+      const memberNames = [...(entry.membres_noms || [])];
       
       const existingIndex = memberIds.indexOf(starId);
       if (existingIndex > -1) {
-        // Remove member
         memberIds.splice(existingIndex, 1);
         memberNames.splice(existingIndex, 1);
       } else {
-        // Add member
         memberIds.push(starId);
         memberNames.push(starName);
       }
@@ -265,7 +331,7 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const removePlanningEntry = (index) => {
-    if (!canEdit) return;
+    if (!canEdit || !isEditMode) return;
     setCurrentPlanning(prev => ({
       ...prev,
       entries: prev.entries.filter((_, i) => i !== index)
@@ -295,7 +361,7 @@ const MinistereStarsDepartementPage = () => {
       if (!response.ok) throw new Error('Erreur');
       toast.success('Planning enregistré !');
       loadPlannings();
-      setShowWeekPlanningDialog(false);
+      setIsEditMode(false);
     } catch (error) {
       toast.error('Erreur lors de l\'enregistrement');
     }
@@ -329,30 +395,37 @@ const MinistereStarsDepartementPage = () => {
     return plannings.some(p => p.semaine === week && p.annee === currentYear);
   };
 
+  // Calculer les KPIs du planning
+  const calculatePlanningKPIs = () => {
+    const entries = currentPlanning.entries || [];
+    const kpisByType = {};
+    let totalStarsEnService = 0;
+    const uniqueMembers = new Set();
+
+    typesCulte.forEach(type => {
+      kpisByType[type] = { count: 0, membres: new Set() };
+    });
+
+    entries.forEach(entry => {
+      const type = entry.type_culte;
+      const members = entry.membre_ids || [];
+      
+      if (type && kpisByType[type]) {
+        members.forEach(m => {
+          kpisByType[type].membres.add(m);
+          uniqueMembers.add(m);
+        });
+        kpisByType[type].count = kpisByType[type].membres.size;
+      }
+    });
+
+    totalStarsEnService = uniqueMembers.size;
+
+    return { kpisByType, totalStarsEnService };
+  };
+
   const actifs = stars.filter(s => s.statut === 'actif').length;
   const nonActifs = stars.filter(s => s.statut === 'non_actif').length;
-
-  // Liste des rôles possibles dans le planning
-  const rolesPlanning = [
-    'Équipe de Prière', 
-    'Équipe Technique (Son)', 
-    'Équipe Technique (Vidéo)', 
-    'Équipe Technique (Lumière)',
-    'Accueil',
-    'Service d\'ordre',
-    'Louange',
-    'Choristes',
-    'Musiciens',
-    'Animation',
-    'Protocole',
-    'Intercession',
-    'Communion',
-    'Quête',
-    'École du Dimanche',
-    'Nursery',
-    'Média/Communication',
-    'Autre'
-  ];
 
   if (loading) {
     return (
@@ -363,6 +436,8 @@ const MinistereStarsDepartementPage = () => {
       </LayoutMinistereStars>
     );
   }
+
+  const planningKPIs = calculatePlanningKPIs();
 
   return (
     <LayoutMinistereStars>
@@ -621,119 +696,101 @@ const MinistereStarsDepartementPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Planning - Édition d'une semaine avec tableau propre */}
-      <Dialog open={showWeekPlanningDialog} onOpenChange={setShowWeekPlanningDialog}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+      {/* Dialog Planning - Affichage/Édition d'une semaine */}
+      <Dialog open={showWeekPlanningDialog} onOpenChange={(open) => {
+        setShowWeekPlanningDialog(open);
+        if (!open) setIsEditMode(false);
+      }}>
+        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {canEdit ? <Edit className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              📅 Planning Semaine {selectedWeek} - {decodeURIComponent(departement)}
+            <DialogTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                📅 Planning Semaine {selectedWeek} - {decodeURIComponent(departement)}
+              </span>
+              {canEdit && !isEditMode && (currentPlanning.entries?.length > 0 || true) && (
+                <Button onClick={() => setIsEditMode(true)} size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Modifier
+                </Button>
+              )}
             </DialogTitle>
           </DialogHeader>
+
+          {/* KPIs Stars en service */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
+            {typesCulte.map(type => (
+              <Card key={type} className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                <CardContent className="p-3 text-center">
+                  <p className="text-xs text-purple-600 font-medium truncate">{type}</p>
+                  <p className="text-2xl font-bold text-purple-800">{planningKPIs.kpisByType[type]?.count || 0}</p>
+                  <p className="text-xs text-purple-500">stars</p>
+                </CardContent>
+              </Card>
+            ))}
+            <Card className="bg-gradient-to-br from-orange-100 to-orange-200 border-orange-300">
+              <CardContent className="p-3 text-center">
+                <p className="text-xs text-orange-700 font-medium flex items-center justify-center gap-1">
+                  <UserCheck className="h-3 w-3" /> Total
+                </p>
+                <p className="text-2xl font-bold text-orange-800">{planningKPIs.totalStarsEnService}</p>
+                <p className="text-xs text-orange-600">en service</p>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="space-y-4">
-            {/* Tableau propre */}
-            <div className="border rounded-lg overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-purple-50">
-                  <tr>
-                    <th className="p-3 text-left font-semibold text-purple-800 w-36">Type Culte</th>
-                    <th className="p-3 text-left font-semibold text-purple-800 w-44">Rôle/Service</th>
-                    <th className="p-3 text-left font-semibold text-purple-800">Membres assignés</th>
-                    <th className="p-3 text-left font-semibold text-purple-800 w-48">Commentaire</th>
-                    {canEdit && <th className="p-3 text-center font-semibold text-purple-800 w-16">🗑️</th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {(currentPlanning.entries || []).length === 0 ? (
+            {/* Mode Visualisation */}
+            {!isEditMode && (
+              <div className="border rounded-lg overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-purple-50">
                     <tr>
-                      <td colSpan={canEdit ? 5 : 4} className="p-8 text-center text-gray-500">
-                        Aucune entrée dans le planning pour cette semaine
-                        {canEdit && (
-                          <p className="text-sm mt-2">Cliquez sur "Ajouter une ligne" pour commencer</p>
-                        )}
-                      </td>
+                      <th className="p-3 text-left font-semibold text-purple-800">Type Culte</th>
+                      <th className="p-3 text-left font-semibold text-purple-800">Rôle/Service</th>
+                      <th className="p-3 text-left font-semibold text-purple-800">Pôle(s)</th>
+                      <th className="p-3 text-left font-semibold text-purple-800">Membres assignés</th>
+                      <th className="p-3 text-left font-semibold text-purple-800">Commentaire</th>
                     </tr>
-                  ) : (
-                    (currentPlanning.entries || []).map((entry, idx) => (
-                      <tr key={idx} className="border-t hover:bg-gray-50">
-                        <td className="p-3">
-                          {canEdit ? (
-                            <Select
-                              value={entry.type_culte || ''}
-                              onValueChange={(val) => updatePlanningEntry(idx, 'type_culte', val)}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Type..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {typesCulte.map(t => (
-                                  <SelectItem key={t} value={t}>{t}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            <span className="font-medium">{entry.type_culte || '-'}</span>
+                  </thead>
+                  <tbody>
+                    {(currentPlanning.entries || []).length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-8 text-center text-gray-500">
+                          Aucune entrée dans le planning pour cette semaine
+                          {canEdit && (
+                            <p className="text-sm mt-2">Cliquez sur "Modifier" pour ajouter des entrées</p>
                           )}
                         </td>
-                        <td className="p-3">
-                          {canEdit ? (
-                            <Select
-                              value={entry.role || ''}
-                              onValueChange={(val) => updatePlanningEntry(idx, 'role', val)}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Rôle..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {rolesPlanning.map(r => (
-                                  <SelectItem key={r} value={r}>{r}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            <span className="font-medium">{entry.role || '-'}</span>
-                          )}
-                        </td>
-                        <td className="p-3">
-                          {canEdit ? (
-                            <div className="space-y-2">
-                              <div className="flex flex-wrap gap-1 mb-2">
-                                {(entry.membres_noms || []).map((nom, i) => (
-                                  <span key={i} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs flex items-center gap-1">
-                                    {nom}
-                                    <button
-                                      onClick={() => {
-                                        const star = stars.find(s => `${s.prenom} ${s.nom}` === nom);
-                                        if (star) toggleMemberSelection(idx, star.id, nom);
-                                      }}
-                                      className="ml-1 text-purple-500 hover:text-purple-700"
-                                    >
-                                      ×
-                                    </button>
+                      </tr>
+                    ) : (
+                      (currentPlanning.entries || []).map((entry, idx) => (
+                        <tr key={idx} className="border-t hover:bg-gray-50">
+                          <td className="p-3">
+                            <span className="font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                              {entry.type_culte || '-'}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <span className="text-gray-700">{entry.role || '-'}</span>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex flex-wrap gap-1">
+                              {(entry.poles || []).length > 0 ? (
+                                entry.poles.filter(p => p).map((pole, i) => (
+                                  <span key={i} className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+                                    {pole}
                                   </span>
-                                ))}
-                              </div>
-                              <div className="max-h-32 overflow-y-auto border rounded p-2 bg-gray-50">
-                                {stars.filter(s => s.statut === 'actif').map(s => {
-                                  const fullName = `${s.prenom} ${s.nom}`;
-                                  const isSelected = (entry.membre_ids || []).includes(s.id);
-                                  return (
-                                    <label key={s.id} className="flex items-center gap-2 py-1 hover:bg-gray-100 px-1 rounded cursor-pointer">
-                                      <Checkbox
-                                        checked={isSelected}
-                                        onCheckedChange={() => toggleMemberSelection(idx, s.id, fullName)}
-                                      />
-                                      <span className="text-sm">{fullName}</span>
-                                    </label>
-                                  );
-                                })}
-                              </div>
+                                ))
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
                             </div>
-                          ) : (
+                          </td>
+                          <td className="p-3">
                             <div className="flex flex-wrap gap-1">
                               {(entry.membres_noms || []).length > 0 ? (
                                 entry.membres_noms.map((nom, i) => (
-                                  <span key={i} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+                                  <span key={i} className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
                                     {nom}
                                   </span>
                                 ))
@@ -741,51 +798,182 @@ const MinistereStarsDepartementPage = () => {
                                 <span className="text-gray-400">-</span>
                               )}
                             </div>
-                          )}
-                        </td>
-                        <td className="p-3">
-                          {canEdit ? (
-                            <Input
-                              value={entry.commentaire || ''}
-                              onChange={(e) => updatePlanningEntry(idx, 'commentaire', e.target.value)}
-                              placeholder="Note..."
-                              className="text-sm"
-                            />
-                          ) : (
-                            <span className="text-sm text-gray-600">{entry.commentaire || '-'}</span>
-                          )}
-                        </td>
-                        {canEdit && (
-                          <td className="p-3 text-center">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => removePlanningEntry(idx)} 
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
                           </td>
-                        )}
+                          <td className="p-3">
+                            <span className="text-sm text-gray-600">{entry.commentaire || '-'}</span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Mode Édition */}
+            {isEditMode && canEdit && (
+              <>
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-purple-50">
+                      <tr>
+                        <th className="p-3 text-left font-semibold text-purple-800 w-36">Type Culte</th>
+                        <th className="p-3 text-left font-semibold text-purple-800 w-40">Rôle/Service</th>
+                        <th className="p-3 text-left font-semibold text-purple-800 w-48">Pôle(s)</th>
+                        <th className="p-3 text-left font-semibold text-purple-800">Membres</th>
+                        <th className="p-3 text-left font-semibold text-purple-800 w-36">Commentaire</th>
+                        <th className="p-3 text-center font-semibold text-purple-800 w-12">🗑️</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-            
-            {canEdit && (
-              <Button onClick={addPlanningEntry} variant="outline" className="w-full border-dashed">
-                <Plus className="h-4 w-4 mr-2" />
-                Ajouter une ligne
-              </Button>
+                    </thead>
+                    <tbody>
+                      {(currentPlanning.entries || []).length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="p-8 text-center text-gray-500">
+                            Cliquez sur "Ajouter une ligne" pour commencer
+                          </td>
+                        </tr>
+                      ) : (
+                        (currentPlanning.entries || []).map((entry, idx) => (
+                          <tr key={idx} className="border-t">
+                            <td className="p-2">
+                              <Select
+                                value={entry.type_culte || ''}
+                                onValueChange={(val) => updatePlanningEntry(idx, 'type_culte', val)}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Type..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {typesCulte.map(t => (
+                                    <SelectItem key={t} value={t}>{t}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </td>
+                            <td className="p-2">
+                              <Select
+                                value={entry.role || ''}
+                                onValueChange={(val) => updatePlanningEntry(idx, 'role', val)}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Rôle..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {rolesPlanning.map(r => (
+                                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </td>
+                            <td className="p-2">
+                              <div className="space-y-1">
+                                {(entry.poles || []).map((pole, poleIdx) => (
+                                  <div key={poleIdx} className="flex gap-1">
+                                    <Input
+                                      value={pole}
+                                      onChange={(e) => updatePole(idx, poleIdx, e.target.value)}
+                                      placeholder={`Pôle ${poleIdx + 1}`}
+                                      className="text-sm"
+                                    />
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => removePole(idx, poleIdx)}
+                                      className="text-red-500 px-2"
+                                    >
+                                      ×
+                                    </Button>
+                                  </div>
+                                ))}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => addPole(idx)}
+                                  className="w-full text-xs"
+                                >
+                                  + Pôle
+                                </Button>
+                              </div>
+                            </td>
+                            <td className="p-2">
+                              <div className="space-y-2">
+                                <div className="flex flex-wrap gap-1 mb-1">
+                                  {(entry.membres_noms || []).map((nom, i) => (
+                                    <span key={i} className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                                      {nom}
+                                      <button
+                                        onClick={() => {
+                                          const star = stars.find(s => `${s.prenom} ${s.nom}` === nom);
+                                          if (star) toggleMemberSelection(idx, star.id, nom);
+                                        }}
+                                        className="ml-1 text-green-500 hover:text-green-700"
+                                      >
+                                        ×
+                                      </button>
+                                    </span>
+                                  ))}
+                                </div>
+                                <div className="max-h-24 overflow-y-auto border rounded p-1 bg-gray-50">
+                                  {stars.filter(s => s.statut === 'actif').map(s => {
+                                    const fullName = `${s.prenom} ${s.nom}`;
+                                    const isSelected = (entry.membre_ids || []).includes(s.id);
+                                    return (
+                                      <label key={s.id} className="flex items-center gap-2 py-1 px-1 hover:bg-gray-100 rounded cursor-pointer">
+                                        <Checkbox
+                                          checked={isSelected}
+                                          onCheckedChange={() => toggleMemberSelection(idx, s.id, fullName)}
+                                        />
+                                        <span className="text-xs">{fullName}</span>
+                                      </label>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-2">
+                              <Input
+                                value={entry.commentaire || ''}
+                                onChange={(e) => updatePlanningEntry(idx, 'commentaire', e.target.value)}
+                                placeholder="Note..."
+                                className="text-sm"
+                              />
+                            </td>
+                            <td className="p-2 text-center">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => removePlanningEntry(idx)} 
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                
+                <Button onClick={addPlanningEntry} variant="outline" className="w-full border-dashed">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Ajouter une ligne
+                </Button>
+              </>
             )}
 
             <div className="flex gap-2 pt-4 border-t">
-              <Button variant="outline" onClick={() => setShowWeekPlanningDialog(false)} className="flex-1">
-                {canEdit ? 'Annuler' : 'Fermer'}
+              <Button variant="outline" onClick={() => {
+                if (isEditMode) {
+                  setIsEditMode(false);
+                  openWeekPlanning(selectedWeek); // Reload data
+                } else {
+                  setShowWeekPlanningDialog(false);
+                }
+              }} className="flex-1">
+                {isEditMode ? 'Annuler' : 'Fermer'}
               </Button>
-              {canEdit && (
+              {isEditMode && canEdit && (
                 <Button onClick={savePlanning} className="flex-1 bg-purple-600 hover:bg-purple-700">
                   Enregistrer le planning
                 </Button>
