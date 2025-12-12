@@ -6386,6 +6386,91 @@ async def delete_planning(departement: str, semaine: int, annee: int, current_us
     return {"message": "Planning supprimé"}
 
 
+@api_router.get("/stars/service-stats/{semaine}/{annee}")
+async def get_stars_service_stats(semaine: int, annee: int, ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    """Récupérer les KPIs des stars en service pour une semaine donnée (tous départements)"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Récupérer tous les plannings de cette semaine
+    plannings = await db.stars_planning.find(
+        {"semaine": semaine, "annee": annee},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    types_culte = ['Culte 1', 'Culte 2', 'EJP', 'Tous les cultes', 'Événements spéciaux']
+    kpis_by_type = {t: {"count": 0, "membres": []} for t in types_culte}
+    all_membres = set()
+    departements_avec_planning = []
+    
+    for planning in plannings:
+        dept = planning.get("departement", "")
+        if dept not in departements_avec_planning:
+            departements_avec_planning.append(dept)
+            
+        for entry in planning.get("entries", []):
+            type_culte = entry.get("type_culte")
+            membres_noms = entry.get("membres_noms", [])
+            membre_ids = entry.get("membre_ids", [])
+            
+            if type_culte and type_culte in kpis_by_type:
+                for i, nom in enumerate(membres_noms):
+                    if nom not in kpis_by_type[type_culte]["membres"]:
+                        kpis_by_type[type_culte]["membres"].append(nom)
+                        kpis_by_type[type_culte]["count"] += 1
+                    
+                    # Ajouter à la liste globale des membres
+                    all_membres.add(nom)
+    
+    return {
+        "semaine": semaine,
+        "annee": annee,
+        "total_stars_en_service": len(all_membres),
+        "par_type_culte": {k: {"count": v["count"], "membres": v["membres"]} for k, v in kpis_by_type.items()},
+        "departements_avec_planning": departements_avec_planning,
+        "membres_en_service": list(all_membres)
+    }
+
+
+@api_router.get("/stars/service-overview/{annee}")
+async def get_stars_service_overview(annee: int, current_user: dict = Depends(get_current_user)):
+    """Récupérer un aperçu des stats de service pour toutes les semaines d'une année"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Récupérer tous les plannings de l'année
+    plannings = await db.stars_planning.find(
+        {"annee": annee},
+        {"_id": 0}
+    ).to_list(5000)
+    
+    # Regrouper par semaine
+    weeks_data = {}
+    for planning in plannings:
+        semaine = planning.get("semaine")
+        if semaine not in weeks_data:
+            weeks_data[semaine] = {"membres": set(), "departements": set()}
+        
+        weeks_data[semaine]["departements"].add(planning.get("departement", ""))
+        
+        for entry in planning.get("entries", []):
+            for nom in entry.get("membres_noms", []):
+                weeks_data[semaine]["membres"].add(nom)
+    
+    # Créer le résumé
+    result = []
+    for week in range(1, 53):
+        data = weeks_data.get(week, {"membres": set(), "departements": set()})
+        result.append({
+            "semaine": week,
+            "total_stars_en_service": len(data["membres"]),
+            "nb_departements": len(data["departements"]),
+            "has_planning": week in weeks_data
+        })
+    
+    return result
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
