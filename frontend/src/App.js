@@ -156,6 +156,7 @@ function App() {
           <Route path="/recensement-stars" element={<RecensementStarsPage />} />
         </Routes>
       </BrowserRouter>
+      </SelectedCityProvider>
       </CitiesProvider>
     </div>
   );
