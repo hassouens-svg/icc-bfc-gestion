@@ -120,6 +120,7 @@ class UserUpdate(BaseModel):
     permissions: Optional[Dict[str, bool]] = None
     team_members: Optional[List[Dict[str, str]]] = None  # For responsable_promo team
     dashboard_permissions: Optional[Dict[str, bool]] = None
+    assigned_departement: Optional[str] = None  # For respo_departement
 
 class UserLogin(BaseModel):
     username: str
