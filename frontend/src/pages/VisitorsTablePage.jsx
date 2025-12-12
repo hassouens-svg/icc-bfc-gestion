@@ -679,20 +679,34 @@ const VisitorsTablePage = () => {
                 <div>
                   <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg">
-                      <p className="text-sm text-gray-600">Total Visiteurs</p>
-                      <p className="text-2xl font-bold text-blue-600">{fidelisationData.total_visitors}</p>
+                      <p className="text-sm text-gray-600">Total Visiteurs {filters.promo !== 'all' && '(filtrés)'}</p>
+                      <p className="text-2xl font-bold text-blue-600">
+                        {filters.promo !== 'all' ? filteredVisitors.length : fidelisationData.total_visitors}
+                      </p>
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
                       <p className="text-sm text-gray-600">Visiteurs Actifs</p>
-                      <p className="text-2xl font-bold text-green-600">{fidelisationData.total_visitors_actifs}</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        {filters.promo !== 'all' 
+                          ? filteredVisitors.filter(v => !v.tracking_stopped).length 
+                          : fidelisationData.total_visitors_actifs}
+                      </p>
                     </div>
                     <div className="bg-purple-50 p-4 rounded-lg">
                       <p className="text-sm text-gray-600">Nouveaux Arrivants</p>
-                      <p className="text-2xl font-bold text-purple-600">{fidelisationData.total_na}</p>
+                      <p className="text-2xl font-bold text-purple-600">
+                        {filters.promo !== 'all' 
+                          ? filteredVisitors.filter(v => v.types?.includes('Nouveau Arrivant')).length 
+                          : fidelisationData.total_na}
+                      </p>
                     </div>
                     <div className="bg-orange-50 p-4 rounded-lg">
                       <p className="text-sm text-gray-600">Nouveaux Convertis</p>
-                      <p className="text-2xl font-bold text-orange-600">{fidelisationData.total_nc}</p>
+                      <p className="text-2xl font-bold text-orange-600">
+                        {filters.promo !== 'all' 
+                          ? filteredVisitors.filter(v => v.types?.includes('Nouveau Converti')).length 
+                          : fidelisationData.total_nc}
+                      </p>
                     </div>
                   </div>
                   <div className="h-96 w-full">
