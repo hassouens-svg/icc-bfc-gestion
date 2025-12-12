@@ -426,6 +426,8 @@ const GestionAccesPage = () => {
                           <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
                           <SelectItem value="accueil">Accueil et Intégration</SelectItem>
                           <SelectItem value="responsable_evangelisation">Responsable Évangélisation</SelectItem>
+                          <SelectItem value="respo_departement">Responsable Département (Stars)</SelectItem>
+                          <SelectItem value="star">Star (Lecture seule)</SelectItem>
                           {user?.role === 'super_admin' && (
                             <>
                               <SelectItem value="promotions">Promotions</SelectItem>
