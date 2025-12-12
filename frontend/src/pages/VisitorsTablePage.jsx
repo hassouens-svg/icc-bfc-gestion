@@ -111,10 +111,61 @@ const VisitorsTablePage = () => {
     return fidelisationData.monthly_average || 0;
   };
 
-  // Obtenir les données du graphique filtrées par date
+  // Obtenir les données du graphique filtrées par date ET par promo
   const getChartData = () => {
     if (!fidelisationData || !fidelisationData.weekly_rates) return [];
 
+    // Si on filtre par promo, recalculer les données à partir des visiteurs filtrés
+    if (filters.promo !== 'all') {
+      // Calculer les données hebdomadaires pour les visiteurs de cette promo uniquement
+      const promoVisitors = visitors.filter(v => {
+        if (!v.assigned_month) return false;
+        const parts = v.assigned_month.split('-');
+        const month = parts.length === 2 ? parts[1] : null;
+        return month === filters.promo && !v.tracking_stopped;
+      });
+
+      if (promoVisitors.length === 0) return [];
+
+      // Grouper les présences par semaine
+      const weeklyData = {};
+      promoVisitors.forEach(visitor => {
+        const allPresences = [
+          ...(visitor.presences_dimanche || []),
+          ...(visitor.presences_jeudi || [])
+        ];
+        
+        allPresences.forEach(presence => {
+          if (presence.date) {
+            const weekNum = getWeekNumber(presence.date);
+            if (!weeklyData[weekNum]) {
+              weeklyData[weekNum] = { present: 0, total: 0 };
+            }
+            weeklyData[weekNum].total++;
+            if (presence.present === true) {
+              weeklyData[weekNum].present++;
+            }
+          }
+        });
+      });
+
+      // Convertir en format de graphique
+      const chartData = Object.entries(weeklyData).map(([week, data]) => ({
+        week: parseInt(week),
+        rate: data.total > 0 ? Math.round((data.present / data.total) * 100) : 0
+      })).sort((a, b) => a.week - b.week);
+
+      // Si une date spécifique est sélectionnée
+      if (filters.date) {
+        const weekNumber = getWeekNumber(filters.date);
+        const weekData = chartData.find(w => w.week === weekNumber);
+        return weekData ? [weekData] : [];
+      }
+
+      return chartData;
+    }
+
+    // Sinon, utiliser les données globales
     // Si une date est sélectionnée, ne montrer que cette semaine
     if (filters.date) {
       const weekNumber = getWeekNumber(filters.date);
