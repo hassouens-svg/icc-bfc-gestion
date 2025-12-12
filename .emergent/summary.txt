@@ -1,178 +1,237 @@
 <analysis>**original_problem_statement:**
-The initial task was to fix inaccurate statistics on the Villes (Cities) dashboard. This was completed. The scope then expanded significantly to include multiple new features and fixes:
-1.  **WhatsApp Campaigns:** Implement a Campagne WhatsApp feature within the My Event Church section, mirroring the existing SMS/Email campaign functionality, with integration via Brevo.
-2.  **Branding Update:** Globally replace Promotions and Responsable de promos with Bergerie and Bergers respectively. Add a bible verse to the Berger dashboard.
-3.  **Project Management Enhancements (My Event Church):**
-    *   Add expense tracking to projects (amount, reason) that deducts from a total budget.
-    *   Automatically set task status to En retard (Overdue) if the deadline has passed.
-    *   Implement filtering by task status.
-    *   Add color-coding to task rows based on status.
-    *   Display a project completion percentage on both the detail page and the project list cards.
-    *   Numerous UI/UX fixes, including changing currency symbols to '€', fixing task deletion, and modifying the add team member form.
-4.  **Bug Fixes & Stabilisation:**
-    *   Fix an error on the homepage related to loading cities before login.
-    *   Fix an issue preventing users with the gestion_projet role from being displayed.
-    *   Modify the My Events Church login to require a city selection for non-admin roles.
-    *   Stabilize the Deleted Visitors list page.
-    *   Fix deployment blockers related to hardcoded environment variable fallbacks.
-    *   Ensure Villes statistics work in production by adding more flexible data querying.
+The user initiated this session to address several bugs from a previous fork that were not functional in the live environment. The scope quickly expanded to include numerous bug fixes and new feature requests across multiple modules of the application.
+
+Initial bug reports included:
+*   **Bergerie (Promotions) Module:**
+    *   The promo filter in the supervisor's Vue Tableau did not update KPIs or graphs.
+    *   The  button was incorrectly visible for the  role.
+    *   The  (Uncheck all) button was clearing comments and preventing saves.
+    *   The EJP (Église des Jeunes Prodiges) indicator was not appearing correctly.
+
+New feature requests and bug fixes during the session:
+*   **RSVP System:**
+    *   Display conditional payment instructions on the confirmation page based on the selected method (Card, Wero, Espèces).
+    *   Add a functional trash icon to the RSVP statistics table to allow deletion of duplicate entries, ensuring it is visible on mobile devices.
+*   **Ministère des STARS Module:**
+    *   Update the birthday toast notification on the  to include the user's city and change the icon to a cake (🎂).
+    *   Implement city-based filtering for all data displayed within the STARS module (dashboard, department pages).
+    *   Add a Voir planning feature on the department page, leading to a comprehensive 52-week planning system where admins can assign members to services and roles.
+    *   Add a + button within each department page to directly register a new Star.
+    *   Add a trash icon to the member list within a department to allow deletion of Stars.
+    *   Modify the public census form's title and submission button text for clarity.
+*   **Visitor Management:**
+    *   Fix a bug preventing the EJP flag from being saved when creating a new visitor, which also caused subsequent update attempts to fail.
+    *   Permanently remove the  button from the  for all roles except .
 
 **User's preferred language**: French
 
 **what currently exists?**
-The application is largely functional. The Villes statistics page is now working correctly in the local environment, with backend logic updated to be more resilient for production data. The Bergerie rebranding is complete across the UI and database. The Campagne WhatsApp feature has been fully implemented on both frontend and backend, with a guide created for Brevo integration.
+The application is a large-scale church management system. The agent has just completed a significant batch of work, addressing a wide range of user-_reported bugs and implementing several new features.
 
-The My Events Church project management section has been significantly overhauled:
-*   Backend supports expense tracking and automatic En retard (Overdue) task statuses.
-*   The project detail page () has been completely rewritten to include a new UI for expense management, task filtering by status, color-coded tasks, a large title with a completion percentage, and various bug fixes (task deletion, team member management, currency symbol).
+*   The **Bergerie (Promotions) module** has been fixed; promo filtering on the supervisor dashboard now correctly updates all KPIs and graphs, and the  button functions as intended without deleting comments.
+*   The **RSVP system** has been enhanced with conditional payment messages and a functional delete button in the statistics table, which is now mobile-friendly.
+*   The **Ministère des STARS module** has been significantly expanded with a new, complex weekly planning system, the ability to add/delete stars directly from the department page, and an updated birthday notification toast.
+*   Critical bugs related to the **EJP visitor flag** have been resolved, allowing the flag to be saved on creation and ensuring visitors can be updated correctly.
+*   The  button has been completely removed from the main visitor list page.
 
 **Last working item**:
--   **Last item agent was working:** The user requested adding the project completion percentage to the individual project cards on the project list page, similar to what was just added to the project detail page. The agent acknowledged the request but has not yet started the implementation.
--   **Status**: NOT STARTED
--   **Agent Testing Done**: N
--   **Which testing method agent to use?** screenshot tool (to verify the UI change on the project list page).
--   **User Testing Done**: N
+- **Last item agent was working:** The agent implemented a large, multi-part feature request for the Ministère des STARS module. The main component was a new, complex weekly planning system accessible from the department page. This included creating backend models and API endpoints for storing plans and building a new frontend UI with multiple dialogs for managing the 52 weeks of the year and assigning members to roles. The agent also updated the birthday toast and added add/delete functionality for stars.
+- **Status**: USER VERIFICATION PENDING
+- **Agent Testing Done**: Y
+- **Which testing method agent to use?** Frontend testing agent
+- **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Add completion percentage to project list cards (P0)**
-    -   **Description:** The list of projects (likely on ) should display a completion percentage on each project's card. This percentage is calculated based on the number of completed tasks vs. the total number of tasks for that project.
-    -   **Attempted fixes:** None.
-    -   **Next debug checklist:**
-        1.  Locate the project list component, likely .
-        2.  Verify if the API endpoint that fetches the list of projects already includes the necessary task data to calculate the percentage. If not, modify the backend endpoint (likely ) to include a count of total and completed tasks for each project.
-        3.  Update the frontend component () to calculate and display the completion percentage on each project card. A progress bar or a simple text display would suffice.
-    -   **Why fix this issue and what will be achieved with the fix?** It provides a quick, at-a-glance overview of the progress of all projects, improving usability.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** frontend
-    -   **Blocked on other issue:** None
+- **Issue 1: City filtering on STARS dashboard (P0)**
+- **Issue 2: City Selector for Admins (P1)**
+- **Issue 3: Brevo API Key is Unauthorized (P2)**
+- **Issue 4: Uninvestigated 5-minute polling request (P3)**
+- **Issue 5: Villes stats showing zeros and Gestion de projet role visibility (P3)**
 
--   **Issue 2: User cannot see Gestion de projet role option (P1)**
-    -   **Description:** The user reported not seeing the Gestion de projet role in the dropdown when creating a new user. The agent's investigation concluded that this is the correct behavior, as the UI restricts the creation of this role to  users only.
-    -   **Attempted fixes:** The agent verified the code logic is correct.
-    -   **Next debug checklist:** This is not a bug. The next step is to confirm with the user that they are logged in as  when trying to create a Gestion de projet user. If they are and still cannot see it, further investigation is needed.
-    -   **Why fix this issue and what will be achieved with the fix?** Resolves user confusion about role permissions.
-    -   **Status:** USER VERIFICATION PENDING
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** frontend (if a code change is needed)
-    -   **Blocked on other issue:** None
+Issues Detail:
+- **Issue 1: City filtering on STARS dashboard (P0)**
+    - **Attempted fixes:** None. This was part of the user's last request, but the agent only implemented the planning system and overlooked the filtering requirement.
+    - **Next debug checklist:**
+        1.  Analyze how the 's selected city is stored (from the pending City Selector task).
+        2.  Modify the API endpoints for the STARS dashboard () and department pages () to accept a  query parameter.
+        3.  Update the frontend pages (, ) to pass the selected city when fetching data.
+        4.  Ensure all KPIs and lists refresh when the city changes.
+    - **Why fix this issue and what will be achieved with the fix?** To fulfill a key part of the user's request, allowing high-level admins to view STARS data for specific cities.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** N
+    - **Should Test frontend/backend/both after fix?** Both
+    - **Blocked on other issue:** Issue 2: City Selector for Admins
 
--   **Issue 3: Villes stats showing zeros in production (P2)**
-    -   **Description:** The user reported that the Villes statistics, while working in the preview environment, were showing zeros in production.
-    -   **Attempted fixes:** The agent modified the backend endpoint () to use more flexible date filters and to have fallbacks that query for all data if the filtered query returns nothing. A diagnostic endpoint () was also added to inspect production data structure.
-    -   **Next debug checklist:** The fixes have been implemented but not verified in the production environment. The user needs to deploy the latest changes and check if the Villes statistics are now populated correctly. If not, the diagnostic endpoint should be used to compare production data structure with the assumptions in the code.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical dashboard for high-level users. This fix will make it reliable in the production environment.
-    -   **Status:** USER VERIFICATION PENDING
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** backend (by checking production data)
-    -   **Blocked on other issue:** None
+- **Issue 2: City Selector for Admins (P1)**
+    - **Attempted fixes:** None in this session. This was the top priority from the previous handoff and was forgotten. The previous agent added UI code to  but did not implement the state management.
+    - **Next debug checklist:**
+        1.  Review the code in  to find the placeholder dropdown.
+        2.  Implement a global state (e.g., using Zustand or React Context) to store the currently selected city for /.
+        3.  The  handler of the dropdown should update this global state.
+        4.  All pages displaying city-specific data must be refactored to use this global state and re-fetch data upon its change.
+    - **Why fix this issue and what will be achieved with the fix?** This will allow  and  to switch between city-specific views without logging out, a core requirement.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** Frontend
+    - **Blocked on other issue:** None
+
+- **Issue 3: Brevo API Key is Unauthorized (P2)**
+    - **Attempted fixes:** None. This is a recurring issue dependent on the user.
+    - **Next debug checklist:** Remind the user that the provided Brevo API key is inactive and they need to provide a valid one from their Brevo account for transactional emails to work.
+    - **Why fix this issue and what will be achieved with the fix?** This will enable automated email confirmations for RSVPs.
+    - **Status:** BLOCKED
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** Backend
+    - **Blocked on other issue:** User action required.
+
+- **Issue 4: Uninvestigated 5-minute polling request (P3)**
+    - **Attempted fixes:** None. Carried over.
+    - **Next debug checklist:**
+        1.  Search the frontend codebase for  or recurring  calls.
+        2.  Use browser developer tools to inspect network activity to find the source.
+    - **Why fix this issue and what will be achieved with the fix?** To reduce unnecessary server load.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** Frontend
+    - **Blocked on other issue:** None
+
+- **Issue 5: Villes stats showing zeros and Gestion de projet role visibility (P3)**
+    - **Attempted fixes:** None. Carried over from a previous handoff.
+    - **Next debug checklist:** Ask the user to verify if this is still an issue, as many related areas have been modified.
+    - **Why fix this issue and what will be achieved with the fix?** To ensure data accuracy and correct role permissions.
+    - **Status:** USER VERIFICATION PENDING
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** Both
+    - **Blocked on other issue:** User feedback required.
 
 **In progress Task List**:
-(None, all current work is captured in the issue list)
+(None)
 
 **Upcoming and Future Tasks**
--   **Upcoming Tasks:**
-    -   **(P1) Create read-only Vue Evangelisation:** For / roles, the Vue Evangelisation link should lead to a read-only statistics page.
-    -   **(P2) Push Notifications:** Implement mobile push notifications.
--   **Future Tasks:**
-    -   **(P3) Refactor :** The main backend file is now over 5000 lines and is a significant technical debt. It should be broken down into a proper project structure with routers, models, and services.
-    -   **(P4) Refactor :** This file has become very large and complex; its logic could be broken down into smaller components and custom hooks.
+- **Upcoming Tasks:**
+    - (P0) **User Verification:** The user must test the new weekly planning system in the Ministère des STARS module.
+- **Future Tasks:**
+    - (P3) **CRITICAL REFACTORING:**  is dangerously large and must be split into a proper project structure (e.g., , , ).
+    - (P4) **CRITICAL REFACTORING:** Components like , , and  are now extremely complex and should be broken down into smaller, manageable components and custom hooks.
 
 **Completed work in this session**
--   **Villes Statistics Fix:** Corrected backend queries in  to use proper collection/field names and logic, and added filtering for all KPIs. Added fallbacks for production data robustness.
--   **Deployment Blockers Resolved:** Removed all hardcoded environment variable fallbacks in  that were causing production deployment to fail.
--   **Bergerie Rebranding:** Replaced all instances of Promotions with Bergerie and Responsable de promos with Bergers in the frontend and database. Added a Bible verse to the Berger dashboard.
--   **WhatsApp Campaign Feature:**
-    -   Added Campagne WhatsApp to UI menus and home page.
-    -   Created new frontend pages (, ).
-    -   Added supporting backend models and API endpoints in .
-    -   Created a  document.
--   **Project Management Overhaul ():**
-    -   Implemented expense tracking with a new backend model and API endpoints.
-    -   Added automatic En retard (Overdue) status calculation for tasks.
-    -   Implemented task filtering by status and color-coding.
-    -   Redesigned the project header to be larger and include a completion percentage.
-    -   Fixed task deletion, updated the team member creation form, and changed currency symbol to '€'.
--   **General Bug Fixes:**
-    -   Fixed a crash on the homepage by preventing city data from loading before login.
-    -   Fixed a bug where gestion_projet users were not appearing in user lists.
-    -   Stabilized the  page by improving  dependencies.
-    -   Made the My Events Church login page require city selection for non-admin roles.
-    -   Gave  role the same permissions as  in My Events Church.
+- **Bergerie / Promotions Module Fixes:**
+    - Fixed promo filter on the supervisor's Vue Tableau () to correctly update all KPIs and graphs.
+    - Corrected the  button logic on  and  to preserve comments.
+- **RSVP System Enhancements:**
+    - Implemented conditional confirmation messages based on payment method in .
+    - Added a functional delete button to the stats table in  and moved it to the first column for mobile visibility.
+- **Visitor Management Fixes:**
+    - Permanently removed the + Nouveau Visiteur button and its related dialog/logic from .
+    - Fixed a bug where the  flag was not saved on visitor creation by adding the field to the  Pydantic model in .
+    - Fixed a bug that prevented visitor updates by correcting the payload for empty email fields in .
+- **Ministère des STARS Feature Additions:**
+    - Implemented a complete weekly planning system in  with new backend endpoints.
+    - Added functionality to add and delete stars directly from the department page.
+    - Updated the public census page () text.
+    - Updated the birthday toast on  to include the city and a cake emoji.
+
+**Earlier issues found/mentioned but not fixed**
+- **Issue 1: City filtering on STARS dashboard**
+    - **Debug checklist:** See All Pending/In progress Issue list - Issue 1.
+    - **Why to solve this issue and what will be achieved with this?** To fulfill a user requirement for admins to view data segregated by city.
+    - **Should Test frontend/backend/both after fix:** Both
+    - **Is recurring issue?** N
+- **Issue 2: City Selector for Admins**
+    - **Debug checklist:** See All Pending/In progress Issue list - Issue 2.
+    - **Why to solve this issue and what will be achieved with this?** This is a high-priority carry-over task essential for admin navigation.
+    - **Should Test frontend/backend/both after fix:** Frontend
+    - **Is recurring issue?** Y
+
+**Known issue recurrence from previous fork**
+- **Issue recurrence in previous fork:** Villes stats showing zeros, Gestion de projet role visibility, and Brevo API key authorization.
+- **Recurrence count:** 3+
+- **Status:** BLOCKED / USER VERIFICATION PENDING
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI, Pydantic, Motor (async MongoDB driver).
--   **Frontend:** React, Shadcn UI, Tailwind CSS, .
--   **Database:** MongoDB.
--   **Deployment:** The system is prepared for a Kubernetes deployment, with a strict requirement for environment variables over hardcoded fallbacks.
+- **Backend:** FastAPI, Motor (MongoDB), Pydantic.
+- **Frontend:** React, Shadcn UI, .
+- **State Management:** Extensive use of  and complex prop drilling in large components. The new  is a prime example of a component managing multiple complex states (star list, add star dialog, planning dialog, week selection, plan editing).
+- **Bug Fixes:** Resolved critical bugs related to Pydantic model mismatches (missing fields) and validation rules (handling of  vs. empty strings).
 
 **key DB schema**
--   **projets:** Contains project details. Now implicitly linked to .
--   **taches:** Contains task details.  field now dynamically updated to en_retard by the API if  is passed.
--   **depenses:** (NEW) Stores expense records .
--   **visitors:** Collection for Personnes Reçues.
--   **culte_stats:** Collection for Statistiques Cultes (previously misidentified as ).
+-   **plannings_stars** (NEW): . Used for the new weekly planning feature.
+-   **visitors**: The Pydantic  model in  was updated to include  to fix a save bug.
+-   **event_rsvps**: No schema change, but now supports deletion via a new API endpoint.
+-   **stars**: No schema change, but now supports deletion.
 
 **changes in tech stack**
--   None.
+- None.
 
-**All files**
--   **/app/backend/server.py**: Heavily modified to fix stats, add WhatsApp endpoints, add Project Expense endpoints, fix role permissions, remove deployment blockers, and add diagnostic endpoints.
--   **/app/frontend/src/pages/ProjetDetailPage.jsx**: Completely rewritten to add expense tracking, status filters, color-coding, completion percentage, and fix numerous bugs.
--   **/app/frontend/src/pages/EventsLoginPage.jsx**: Modified to conditionally show a city selector based on user role.
--   **/app/frontend/src/pages/HomePage.jsx**: Modified for Bergerie rebranding and subtitle display.
--   **/app/frontend/src/pages/DashboardSuperAdminCompletPage.jsx**: Modified to correctly fetch and display the Deleted Visitors count.
--   **/app/frontend/src/contexts/CitiesContext.jsx**: Modified to prevent API calls before user authentication.
--   **/app/frontend/src/pages/CommunicationWhatsAppPage.jsx** & **/app/frontend/src/pages/ContactGroupsWhatsAppPage.jsx**: New files created for the WhatsApp feature.
--   **/.env.example** files, **DEPLOYMENT_GUIDE.md**, **PRODUCTION_STATS_FIX.md**, **WHATSAPP_BREVO_GUIDE.md**: New documentation and configuration files created.
+**All files of reference**
+-   **/app/backend/server.py**: Main monolith, modified with new planning endpoints and fixes for visitor creation/update.
+-   **/app/frontend/src/pages/MinistereStarsDepartementPage.jsx**: Completely rewritten to include the new planning system.
+-   **/app/frontend/src/pages/VisitorsPage.jsx**: Heavily refactored to remove the New Visitor feature.
+-   **/app/frontend/src/pages/RSVPLinksPage.jsx**: Contains the RSVP deletion feature.
+-   **/app/frontend/src/pages/PublicEventRSVPPage.jsx**: Contains the conditional payment messages.
+-   **/app/frontend/src/pages/VisitorsTablePage.jsx**: Contains the fix for promo filtering affecting KPIs and graphs.
 
 **Areas that need refactoring**:
--    is critically overgrown and is a major stability risk. It urgently needs to be broken down into a proper project structure (e.g., , , ).
--    is now a very large and complex component. Its state management and UI logic should be extracted into smaller, reusable components and custom hooks.
+-   **CRITICAL:**  continues to grow and is unsustainable.
+-   **CRITICAL:**  is now a new monolithic component (~400 lines) managing multiple complex UI states and logic. It should be broken down into smaller components (e.g., , , , ).
+-   **HIGH PRIORITY:**  contains complex filtering and data calculation logic that should be extracted into custom hooks.
 
 **key api endpoints**
--   : The core endpoint for the Villes page. Heavily modified for correctness and robustness.
--   : (NEW) Adds an expense to a project.
--   : (NEW) Retrieves expenses for a project.
--   : Modified to automatically calculate and return the en_retard status.
--   : Modified to include the  role.
--   : (NEW) A temporary diagnostic endpoint to inspect production data.
--   , , etc.: New endpoints for the WhatsApp feature.
+-   : Create a new weekly plan for a department.
+-   : Get all plans for a department.
+-   : Update an existing plan.
+-   : Delete a weekly plan.
+-   : Delete a specific RSVP response.
+-   : Delete a star.
+-   : Modified to include  in the response.
+-   : Fixed to correctly save the  flag.
+-   : Fixed to handle empty email strings correctly.
 
 **Critical Info for New Agent**
--   **Your P0 Task:** Your immediate priority is to add the completion percentage to the project cards on the main project list page (), as requested by the user in their last message.
--   **Production Issues:** Be aware that two issues ( stats and  role visibility) have fixes or explanations that are pending user verification in the production environment. Do not treat them as new bugs unless the user confirms the problem persists after deployment.
--   **Environment Variables:** The application is now strict about environment variables for production. All hardcoded fallbacks have been removed from the backend. Refer to the new  files.
--   **Refactoring:** The  file is extremely fragile. Be very careful when making changes and consider any opportunity for minor refactoring. The user has not approved a full refactor, but it is a major source of risk.
+-   **New Planning Feature:** A large and complex weekly planning system was just added to the . It is untested by the user and should be the first thing they are asked to verify.
+-   **Forgotten Tasks:** The agent completely missed two high-priority tasks: (1) implementing city-based filtering for the STARS module, and (2) implementing the global city selector for admins from the previous handoff. These should be prioritized next.
+-   **Pydantic Bugs:** The agent fixed several bugs caused by inconsistencies between frontend data and backend Pydantic models (e.g., missing  field,  validation for  vs. ). Be mindful that other such inconsistencies may exist.
+-   **Feature Removal:** The  feature has been entirely removed from , including the button, dialog, state, and API call functions.
 
 **documents created in this job**
--   /app/WHATSAPP_BREVO_GUIDE.md
--   /app/backend/.env.example
--   /app/frontend/.env.example
--   /app/DEPLOYMENT_GUIDE.md
--   /app/PRODUCTION_STATS_FIX.md
+(None)
 
-**Last 5 User Messages and any pending user messages**
--   **User:** Requested adding an expense tracking system, En retard status, status filters, and color-coding to the Projects page. (COMPLETED)
--   **User:** Requested fixing task deletion, changing the add member form (remove email, add role), and changing the currency symbol to Euro. (COMPLETED)
--   **User:** Requested making the project title larger, adding a completion percentage next to it, and fixing the budget display. (COMPLETED)
--   **User:** Requested adding the completion percentage to the project *list* cards as well. (PENDING - This is the current P0 task).
--   **User:** Asked to ensure the title is large and the completion percentage is next to it (related to project detail page). (COMPLETED)
+**Last 10 User Messages and any pending user messages**
+1.  **User:** Requested conditional RSVP payment messages and a trash icon for RSVP duplicates. (COMPLETED)
+2.  **User:** Requested hiding + Nouveau Visiteur for berger role and reported the RSVP trash icon was not working. (COMPLETED)
+3.  **User:** Reported + Nouveau Visiteur and trash can issues again, and requested a + button in the STARS department page. (COMPLETED)
+4.  **User:** Requested a trash can in the STARS department member list. (COMPLETED)
+5.  **User:** Reported a bug with the EJP flag not saving for new visitors. (COMPLETED)
+6.  **User:** Insisted the + Nouveau Visiteur button be removed everywhere. (COMPLETED)
+7.  **User:** Reported that the Décocher tout button was clearing comments. (COMPLETED)
+8.  **User:** Reported that promo filtering was not updating supervisor KPIs/graphs. (COMPLETED)
+9.  **User:** (Last Major Request) Asked to: add city/cake emoji to birthday toast, filter STARS pages by city, and add a full 52-week planning system to STARS departments. (PARTIALLY COMPLETED - city filtering was missed)
+10. **Agent:** Completed all implementation work and is now waiting for user verification.
 
 **Project Health Check:**
--   **Broken:** No. The application is in a functional state with several major features and fixes completed. However, there are pending user verifications for fixes intended for the production environment.
+-   **Broken:**
+    -   Automated email confirmation via Brevo (due to invalid API key).
+-   **Mocked:**
+    -   None.
+
+**3rd Party Integrations**
+-   **Brevo**: For transactional emails. Currently non-functional due to a  error.
+-   **Firebase Cloud Messaging (FCM)**: For push notifications. Implemented but feature is gated/hidden.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES
+-   **Testing agent used after significant changes:** NO. Agent relied on  tool for verification.
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None in this session.
--   **Known regressions:** A database update script temporarily corrupted usernames, but this was fixed immediately. No other known regressions.
+-   **Test files created:** None.
+-   **Known regressions:** None identified.
 
 **Credentials to test flow:**
 -   **superadmin** / **superadmin123**
+-   **respo_aout** / **test123** (role: )
+-   **test_berger** / **test123** (role: )
 
 **What agent forgot to execute**
-The agent has not yet started the user's last request: to add the completion percentage to the project cards on the project list page (). This has been set as the P0 task for the next agent.</analysis>
+-   **City-based filtering for the STARS module:** The user explicitly asked for STARS pages to be filtered by city, but the agent only implemented the other parts of the request.
+-   **Global City Selector for Admins:** The highest priority task from the previous handoff—adding a city selector dropdown in the main header for  and  roles—was completely forgotten.</analysis>

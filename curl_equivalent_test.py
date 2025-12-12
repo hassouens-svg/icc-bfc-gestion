@@ -17,7 +17,7 @@ import os
 from datetime import datetime
 
 # Configuration
-REACT_APP_BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://ministery-stars.preview.emergentagent.com')
+REACT_APP_BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://visitor-tracker-41.preview.emergentagent.com')
 BASE_URL = f"{REACT_APP_BACKEND_URL}/api"
 
 def test_curl_login():

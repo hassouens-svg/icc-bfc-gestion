@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv('/app/frontend/.env')
 
 # Get backend URL from frontend env
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://ministery-stars.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://visitor-tracker-41.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 def create_responsable_eglise():

@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://ministery-stars.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://visitor-tracker-41.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 # Test pasteur et superadmin sans ville (ils ne devraient pas en avoir besoin)

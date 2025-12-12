@@ -19,7 +19,7 @@ Le déploiement échouait avec **status code 520** (Web Server Returned an Unkno
 #### Avant (DANGEREUX) :
 ```python
 SECRET_KEY = os.environ.get("SECRET_KEY", "icc-bfc-italie-secret-key-2024-production-secure")
-backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://ministery-stars.preview.emergentagent.com')
+backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://visitor-tracker-41.preview.emergentagent.com')
 ```
 
 #### Après (SÉCURISÉ) :
