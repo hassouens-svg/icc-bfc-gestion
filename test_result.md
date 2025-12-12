@@ -2886,3 +2886,78 @@ Tous les éléments critiques du flux RSVP avec email de confirmation sont prés
 - Écriture planning (star): ✅ Bloqué comme prévu
 - Écriture planning (respo_departement): ✅
 
+
+---
+
+## 🎯 NOUVELLES FONCTIONNALITÉS IMPLÉMENTÉES - Phase 2
+
+### 📋 Fonctionnalités à tester :
+
+**1. Planning amélioré avec pôles multiples**
+- Possibilité d'ajouter 0, 1 ou plusieurs pôles par ligne
+- Bouton "+ Pôle" pour ajouter des pôles
+- Champ "Événements spéciaux" ajouté aux types de culte
+- Mode affichage (lecture) vs Mode édition (Modifier)
+- Bouton "Modifier" visible uniquement pour: respo_departement, pasteur, super_admin, responsable_eglise
+
+**2. KPIs Planning**
+- KPIs en haut du planning: Stars par type de culte + Total en service cette semaine
+- Comptage automatique des membres sélectionnés
+
+**3. Dashboard - Bouton "Stars en service"**
+- Nouveau bouton violet "Stars en service" sur le dashboard
+- Dialog avec 52 boutons (1 par semaine)
+- Chaque semaine affiche le nombre de stars en service
+- Clic sur une semaine → Dialog avec KPIs détaillés:
+  - Total stars en service
+  - Stars par type de culte
+  - Départements avec planning
+  - Liste des membres en service
+
+### 🧪 Tests à effectuer :
+
+**Test 1: Planning avec pôles multiples**
+```
+1. Aller sur /ministere-stars/departement/Sono
+2. Cliquer sur "Gérer le Planning"
+3. Sélectionner semaine 1
+4. Vérifier que le planning s'affiche en mode lecture
+5. Cliquer sur "Modifier"
+6. Ajouter une ligne
+7. Sélectionner type culte "Événements spéciaux"
+8. Cliquer plusieurs fois sur "+ Pôle" pour ajouter des pôles
+9. Sélectionner plusieurs membres
+10. Enregistrer et vérifier l'affichage
+```
+
+**Test 2: KPIs dans le dialog planning**
+```
+1. Ouvrir le planning d'une semaine
+2. Vérifier les KPIs en haut:
+   - Chaque type de culte montre le nombre de stars
+   - Total "en service" = nombre unique de membres
+```
+
+**Test 3: Bouton "Stars en service" sur dashboard**
+```
+1. Aller sur /ministere-stars/dashboard
+2. Vérifier le nouveau bouton violet "Stars en service"
+3. Cliquer dessus → dialog avec 52 semaines
+4. Les semaines avec planning montrent le nombre de stars
+5. Cliquer sur semaine 1 → voir les KPIs détaillés
+```
+
+**Test 4: Permissions (rôle star = lecture seule)**
+```
+1. Se connecter avec test_star_user/test123
+2. Vérifier que le bouton "Modifier" N'APPARAÎT PAS
+3. Vérifier qu'on peut seulement consulter
+```
+
+### ✅ Tests backend réussis :
+- Création planning avec pôles multiples: ✅
+- Récupération planning avec pôles: ✅
+- Endpoint /api/stars/service-stats/{semaine}/{annee}: ✅
+- Endpoint /api/stars/service-overview/{annee}: ✅
+- KPIs: 5 stars en service semaine 1, 2 semaine 50, 1 semaine 51
+
