@@ -2,47 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logout, getUser } from '../utils/api';
 import { Button } from './ui/button';
-import { LogOut, ArrowLeft, Star } from 'lucide-react';
+import { LogOut, ArrowLeft, Star, MapPin } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useCities } from '../contexts/CitiesContext';
+import { useSelectedCity } from '../contexts/SelectedCityContext';
 
-const LayoutMinistereStars = ({ children, onCityChange }) => {
+const LayoutMinistereStars = ({ children }) => {
   const navigate = useNavigate();
   const user = getUser();
-  const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState(user?.city || 'all');
-
-  useEffect(() => {
-    loadCities();
-  }, []);
-
-  const loadCities = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities`);
-      const data = await response.json();
-      setCities(data || []);
-    } catch (error) {
-      console.error('Error loading cities:', error);
-    }
-  };
+  const { cities } = useCities();
+  const { selectedCity, setSelectedCity } = useSelectedCity();
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const handleCityChange = (city) => {
-    setSelectedCity(city);
-    // Mettre à jour l'utilisateur avec la nouvelle ville
-    const updatedUser = { ...user, city };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    
-    // Notifier le parent (dashboard) du changement
-    if (onCityChange) {
-      onCityChange(city);
-    }
-    
-    // Recharger la page pour appliquer les changements
-    window.location.reload();
-  };
+  // Permissions : pasteur/superadmin peuvent sélectionner n'importe quelle ville
+  // respo_departement aussi
+  // responsable_eglise voit seulement sa ville
+  // star voit seulement sa ville ou le filtre global
+  const canSelectCity = ['super_admin', 'pasteur', 'respo_departement'].includes(user?.role);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -57,28 +37,35 @@ const LayoutMinistereStars = ({ children, onCityChange }) => {
                 <h1 className="text-xl font-bold text-white">Ministère des STARS</h1>
               </div>
               
-              {/* Sélecteur de ville - uniquement pour superadmin/pasteur */}
-              {['super_admin', 'pasteur'].includes(user?.role) && (
-                <div className="ml-4">
-                  <select
-                    value={selectedCity}
-                    onChange={(e) => handleCityChange(e.target.value)}
-                    className="px-3 py-1.5 bg-white/20 border border-white/30 rounded-lg text-white text-sm focus:ring-2 focus:ring-white/50 focus:outline-none backdrop-blur-sm hover:bg-white/30 transition-colors cursor-pointer"
-                  >
-                    <option value="all" className="text-gray-900">Toutes les villes</option>
-                    {cities.map((city, idx) => (
-                      <option key={idx} value={city.name} className="text-gray-900">
-                        {city.name}
-                      </option>
+              {/* Sélecteur de ville - pour ceux qui peuvent sélectionner */}
+              {canSelectCity && (
+                <Select value={selectedCity || 'all'} onValueChange={setSelectedCity}>
+                  <SelectTrigger className="w-[160px] bg-white/20 border-white/30 text-white hover:bg-white/30">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Ville" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">🌍 Toutes les villes</SelectItem>
+                    {cities.filter(c => c.name && c.name.trim() !== '').sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
+                      <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
                     ))}
-                  </select>
+                  </SelectContent>
+                </Select>
+              )}
+              
+              {/* Affichage ville pour responsable_eglise (fixe sur sa ville) */}
+              {user?.role === 'responsable_eglise' && (
+                <div className="px-3 py-1.5 bg-white/20 rounded-lg text-white text-sm border border-white/30 flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  {user?.city}
                 </div>
               )}
               
-              {/* Affichage ville pour responsable_eglise/ministere_stars */}
-              {['responsable_eglise', 'ministere_stars'].includes(user?.role) && (
-                <div className="ml-4 px-3 py-1.5 bg-white/20 rounded-lg text-white text-sm border border-white/30">
-                  📍 {user?.city}
+              {/* Affichage pour star (lecture seule mais peut voir le filtre) */}
+              {user?.role === 'star' && (
+                <div className="px-3 py-1.5 bg-white/20 rounded-lg text-white text-sm border border-white/30 flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  {selectedCity && selectedCity !== 'all' ? selectedCity : 'Toutes les villes'}
                 </div>
               )}
             </div>
