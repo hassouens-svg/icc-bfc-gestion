@@ -6,16 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Users, TrendingUp, Star, Calendar, MapPin, Eye, UserCheck } from 'lucide-react';
+import { Users, TrendingUp, Star, Calendar, Eye, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSelectedCity } from '../contexts/SelectedCityContext';
-import { useCities } from '../contexts/CitiesContext';
 
 const MinistereStarsDashboardPage = () => {
   const navigate = useNavigate();
   const user = getUser();
-  const { selectedCity, setSelectedCity } = useSelectedCity();
-  const { cities } = useCities();
+  const { selectedCity } = useSelectedCity();
   const [stats, setStats] = useState(null);
   const [multiDeptStars, setMultiDeptStars] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +24,7 @@ const MinistereStarsDashboardPage = () => {
   const [serviceOverview, setServiceOverview] = useState([]);
   const [selectedWeekDetail, setSelectedWeekDetail] = useState(null);
   const [weekStats, setWeekStats] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const departements = [
     'MLA',
@@ -51,10 +50,21 @@ const MinistereStarsDashboardPage = () => {
   ];
 
   const typesCulte = ['Culte 1', 'Culte 2', 'EJP', 'Tous les cultes', 'Événements spéciaux'];
+  const years = [2025, 2026, 2027, 2028, 2029, 2030];
 
-  // Vérifier les permissions
-  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'ministere_stars', 'respo_departement', 'star'].includes(user.role);
-  const canSelectCity = user?.role && ['super_admin', 'pasteur'].includes(user.role);
+  // Permissions: pasteur/superadmin = tout, responsable_eglise = sa ville, respo_departement = tout, star = lecture
+  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role);
+
+  // Déterminer la ville effective pour le filtrage
+  const getEffectiveCity = () => {
+    if (user?.role === 'responsable_eglise') {
+      return user.city;
+    }
+    if (['super_admin', 'pasteur', 'respo_departement'].includes(user?.role)) {
+      return selectedCity && selectedCity !== 'all' ? selectedCity : null;
+    }
+    return null;
+  };
 
   useEffect(() => {
     if (!user || !canView) {
@@ -66,7 +76,8 @@ const MinistereStarsDashboardPage = () => {
 
   const loadData = async () => {
     try {
-      const villeParam = selectedCity && selectedCity !== 'all' ? `?ville=${encodeURIComponent(selectedCity)}` : '';
+      const effectiveCity = getEffectiveCity();
+      const villeParam = effectiveCity ? `?ville=${encodeURIComponent(effectiveCity)}` : '';
       
       const [statsRes, multiRes] = await Promise.all([
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/stats/overview${villeParam}`, {
@@ -88,10 +99,13 @@ const MinistereStarsDashboardPage = () => {
 
   const openServiceDialog = async () => {
     setShowServiceDialog(true);
+    loadServiceOverview(selectedYear);
+  };
+
+  const loadServiceOverview = async (year) => {
     try {
-      const currentYear = new Date().getFullYear();
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/service-overview/${currentYear}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/service-overview/${year}`,
         { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
       const data = await response.json();
@@ -102,13 +116,17 @@ const MinistereStarsDashboardPage = () => {
     }
   };
 
+  const handleYearChange = (year) => {
+    setSelectedYear(parseInt(year));
+    loadServiceOverview(parseInt(year));
+  };
+
   const openWeekDetail = async (week) => {
     setSelectedWeekDetail(week);
     setShowWeekDetailDialog(true);
     try {
-      const currentYear = new Date().getFullYear();
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/service-stats/${week}/${currentYear}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/service-stats/${week}/${selectedYear}`,
         { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
       const data = await response.json();
@@ -129,6 +147,10 @@ const MinistereStarsDashboardPage = () => {
     );
   }
 
+  // Affichage de la ville effective
+  const effectiveCity = getEffectiveCity();
+  const cityDisplay = user?.role === 'responsable_eglise' ? user.city : (selectedCity && selectedCity !== 'all' ? selectedCity : null);
+
   return (
     <LayoutMinistereStars>
       <div className="space-y-6 p-6">
@@ -140,8 +162,8 @@ const MinistereStarsDashboardPage = () => {
             </h1>
             <p className="text-gray-500 mt-1">
               Dashboard de suivi des stars
-              {selectedCity && selectedCity !== 'all' && (
-                <span className="ml-2 text-indigo-600 font-medium">({selectedCity})</span>
+              {cityDisplay && (
+                <span className="ml-2 text-indigo-600 font-medium">({cityDisplay})</span>
               )}
               {user?.role === 'star' && (
                 <span className="ml-2 text-amber-600 flex items-center gap-1 inline-flex">
@@ -150,25 +172,9 @@ const MinistereStarsDashboardPage = () => {
               )}
             </p>
           </div>
-          
-          {/* Sélecteur de ville pour les admins */}
-          {canSelectCity && (
-            <Select value={selectedCity} onValueChange={setSelectedCity}>
-              <SelectTrigger className="w-[200px] bg-white border-orange-200">
-                <MapPin className="h-4 w-4 mr-2 text-orange-600" />
-                <SelectValue placeholder="Filtrer par ville" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">🌍 Toutes les villes</SelectItem>
-                {cities.filter(c => c.name && c.name.trim() !== '').sort((a, b) => a.name.localeCompare(b.name)).map((city) => (
-                  <SelectItem key={city.id} value={city.name}>{city.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
         </div>
 
-        {/* KPI Cards - avec le nouveau bouton "Stars en service" */}
+        {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
             <CardContent className="pt-6">
@@ -206,7 +212,7 @@ const MinistereStarsDashboardPage = () => {
             </CardContent>
           </Card>
 
-          {/* Nouveau bouton Stars en service */}
+          {/* Bouton Stars en service */}
           <Card 
             className="bg-gradient-to-br from-purple-500 to-purple-600 text-white cursor-pointer hover:from-purple-600 hover:to-purple-700 transition-all"
             onClick={openServiceDialog}
@@ -325,13 +331,25 @@ const MinistereStarsDashboardPage = () => {
         </Card>
       </div>
 
-      {/* Dialog - Sélection des semaines (Stars en service) */}
+      {/* Dialog - Sélection des semaines (Stars en service) avec année */}
       <Dialog open={showServiceDialog} onOpenChange={setShowServiceDialog}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <UserCheck className="h-5 w-5 text-purple-600" />
-              📅 Stars en service par semaine ({new Date().getFullYear()})
+            <DialogTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-purple-600" />
+                📅 Stars en service par semaine
+              </span>
+              <Select value={selectedYear.toString()} onValueChange={handleYearChange}>
+                <SelectTrigger className="w-28">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map(y => (
+                    <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
@@ -383,7 +401,7 @@ const MinistereStarsDashboardPage = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-purple-600" />
-              📊 Stars en service - Semaine {selectedWeekDetail}
+              📊 Stars en service - Semaine {selectedWeekDetail} / {selectedYear}
             </DialogTitle>
           </DialogHeader>
           
@@ -404,20 +422,19 @@ const MinistereStarsDashboardPage = () => {
                 </CardContent>
               </Card>
 
-              {/* KPIs par type de culte */}
+              {/* KPIs par type de culte - COMPACTS */}
               <Card>
-                <CardHeader>
+                <CardHeader className="pb-2">
                   <CardTitle className="text-base">📊 Stars par type de culte</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {typesCulte.map(type => {
                       const typeData = weekStats.par_type_culte?.[type] || { count: 0, membres: [] };
                       return (
-                        <div key={type} className="bg-gradient-to-br from-gray-50 to-gray-100 border rounded-lg p-3 text-center">
-                          <p className="text-xs text-gray-600 font-medium truncate" title={type}>{type}</p>
-                          <p className="text-2xl font-bold text-purple-700">{typeData.count}</p>
-                          <p className="text-xs text-gray-500">stars</p>
+                        <div key={type} className="bg-gray-50 border rounded px-3 py-2 text-center min-w-[90px]">
+                          <p className="text-[10px] text-gray-600 font-medium truncate" title={type}>{type}</p>
+                          <p className="text-xl font-bold text-purple-700">{typeData.count}</p>
                         </div>
                       );
                     })}
@@ -428,8 +445,8 @@ const MinistereStarsDashboardPage = () => {
               {/* Départements avec planning */}
               {weekStats.departements_avec_planning?.length > 0 && (
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">📂 Départements avec planning cette semaine</CardTitle>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">📂 Départements avec planning</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
@@ -454,11 +471,11 @@ const MinistereStarsDashboardPage = () => {
               {/* Liste des membres en service */}
               {weekStats.membres_en_service?.length > 0 && (
                 <Card>
-                  <CardHeader>
+                  <CardHeader className="pb-2">
                     <CardTitle className="text-base">👥 Membres en service ({weekStats.membres_en_service.length})</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
+                    <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
                       {weekStats.membres_en_service.sort().map((nom, idx) => (
                         <span key={idx} className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
                           {nom}
