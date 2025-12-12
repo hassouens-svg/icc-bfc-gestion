@@ -91,23 +91,18 @@ const MarquerPresencesPage = () => {
     });
   };
 
-  // Fonction pour décocher toutes les présences
+  // Fonction pour décocher toutes les présences (garde les commentaires)
   const handleUncheckAll = () => {
-    if (window.confirm('⚠️ Êtes-vous sûr de vouloir décocher toutes les présences ?')) {
+    if (window.confirm('⚠️ Êtes-vous sûr de vouloir décocher toutes les présences ? (Les commentaires seront conservés)')) {
       setPresences({});
-      setComments({});
-      toast.info('Toutes les cases ont été décochées');
+      toast.info('Toutes les présences ont été décochées');
     }
   };
 
-  // Fonction pour vérifier si tous les visiteurs ont au moins une présence ou un commentaire
+  // Fonction pour vérifier si on peut sauvegarder
   const canSave = () => {
-    // Pour chaque visiteur, vérifier qu'il a soit une présence cochée, soit un commentaire
-    return visitors.every(visitor => {
-      const hasPresenceChecked = presences[visitor.id] !== undefined;
-      const hasComment = comments[visitor.id]?.trim();
-      return hasPresenceChecked || hasComment;
-    });
+    // On peut toujours sauvegarder, même si tout est vide (pour corriger des erreurs)
+    return true;
   };
 
   const handleSaveAll = async () => {
