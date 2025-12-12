@@ -127,16 +127,16 @@ const MarquerPresenceBergersPage = () => {
   };
 
   const handleUnchecksAll = () => {
-    if (window.confirm('⚠️ Êtes-vous sûr de vouloir décocher toutes les présences ?')) {
+    if (window.confirm('⚠️ Êtes-vous sûr de vouloir décocher toutes les présences ? (Les commentaires seront conservés)')) {
       const newPromos = promos.map(promo => ({
         ...promo,
         present: false,
         absent: false,
-        priere: 'Non',
-        commentaire: ''
+        priere: 'Non'
+        // On garde le commentaire existant
       }));
       setPromos(newPromos);
-      toast.info('Toutes les cases ont été décochées');
+      toast.info('Toutes les présences ont été décochées');
     }
   };
 
