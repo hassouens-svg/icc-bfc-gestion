@@ -6160,7 +6160,7 @@ async def get_stars_by_departement(departement: str, ville: Optional[str] = None
 @api_router.get("/stars/multi-departements")
 async def get_stars_multi_departements(current_user: dict = Depends(get_current_user)):
     """Récupérer les stars qui servent dans plusieurs départements"""
-    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars"]:
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     query = {}
