@@ -84,7 +84,7 @@ class User(BaseModel):
     password: str  # hashed
     plain_password: Optional[str] = None  # Mot de passe en clair pour export (super_admin only)
     city: str
-    role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin, responsable_eglise, gestion_projet
+    role: str  # superviseur_promos, superviseur_fi, referent, accueil, promotions, pilote_fi, responsable_secteur, pasteur, super_admin, responsable_eglise, gestion_projet, respo_departement, star
     telephone: Optional[str] = None  # Phone number (especially for pilote_fi)
     assigned_month: Optional[Union[str, List[str]]] = None  # For referents: "2025-01"
     promo_name: Optional[str] = None  # Custom name for promo (instead of "2025-01")
@@ -95,6 +95,7 @@ class User(BaseModel):
     dashboard_permissions: Optional[Dict[str, bool]] = None  # What user can see in their dashboard (controlled by super_admin)
     is_blocked: bool = False  # For blocking users
     team_members: Optional[List[Dict[str, str]]] = []  # For responsable_promo - list of team members with firstname/lastname
+    assigned_departement: Optional[str] = None  # For respo_departement: department name
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
