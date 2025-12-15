@@ -6483,8 +6483,12 @@ class PainDuJourContent(BaseModel):
     date: str  # "YYYY-MM-DD"
     lien_priere: Optional[str] = None  # Lien YouTube temps de prière
     titre_priere: Optional[str] = None
+    thumbnail_priere: Optional[str] = None  # Thumbnail YouTube
+    duration_priere: Optional[str] = None  # Durée de la vidéo
     lien_enseignement: Optional[str] = None  # Lien YouTube enseignement
     titre_enseignement: Optional[str] = None
+    thumbnail_enseignement: Optional[str] = None  # Thumbnail YouTube
+    duration_enseignement: Optional[str] = None  # Durée de la vidéo
     versets: Optional[List[Dict]] = []  # [{livre, chapitre, verset_debut, verset_fin}]
     created_by: Optional[str] = None
     created_at: Optional[str] = None
