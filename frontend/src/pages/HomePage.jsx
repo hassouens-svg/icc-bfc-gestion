@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { Users, TrendingUp, UserCheck, Shield, Church, Heart } from 'lucide-react';
+import { Users, TrendingUp, UserCheck, Shield, Church, Heart, Star, Book } from 'lucide-react';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -17,7 +17,6 @@ const HomePage = () => {
         console.log('🎂 Anniversaires chargés:', data);
         setAnniversaires(data);
         
-        // Afficher les toasts pour les anniversaires
         if (data && data.length > 0) {
           data.forEach((anniv, idx) => {
             setTimeout(() => {
@@ -32,7 +31,7 @@ const HomePage = () => {
                   position: 'top-center',
                 });
               }
-            }, idx * 1000); // Décaler chaque toast de 1 seconde
+            }, idx * 1000);
           });
         }
       } catch (error) {
@@ -43,7 +42,6 @@ const HomePage = () => {
   }, []);
 
   const handleDepartmentChoice = (deptId) => {
-    // Handle special access pages
     if (deptId === 'acces-specifiques') {
       navigate('/acces-specifiques');
       return;
@@ -54,7 +52,16 @@ const HomePage = () => {
       return;
     }
 
-    // Plus besoin de sélectionner la ville ici - elle sera sélectionnée au login
+    if (deptId === 'ministere-stars') {
+      navigate('/ministere-stars-login');
+      return;
+    }
+
+    if (deptId === 'pain-du-jour') {
+      navigate('/pain-du-jour');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Veuillez vous connecter');
@@ -62,10 +69,8 @@ const HomePage = () => {
       return;
     }
 
-    // Store the selected role in localStorage
     localStorage.setItem('selected_role', deptId);
     
-    // Navigate based on department
     if (deptId === 'accueil') {
       navigate('/visitors');
     } else if (deptId === 'promotions') {
@@ -117,9 +122,23 @@ const HomePage = () => {
     {
       id: 'evangelisation',
       title: 'Dynamique d\'Évangélisation',
-      description: 'Enregistrement des activités d\'évangélisation de l\'église et des familles d\'impact',
+      description: 'Enregistrement des activités d\'évangélisation',
       icon: Heart,
       color: 'from-red-400 to-pink-600'
+    },
+    {
+      id: 'ministere-stars',
+      title: 'Ministère des STARS',
+      description: 'Suivi et bien-être des stars de l\'église',
+      icon: Star,
+      color: 'from-yellow-400 to-orange-500'
+    },
+    {
+      id: 'pain-du-jour',
+      title: 'Le Pain du Jour',
+      description: 'Enseignements, prières prophétiques et versets quotidiens',
+      icon: Book,
+      color: 'from-amber-400 to-orange-600'
     }
   ];
 
@@ -131,65 +150,56 @@ const HomePage = () => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      
       {/* Content */}
-      <div className="relative z-10 w-full max-w-5xl">
+      <div className="relative z-10 w-full max-w-6xl">
         {/* Logo */}
-        <div className="flex justify-center mb-8 animate-fade-in">
-          <div className="w-48 h-48 rounded-full bg-white shadow-2xl flex items-center justify-center border-8 border-white/20 backdrop-blur-sm">
+        <div className="flex justify-center mb-6 animate-fade-in">
+          <div className="w-40 h-40 rounded-full bg-white shadow-2xl flex items-center justify-center border-8 border-white/20 backdrop-blur-sm">
             <img
               src="https://customer-assets.emergentagent.com/job_dijon-icc-hub/artifacts/foeikpvk_IMG_2590.png"
               alt="ICC Logo"
-              className="w-40 h-40 object-contain rounded-full"
+              className="w-32 h-32 object-contain rounded-full"
             />
           </div>
         </div>
 
         {/* Title */}
-        <div className="text-center mb-12 animate-fade-in-up">
-          <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
+        <div className="text-center mb-10 animate-fade-in-up">
+          <h1 className="text-5xl font-bold text-white mb-3 tracking-tight">
             ICC BFC-ITALIE
           </h1>
-          <p className="text-lg text-blue-100 mb-2">Impact Centre Chrétien - Bourgogne-Franche-Comté et Italie</p>
-          <div className="max-w-2xl mx-auto">
-            <p className="text-2xl text-blue-100 font-medium mb-2">
-              Département de l'accueil, de l'intégration et des promotions
-            </p>
-            <p className="text-base text-blue-200/80">
-              Gestion des nouveaux arrivants et nouveaux convertis
-            </p>
-          </div>
+          <p className="text-lg text-blue-100">Impact Centre Chrétien - Bourgogne-Franche-Comté et Italie</p>
         </div>
 
         {/* Department Cards */}
         <div className="w-full animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-          <h2 className="text-3xl font-semibold text-white text-center mb-8">
+          <h2 className="text-2xl font-semibold text-white text-center mb-6">
             Choisissez votre département
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
             {departments.map((dept) => {
               const Icon = dept.icon;
               return (
                 <Card
                   key={dept.id}
-                  className="cursor-pointer hover:scale-105 transition-all duration-300 bg-white/95 backdrop-blur-xl shadow-2xl hover:shadow-blue-500/20 border-0 group"
+                  className="cursor-pointer hover:scale-105 transition-all duration-300 bg-white/95 backdrop-blur-xl shadow-xl hover:shadow-blue-500/20 border-0 group"
                   onClick={() => handleDepartmentChoice(dept.id)}
                   data-testid={`dept-card-${dept.id}`}
                 >
-                  <CardContent className="p-8 text-center">
-                    <div className={`w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${dept.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                      <Icon className="w-12 h-12 text-white" />
+                  <CardContent className="p-5 text-center">
+                    <div className={`w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br ${dept.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                      <Icon className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-800 mb-2">
+                    <h3 className="text-lg font-bold text-gray-800 mb-1">
                       {dept.title}
                     </h3>
                     {dept.subtitle && (
-                      <p className="text-sm text-gray-500 mb-3 italic">
+                      <p className="text-xs text-gray-500 mb-2 italic">
                         {dept.subtitle}
                       </p>
                     )}
-                    <p className="text-base text-gray-600 leading-relaxed">
+                    <p className="text-sm text-gray-600 leading-relaxed">
                       {dept.description}
                     </p>
                   </CardContent>
@@ -200,11 +210,11 @@ const HomePage = () => {
         </div>
 
         {/* Footer Links */}
-        <div className="mt-16 text-center animate-fade-in" style={{animationDelay: '0.4s'}}>
-          <p className="text-white/90 mb-3 text-lg">Nouveau nouveaux arrivants et nouveaux convertis?</p>
+        <div className="mt-10 text-center animate-fade-in" style={{animationDelay: '0.4s'}}>
+          <p className="text-white/90 mb-3">Nouveau à l'église ?</p>
           <Button
             variant="outline"
-            className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-xl px-8 py-6 text-lg font-medium shadow-lg"
+            className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-xl px-6 py-4 text-base font-medium shadow-lg"
             onClick={() => navigate('/register')}
             data-testid="register-link-home"
           >
@@ -213,101 +223,54 @@ const HomePage = () => {
         </div>
 
         {/* My Events Church Section */}
-        <div className="mt-12 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
+        <div className="mt-8 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
           <Card className="bg-gradient-to-br from-purple-600 to-indigo-700 border-0 shadow-2xl">
-            <CardContent className="p-8 text-center">
-              <div className="flex items-center justify-center mb-4">
-                <div className="text-5xl">📅</div>
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center mb-3">
+                <div className="text-4xl">📅</div>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">
+              <h3 className="text-xl font-bold text-white mb-2">
                 My Events Church
               </h3>
-              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-                Gérez vos projets d'église, organisez des événements et communiquez avec votre communauté via email et SMS en masse.
+              <p className="text-white/90 mb-4 max-w-2xl mx-auto text-sm">
+                Gérez vos projets d'église, organisez des événements et communiquez avec votre communauté.
               </p>
               <Button
                 onClick={() => navigate('/events-login')}
                 size="lg"
-                className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8 py-6 text-lg shadow-lg"
+                className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-6 py-4 shadow-lg"
               >
                 Accéder à My Events Church →
               </Button>
-              <p className="text-xs text-white/70 mt-4">
+              <p className="text-xs text-white/70 mt-3">
                 Accès réservé : Pasteur, Super Admin, Responsable d'Église, Gestion Projet
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Ministère des STARS Section - Version compacte */}
-        <div className="mt-8 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
-          <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 border-0 shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl">⭐</div>
-                  <div className="text-left">
-                    <h3 className="text-lg font-bold text-white">Ministère des STARS</h3>
-                    <p className="text-xs text-white/80">Suivi et bien-être des stars</p>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => navigate('/ministere-stars-login')}
-                  size="sm"
-                  className="bg-white text-orange-700 hover:bg-gray-100 font-semibold shadow-lg"
-                >
-                  Accéder →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Footer Copyright */}
-        <footer className="mt-20 pb-8 text-center animate-fade-in border-t border-white/10 pt-8" style={{animationDelay: '0.6s'}}>
-          <div className="max-w-3xl mx-auto space-y-4">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <Church className="w-6 h-6 text-white" />
+        <footer className="mt-12 pb-6 text-center animate-fade-in border-t border-white/10 pt-6" style={{animationDelay: '0.6s'}}>
+          <div className="max-w-3xl mx-auto space-y-3">
+            <div className="flex items-center justify-center space-x-2 mb-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                <Church className="w-5 h-5 text-white" />
               </div>
-              <span className="text-2xl font-bold text-white">ICC BFC-ITALIE</span>
+              <span className="text-xl font-bold text-white">ICC BFC-ITALIE</span>
             </div>
             
-            <p className="text-white/80 text-base leading-relaxed px-4">
-              Cette application web a été développée par <strong className="text-white">Impact Centre Chrétien - Campus de Dijon</strong> dans le but de gérer efficacement les différents départements qui s'y trouvent ainsi que toutes les églises sous la supervision du <strong className="text-white">Pasteur Narcisse HAMY</strong>.
+            <p className="text-white/80 text-sm leading-relaxed px-4">
+              Cette application a été développée par <strong className="text-white">Impact Centre Chrétien - Campus de Dijon</strong> pour la gestion des différents départements sous la supervision du <strong className="text-white">Pasteur Narcisse HAMY</strong>.
             </p>
             
-            <div className="flex items-center justify-center space-x-6 text-white/60 text-sm mt-6">
-              <span>© {new Date().getFullYear()} ICC Dijon</span>
+            <div className="flex items-center justify-center space-x-6 text-white/60 text-xs mt-4">
+              <span>© {new Date().getFullYear()}</span>
               <span>•</span>
-              <span>Tous droits réservés</span>
+              <span>ICC BFC-ITALIE</span>
             </div>
           </div>
         </footer>
       </div>
-
-      <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes fade-in-up {
-          from { 
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to { 
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out;
-        }
-      `}</style>
     </div>
   );
 };
