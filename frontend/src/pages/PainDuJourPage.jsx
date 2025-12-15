@@ -343,12 +343,28 @@ const PainDuJourPage = () => {
                 <p className="text-amber-100 text-xs md:text-sm">Nourriture spirituelle quotidienne</p>
               </div>
             </div>
-            {canEdit && (
-              <Button onClick={handleAdminOpen} variant="outline" size="sm" className="bg-white/20 hover:bg-white/30 border-white/30">
-                <Settings className="h-4 w-4 mr-1 md:mr-2" />
-                <span className="hidden md:inline">Gérer</span>
-              </Button>
-            )}
+            <Button 
+              onClick={() => {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                  toast.info('Connectez-vous pour gérer le contenu');
+                  navigate('/login');
+                  return;
+                }
+                if (!canEdit) {
+                  toast.error('Accès réservé aux administrateurs');
+                  return;
+                }
+                handleAdminOpen();
+              }} 
+              variant="outline" 
+              size="sm" 
+              className="bg-white/20 hover:bg-white/30 border-white/30"
+            >
+              <Settings className="h-4 w-4 mr-1 md:mr-2" />
+              <span className="hidden md:inline">Mettre à jour</span>
+              <span className="md:hidden">MAJ</span>
+            </Button>
           </div>
         </div>
       </header>
