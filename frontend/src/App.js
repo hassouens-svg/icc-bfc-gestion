@@ -159,6 +159,7 @@ function App() {
           
           {/* Le Pain du Jour */}
           <Route path="/pain-du-jour" element={<PainDuJourPage />} />
+          <Route path="/pain-du-jour/admin" element={<PainDuJourAdminPage />} />
         </Routes>
       </BrowserRouter>
       </SelectedCityProvider>
