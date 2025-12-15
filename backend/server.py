@@ -6472,6 +6472,154 @@ async def get_stars_service_overview(annee: int, current_user: dict = Depends(ge
     return result
 
 
+# ==================== LE PAIN DU JOUR ====================
+
+class PainDuJourContent(BaseModel):
+    date: str  # "YYYY-MM-DD"
+    lien_priere: Optional[str] = None  # Lien YouTube temps de prière
+    titre_priere: Optional[str] = None
+    lien_enseignement: Optional[str] = None  # Lien YouTube enseignement
+    titre_enseignement: Optional[str] = None
+    versets: Optional[List[Dict]] = []  # [{livre, chapitre, verset_debut, verset_fin}]
+    created_by: Optional[str] = None
+    created_at: Optional[str] = None
+
+class SondagePainDuJour(BaseModel):
+    date: str  # "YYYY-MM-DD"
+    lecture_reponse: str  # "Oui", "Non", "Partiellement"
+    video_reponse: str  # "Oui", "Non", "Pas totalement"
+
+class ClickTrack(BaseModel):
+    type: str  # "priere" ou "enseignement"
+    date: str  # "YYYY-MM-DD"
+
+
+# Liste des livres de la Bible
+LIVRES_BIBLE = [
+    # Ancien Testament
+    "Genèse", "Exode", "Lévitique", "Nombres", "Deutéronome",
+    "Josué", "Juges", "Ruth", "1 Samuel", "2 Samuel",
+    "1 Rois", "2 Rois", "1 Chroniques", "2 Chroniques",
+    "Esdras", "Néhémie", "Esther", "Job", "Psaumes", "Proverbes",
+    "Ecclésiaste", "Cantique des Cantiques", "Ésaïe", "Jérémie",
+    "Lamentations", "Ézéchiel", "Daniel", "Osée", "Joël", "Amos",
+    "Abdias", "Jonas", "Michée", "Nahum", "Habacuc", "Sophonie",
+    "Aggée", "Zacharie", "Malachie",
+    # Nouveau Testament
+    "Matthieu", "Marc", "Luc", "Jean", "Actes",
+    "Romains", "1 Corinthiens", "2 Corinthiens", "Galates", "Éphésiens",
+    "Philippiens", "Colossiens", "1 Thessaloniciens", "2 Thessaloniciens",
+    "1 Timothée", "2 Timothée", "Tite", "Philémon", "Hébreux",
+    "Jacques", "1 Pierre", "2 Pierre", "1 Jean", "2 Jean", "3 Jean",
+    "Jude", "Apocalypse"
+]
+
+
+@api_router.get("/pain-du-jour/livres")
+async def get_livres_bible():
+    """Retourne la liste des livres de la Bible"""
+    return LIVRES_BIBLE
+
+
+@api_router.get("/pain-du-jour/today")
+async def get_pain_du_jour_today():
+    """Récupère le contenu du jour (public, pas besoin d'auth)"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    content = await db.pain_du_jour.find_one({"date": today}, {"_id": 0})
+    return content or {"date": today, "versets": []}
+
+
+@api_router.get("/pain-du-jour/{date}")
+async def get_pain_du_jour(date: str):
+    """Récupère le contenu d'une date spécifique (public)"""
+    content = await db.pain_du_jour.find_one({"date": date}, {"_id": 0})
+    return content or {"date": date, "versets": []}
+
+
+@api_router.post("/pain-du-jour")
+async def save_pain_du_jour(content: PainDuJourContent, current_user: dict = Depends(get_current_user)):
+    """Enregistrer le contenu du jour - pasteur, super_admin, gestion_projet uniquement"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    content_data = content.model_dump()
+    content_data["created_by"] = current_user["username"]
+    content_data["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.pain_du_jour.update_one(
+        {"date": content.date},
+        {"$set": content_data},
+        upsert=True
+    )
+    
+    return {"message": "Contenu enregistré"}
+
+
+@api_router.post("/pain-du-jour/click")
+async def track_click(click: ClickTrack):
+    """Enregistrer un clic sur vidéo (public)"""
+    week_num = datetime.strptime(click.date, "%Y-%m-%d").isocalendar()[1]
+    year = datetime.strptime(click.date, "%Y-%m-%d").year
+    week_key = f"S{week_num}"
+    
+    await db.pain_du_jour_stats.update_one(
+        {"semaine": week_key, "annee": year},
+        {"$inc": {f"clicks_{click.type}": 1}},
+        upsert=True
+    )
+    
+    return {"message": "Click enregistré"}
+
+
+@api_router.post("/pain-du-jour/sondage")
+async def submit_sondage(sondage: SondagePainDuJour):
+    """Soumettre un sondage (public)"""
+    week_num = datetime.strptime(sondage.date, "%Y-%m-%d").isocalendar()[1]
+    year = datetime.strptime(sondage.date, "%Y-%m-%d").year
+    week_key = f"S{week_num}"
+    
+    # Incrémenter les compteurs
+    update_query = {"$inc": {"total_reponses": 1}}
+    
+    # Lecture
+    if sondage.lecture_reponse == "Oui":
+        update_query["$inc"]["lecture_oui"] = 1
+    elif sondage.lecture_reponse == "Non":
+        update_query["$inc"]["lecture_non"] = 1
+    else:
+        update_query["$inc"]["lecture_partiel"] = 1
+    
+    # Vidéo
+    if sondage.video_reponse == "Oui":
+        update_query["$inc"]["video_oui"] = 1
+    elif sondage.video_reponse == "Non":
+        update_query["$inc"]["video_non"] = 1
+    else:
+        update_query["$inc"]["video_partiel"] = 1
+    
+    await db.pain_du_jour_stats.update_one(
+        {"semaine": week_key, "annee": year},
+        update_query,
+        upsert=True
+    )
+    
+    return {"message": "Sondage enregistré"}
+
+
+@api_router.get("/pain-du-jour/stats/{annee}")
+async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_current_user)):
+    """Récupérer les statistiques - pasteur, super_admin, gestion_projet uniquement"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    stats = await db.pain_du_jour_stats.find(
+        {"annee": annee},
+        {"_id": 0}
+    ).to_list(100)
+    
+    return stats
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
