@@ -567,7 +567,7 @@ const PainDuJourAdminPage = () => {
                       {form.versets.map((v, idx) => (
                         <div key={idx} className="flex items-center justify-between bg-green-50 p-3 rounded-lg">
                           <span className="font-medium">
-                            📖 {v.livre} {v.chapitre}:{v.verset_debut}{v.verset_fin ? `-${v.verset_fin}` : ''}
+                            📖 {v.livre} {v.chapitre ? `${v.chapitre}` : ''}{v.verset_debut ? `:${v.verset_debut}` : ''}{v.verset_fin ? `-${v.verset_fin}` : ''}
                           </span>
                           <Button variant="ghost" size="sm" onClick={() => removeVerset(idx)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
                             <X className="h-4 w-4" />
