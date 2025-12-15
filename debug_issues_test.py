@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BACKEND_URL = "https://visitor-tracker-41.preview.emergentagent.com/api"
+BACKEND_URL = "https://dailymanna-1.preview.emergentagent.com/api"
 USERNAME = "superadmin"
 PASSWORD = "superadmin123"
 CITY = "Dijon"

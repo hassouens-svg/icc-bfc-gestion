@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://visitor-tracker-41.preview.emergentagent.com/login
-- **Inscription Publique**: https://visitor-tracker-41.preview.emergentagent.com/register
+- **Connexion**: https://dailymanna-1.preview.emergentagent.com/login
+- **Inscription Publique**: https://dailymanna-1.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**
