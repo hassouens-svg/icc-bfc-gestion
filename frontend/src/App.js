@@ -71,6 +71,7 @@ import MinistereStarsLoginPage from './pages/MinistereStarsLoginPage';
 import MinistereStarsDashboardPage from './pages/MinistereStarsDashboardPage';
 import MinistereStarsDepartementPage from './pages/MinistereStarsDepartementPage';
 import RecensementStarsPage from './pages/RecensementStarsPage';
+import PainDuJourPage from './pages/PainDuJourPage';
 
 function App() {
   return (
