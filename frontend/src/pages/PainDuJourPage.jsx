@@ -243,7 +243,8 @@ const PainDuJourPage = () => {
 
   const getYouTubeId = (url) => {
     if (!url) return null;
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([^&?\s]{11})/);
+    // Support: watch?v=, youtu.be/, embed/, shorts/, live/
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^&?\s]{11})/);
     return match ? match[1] : null;
   };
 
