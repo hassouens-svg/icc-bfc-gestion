@@ -529,9 +529,20 @@ const PainDuJourPage = () => {
         {/* Versets du jour */}
         <Card className="bg-white shadow-lg border-0 overflow-hidden">
           <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 md:py-4">
-            <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-              <Book className="h-5 w-5" />
-              Versets du Jour
+            <CardTitle className="flex items-center justify-between text-base md:text-lg">
+              <div className="flex items-center gap-2">
+                <Book className="h-5 w-5" />
+                Versets du Jour
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open('https://emcitv.com/bible/', '_blank')}
+                className="bg-white/20 hover:bg-white/30 border-white/30 text-white text-xs"
+              >
+                <ExternalLink className="h-3 w-3 mr-1" />
+                Lire sur EMCI TV
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -543,6 +554,7 @@ const PainDuJourPage = () => {
                       <th className="text-left py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Livre</th>
                       <th className="text-center py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Chapitre</th>
                       <th className="text-center py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Versets</th>
+                      <th className="text-center py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Lire</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -553,6 +565,16 @@ const PainDuJourPage = () => {
                         <td className="py-3 md:py-4 px-4 md:px-6 text-center text-gray-700 text-sm md:text-lg">
                           {v.verset_fin ? `${v.verset_debut} - ${v.verset_fin}` : v.verset_debut}
                         </td>
+                        <td className="py-3 md:py-4 px-4 md:px-6 text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open('https://emcitv.com/bible/', '_blank')}
+                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -562,6 +584,14 @@ const PainDuJourPage = () => {
               <div className="text-center py-8">
                 <div className="text-4xl mb-3">📖</div>
                 <p className="text-gray-500">Aucun verset configuré pour cette date</p>
+                <Button
+                  variant="link"
+                  onClick={() => window.open('https://emcitv.com/bible/', '_blank')}
+                  className="text-green-600 mt-2"
+                >
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  Lire la Bible sur EMCI TV
+                </Button>
               </div>
             )}
           </CardContent>
