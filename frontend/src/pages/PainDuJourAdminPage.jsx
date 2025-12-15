@@ -217,18 +217,28 @@ const PainDuJourAdminPage = () => {
   const handleSaveContent = async () => {
     setSaving(true);
     try {
+      const dataToSave = {
+        ...form,
+        date: selectedDate
+      };
+      console.log('Saving data:', dataToSave); // Debug
+      
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${getToken()}`
         },
-        body: JSON.stringify({ ...form, date: selectedDate })
+        body: JSON.stringify(dataToSave)
       });
       
       if (!response.ok) throw new Error('Erreur');
       toast.success('Contenu enregistré avec succès !');
+      
+      // Recharger le contenu pour confirmer
+      await loadContent(selectedDate);
     } catch (error) {
+      console.error('Save error:', error);
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
