@@ -155,6 +155,9 @@ function App() {
           <Route path="/ministere-stars/dashboard" element={<MinistereStarsDashboardPage />} />
           <Route path="/ministere-stars/departement/:departement" element={<MinistereStarsDepartementPage />} />
           <Route path="/recensement-stars" element={<RecensementStarsPage />} />
+          
+          {/* Le Pain du Jour */}
+          <Route path="/pain-du-jour" element={<PainDuJourPage />} />
         </Routes>
       </BrowserRouter>
       </SelectedCityProvider>
