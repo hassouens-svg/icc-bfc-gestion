@@ -485,7 +485,7 @@ const PainDuJourPage = () => {
                   <thead className="bg-green-50">
                     <tr>
                       <th className="text-left py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Livre</th>
-                      <th className="text-center py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Chapitre</th>
+                      <th className="text-center py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Chapitres</th>
                       <th className="text-center py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Versets</th>
                       <th className="text-center py-3 md:py-4 px-4 md:px-6 font-semibold text-green-800 text-sm md:text-lg">Lire</th>
                     </tr>
