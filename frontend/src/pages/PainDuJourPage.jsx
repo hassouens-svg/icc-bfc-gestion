@@ -639,8 +639,16 @@ const PainDuJourPage = () => {
                     </RadioGroup>
                   </div>
 
-                  <Button onClick={handleSubmitSondage} className="w-full bg-amber-600 hover:bg-amber-700">
-                    Enregistrer mes réponses
+                  <Button 
+                    onClick={handleSubmitSondage} 
+                    className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    disabled={!sondage.lecture || !sondage.video}
+                  >
+                    {(!sondage.lecture || !sondage.video) ? (
+                      '⚠️ Répondez aux deux questions'
+                    ) : (
+                      'Enregistrer mes réponses ✓'
+                    )}
                   </Button>
                 </div>
               )}
