@@ -236,8 +236,8 @@ const PainDuJourAdminPage = () => {
   };
 
   const addVerset = () => {
-    if (!newVerset.livre || !newVerset.chapitre || !newVerset.verset_debut) {
-      toast.error('Remplissez livre, chapitre et verset de début');
+    if (!newVerset.livre) {
+      toast.error('Sélectionnez au moins un livre');
       return;
     }
     setForm(prev => ({
