@@ -593,19 +593,19 @@ const PainDuJourAdminPage = () => {
                       </SelectContent>
                     </Select>
                     <Input
-                      type="number"
-                      placeholder="Chapitre"
+                      type="text"
+                      placeholder="Chapitres (ex: 1, 2, 3)"
                       value={newVerset.chapitre}
                       onChange={(e) => setNewVerset({ ...newVerset, chapitre: e.target.value })}
                     />
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="Verset début"
                       value={newVerset.verset_debut}
                       onChange={(e) => setNewVerset({ ...newVerset, verset_debut: e.target.value })}
                     />
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="Verset fin (opt.)"
                       value={newVerset.verset_fin}
                       onChange={(e) => setNewVerset({ ...newVerset, verset_fin: e.target.value })}
