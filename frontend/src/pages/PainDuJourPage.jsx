@@ -494,9 +494,9 @@ const PainDuJourPage = () => {
                     {content.versets.map((v, idx) => (
                       <tr key={idx} className="border-t hover:bg-green-50/50">
                         <td className="py-3 md:py-4 px-4 md:px-6 font-medium text-gray-800 text-sm md:text-lg">{v.livre}</td>
-                        <td className="py-3 md:py-4 px-4 md:px-6 text-center text-gray-700 text-sm md:text-lg">{v.chapitre}</td>
+                        <td className="py-3 md:py-4 px-4 md:px-6 text-center text-gray-700 text-sm md:text-lg">{v.chapitre || '-'}</td>
                         <td className="py-3 md:py-4 px-4 md:px-6 text-center text-gray-700 text-sm md:text-lg">
-                          {v.verset_fin ? `${v.verset_debut} - ${v.verset_fin}` : v.verset_debut}
+                          {v.verset_debut ? (v.verset_fin ? `${v.verset_debut} - ${v.verset_fin}` : v.verset_debut) : '-'}
                         </td>
                         <td className="py-3 md:py-4 px-4 md:px-6 text-center">
                           <Button
