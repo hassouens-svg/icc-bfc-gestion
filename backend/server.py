@@ -6498,6 +6498,40 @@ class ClickTrack(BaseModel):
     type: str  # "priere" ou "enseignement"
     date: str  # "YYYY-MM-DD"
 
+class YouTubeVideoRequest(BaseModel):
+    url: str
+
+
+# YouTube API Key
+YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY", "")
+
+def get_youtube_video_id(url: str) -> Optional[str]:
+    """Extraire l'ID de la vidéo à partir d'une URL YouTube"""
+    patterns = [
+        r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})',
+        r'(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
+
+def format_duration(duration: str) -> str:
+    """Convertir la durée ISO 8601 en format lisible (ex: PT1H2M30S -> 1:02:30)"""
+    match = re.match(r'PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?', duration)
+    if not match:
+        return "0:00"
+    hours, minutes, seconds = match.groups()
+    hours = int(hours) if hours else 0
+    minutes = int(minutes) if minutes else 0
+    seconds = int(seconds) if seconds else 0
+    
+    if hours > 0:
+        return f"{hours}:{minutes:02d}:{seconds:02d}"
+    else:
+        return f"{minutes}:{seconds:02d}"
+
 
 # Liste des livres de la Bible
 LIVRES_BIBLE = [
