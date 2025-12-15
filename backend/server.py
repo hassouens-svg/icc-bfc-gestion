@@ -23,6 +23,11 @@ import mimetypes
 import firebase_admin
 from firebase_admin import credentials, messaging
 import requests
+import re
+
+# YouTube API
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 # Suppress warnings
 warnings.filterwarnings('ignore', message='.*bcrypt.*')
