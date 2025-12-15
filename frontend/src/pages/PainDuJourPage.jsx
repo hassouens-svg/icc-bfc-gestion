@@ -344,19 +344,7 @@ const PainDuJourPage = () => {
               </div>
             </div>
             <Button 
-              onClick={() => {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                  toast.info('Connectez-vous pour gérer le contenu');
-                  navigate('/login');
-                  return;
-                }
-                if (!canEdit) {
-                  toast.error('Accès réservé aux administrateurs');
-                  return;
-                }
-                handleAdminOpen();
-              }} 
+              onClick={() => navigate('/pain-du-jour/admin')} 
               variant="outline" 
               size="sm" 
               className="bg-white/20 hover:bg-white/30 border-white/30"
