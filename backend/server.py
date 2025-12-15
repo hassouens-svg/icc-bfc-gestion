@@ -6560,6 +6560,63 @@ async def get_livres_bible():
     return LIVRES_BIBLE
 
 
+@api_router.post("/pain-du-jour/youtube-info")
+async def get_youtube_video_info(request: YouTubeVideoRequest):
+    """Récupère les métadonnées d'une vidéo YouTube (titre, miniature, durée)"""
+    video_id = get_youtube_video_id(request.url)
+    
+    if not video_id:
+        raise HTTPException(status_code=400, detail="URL YouTube invalide")
+    
+    if not YOUTUBE_API_KEY:
+        raise HTTPException(status_code=500, detail="Clé API YouTube non configurée")
+    
+    try:
+        youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY, cache_discovery=False)
+        
+        video_response = youtube.videos().list(
+            part="snippet,contentDetails,statistics",
+            id=video_id
+        ).execute()
+        
+        if not video_response.get("items"):
+            raise HTTPException(status_code=404, detail="Vidéo non trouvée")
+        
+        item = video_response["items"][0]
+        snippet = item["snippet"]
+        content_details = item["contentDetails"]
+        statistics = item.get("statistics", {})
+        
+        # Get best thumbnail
+        thumbnails = snippet.get("thumbnails", {})
+        thumbnail_url = (
+            thumbnails.get("maxres", {}).get("url") or
+            thumbnails.get("high", {}).get("url") or
+            thumbnails.get("medium", {}).get("url") or
+            thumbnails.get("default", {}).get("url", "")
+        )
+        
+        return {
+            "video_id": video_id,
+            "title": snippet.get("title", ""),
+            "description": snippet.get("description", "")[:500],  # Limit description
+            "thumbnail_url": thumbnail_url,
+            "channel_title": snippet.get("channelTitle", ""),
+            "published_at": snippet.get("publishedAt", ""),
+            "duration": format_duration(content_details.get("duration", "PT0S")),
+            "view_count": int(statistics.get("viewCount", 0)),
+            "like_count": int(statistics.get("likeCount", 0)),
+        }
+        
+    except HttpError as e:
+        if "quotaExceeded" in str(e):
+            raise HTTPException(status_code=429, detail="Quota API YouTube dépassé")
+        raise HTTPException(status_code=400, detail=f"Erreur API YouTube: {str(e)}")
+    except Exception as e:
+        logging.error(f"YouTube API error: {e}")
+        raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
+
+
 @api_router.get("/pain-du-jour/today")
 async def get_pain_du_jour_today():
     """Récupère le contenu du jour (public, pas besoin d'auth)"""
