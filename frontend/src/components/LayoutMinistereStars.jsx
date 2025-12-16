@@ -73,6 +73,16 @@ const LayoutMinistereStars = ({ children }) => {
             {/* Actions */}
             <div className="flex items-center space-x-2">
               <Button 
+                onClick={() => navigate('/')} 
+                variant="outline"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                title="Retour à l'accueil"
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Accueil
+              </Button>
+
+              <Button 
                 onClick={() => navigate(-1)} 
                 variant="outline"
                 className="bg-white/20 hover:bg-white/30 text-white border-white/30"
