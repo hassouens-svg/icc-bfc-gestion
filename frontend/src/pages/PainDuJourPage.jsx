@@ -320,9 +320,9 @@ const PainDuJourPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-gradient-to-r from-amber-600 to-orange-600 text-white py-4 md:py-6 shadow-lg sticky top-0 z-50">
+      <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-4 md:py-6 shadow-lg sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 md:gap-4">
@@ -341,7 +341,7 @@ const PainDuJourPage = () => {
               />
               <div>
                 <h1 className="text-xl md:text-3xl font-bold">🍞 Le Pain du Jour</h1>
-                <p className="text-amber-100 text-xs md:text-sm">Nourriture spirituelle quotidienne</p>
+                <p className="text-blue-100 text-xs md:text-sm">Nourriture spirituelle quotidienne</p>
               </div>
             </div>
             <Button 
