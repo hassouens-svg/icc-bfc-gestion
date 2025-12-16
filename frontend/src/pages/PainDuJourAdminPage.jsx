@@ -306,7 +306,7 @@ const PainDuJourAdminPage = () => {
   // Login Page
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-2xl">
           <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-t-lg">
             <CardTitle className="text-center text-xl">
