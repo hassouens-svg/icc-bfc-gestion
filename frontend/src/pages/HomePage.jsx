@@ -74,9 +74,42 @@ const HomePage = () => {
       }
     };
 
-    loadAnniversaires();
-    // Charger les événements après un court délai pour laisser les anniversaires se charger
-    setTimeout(loadEvenements, 500);
+    const loadData = async () => {
+      // D'abord charger les anniversaires
+      let anniversairesCount = 0;
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/anniversaires`);
+        const data = await response.json();
+        console.log('🎂 Anniversaires chargés:', data);
+        setAnniversaires(data);
+        anniversairesCount = data?.length || 0;
+        
+        if (data && data.length > 0) {
+          data.forEach((anniv, idx) => {
+            setTimeout(() => {
+              if (anniv.days_until === 0) {
+                toast.info(`🎂 Aujourd'hui : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
+                  duration: 5000,
+                  position: 'top-center',
+                });
+              } else {
+                toast(`🎂 Dans ${anniv.days_until} jour${anniv.days_until > 1 ? 's' : ''} : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
+                  duration: 4000,
+                  position: 'top-center',
+                });
+              }
+            }, idx * 1000);
+          });
+        }
+      } catch (error) {
+        console.error('Erreur chargement anniversaires', error);
+      }
+      
+      // Ensuite charger les événements avec le bon délai
+      await loadEvenements(anniversairesCount);
+    };
+
+    loadData();
   }, []);
 
   const handleDepartmentChoice = (deptId) => {
