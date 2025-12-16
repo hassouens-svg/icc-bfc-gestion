@@ -360,10 +360,10 @@ const PainDuJourPage = () => {
 
       <main className="max-w-4xl mx-auto px-4 py-6 md:py-8 space-y-6 md:space-y-8">
         {/* Verset d'introduction */}
-        <Card className="bg-white/80 backdrop-blur border-amber-200 shadow-xl">
+        <Card className="bg-white/80 backdrop-blur border-blue-200 shadow-xl">
           <CardContent className="p-4 md:p-6 text-center">
             <div className="text-3xl md:text-4xl mb-3 md:mb-4">📖</div>
-            <blockquote className="text-lg md:text-xl font-serif italic text-amber-800 mb-2 md:mb-3">
+            <blockquote className="text-lg md:text-xl font-serif italic text-blue-800 mb-2 md:mb-3">
               "Donne-nous aujourd'hui notre pain quotidien"
             </blockquote>
             <p className="text-sm text-gray-600 font-medium mb-3 md:mb-4">— Matthieu 6:11</p>
@@ -382,10 +382,10 @@ const PainDuJourPage = () => {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <div className="text-center px-4">
-            <p className={`text-base md:text-lg font-medium ${isToday ? 'text-amber-800' : 'text-gray-700'}`}>
+            <p className={`text-base md:text-lg font-medium ${isToday ? 'text-blue-800' : 'text-gray-700'}`}>
               📅 {formattedDate}
             </p>
-            {isToday && <span className="text-xs text-amber-600 font-medium">(Aujourd'hui)</span>}
+            {isToday && <span className="text-xs text-blue-600 font-medium">(Aujourd'hui)</span>}
           </div>
           <Button 
             variant="outline" 
