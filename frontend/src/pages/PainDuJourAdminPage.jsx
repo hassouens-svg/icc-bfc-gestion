@@ -540,7 +540,7 @@ const PainDuJourAdminPage = () => {
             </Card>
 
             {/* Save Button */}
-            <Button onClick={handleSaveContent} className="w-full bg-amber-600 hover:bg-amber-700" disabled={saving}>
+            <Button onClick={handleSaveContent} className="w-full bg-blue-600 hover:bg-blue-700" disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Enregistrer le contenu du {new Date(selectedDate).toLocaleDateString('fr-FR')}
             </Button>
