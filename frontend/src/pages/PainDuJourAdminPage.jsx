@@ -308,7 +308,7 @@ const PainDuJourAdminPage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-2xl">
-          <CardHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-t-lg">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-t-lg">
             <CardTitle className="text-center text-xl">
               🍞 Le Pain du Jour - Administration
             </CardTitle>
@@ -341,7 +341,7 @@ const PainDuJourAdminPage = () => {
             
             <Button 
               onClick={handleLogin} 
-              className="w-full bg-amber-600 hover:bg-amber-700"
+              className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={loginLoading}
             >
               {loginLoading ? (
