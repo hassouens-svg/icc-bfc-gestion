@@ -588,9 +588,9 @@ const PainDuJourPage = () => {
 
         {/* Sondage - Only show for today */}
         {isToday && (
-          <Card className="bg-white shadow-lg border-2 border-amber-200">
-            <CardHeader className="bg-amber-50 py-3">
-              <CardTitle className="text-amber-800 flex items-center gap-2 text-base md:text-lg">
+          <Card className="bg-white shadow-lg border-2 border-blue-200">
+            <CardHeader className="bg-blue-50 py-3">
+              <CardTitle className="text-blue-800 flex items-center gap-2 text-base md:text-lg">
                 <BarChart3 className="h-5 w-5" />
                 📊 Votre Participation
               </CardTitle>
