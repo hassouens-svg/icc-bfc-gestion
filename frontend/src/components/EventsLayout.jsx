@@ -95,6 +95,16 @@ const EventsLayout = ({ children }) => {
               
               <Button
                 variant="outline"
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 bg-white/20 text-white hover:bg-white/30 border-white/30"
+                title="Retour à l'accueil ICC"
+              >
+                <Home className="h-4 w-4" />
+                ICC
+              </Button>
+              
+              <Button
+                variant="outline"
                 onClick={handleLogout}
                 className="flex items-center gap-2 bg-white text-purple-600 hover:bg-gray-100"
               >
