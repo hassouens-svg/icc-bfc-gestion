@@ -423,15 +423,30 @@ const PainDuJourPage = () => {
                     )}
                   </div>
                 </div>
-                <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden shadow-inner">
+                <div 
+                  className="aspect-video bg-gray-100 rounded-lg overflow-hidden shadow-inner relative cursor-pointer group"
+                  onClick={() => trackClick('priere')}
+                >
                   {getYouTubeId(content.lien_priere) ? (
-                    <iframe
-                      src={`https://www.youtube.com/embed/${getYouTubeId(content.lien_priere)}`}
-                      title="Temps de prière"
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
+                    <>
+                      <iframe
+                        src={`https://www.youtube.com/embed/${getYouTubeId(content.lien_priere)}?enablejsapi=1`}
+                        title="Temps de prière"
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                      {/* Overlay invisible pour détecter le premier clic */}
+                      <div 
+                        className="absolute inset-0 bg-transparent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          trackClick('priere');
+                          // Permettre la propagation vers l'iframe après le premier clic
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </>
                   ) : (
                     <div className="flex items-center justify-center h-full">
                       <p className="text-gray-500">Aperçu non disponible</p>
