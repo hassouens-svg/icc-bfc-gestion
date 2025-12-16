@@ -8,6 +8,7 @@ import { Users, TrendingUp, UserCheck, Shield, Church, Heart, Star, Book } from 
 const HomePage = () => {
   const navigate = useNavigate();
   const [anniversaires, setAnniversaires] = React.useState([]);
+  const [evenements, setEvenements] = React.useState([]);
 
   React.useEffect(() => {
     const loadAnniversaires = async () => {
@@ -38,7 +39,45 @@ const HomePage = () => {
         console.error('Erreur chargement anniversaires', error);
       }
     };
+
+    const loadEvenements = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/upcoming`);
+        const data = await response.json();
+        console.log('🎉 Événements à venir chargés:', data);
+        setEvenements(data);
+        
+        // Calculer le délai initial après les anniversaires
+        const anniversaireDelay = anniversaires.length > 0 ? anniversaires.length * 1000 + 500 : 500;
+        
+        if (data && data.length > 0) {
+          data.forEach((event, idx) => {
+            setTimeout(() => {
+              const emoji = event.days_until === 0 ? '🎊' : '🎉';
+              const daysText = event.days_until === 0 
+                ? "Aujourd'hui" 
+                : event.days_until === 1 
+                  ? "Demain" 
+                  : `Dans ${event.days_until} jours`;
+              
+              toast.success(
+                `${emoji} ${event.ville}: ${event.titre} - ${daysText} 🎊`, 
+                {
+                  duration: 5000,
+                  position: 'top-center',
+                }
+              );
+            }, anniversaireDelay + (idx * 1200));
+          });
+        }
+      } catch (error) {
+        console.error('Erreur chargement événements', error);
+      }
+    };
+
     loadAnniversaires();
+    // Charger les événements après un court délai pour laisser les anniversaires se charger
+    setTimeout(loadEvenements, 500);
   }, []);
 
   const handleDepartmentChoice = (deptId) => {
