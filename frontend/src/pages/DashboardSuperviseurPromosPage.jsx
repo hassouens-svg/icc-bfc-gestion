@@ -62,48 +62,53 @@ const DashboardSuperviseurPromosPage = () => {
       return months[monthNum] || monthNum;
     };
     
-    // Create a map of month number to promo_name
-    const monthToPromo = {};
+    // Créer les 12 promos par défaut (Janvier à Décembre)
+    const promoGroups = {};
+    const allMonths = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    
+    allMonths.forEach(monthNum => {
+      const monthName = getMonthName(monthNum);
+      promoGroups[monthNum] = {
+        promo_name: `Promo ${monthName}`,
+        month_name: monthName,
+        month_num: monthNum,
+        years: {},
+        bergers: [] // Liste des bergers assignés
+      };
+    });
+    
+    // Assigner les bergers aux promos correspondantes
     resposPromo.forEach(respo => {
       if (respo.assigned_month) {
         const monthPart = respo.assigned_month.split('-')[1];
-        const monthName = getMonthName(monthPart);
-        if (!monthToPromo[monthPart]) {
-          monthToPromo[monthPart] = {
-            promo_name: respo.promo_name || `Promo ${monthName}`,
-            month_name: monthName,
-            month_num: monthPart
-          };
+        if (promoGroups[monthPart]) {
+          // Mettre à jour le nom de la promo si défini
+          if (respo.promo_name) {
+            promoGroups[monthPart].promo_name = respo.promo_name;
+          }
+          // Ajouter le berger à la liste
+          if (!promoGroups[monthPart].bergers.find(b => b.id === respo.id)) {
+            promoGroups[monthPart].bergers.push({
+              id: respo.id,
+              name: `${respo.prenom || ''} ${respo.nom || respo.username}`.trim()
+            });
+          }
         }
       }
     });
     
-    // Group visitors by month ONLY (not by year)
-    const promoGroups = {};
-    
+    // Compter les visiteurs par mois
     visitorsData.forEach(visitor => {
       if (!visitor.assigned_month) return;
       
       // Extract month and year parts
       const [year, monthPart] = visitor.assigned_month.split('-');
-      const promoInfo = monthToPromo[monthPart];
-      const monthName = getMonthName(monthPart);
       
-      // Use month as key (not month+year)
-      const promoKey = monthPart;
-      
-      if (!promoGroups[promoKey]) {
-        promoGroups[promoKey] = {
-          promo_name: promoInfo?.promo_name || `Promo ${monthName}`,
-          month_name: monthName,
-          month_num: monthPart,
-          years: {} // Store data by year
-        };
-      }
+      if (!promoGroups[monthPart]) return;
       
       // Initialize year if not exists
-      if (!promoGroups[promoKey].years[year]) {
-        promoGroups[promoKey].years[year] = {
+      if (!promoGroups[monthPart].years[year]) {
+        promoGroups[monthPart].years[year] = {
           nouveaux_arrivants: 0,
           nouveaux_convertis: 0,
           en_cours: 0,
@@ -113,23 +118,21 @@ const DashboardSuperviseurPromosPage = () => {
       
       // Count stats for this year
       if (visitor.types?.includes('Nouveau Arrivant')) {
-        promoGroups[promoKey].years[year].nouveaux_arrivants++;
+        promoGroups[monthPart].years[year].nouveaux_arrivants++;
       }
       if (visitor.types?.includes('Nouveau Converti')) {
-        promoGroups[promoKey].years[year].nouveaux_convertis++;
+        promoGroups[monthPart].years[year].nouveaux_convertis++;
       }
       
       if (visitor.tracking_stopped) {
-        promoGroups[promoKey].years[year].suivi_arrete++;
+        promoGroups[monthPart].years[year].suivi_arrete++;
       } else {
-        promoGroups[promoKey].years[year].en_cours++;
+        promoGroups[monthPart].years[year].en_cours++;
       }
     });
 
-    // Convert to array and sort by month number
-    const stats = Object.values(promoGroups).sort((a, b) => {
-      return a.month_num.localeCompare(b.month_num);
-    });
+    // Convert to array (already sorted by month number)
+    const stats = Object.values(promoGroups);
     
     setPromoStats(stats);
   };
