@@ -11,35 +11,6 @@ const HomePage = () => {
   const [evenements, setEvenements] = React.useState([]);
 
   React.useEffect(() => {
-    const loadAnniversaires = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/anniversaires`);
-        const data = await response.json();
-        console.log('🎂 Anniversaires chargés:', data);
-        setAnniversaires(data);
-        
-        if (data && data.length > 0) {
-          data.forEach((anniv, idx) => {
-            setTimeout(() => {
-              if (anniv.days_until === 0) {
-                toast.info(`🎂 Aujourd'hui : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
-                  duration: 5000,
-                  position: 'top-center',
-                });
-              } else {
-                toast(`🎂 Dans ${anniv.days_until} jour${anniv.days_until > 1 ? 's' : ''} : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
-                  duration: 4000,
-                  position: 'top-center',
-                });
-              }
-            }, idx * 1000);
-          });
-        }
-      } catch (error) {
-        console.error('Erreur chargement anniversaires', error);
-      }
-    };
-
     const loadEvenements = async (anniversairesCount = 0) => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/upcoming`);
