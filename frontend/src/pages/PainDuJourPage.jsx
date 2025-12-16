@@ -443,7 +443,7 @@ const PainDuJourPage = () => {
                     trackClick('priere');
                     window.open(content.lien_priere, '_blank');
                   }}
-                  className="w-full bg-purple-600 hover:bg-purple-700"
+                  className="w-full bg-blue-600 hover:bg-blue-700"
                 >
                   <Youtube className="h-4 w-4 mr-2" />
                   Regarder sur YouTube
