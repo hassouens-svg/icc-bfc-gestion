@@ -642,7 +642,7 @@ const PainDuJourPage = () => {
 
                   <Button 
                     onClick={handleSubmitSondage} 
-                    className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     disabled={!sondage.lecture || !sondage.video}
                   >
                     {(!sondage.lecture || !sondage.video) ? (
