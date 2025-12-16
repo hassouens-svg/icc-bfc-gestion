@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logout, getUser } from '../utils/api';
 import { Button } from './ui/button';
-import { LogOut, ArrowLeft, Star, MapPin } from 'lucide-react';
+import { LogOut, ArrowLeft, Star, MapPin, Home } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useCities } from '../contexts/CitiesContext';
 import { useSelectedCity } from '../contexts/SelectedCityContext';
