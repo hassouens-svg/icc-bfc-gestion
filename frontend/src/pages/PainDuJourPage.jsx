@@ -397,7 +397,7 @@ const PainDuJourPage = () => {
             <ChevronRight className="h-4 w-4" />
           </Button>
           {!isToday && (
-            <Button variant="link" size="sm" onClick={() => setSelectedDate(today)} className="text-amber-600">
+            <Button variant="link" size="sm" onClick={() => setSelectedDate(today)} className="text-blue-600">
               Revenir à aujourd'hui
             </Button>
           )}
@@ -405,7 +405,7 @@ const PainDuJourPage = () => {
 
         {/* Temps de prière prophétique */}
         <Card className="bg-white shadow-lg border-0 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 md:py-4">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 md:py-4">
             <CardTitle className="flex items-center gap-2 text-base md:text-lg">
               🙏 Temps de Prière Prophétique
             </CardTitle>
