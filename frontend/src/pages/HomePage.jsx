@@ -14,34 +14,42 @@ const HomePage = () => {
     const loadEvenements = async (anniversairesCount = 0) => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/upcoming`);
+        if (!response.ok) {
+          console.error('Erreur API événements:', response.status);
+          return;
+        }
         const data = await response.json();
         console.log('🎉 Événements à venir chargés:', data);
         setEvenements(data);
         
-        // Calculer le délai initial après les anniversaires
-        const anniversaireDelay = anniversairesCount > 0 ? anniversairesCount * 1000 + 1000 : 500;
+        // Calculer le délai initial après les anniversaires (minimum 2 secondes)
+        const anniversaireDelay = Math.max(anniversairesCount * 1200 + 1500, 2000);
         
-        if (data && data.length > 0) {
+        if (data && Array.isArray(data) && data.length > 0) {
           data.forEach((event, idx) => {
             setTimeout(() => {
-              const daysText = event.days_until === 0 
-                ? "🎊 Aujourd'hui" 
-                : event.days_until === 1 
-                  ? "⏰ Demain" 
-                  : `⏳ dans ${event.days_until} jours`;
-              
-              toast.success(
-                `🎉 ${event.ville}: ${event.titre}, ${daysText} 🎊`, 
-                {
-                  duration: 6000,
-                  position: 'top-center',
-                }
-              );
-            }, anniversaireDelay + (idx * 1500));
+              try {
+                const daysText = event.days_until === 0 
+                  ? "🎊 Aujourd'hui" 
+                  : event.days_until === 1 
+                    ? "⏰ Demain" 
+                    : `⏳ dans ${event.days_until} jours`;
+                
+                toast.success(
+                  `🎉 ${event.ville || 'ICC'}: ${event.titre}, ${daysText} 🎊`, 
+                  {
+                    duration: 7000,
+                    position: 'top-center',
+                  }
+                );
+              } catch (err) {
+                console.error('Erreur affichage toast événement:', err);
+              }
+            }, anniversaireDelay + (idx * 1800));
           });
         }
       } catch (error) {
-        console.error('Erreur chargement événements', error);
+        console.error('Erreur chargement événements:', error);
       }
     };
 
