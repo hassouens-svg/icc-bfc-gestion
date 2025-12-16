@@ -260,92 +260,131 @@ const DashboardSuperviseurPromosPage = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              Liste des Promotions
+              Liste des Promotions (12 mois)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b">
+                  <tr className="border-b bg-gray-50">
                     <th className="text-left py-3 px-4">Nom de la Promo</th>
-                    <th className="text-center py-3 px-4">Nouveaux Arrivants (NA)</th>
-                    <th className="text-center py-3 px-4">Nouveaux Convertis (NC)</th>
-                    <th className="text-center py-3 px-4">En Cours de Suivi</th>
-                    <th className="text-center py-3 px-4">Suivi Arrêté</th>
+                    <th className="text-left py-3 px-4">Bergers</th>
+                    <th className="text-center py-3 px-4">Nbre Suivis</th>
+                    <th className="text-center py-3 px-4">NA</th>
+                    <th className="text-center py-3 px-4">NC</th>
+                    <th className="text-center py-3 px-4">En Cours</th>
+                    <th className="text-center py-3 px-4">Arrêtés</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {promoStats.length > 0 ? (
-                    promoStats.map((stat, index) => {
-                      // Sort years in descending order (most recent first)
-                      const sortedYears = Object.keys(stat.years).sort((a, b) => b - a);
-                      
-                      return (
-                        <tr key={index} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4 font-medium">{stat.promo_name}</td>
-                          
-                          {/* Nouveaux Arrivants with years */}
-                          <td className="text-center py-3 px-4">
+                  {promoStats.map((stat, index) => {
+                    // Sort years in descending order (most recent first)
+                    const sortedYears = Object.keys(stat.years).sort((a, b) => b - a);
+                    const hasData = sortedYears.length > 0;
+                    
+                    // Calculer le total des suivis
+                    const totalSuivis = sortedYears.reduce((acc, year) => {
+                      return acc + (stat.years[year].en_cours || 0) + (stat.years[year].suivi_arrete || 0);
+                    }, 0);
+                    
+                    return (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="py-3 px-4 font-medium">
+                          <div className="font-semibold text-indigo-600">{stat.promo_name}</div>
+                          <div className="text-xs text-gray-400">{stat.month_name}</div>
+                        </td>
+                        
+                        {/* Bergers */}
+                        <td className="py-3 px-4">
+                          {stat.bergers && stat.bergers.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {stat.bergers.map((berger, idx) => (
+                                <span key={idx} className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">
+                                  {berger.name}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-xs">Non assigné</span>
+                          )}
+                        </td>
+                        
+                        {/* Total Suivis */}
+                        <td className="text-center py-3 px-4">
+                          <span className="font-bold text-lg">{totalSuivis || '-'}</span>
+                        </td>
+                        
+                        {/* Nouveaux Arrivants with years */}
+                        <td className="text-center py-3 px-4">
+                          {hasData ? (
                             <div className="flex flex-col gap-1">
                               {sortedYears.map(year => (
                                 <div key={year} className="text-sm">
-                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="text-xs text-gray-500">{year}:</span>{' '}
                                   <span className="font-semibold">{stat.years[year].nouveaux_arrivants}</span>
                                 </div>
                               ))}
                             </div>
-                          </td>
-                          
-                          {/* Nouveaux Convertis with years */}
-                          <td className="text-center py-3 px-4">
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                        
+                        {/* Nouveaux Convertis with years */}
+                        <td className="text-center py-3 px-4">
+                          {hasData ? (
                             <div className="flex flex-col gap-1">
                               {sortedYears.map(year => (
                                 <div key={year} className="text-sm">
-                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="text-xs text-gray-500">{year}:</span>{' '}
                                   <span className="font-semibold">{stat.years[year].nouveaux_convertis}</span>
                                 </div>
                               ))}
                             </div>
-                          </td>
-                          
-                          {/* En Cours with years */}
-                          <td className="text-center py-3 px-4">
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                        
+                        {/* En Cours with years */}
+                        <td className="text-center py-3 px-4">
+                          {hasData ? (
                             <div className="flex flex-col gap-1">
                               {sortedYears.map(year => (
                                 <div key={year} className="text-sm">
-                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="text-xs text-gray-500">{year}:</span>{' '}
                                   <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">
                                     {stat.years[year].en_cours}
                                   </span>
                                 </div>
                               ))}
                             </div>
-                          </td>
-                          
-                          {/* Suivi Arrêté with years */}
-                          <td className="text-center py-3 px-4">
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                        
+                        {/* Suivi Arrêté with years */}
+                        <td className="text-center py-3 px-4">
+                          {hasData ? (
                             <div className="flex flex-col gap-1">
                               {sortedYears.map(year => (
                                 <div key={year} className="text-sm">
-                                  <span className="text-xs text-gray-500 font-medium">{year}:</span>{' '}
+                                  <span className="text-xs text-gray-500">{year}:</span>{' '}
                                   <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-medium">
                                     {stat.years[year].suivi_arrete}
                                   </span>
                                 </div>
                               ))}
                             </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className="text-center py-8 text-gray-500">
-                        Aucune promotion trouvée
-                      </td>
-                    </tr>
-                  )}
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
