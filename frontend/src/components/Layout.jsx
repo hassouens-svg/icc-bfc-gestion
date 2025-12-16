@@ -207,6 +207,17 @@ const Layout = ({ children }) => {
               </PopoverContent>
             </Popover>
 
+            {/* Bouton Accueil */}
+            <Button 
+              onClick={() => navigate('/')} 
+              variant="outline"
+              className="hover:bg-indigo-50 text-indigo-600 border-indigo-200"
+              title="Retour à l'accueil"
+            >
+              <Home className="h-4 w-4 mr-2" />
+              Accueil
+            </Button>
+
             {/* Bouton Retour universel */}
             <Button 
               onClick={() => navigate(-1)} 
