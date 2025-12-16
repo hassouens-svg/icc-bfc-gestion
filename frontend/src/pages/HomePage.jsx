@@ -40,7 +40,7 @@ const HomePage = () => {
       }
     };
 
-    const loadEvenements = async () => {
+    const loadEvenements = async (anniversairesCount = 0) => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/upcoming`);
         const data = await response.json();
@@ -48,26 +48,25 @@ const HomePage = () => {
         setEvenements(data);
         
         // Calculer le délai initial après les anniversaires
-        const anniversaireDelay = anniversaires.length > 0 ? anniversaires.length * 1000 + 500 : 500;
+        const anniversaireDelay = anniversairesCount > 0 ? anniversairesCount * 1000 + 1000 : 500;
         
         if (data && data.length > 0) {
           data.forEach((event, idx) => {
             setTimeout(() => {
-              const emoji = event.days_until === 0 ? '🎊' : '🎉';
               const daysText = event.days_until === 0 
-                ? "Aujourd'hui" 
+                ? "🎊 Aujourd'hui" 
                 : event.days_until === 1 
-                  ? "Demain" 
-                  : `Dans ${event.days_until} jours`;
+                  ? "⏰ Demain" 
+                  : `⏳ dans ${event.days_until} jours`;
               
               toast.success(
-                `${emoji} ${event.ville}: ${event.titre} - ${daysText} 🎊`, 
+                `🎉 ${event.ville}: ${event.titre}, ${daysText} 🎊`, 
                 {
-                  duration: 5000,
+                  duration: 6000,
                   position: 'top-center',
                 }
               );
-            }, anniversaireDelay + (idx * 1200));
+            }, anniversaireDelay + (idx * 1500));
           });
         }
       } catch (error) {
