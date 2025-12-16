@@ -4281,6 +4281,41 @@ async def migrate_presences(current_user: dict = Depends(get_current_user)):
 
 # ==================== EVENTS & PROJECTS ENDPOINTS ====================
 
+@api_router.get("/events/upcoming")
+async def get_upcoming_events():
+    """Get upcoming events/projects for the next 30 days - public endpoint for homepage"""
+    today = datetime.now(timezone.utc).date()
+    max_date = today + timedelta(days=30)
+    
+    # Get all non-archived projects with date_debut
+    projets = await db.projets.find(
+        {"archived": {"$ne": True}, "date_debut": {"$ne": None}},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    upcoming = []
+    for projet in projets:
+        try:
+            date_debut = datetime.strptime(projet["date_debut"], "%Y-%m-%d").date()
+            if today <= date_debut <= max_date:
+                days_until = (date_debut - today).days
+                upcoming.append({
+                    "id": projet["id"],
+                    "titre": projet["titre"],
+                    "ville": projet.get("ville", ""),
+                    "date_debut": projet["date_debut"],
+                    "days_until": days_until,
+                    "statut": projet.get("statut", "planifie")
+                })
+        except (ValueError, KeyError):
+            continue
+    
+    # Sort by date
+    upcoming.sort(key=lambda x: x["days_until"])
+    
+    return upcoming
+
+
 @api_router.get("/events/projets")
 async def get_projets(ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     """Get all projects - filtered by city for non-super_admin"""
