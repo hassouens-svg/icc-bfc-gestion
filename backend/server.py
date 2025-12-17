@@ -4283,19 +4283,48 @@ async def migrate_presences(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/events/upcoming")
 async def get_upcoming_events():
-    """Get upcoming events/projects for the next 30 days - public endpoint for homepage"""
+    """Get upcoming events/activities for the next 30 days - public endpoint for homepage"""
     today = datetime.now(timezone.utc).date()
     max_date = today + timedelta(days=30)
     
-    # Get all non-archived projects with date_debut
+    upcoming = []
+    
+    # 1. Récupérer les activités du planning (collection planning_activites)
+    activites = await db.planning_activites.find(
+        {"statut": {"$in": ["À venir", "Planifié", "planifie"]}},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    for activite in activites:
+        try:
+            date_str = activite.get("date_debut") or activite.get("date")
+            if not date_str:
+                continue
+            date_debut = datetime.strptime(date_str, "%Y-%m-%d").date()
+            if today <= date_debut <= max_date:
+                days_until = (date_debut - today).days
+                upcoming.append({
+                    "id": activite.get("id", ""),
+                    "titre": activite.get("nom", ""),
+                    "ville": activite.get("ville", ""),
+                    "date_debut": date_str,
+                    "days_until": days_until,
+                    "statut": activite.get("statut", "À venir"),
+                    "source": "planning"
+                })
+        except (ValueError, KeyError):
+            continue
+    
+    # 2. Récupérer aussi les projets (collection projets)
     projets = await db.projets.find(
         {"archived": {"$ne": True}, "date_debut": {"$ne": None}},
         {"_id": 0}
     ).to_list(1000)
     
-    upcoming = []
     for projet in projets:
         try:
+            if not projet.get("date_debut"):
+                continue
             date_debut = datetime.strptime(projet["date_debut"], "%Y-%m-%d").date()
             if today <= date_debut <= max_date:
                 days_until = (date_debut - today).days
@@ -4305,12 +4334,13 @@ async def get_upcoming_events():
                     "ville": projet.get("ville", ""),
                     "date_debut": projet["date_debut"],
                     "days_until": days_until,
-                    "statut": projet.get("statut", "planifie")
+                    "statut": projet.get("statut", "planifie"),
+                    "source": "projet"
                 })
         except (ValueError, KeyError):
             continue
     
-    # Sort by date
+    # Sort by date (closest first)
     upcoming.sort(key=lambda x: x["days_until"])
     
     return upcoming
