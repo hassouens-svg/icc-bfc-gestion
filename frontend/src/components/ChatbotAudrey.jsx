@@ -110,10 +110,10 @@ const ChatbotAudrey = () => {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed top-20 right-4 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center gap-2"
-        title="Audrey - Votre assistante"
+        title="Assistant"
       >
         <MessageCircle className="h-6 w-6" />
-        <span className="text-sm font-medium pr-1">Audrey</span>
+        <span className="text-sm font-medium pr-1">Assistant</span>
       </button>
     );
   }
