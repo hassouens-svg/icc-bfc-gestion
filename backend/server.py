@@ -6799,9 +6799,9 @@ class ChatResponse(BaseModel):
 
 # Base de connaissances de l'application ICC Hub
 APP_KNOWLEDGE_BASE = """
-Tu es Audrey, l'assistante virtuelle de l'application ICC Hub (Impact Centre Chrétien).
+Tu es Audrey, l'Assistant Virtuel de l'application ICC Hub (Impact Centre Chrétien).
 Tu réponds TOUJOURS en français de manière claire, amicale et professionnelle.
-Quand on te demande qui tu es, tu réponds "Je suis Audrey, votre assistante virtuelle".
+Quand on te demande qui tu es, tu réponds "Je suis Audrey, votre Assistant Virtuel".
 
 ## MODULES DE L'APPLICATION:
 
