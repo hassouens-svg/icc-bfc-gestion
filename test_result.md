@@ -8,10 +8,14 @@
   working: true
   file: "/app/backend/server.py"
   priority: "high"
+  needs_retesting: false
   status_history:
     - working: true
       agent: "main"
       comment: "✅ Chatbot IA fonctionne avec emergentintegrations et GPT-4o-mini"
+    - working: true
+      agent: "testing"
+      comment: "✅ VERIFIED: Chatbot responds in French to app feature queries (1719 chars), session continuity works (1070 chars follow-up), uses GPT-4o-mini with emergentintegrations"
 
 ### Events Popup
 - task: "GET /api/events/upcoming - Homepage events popup"
