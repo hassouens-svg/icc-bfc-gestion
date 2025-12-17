@@ -10,7 +10,7 @@ const ChatbotAudrey = () => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Bonjour ! 👋 Je suis l'Assistant ICC Hub. Je connais parfaitement l'application et je peux vous aider avec :\n\n• Le Pain du Jour\n• Les Bergeries et Promotions\n• Le Ministère des STARS\n• Les Familles Impact\n• My Event Church\n• Et bien plus !\n\nComment puis-je vous aider aujourd'hui ?"
+      content: "Bonjour ! 👋 Je suis Audrey, votre assistante virtuelle. Je connais parfaitement l'application et je peux vous aider avec :\n\n• Le Pain du Jour\n• Les Bergeries et Promotions\n• Le Ministère des STARS\n• Les Familles Impact\n• My Event Church\n• Et bien plus !\n\nComment puis-je vous aider aujourd'hui ?"
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -110,10 +110,10 @@ const ChatbotAudrey = () => {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed top-20 right-4 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center gap-2"
-        title="Assistant ICC Hub"
+        title="Audrey - Votre assistante"
       >
         <MessageCircle className="h-6 w-6" />
-        <span className="text-sm font-medium pr-1">Assistant</span>
+        <span className="text-sm font-medium pr-1">Audrey</span>
       </button>
     );
   }
@@ -129,8 +129,8 @@ const ChatbotAudrey = () => {
                 <Bot className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-base font-semibold">Assistant</CardTitle>
-                <p className="text-xs text-blue-100">ICC Hub</p>
+                <CardTitle className="text-base font-semibold">Audrey</CardTitle>
+                <p className="text-xs text-blue-100">Votre assistante</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
