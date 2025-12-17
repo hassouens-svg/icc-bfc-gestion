@@ -6786,6 +6786,141 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
     return stats
 
 
+# ==================== CHATBOT ASSISTANT IA ====================
+
+class ChatMessage(BaseModel):
+    message: str
+    session_id: Optional[str] = None
+    role: Optional[str] = None  # Rôle de l'utilisateur dans l'application
+
+class ChatResponse(BaseModel):
+    response: str
+    session_id: str
+
+# Base de connaissances de l'application ICC Hub
+APP_KNOWLEDGE_BASE = """
+Tu es l'Assistant ICC Hub, une intelligence artificielle experte de l'application ICC Hub (Impact Centre Chrétien).
+Tu réponds TOUJOURS en français de manière claire, amicale et professionnelle.
+
+## MODULES DE L'APPLICATION:
+
+### 1. PAGE D'ACCUEIL (/)
+- Accès aux différents départements de l'église
+- Pop-ups d'anniversaires des membres STARS
+- Pop-ups des événements à venir (dans les 30 jours)
+- Accès: Public
+
+### 2. LE PAIN DU JOUR (/pain-du-jour)
+- Contenu spirituel quotidien
+- Vidéos YouTube: Temps de prière prophétique + Enseignements
+- Versets du jour avec liens vers EMCI TV pour lecture
+- Sondage de participation (lectures et vidéos)
+- Administration: Gérer les contenus quotidiens + Statistiques
+- Accès: Public (lecture), Admin/Pasteur/Gestion Projet pour mise à jour
+
+### 3. MINISTÈRE DES STARS (/ministere-stars)
+- Gestion des départements STARS (Service, Technique, Accueil, Régie, Sécurité)
+- Planning hebdomadaire sur 52 semaines
+- Attribution des tâches aux membres
+- KPIs: nombre de stars en service par semaine
+- Rôles: star (lecture seule), respo_departement (gestion complète)
+
+### 4. MY EVENT CHURCH (/events-management)
+- Gestion des projets et événements de l'église
+- Planning des activités avec dates
+- Campagnes d'évangélisation
+- Statistiques des événements
+- RSVP et inscriptions en ligne
+
+### 5. FAMILLES IMPACT (/familles-impact)
+- Gestion des Familles Impact (petits groupes de maison)
+- Suivi des membres par FI
+- Présences aux rencontres
+- Pilotes et responsables de secteur
+
+### 6. SUIVI DES NOUVEAUX (/nouveaux, /dashboard)
+- Gestion des nouveaux arrivants (NA) et nouveaux convertis (NC)
+- Attribution aux bergers par promo mensuelle (Janvier à Décembre)
+- Suivi des présences dimanche et jeudi
+- Formations: PCNC, Au Cœur de la Bible, STAR
+- Dashboard superviseur promos avec statistiques
+
+### 7. GESTION DES ACCÈS (/gestion-acces)
+- Création et gestion des comptes utilisateurs
+- Attribution des rôles et permissions
+- Gestion multi-villes (Milan, Rome, Dijon, etc.)
+
+## RÔLES DISPONIBLES:
+- **visiteur**: Accès limité, consultation uniquement
+- **membre**: Membre standard de l'église
+- **berger/referent**: Responsable de suivi d'une promo mensuelle
+- **responsable_promo**: Gère les bergers d'une promo
+- **superviseur_promos**: Supervise toutes les promos d'une ville
+- **pilote**: Pilote d'une Famille Impact
+- **responsable_fi**: Responsable des Familles Impact
+- **responsable_secteur**: Responsable d'un secteur de FI
+- **superviseur_fi**: Supervise les FI d'une ville
+- **star**: Membre du ministère STARS
+- **respo_departement**: Responsable d'un département STARS
+- **coordinateur**: Coordonne plusieurs départements
+- **secretaire**: Gestion administrative
+- **tresorier**: Gestion financière
+- **pasteur**: Pasteur de l'église
+- **gestion_projet**: Gestion des projets et événements
+- **super_admin**: Accès complet à tout
+
+## VILLES DISPONIBLES:
+- Italie: Milan, Rome, Perugia, Bologne, Turin
+- France: Dijon, Auxerre, Besançon, Chalon-Sur-Saone, Dole, Sens
+
+## CONSEILS D'UTILISATION:
+- Pour voir vos visiteurs: allez dans "Bergeries" puis "Liste des Nouveaux"
+- Pour marquer les présences: utilisez les boutons Présent/Absent dans la fiche visiteur
+- Pour les STARS: connectez-vous via "Ministère des STARS" avec vos identifiants
+- Pour le Pain du Jour: accessible directement depuis l'accueil, pas besoin de connexion
+
+## CONTACT SUPPORT:
+Pour toute question technique, contactez l'administrateur de votre église.
+"""
+
+@api_router.post("/chatbot/message")
+async def chatbot_message(chat: ChatMessage):
+    """Endpoint pour le chatbot IA - public"""
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        api_key = os.environ.get("EMERGENT_LLM_KEY")
+        if not api_key:
+            return {"response": "Le service chatbot n'est pas configuré. Veuillez contacter l'administrateur.", "session_id": chat.session_id or str(uuid4())}
+        
+        session_id = chat.session_id or str(uuid4())
+        
+        # Construire le message système avec contexte du rôle
+        system_message = APP_KNOWLEDGE_BASE
+        if chat.role:
+            system_message += f"\n\nL'utilisateur actuel a le rôle: {chat.role}. Adapte tes réponses à ses permissions et besoins."
+        
+        # Initialiser le chat LLM
+        llm_chat = LlmChat(
+            api_key=api_key,
+            session_id=session_id,
+            system_message=system_message
+        ).with_model("openai", "gpt-4o-mini")
+        
+        # Envoyer le message
+        user_message = UserMessage(text=chat.message)
+        response = await llm_chat.send_message(user_message)
+        
+        return {"response": response, "session_id": session_id}
+        
+    except Exception as e:
+        logger.error(f"Erreur chatbot: {str(e)}")
+        return {
+            "response": "Désolé, je rencontre un problème technique. Veuillez réessayer dans quelques instants.",
+            "session_id": chat.session_id or str(uuid4())
+        }
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
