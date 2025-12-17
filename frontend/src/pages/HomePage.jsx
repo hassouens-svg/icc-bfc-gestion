@@ -322,6 +322,9 @@ const HomePage = () => {
           </div>
         </footer>
       </div>
+
+      {/* Chatbot Audrey */}
+      <ChatbotAudrey />
     </div>
   );
 };
