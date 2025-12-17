@@ -52,31 +52,41 @@ const MarquerPresenceBergersPage = () => {
         '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
       };
       
+      // Créer les 12 promos par défaut (Janvier à Décembre)
+      const allMonths = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
       const promoGroups = {};
+      
+      allMonths.forEach(monthPart => {
+        const monthName = monthNames[monthPart];
+        const promoKey = `Promo ${monthName}`;
+        promoGroups[promoKey] = {
+          id: promoKey,
+          nom: promoKey,
+          monthNum: monthPart,
+          bergers: [],
+          nomsBergers: '',
+          personnesSuivies: 0,
+          present: false,
+          absent: false,
+          priere: 'Non',
+          commentaire: ''
+        };
+      });
+      
+      // Assigner les bergers aux promos correspondantes
       bergersList.forEach(berger => {
         if (berger.assigned_month) {
           const monthPart = berger.assigned_month.split('-')[1];
           const monthName = monthNames[monthPart];
           const promoKey = `Promo ${monthName}`;
           
-          if (!promoGroups[promoKey]) {
-            promoGroups[promoKey] = {
-              id: promoKey,
-              nom: promoKey,
-              monthNum: monthPart,
-              bergers: [],
-              nomsBergers: '',
-              personnesSuivies: 0,
-              present: false,
-              absent: false,
-              priere: 'Non',
-              commentaire: ''
-            };
+          if (promoGroups[promoKey]) {
+            promoGroups[promoKey].bergers.push(berger);
           }
-          promoGroups[promoKey].bergers.push(berger);
         }
       });
       
+      // Pré-remplir avec les dernières présences sauvegardées
       Object.values(promoGroups).forEach(promo => {
         // Chercher la dernière présence sauvegardée pour cette promo
         const lastPresence = latestPresences.find(p => p.promo_name === promo.nom);
@@ -85,9 +95,9 @@ const MarquerPresenceBergersPage = () => {
           // Pré-remplir avec les valeurs sauvegardées
           promo.nomsBergers = lastPresence.noms_bergers;
           promo.personnesSuivies = lastPresence.personnes_suivies || 0;
-        } else {
-          // Valeurs par défaut si pas de dernière présence
-          promo.nomsBergers = promo.bergers.map(b => b.name).join(', ');
+        } else if (promo.bergers.length > 0) {
+          // Valeurs par défaut basées sur les bergers assignés
+          promo.nomsBergers = promo.bergers.map(b => b.name || `${b.prenom || ''} ${b.nom || b.username}`.trim()).join(', ');
           const suivies = cityVisitors.filter(v => {
             if (!v.assigned_month) return false;
             const visitorMonth = v.assigned_month.split('-')[1];
