@@ -12,13 +12,6 @@ const HomePage = () => {
   const [evenements, setEvenements] = React.useState([]);
 
   React.useEffect(() => {
-    // Vérifier si les pop-ups ont déjà été affichés dans cette session
-    const popupsShown = sessionStorage.getItem('homepage_popups_shown');
-    if (popupsShown) {
-      console.log('Pop-ups déjà affichés dans cette session');
-      return;
-    }
-
     const loadEvenements = async (anniversairesCount = 0) => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/upcoming`);
@@ -33,11 +26,8 @@ const HomePage = () => {
         // Calculer le délai initial après les anniversaires (minimum 2 secondes)
         const anniversaireDelay = Math.max(anniversairesCount * 1200 + 1500, 2000);
         
-        // Limiter à 5 événements maximum pour ne pas surcharger
-        const eventsToShow = data.slice(0, 5);
-        
-        if (eventsToShow && eventsToShow.length > 0) {
-          eventsToShow.forEach((event, idx) => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          data.forEach((event, idx) => {
             setTimeout(() => {
               try {
                 const daysText = event.days_until === 0 
@@ -72,13 +62,10 @@ const HomePage = () => {
         const data = await response.json();
         console.log('🎂 Anniversaires chargés:', data);
         setAnniversaires(data);
+        anniversairesCount = data?.length || 0;
         
-        // Limiter à 3 anniversaires maximum
-        const anniversairesToShow = data?.slice(0, 3) || [];
-        anniversairesCount = anniversairesToShow.length;
-        
-        if (anniversairesToShow.length > 0) {
-          anniversairesToShow.forEach((anniv, idx) => {
+        if (data && data.length > 0) {
+          data.forEach((anniv, idx) => {
             setTimeout(() => {
               if (anniv.days_until === 0) {
                 toast.info(`🎂 Aujourd'hui : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
@@ -100,9 +87,6 @@ const HomePage = () => {
       
       // Ensuite charger les événements avec le bon délai
       await loadEvenements(anniversairesCount);
-      
-      // Marquer les pop-ups comme affichés pour cette session
-      sessionStorage.setItem('homepage_popups_shown', 'true');
     };
 
     loadData();
