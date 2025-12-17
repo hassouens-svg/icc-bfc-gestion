@@ -1,337 +1,351 @@
 #!/usr/bin/env python3
 """
-Backend Test Suite for Le Pain du Jour Feature
-Tests all Pain du Jour endpoints with realistic data
+Backend API Tests for ICC Hub Application
+Testing: Chatbot IA, Events Popup, and Berger Presences APIs
 """
 
 import requests
 import json
+import os
 from datetime import datetime, timedelta
-import sys
+import uuid
 
-# Backend URL from frontend .env
+# Configuration
 BASE_URL = "https://spiritualapp-3.preview.emergentagent.com/api"
-
-# Test credentials
-ADMIN_CREDENTIALS = {
+TEST_CREDENTIALS = {
     "username": "superadmin",
     "password": "superadmin123"
 }
 
-class PainDuJourTester:
+class ICCHubTester:
     def __init__(self):
+        self.base_url = BASE_URL
         self.token = None
+        self.session = requests.Session()
         self.test_results = []
         
-    def log_result(self, test_name, success, message, details=None):
-        """Log test result"""
-        status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status} {test_name}: {message}")
-        if details:
-            print(f"   Details: {details}")
-        
-        self.test_results.append({
+    def log_test(self, test_name, success, details="", error=""):
+        """Log test results"""
+        result = {
             "test": test_name,
             "success": success,
-            "message": message,
-            "details": details
-        })
-    
+            "details": details,
+            "error": error,
+            "timestamp": datetime.now().isoformat()
+        }
+        self.test_results.append(result)
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} {test_name}")
+        if details:
+            print(f"   Details: {details}")
+        if error:
+            print(f"   Error: {error}")
+        print()
+
     def authenticate(self):
-        """Login as admin to get token"""
+        """Authenticate and get token"""
         try:
-            response = requests.post(
-                f"{BASE_URL}/auth/login",
-                json=ADMIN_CREDENTIALS,
-                timeout=10
+            response = self.session.post(
+                f"{self.base_url}/auth/login",
+                json=TEST_CREDENTIALS,
+                timeout=30
             )
             
             if response.status_code == 200:
                 data = response.json()
                 self.token = data.get("token")
-                self.log_result("Authentication", True, "Admin login successful")
+                self.session.headers.update({"Authorization": f"Bearer {self.token}"})
+                self.log_test("Authentication", True, f"Logged in as {data.get('user', {}).get('username')}")
                 return True
             else:
-                self.log_result("Authentication", False, f"Login failed: {response.status_code}", response.text)
+                self.log_test("Authentication", False, error=f"Status: {response.status_code}, Response: {response.text}")
                 return False
                 
         except Exception as e:
-            self.log_result("Authentication", False, f"Login error: {str(e)}")
+            self.log_test("Authentication", False, error=str(e))
             return False
-    
-    def test_get_bible_books(self):
-        """Test GET /api/pain-du-jour/livres"""
+
+    def test_chatbot_ia_api(self):
+        """Test Chatbot IA API with French message about app features"""
         try:
-            response = requests.get(f"{BASE_URL}/pain-du-jour/livres", timeout=10)
+            # Test 1: Basic French message about app features
+            test_message = {
+                "message": "Bonjour Audrey ! Peux-tu me parler des fonctionnalités principales de l'application ICC Hub ? Quels sont les modules disponibles ?",
+                "session_id": str(uuid.uuid4()),
+                "role": "super_admin"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/chatbot/message",
+                json=test_message,
+                timeout=60
+            )
             
             if response.status_code == 200:
-                books = response.json()
-                if isinstance(books, list) and len(books) == 66:
-                    # Check for some expected books
-                    expected_books = ["Genèse", "Matthieu", "Apocalypse", "Psaumes"]
-                    found_books = [book for book in expected_books if book in books]
+                data = response.json()
+                chatbot_response = data.get("response", "")
+                session_id = data.get("session_id", "")
+                
+                # Verify response is in French and relevant
+                french_indicators = ["ICC Hub", "application", "fonctionnalités", "module", "visiteur", "église"]
+                has_french_content = any(indicator.lower() in chatbot_response.lower() for indicator in french_indicators)
+                
+                if has_french_content and len(chatbot_response) > 50:
+                    self.log_test(
+                        "Chatbot IA - French App Features Query", 
+                        True, 
+                        f"Response length: {len(chatbot_response)} chars, Session ID: {session_id[:8]}..."
+                    )
                     
-                    if len(found_books) == len(expected_books):
-                        self.log_result("Bible Books", True, f"Retrieved {len(books)} Bible books correctly")
+                    # Test 2: Session continuity
+                    followup_message = {
+                        "message": "Et comment puis-je gérer les visiteurs ?",
+                        "session_id": session_id,
+                        "role": "super_admin"
+                    }
+                    
+                    followup_response = self.session.post(
+                        f"{self.base_url}/chatbot/message",
+                        json=followup_message,
+                        timeout=60
+                    )
+                    
+                    if followup_response.status_code == 200:
+                        followup_data = followup_response.json()
+                        self.log_test(
+                            "Chatbot IA - Session Continuity", 
+                            True, 
+                            f"Follow-up response: {len(followup_data.get('response', ''))} chars"
+                        )
                     else:
-                        self.log_result("Bible Books", False, f"Missing expected books: {set(expected_books) - set(found_books)}")
+                        self.log_test(
+                            "Chatbot IA - Session Continuity", 
+                            False, 
+                            error=f"Status: {followup_response.status_code}"
+                        )
+                        
                 else:
-                    self.log_result("Bible Books", False, f"Expected 66 books, got {len(books) if isinstance(books, list) else 'non-list'}")
+                    self.log_test(
+                        "Chatbot IA - French App Features Query", 
+                        False, 
+                        error=f"Response not relevant or too short: {chatbot_response[:100]}..."
+                    )
             else:
-                self.log_result("Bible Books", False, f"HTTP {response.status_code}", response.text)
+                self.log_test(
+                    "Chatbot IA - French App Features Query", 
+                    False, 
+                    error=f"Status: {response.status_code}, Response: {response.text}"
+                )
                 
         except Exception as e:
-            self.log_result("Bible Books", False, f"Request error: {str(e)}")
-    
-    def test_youtube_info(self):
-        """Test POST /api/pain-du-jour/youtube-info"""
+            self.log_test("Chatbot IA - French App Features Query", False, error=str(e))
+
+    def test_events_popup_api(self):
+        """Test Events Popup API - should return events from planning_activites collection"""
         try:
-            # Test with a valid YouTube URL
-            test_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-            
-            response = requests.post(
-                f"{BASE_URL}/pain-du-jour/youtube-info",
-                json={"url": test_url},
-                timeout=15
+            response = self.session.get(
+                f"{self.base_url}/events/upcoming",
+                timeout=30
             )
             
             if response.status_code == 200:
-                data = response.json()
-                required_fields = ["video_id", "title", "thumbnail_url", "duration"]
-                missing_fields = [field for field in required_fields if field not in data]
+                events = response.json()
                 
-                if not missing_fields:
-                    self.log_result("YouTube Info", True, f"Retrieved video metadata: {data.get('title', 'Unknown')}")
+                if isinstance(events, list):
+                    self.log_test(
+                        "Events Popup API - Response Format", 
+                        True, 
+                        f"Returned {len(events)} events"
+                    )
+                    
+                    # Check event format if events exist
+                    if events:
+                        sample_event = events[0]
+                        required_fields = ["titre", "ville", "days_until", "date_debut"]
+                        has_required_fields = all(field in sample_event for field in required_fields)
+                        
+                        if has_required_fields:
+                            self.log_test(
+                                "Events Popup API - Event Format", 
+                                True, 
+                                f"Sample event: {sample_event.get('titre', 'N/A')} in {sample_event.get('ville', 'N/A')}"
+                            )
+                        else:
+                            missing_fields = [field for field in required_fields if field not in sample_event]
+                            self.log_test(
+                                "Events Popup API - Event Format", 
+                                False, 
+                                error=f"Missing fields: {missing_fields}"
+                            )
+                    else:
+                        self.log_test(
+                            "Events Popup API - Event Format", 
+                            True, 
+                            "No events in next 30 days (expected if no events scheduled)"
+                        )
                 else:
-                    self.log_result("YouTube Info", False, f"Missing fields: {missing_fields}")
+                    self.log_test(
+                        "Events Popup API - Response Format", 
+                        False, 
+                        error=f"Expected list, got {type(events)}"
+                    )
             else:
-                self.log_result("YouTube Info", False, f"HTTP {response.status_code}", response.text)
+                self.log_test(
+                    "Events Popup API - Response Format", 
+                    False, 
+                    error=f"Status: {response.status_code}, Response: {response.text}"
+                )
                 
         except Exception as e:
-            self.log_result("YouTube Info", False, f"Request error: {str(e)}")
-    
-    def test_get_today_content(self):
-        """Test GET /api/pain-du-jour/today"""
+            self.log_test("Events Popup API - Response Format", False, error=str(e))
+
+    def test_berger_presences_apis(self):
+        """Test Berger Presences APIs - batch save and latest get"""
         try:
-            response = requests.get(f"{BASE_URL}/pain-du-jour/today", timeout=10)
+            # Test 1: POST /api/berger-presences/batch
+            test_date = datetime.now().strftime("%Y-%m-%d")
+            test_berger_id = str(uuid.uuid4())
             
-            if response.status_code == 200:
-                data = response.json()
-                today = datetime.now().strftime("%Y-%m-%d")
-                
-                if "date" in data and "versets" in data:
-                    self.log_result("Today Content", True, f"Retrieved today's content for {data.get('date')}")
-                else:
-                    self.log_result("Today Content", False, "Missing required fields (date, versets)")
-            else:
-                self.log_result("Today Content", False, f"HTTP {response.status_code}", response.text)
-                
-        except Exception as e:
-            self.log_result("Today Content", False, f"Request error: {str(e)}")
-    
-    def test_get_specific_date_content(self):
-        """Test GET /api/pain-du-jour/{date}"""
-        try:
-            test_date = "2025-12-15"
-            response = requests.get(f"{BASE_URL}/pain-du-jour/{test_date}", timeout=10)
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                if "date" in data and "versets" in data and data["date"] == test_date:
-                    self.log_result("Specific Date Content", True, f"Retrieved content for {test_date}")
-                else:
-                    self.log_result("Specific Date Content", False, f"Invalid response structure or date mismatch")
-            else:
-                self.log_result("Specific Date Content", False, f"HTTP {response.status_code}", response.text)
-                
-        except Exception as e:
-            self.log_result("Specific Date Content", False, f"Request error: {str(e)}")
-    
-    def test_track_click(self):
-        """Test POST /api/pain-du-jour/click"""
-        try:
-            click_data = {
-                "type": "priere",
-                "date": "2025-12-15"
-            }
-            
-            response = requests.post(
-                f"{BASE_URL}/pain-du-jour/click",
-                json=click_data,
-                timeout=10
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if "message" in data:
-                    self.log_result("Click Tracking", True, "Click tracked successfully")
-                else:
-                    self.log_result("Click Tracking", False, "No confirmation message received")
-            else:
-                self.log_result("Click Tracking", False, f"HTTP {response.status_code}", response.text)
-                
-        except Exception as e:
-            self.log_result("Click Tracking", False, f"Request error: {str(e)}")
-    
-    def test_submit_poll(self):
-        """Test POST /api/pain-du-jour/sondage"""
-        try:
-            poll_data = {
-                "date": "2025-12-15",
-                "lecture_reponse": "Oui",
-                "video_reponse": "Oui"
-            }
-            
-            response = requests.post(
-                f"{BASE_URL}/pain-du-jour/sondage",
-                json=poll_data,
-                timeout=10
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if "message" in data:
-                    self.log_result("Poll Submission", True, "Poll submitted successfully")
-                else:
-                    self.log_result("Poll Submission", False, "No confirmation message received")
-            else:
-                self.log_result("Poll Submission", False, f"HTTP {response.status_code}", response.text)
-                
-        except Exception as e:
-            self.log_result("Poll Submission", False, f"Request error: {str(e)}")
-    
-    def test_save_content_admin(self):
-        """Test POST /api/pain-du-jour (admin only)"""
-        if not self.token:
-            self.log_result("Save Content (Admin)", False, "No authentication token available")
-            return
-            
-        try:
-            content_data = {
-                "date": "2025-12-15",
-                "lien_priere": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                "titre_priere": "Temps de Prière du Jour",
-                "lien_enseignement": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                "titre_enseignement": "Enseignement du Jour",
-                "versets": [
+            batch_data = {
+                "presences": [
                     {
-                        "livre": "Matthieu",
-                        "chapitre": 6,
-                        "verset_debut": 11,
-                        "verset_fin": 11
+                        "berger_id": test_berger_id,
+                        "date": test_date,
+                        "present": True,
+                        "priere": True,
+                        "commentaire": "Test presence entry",
+                        "enregistre_par": "test_user",
+                        "ville": "Milan",
+                        "promo_name": "Test Promo 2024",
+                        "noms_bergers": "Jean Dupont, Marie Martin",
+                        "personnes_suivies": 15
                     }
                 ]
             }
             
-            headers = {"Authorization": f"Bearer {self.token}"}
-            response = requests.post(
-                f"{BASE_URL}/pain-du-jour",
-                json=content_data,
-                headers=headers,
-                timeout=10
+            response = self.session.post(
+                f"{self.base_url}/berger-presences/batch",
+                json=batch_data,
+                timeout=30
             )
             
             if response.status_code == 200:
                 data = response.json()
-                if "message" in data:
-                    self.log_result("Save Content (Admin)", True, "Content saved successfully")
+                if "count" in data and data["count"] > 0:
+                    self.log_test(
+                        "Berger Presences - Batch Save", 
+                        True, 
+                        f"Saved {data['count']} presence(s)"
+                    )
                 else:
-                    self.log_result("Save Content (Admin)", False, "No confirmation message received")
+                    self.log_test(
+                        "Berger Presences - Batch Save", 
+                        False, 
+                        error=f"No count in response: {data}"
+                    )
             else:
-                self.log_result("Save Content (Admin)", False, f"HTTP {response.status_code}", response.text)
-                
-        except Exception as e:
-            self.log_result("Save Content (Admin)", False, f"Request error: {str(e)}")
-    
-    def test_get_stats_admin(self):
-        """Test GET /api/pain-du-jour/stats/{year} (admin only)"""
-        if not self.token:
-            self.log_result("Get Stats (Admin)", False, "No authentication token available")
-            return
+                self.log_test(
+                    "Berger Presences - Batch Save", 
+                    False, 
+                    error=f"Status: {response.status_code}, Response: {response.text}"
+                )
             
-        try:
-            year = 2025
-            headers = {"Authorization": f"Bearer {self.token}"}
-            response = requests.get(
-                f"{BASE_URL}/pain-du-jour/stats/{year}",
-                headers=headers,
-                timeout=10
+            # Test 2: GET /api/berger-presences/latest?ville=Milan
+            response = self.session.get(
+                f"{self.base_url}/berger-presences/latest?ville=Milan",
+                timeout=30
             )
             
             if response.status_code == 200:
-                data = response.json()
-                if isinstance(data, list):
-                    self.log_result("Get Stats (Admin)", True, f"Retrieved {len(data)} statistics records for {year}")
+                latest_presences = response.json()
+                
+                if isinstance(latest_presences, list):
+                    self.log_test(
+                        "Berger Presences - Latest Get", 
+                        True, 
+                        f"Retrieved {len(latest_presences)} latest presences for Milan"
+                    )
+                    
+                    # Check if our test data is included (if any presences exist)
+                    if latest_presences:
+                        sample_presence = latest_presences[0]
+                        expected_fields = ["berger_id", "date", "present", "ville"]
+                        has_expected_fields = all(field in sample_presence for field in expected_fields)
+                        
+                        if has_expected_fields:
+                            self.log_test(
+                                "Berger Presences - Data Format", 
+                                True, 
+                                f"Sample presence for {sample_presence.get('ville', 'N/A')} on {sample_presence.get('date', 'N/A')}"
+                            )
+                        else:
+                            missing_fields = [field for field in expected_fields if field not in sample_presence]
+                            self.log_test(
+                                "Berger Presences - Data Format", 
+                                False, 
+                                error=f"Missing fields: {missing_fields}"
+                            )
                 else:
-                    self.log_result("Get Stats (Admin)", False, "Expected list of statistics")
+                    self.log_test(
+                        "Berger Presences - Latest Get", 
+                        False, 
+                        error=f"Expected list, got {type(latest_presences)}"
+                    )
             else:
-                self.log_result("Get Stats (Admin)", False, f"HTTP {response.status_code}", response.text)
+                self.log_test(
+                    "Berger Presences - Latest Get", 
+                    False, 
+                    error=f"Status: {response.status_code}, Response: {response.text}"
+                )
                 
         except Exception as e:
-            self.log_result("Get Stats (Admin)", False, f"Request error: {str(e)}")
-    
-    def test_unauthorized_access(self):
-        """Test that admin endpoints require authentication"""
-        try:
-            # Test save content without token
-            response = requests.post(
-                f"{BASE_URL}/pain-du-jour",
-                json={"date": "2025-12-15"},
-                timeout=10
-            )
-            
-            if response.status_code == 401 or response.status_code == 403:
-                self.log_result("Unauthorized Access", True, "Admin endpoints properly protected")
-            else:
-                self.log_result("Unauthorized Access", False, f"Expected 401/403, got {response.status_code}")
-                
-        except Exception as e:
-            self.log_result("Unauthorized Access", False, f"Request error: {str(e)}")
-    
+            self.log_test("Berger Presences APIs", False, error=str(e))
+
     def run_all_tests(self):
-        """Run all Pain du Jour tests"""
-        print("🧪 Starting Le Pain du Jour Backend Tests")
-        print("=" * 50)
+        """Run all tests"""
+        print("=" * 60)
+        print("ICC Hub Backend API Tests")
+        print("=" * 60)
+        print(f"Base URL: {self.base_url}")
+        print(f"Test Time: {datetime.now().isoformat()}")
+        print("=" * 60)
+        print()
         
-        # Public endpoints (no auth required)
-        self.test_get_bible_books()
-        self.test_youtube_info()
-        self.test_get_today_content()
-        self.test_get_specific_date_content()
-        self.test_track_click()
-        self.test_submit_poll()
+        # Authenticate first
+        if not self.authenticate():
+            print("❌ Authentication failed. Cannot proceed with tests.")
+            return
         
-        # Test unauthorized access
-        self.test_unauthorized_access()
-        
-        # Admin endpoints (auth required)
-        if self.authenticate():
-            self.test_save_content_admin()
-            self.test_get_stats_admin()
+        # Run tests
+        self.test_chatbot_ia_api()
+        self.test_events_popup_api()
+        self.test_berger_presences_apis()
         
         # Summary
-        print("\n" + "=" * 50)
-        print("📊 TEST SUMMARY")
-        print("=" * 50)
+        print("=" * 60)
+        print("TEST SUMMARY")
+        print("=" * 60)
         
-        passed = sum(1 for result in self.test_results if result["success"])
-        total = len(self.test_results)
+        total_tests = len(self.test_results)
+        passed_tests = sum(1 for result in self.test_results if result["success"])
+        failed_tests = total_tests - passed_tests
         
-        print(f"Total Tests: {total}")
-        print(f"Passed: {passed}")
-        print(f"Failed: {total - passed}")
-        print(f"Success Rate: {(passed/total)*100:.1f}%")
+        print(f"Total Tests: {total_tests}")
+        print(f"Passed: {passed_tests}")
+        print(f"Failed: {failed_tests}")
+        print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
         
-        if total - passed > 0:
-            print("\n❌ FAILED TESTS:")
+        if failed_tests > 0:
+            print("\nFAILED TESTS:")
             for result in self.test_results:
                 if not result["success"]:
-                    print(f"  - {result['test']}: {result['message']}")
+                    print(f"- {result['test']}: {result['error']}")
         
-        return passed == total
+        print("=" * 60)
+        
+        return failed_tests == 0
 
 if __name__ == "__main__":
-    tester = PainDuJourTester()
+    tester = ICCHubTester()
     success = tester.run_all_tests()
-    sys.exit(0 if success else 1)
+    exit(0 if success else 1)
