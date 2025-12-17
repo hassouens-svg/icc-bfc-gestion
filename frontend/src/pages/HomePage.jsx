@@ -36,7 +36,7 @@ const HomePage = () => {
                     ? "⏰ Demain" 
                     : `⏳ dans ${event.days_until} jours`;
                 
-                toast.success(
+                toast.info(
                   `🎉 ${event.ville || 'ICC'}: ${event.titre}, ${daysText} 🎊`, 
                   {
                     duration: 7000,

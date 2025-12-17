@@ -10,7 +10,7 @@ const ChatbotAudrey = () => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Bonjour ! 👋 Je suis Audrey, votre assistante virtuelle. Je connais parfaitement l'application et je peux vous aider avec :\n\n• Le Pain du Jour\n• Les Bergeries et Promotions\n• Le Ministère des STARS\n• Les Familles Impact\n• My Event Church\n• Et bien plus !\n\nComment puis-je vous aider aujourd'hui ?"
+      content: "Bonjour ! 👋 Je suis Audrey, votre Assistant Virtuel. Je connais parfaitement l'application et je peux vous aider avec :\n\n• Le Pain du Jour\n• Les Bergeries et Promotions\n• Le Ministère des STARS\n• Les Familles Impact\n• My Event Church\n• Et bien plus !\n\nComment puis-je vous aider aujourd'hui ?"
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -130,7 +130,7 @@ const ChatbotAudrey = () => {
               </div>
               <div>
                 <CardTitle className="text-base font-semibold">Audrey</CardTitle>
-                <p className="text-xs text-blue-100">Votre assistante</p>
+                <p className="text-xs text-blue-100">Votre Assistant Virtuel</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
