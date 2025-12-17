@@ -16,7 +16,7 @@ from datetime import datetime
 import os
 
 # Configuration - Use environment variable for backend URL
-BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://dailymanna-1.preview.emergentagent.com')
+BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://spiritualapp-3.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 HEADERS = {"Content-Type": "application/json"}
 

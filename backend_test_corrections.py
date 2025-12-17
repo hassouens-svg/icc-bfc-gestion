@@ -17,7 +17,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BACKEND_URL = "https://dailymanna-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://spiritualapp-3.preview.emergentagent.com/api"
 TEST_USER = {
     "username": "superadmin",
     "password": "superadmin123", 

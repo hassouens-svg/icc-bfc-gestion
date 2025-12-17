@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import sys
 
 # Backend URL from frontend .env
-BASE_URL = "https://dailymanna-1.preview.emergentagent.com/api"
+BASE_URL = "https://spiritualapp-3.preview.emergentagent.com/api"
 
 # Test credentials
 ADMIN_CREDENTIALS = {

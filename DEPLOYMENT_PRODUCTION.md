@@ -3,7 +3,7 @@
 ## ⚠️ IMPORTANT : Configuration des URLs
 
 ### Problème actuel
-- L'URL actuelle dans `.env` est : `https://dailymanna-1.preview.emergentagent.com`
+- L'URL actuelle dans `.env` est : `https://spiritualapp-3.preview.emergentagent.com`
 - Ceci est l'URL de **PREVIEW/TEST**, pas de PRODUCTION
 - Les liens RSVP dans les emails pointent vers cette URL preview
 
