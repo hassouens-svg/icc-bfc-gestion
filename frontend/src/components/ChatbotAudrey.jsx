@@ -224,17 +224,18 @@ const ChatbotAudrey = () => {
 
   return (
     <>
-      {/* Bouton flottant */}
+      {/* Bouton flottant - en haut à droite */}
       <Button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 shadow-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 ${isOpen ? 'hidden' : 'flex'} items-center justify-center`}
+        className={`fixed top-20 right-6 z-50 rounded-full w-12 h-12 shadow-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 ${isOpen ? 'hidden' : 'flex'} items-center justify-center`}
+        title="Assistant Audrey"
       >
-        <MessageCircle className="h-6 w-6 text-white" />
+        <MessageCircle className="h-5 w-5 text-white" />
       </Button>
 
-      {/* Fenêtre de chat */}
+      {/* Fenêtre de chat - en haut à droite */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-2rem)] h-[500px] max-h-[calc(100vh-4rem)] flex flex-col bg-white rounded-xl shadow-2xl border">
+        <div className="fixed top-20 right-6 z-50 w-96 max-w-[calc(100vw-2rem)] h-[500px] max-h-[calc(100vh-6rem)] flex flex-col bg-white rounded-xl shadow-2xl border">
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-t-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -243,7 +244,7 @@ const ChatbotAudrey = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Audrey</h3>
-                <p className="text-xs text-indigo-100">Assistant ICC Hub</p>
+                <p className="text-xs text-indigo-100">Assistant</p>
               </div>
             </div>
             <div className="flex gap-2">
