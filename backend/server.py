@@ -6555,8 +6555,20 @@ class PainDuJourContent(BaseModel):
     thumbnail_enseignement: Optional[str] = None  # Thumbnail YouTube
     duration_enseignement: Optional[str] = None  # Durée de la vidéo
     versets: Optional[List[Dict]] = []  # [{livre, chapitre, verset_debut, verset_fin}]
+    # Nouveau: Résumé et Quiz
+    resume: Optional[Dict] = None  # {titre, resume, points_cles, versets_cites, citations}
+    quiz: Optional[List[Dict]] = None  # [{question, options, correct_index}]
     created_by: Optional[str] = None
     created_at: Optional[str] = None
+
+class QuizSubmission(BaseModel):
+    date: str  # "YYYY-MM-DD"
+    answers: List[int]  # Index des réponses choisies
+    score: int  # Score calculé côté frontend
+
+class GenerateResumeQuizRequest(BaseModel):
+    youtube_url: str
+    video_title: Optional[str] = None
 
 class SondagePainDuJour(BaseModel):
     date: str  # "YYYY-MM-DD"
