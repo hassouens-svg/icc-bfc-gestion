@@ -141,12 +141,70 @@ const PainDuJourAdminPage = () => {
         thumbnail_enseignement: data.thumbnail_enseignement || '',
         duration_priere: data.duration_priere || '',
         duration_enseignement: data.duration_enseignement || '',
-        versets: data.versets || []
+        versets: data.versets || [],
+        resume: data.resume || null,
+        quiz: data.quiz || null
       });
+      
+      // Charger les stats du quiz si disponible
+      if (data.quiz) {
+        loadQuizStats(date);
+      }
     } catch (error) {
       console.error('Error loading content:', error);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const loadQuizStats = async (date) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour/quiz/stats/${date}`,
+        { headers: { 'Authorization': `Bearer ${getToken()}` } }
+      );
+      const data = await response.json();
+      setQuizStats(data);
+    } catch (error) {
+      console.error('Error loading quiz stats:', error);
+    }
+  };
+  
+  const generateResumeQuiz = async () => {
+    if (!form.lien_enseignement) {
+      toast.error('Veuillez d\'abord ajouter un lien YouTube pour l\'enseignement');
+      return;
+    }
+    
+    setGeneratingQuiz(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour/generate-resume-quiz`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({
+          youtube_url: form.lien_enseignement,
+          video_title: form.titre_enseignement
+        })
+      });
+      
+      if (!response.ok) throw new Error('Erreur lors de la génération');
+      
+      const data = await response.json();
+      setForm(prev => ({
+        ...prev,
+        resume: data.resume,
+        quiz: data.quiz
+      }));
+      
+      toast.success('Résumé et quiz générés avec succès ! N\'oubliez pas d\'enregistrer.');
+    } catch (error) {
+      console.error('Error generating quiz:', error);
+      toast.error('Erreur lors de la génération du résumé et quiz');
+    } finally {
+      setGeneratingQuiz(false);
     }
   };
 
