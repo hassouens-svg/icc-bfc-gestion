@@ -73,6 +73,7 @@ import MinistereStarsDepartementPage from './pages/MinistereStarsDepartementPage
 import RecensementStarsPage from './pages/RecensementStarsPage';
 import PainDuJourPage from './pages/PainDuJourPage';
 import PainDuJourAdminPage from './pages/PainDuJourAdminPage';
+import PainDuJourQuizPage from './pages/PainDuJourQuizPage';
 
 function App() {
   return (
