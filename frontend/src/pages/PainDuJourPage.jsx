@@ -606,6 +606,18 @@ const PainDuJourPage = () => {
                   Regarder sur YouTube
                   <ExternalLink className="h-4 w-4 ml-2" />
                 </Button>
+                
+                {/* Bouton Résumé et Quiz */}
+                {content.resume && content.quiz && (
+                  <Button 
+                    onClick={() => navigate(`/pain-du-jour/quiz/${selectedDate}`)}
+                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                  >
+                    <Book className="h-4 w-4 mr-2" />
+                    Lire le résumé et répondre au quiz
+                    <ChevronRight className="h-4 w-4 ml-2" />
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="text-center py-8">
