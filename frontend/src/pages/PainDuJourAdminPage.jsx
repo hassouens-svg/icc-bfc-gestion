@@ -41,9 +41,13 @@ const PainDuJourAdminPage = () => {
     thumbnail_enseignement: '',
     duration_priere: '',
     duration_enseignement: '',
-    versets: []
+    versets: [],
+    resume: null,
+    quiz: null
   });
   const [newVerset, setNewVerset] = useState({ livre: '', chapitre: '', verset_debut: '', verset_fin: '' });
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
+  const [quizStats, setQuizStats] = useState(null);
 
   // Check existing auth on mount
   useEffect(() => {
