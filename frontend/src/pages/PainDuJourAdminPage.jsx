@@ -461,10 +461,11 @@ const PainDuJourAdminPage = () => {
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         <Tabs defaultValue="content" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsList className="grid w-full grid-cols-4 max-w-lg">
             <TabsTrigger value="content">📝 Contenu</TabsTrigger>
             <TabsTrigger value="versets">📖 Versets</TabsTrigger>
-            <TabsTrigger value="stats">📊 Statistiques</TabsTrigger>
+            <TabsTrigger value="quiz">🎯 Quiz</TabsTrigger>
+            <TabsTrigger value="stats">📊 Stats</TabsTrigger>
           </TabsList>
 
           {/* Content Tab */}
