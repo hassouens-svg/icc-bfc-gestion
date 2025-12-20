@@ -688,6 +688,137 @@ const PainDuJourAdminPage = () => {
             </Card>
           </TabsContent>
 
+          {/* Quiz Tab */}
+          <TabsContent value="quiz" className="space-y-4">
+            <Card className="border-purple-200">
+              <CardHeader className="bg-purple-50 py-3">
+                <CardTitle className="text-base text-purple-800 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5" />
+                    Résumé & Quiz - {new Date(selectedDate).toLocaleDateString('fr-FR')}
+                  </span>
+                  {form.quiz && (
+                    <span className="text-sm font-normal bg-green-100 text-green-700 px-2 py-1 rounded">
+                      ✅ Configuré
+                    </span>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                {/* Génération */}
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg border border-purple-200">
+                  <h4 className="font-medium text-purple-800 mb-2 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Générer automatiquement
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Génère un résumé structuré et un quiz de 10 questions basé sur le titre de l'enseignement YouTube.
+                  </p>
+                  {!form.lien_enseignement ? (
+                    <p className="text-sm text-amber-600">⚠️ Ajoutez d'abord un lien YouTube dans l'onglet "Contenu"</p>
+                  ) : (
+                    <Button 
+                      onClick={generateResumeQuiz} 
+                      className="bg-purple-600 hover:bg-purple-700"
+                      disabled={generatingQuiz}
+                    >
+                      {generatingQuiz ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          Génération en cours...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 mr-2" />
+                          {form.quiz ? 'Régénérer' : 'Générer'} le résumé et quiz
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+
+                {/* Prévisualisation du résumé */}
+                {form.resume && (
+                  <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                    <h4 className="font-medium text-amber-800 mb-3 flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Résumé généré
+                    </h4>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <strong>Titre:</strong> {form.resume.titre}
+                      </div>
+                      <div>
+                        <strong>Résumé:</strong>
+                        <p className="text-gray-700 mt-1">{form.resume.resume?.substring(0, 300)}...</p>
+                      </div>
+                      <div>
+                        <strong>Points clés:</strong> {form.resume.points_cles?.length || 0}
+                      </div>
+                      <div>
+                        <strong>Versets cités:</strong> {form.resume.versets_cites?.join(', ') || 'Aucun'}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Prévisualisation du quiz */}
+                {form.quiz && (
+                  <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                    <h4 className="font-medium text-indigo-800 mb-3 flex items-center gap-2">
+                      <Trophy className="h-4 w-4" />
+                      Quiz généré ({form.quiz.length} questions)
+                    </h4>
+                    <div className="space-y-2 text-sm max-h-60 overflow-y-auto">
+                      {form.quiz.map((q, idx) => (
+                        <div key={idx} className="bg-white p-2 rounded border">
+                          <p className="font-medium text-gray-800">{idx + 1}. {q.question}</p>
+                          <p className="text-green-600 text-xs mt-1">
+                            ✓ {q.options[q.correct_index]}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Statistiques du quiz */}
+                {quizStats && quizStats.total_participants > 0 && (
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      Résultats du quiz
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+                      <div className="bg-white p-3 rounded-lg">
+                        <p className="text-2xl font-bold text-green-600">{quizStats.total_participants}</p>
+                        <p className="text-xs text-gray-600">Participants</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg">
+                        <p className="text-2xl font-bold text-blue-600">{quizStats.average_score}/10</p>
+                        <p className="text-xs text-gray-600">Score moyen</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg col-span-2 md:col-span-1">
+                        <p className="text-2xl font-bold text-purple-600">
+                          {Math.round((quizStats.average_score / 10) * 100)}%
+                        </p>
+                        <p className="text-xs text-gray-600">Réussite moyenne</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Save Button */}
+                {form.quiz && (
+                  <Button onClick={handleSaveContent} className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving}>
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                    Enregistrer le résumé et quiz
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Stats Tab */}
           <TabsContent value="stats" className="space-y-4">
             {/* Year Selector */}
