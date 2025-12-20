@@ -6798,6 +6798,167 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
     return stats
 
 
+# ==================== RÉSUMÉ ET QUIZ ENSEIGNEMENT ====================
+
+@api_router.post("/pain-du-jour/generate-resume-quiz")
+async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user: dict = Depends(get_current_user)):
+    """Générer le résumé et le quiz à partir d'un lien YouTube - Admin uniquement"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        api_key = os.environ.get("EMERGENT_LLM_KEY")
+        if not api_key:
+            raise HTTPException(status_code=500, detail="Clé API LLM non configurée")
+        
+        video_title = request.video_title or "Enseignement du jour"
+        
+        # Prompt pour générer le résumé et le quiz
+        prompt = f"""Tu es un expert en analyse de contenu chrétien. À partir du titre de cette vidéo d'enseignement biblique, génère un contenu structuré.
+
+Titre de la vidéo: "{video_title}"
+Lien YouTube: {request.youtube_url}
+
+Génère un JSON avec cette structure EXACTE (sans markdown, juste le JSON brut):
+{{
+    "resume": {{
+        "titre": "Le titre principal du message",
+        "resume": "Un résumé détaillé de 3-4 paragraphes expliquant le message principal",
+        "points_cles": ["Point clé 1", "Point clé 2", "Point clé 3", "Point clé 4", "Point clé 5"],
+        "versets_cites": ["Jean 3:16", "Romains 8:28", "etc"],
+        "citations": ["Citation marquante 1", "Citation marquante 2"]
+    }},
+    "quiz": [
+        {{"question": "Question 1?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
+        {{"question": "Question 2?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 1}},
+        {{"question": "Question 3?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 2}},
+        {{"question": "Question 4?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
+        {{"question": "Question 5?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 1}},
+        {{"question": "Question 6?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 2}},
+        {{"question": "Question 7?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
+        {{"question": "Question 8?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 1}},
+        {{"question": "Question 9?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 2}},
+        {{"question": "Question 10?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}}
+    ]
+}}
+
+Les questions du quiz doivent:
+- Être basées sur le contenu probable de l'enseignement
+- Tester la compréhension du message
+- Inclure des questions sur les versets bibliques mentionnés
+- Avoir 4 options de réponse chacune
+- Avoir une seule bonne réponse (correct_index de 0 à 3)
+
+Réponds UNIQUEMENT avec le JSON, sans texte avant ou après."""
+
+        llm_chat = LlmChat(
+            api_key=api_key,
+            session_id=str(uuid4()),
+            system_message="Tu es un assistant qui génère du contenu JSON structuré pour des enseignements bibliques."
+        ).with_model("openai", "gpt-4o-mini")
+        
+        user_message = UserMessage(text=prompt)
+        response = await llm_chat.send_message(user_message)
+        
+        # Parser le JSON de la réponse
+        import json
+        # Nettoyer la réponse (enlever les backticks markdown si présents)
+        clean_response = response.strip()
+        if clean_response.startswith("```json"):
+            clean_response = clean_response[7:]
+        if clean_response.startswith("```"):
+            clean_response = clean_response[3:]
+        if clean_response.endswith("```"):
+            clean_response = clean_response[:-3]
+        clean_response = clean_response.strip()
+        
+        result = json.loads(clean_response)
+        
+        return result
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"Erreur parsing JSON: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erreur lors de la génération du contenu")
+    except Exception as e:
+        logger.error(f"Erreur génération résumé/quiz: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
+
+
+@api_router.post("/pain-du-jour/quiz/submit")
+async def submit_quiz(submission: QuizSubmission):
+    """Soumettre les réponses du quiz (anonyme)"""
+    try:
+        week_num = datetime.strptime(submission.date, "%Y-%m-%d").isocalendar()[1]
+        year = datetime.strptime(submission.date, "%Y-%m-%d").year
+        week_key = f"S{week_num}"
+        
+        # Enregistrer la soumission
+        quiz_data = {
+            "id": str(uuid4()),
+            "date": submission.date,
+            "answers": submission.answers,
+            "score": submission.score,
+            "submitted_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.pain_du_jour_quiz_submissions.insert_one(quiz_data)
+        
+        # Mettre à jour les stats
+        await db.pain_du_jour_stats.update_one(
+            {"semaine": week_key, "annee": year},
+            {
+                "$inc": {
+                    "quiz_total": 1,
+                    "quiz_score_total": submission.score
+                }
+            },
+            upsert=True
+        )
+        
+        return {"message": "Quiz soumis avec succès", "score": submission.score}
+    except Exception as e:
+        logger.error(f"Erreur soumission quiz: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erreur lors de la soumission")
+
+
+@api_router.get("/pain-du-jour/quiz/stats/{date}")
+async def get_quiz_stats(date: str, current_user: dict = Depends(get_current_user)):
+    """Obtenir les statistiques du quiz pour une date - Admin uniquement"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    submissions = await db.pain_du_jour_quiz_submissions.find(
+        {"date": date},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    if not submissions:
+        return {
+            "date": date,
+            "total_participants": 0,
+            "average_score": 0,
+            "score_distribution": {}
+        }
+    
+    total = len(submissions)
+    total_score = sum(s["score"] for s in submissions)
+    avg_score = round(total_score / total, 1) if total > 0 else 0
+    
+    # Distribution des scores
+    distribution = {}
+    for s in submissions:
+        score_key = str(s["score"])
+        distribution[score_key] = distribution.get(score_key, 0) + 1
+    
+    return {
+        "date": date,
+        "total_participants": total,
+        "average_score": avg_score,
+        "score_distribution": distribution
+    }
+
+
 # ==================== CHATBOT ASSISTANT IA ====================
 
 class ChatMessage(BaseModel):
