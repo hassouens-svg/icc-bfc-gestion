@@ -6,7 +6,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Book, Youtube, Loader2, Clock, Eye, ThumbsUp, X, Calendar, Home, LogOut, BarChart3, Save, Plus, ExternalLink } from 'lucide-react';
+import { Book, Youtube, Loader2, Clock, Eye, ThumbsUp, X, Calendar, Home, LogOut, BarChart3, Save, Plus, ExternalLink, Sparkles, FileText, Trophy } from 'lucide-react';
 import { toast } from 'sonner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
