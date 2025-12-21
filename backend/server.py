@@ -6940,22 +6940,22 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         logger.info(f"Génération résumé pour '{titre_message}' à partir de minute {minute_debut}")
         
         # Prompt pour analyse fidèle
-        prompt = f"""Tu es un expert en analyse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE.
+        prompt = f"""Tu es un expert en synthèse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE.
 
 TITRE DU MESSAGE: "{titre_message}"
 
 TRANSCRIPTION (à partir de la minute {minute_debut}):
 {transcription}
 
-GÉNÈRE UN JSON AVEC EXACTEMENT CETTE STRUCTURE:
+GÉNÈRE UN JSON AVEC CETTE STRUCTURE:
 
 {{
     "resume": {{
         "titre": "{titre_message}",
-        "resume": "Un résumé COMPLET en 5-6 LONGUES phrases qui expliquent TOUT le message. Chaque phrase doit être détaillée et explicative. Ce résumé doit permettre à quelqu'un qui n'a pas vu la vidéo de comprendre l'essentiel du message.",
-        "references_bibliques": ["Jean 3:16", "Romains 8:28", "etc - UNIQUEMENT les versets RÉELLEMENT cités dans la transcription"],
-        "points_cles": ["Point clé 1 tel que cité dans la prédication", "Point clé 2", "Point clé 3", "etc - Les points/enseignements principaux donnés"],
-        "phrases_fortes": ["Citation forte 1 du prédicateur mot pour mot", "Citation 2", "etc - Les phrases marquantes RÉELLEMENT dites"]
+        "resume": "Écris un résumé TRÈS DÉTAILLÉ de 8-10 longues phrases en style NARRATIF DIRECT. Ne dis JAMAIS 'le prédicateur dit', 'il explique', 'l'orateur souligne'. Écris directement le contenu comme si tu racontais toi-même l'enseignement. Par exemple, au lieu de 'Le prédicateur explique que Jésus est amour', écris 'Jésus est amour et sa grâce nous transforme'. Développe chaque idée en profondeur, fais des liens entre les concepts, et couvre TOUS les points importants du message.",
+        "references_bibliques": ["Jean 3:16", "Romains 8:28", "etc - UNIQUEMENT les versets RÉELLEMENT cités dans la transcription, format Livre Chapitre:Verset"],
+        "points_cles": ["Point clé 1 formulé comme un enseignement direct", "Point clé 2", "Point clé 3", "etc - Les enseignements principaux formulés de façon claire et directe"],
+        "phrases_fortes": ["Citation exacte 1", "Citation exacte 2", "etc - Les phrases marquantes mot pour mot telles que prononcées"]
     }},
     "quiz": [
         {{"question": "Question 1 basée sur le contenu?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
@@ -6971,12 +6971,16 @@ GÉNÈRE UN JSON AVEC EXACTEMENT CETTE STRUCTURE:
     ]
 }}
 
-RÈGLES IMPORTANTES:
-1. Le résumé doit être en 5-6 LONGUES phrases explicatives
-2. Les références bibliques: UNIQUEMENT celles mentionnées dans la transcription (format: Livre Chapitre:Verset)
-3. Les points clés: Les enseignements/leçons principaux donnés
-4. Les phrases fortes: Citations RÉELLES du prédicateur
-5. Le quiz: 10 questions sur le CONTENU RÉEL
+RÈGLES CRITIQUES POUR LE RÉSUMÉ:
+1. STYLE NARRATIF DIRECT: Ne jamais écrire "le prédicateur", "il dit", "l'orateur explique", etc.
+2. Écrire comme si TU enseignais toi-même ce message
+3. Résumé TRÈS DÉTAILLÉ: 8-10 longues phrases qui couvrent tout le message
+4. Développer chaque idée, faire des liens entre les concepts
+5. Utiliser un ton engageant et profond
+
+EXEMPLE DE BON STYLE:
+❌ MAUVAIS: "Le prédicateur explique que Jésus est le chemin"
+✅ BON: "Jésus est le chemin, la vérité et la vie. Aucun autre nom sous le ciel ne peut sauver l'humanité."
 
 Réponds UNIQUEMENT avec le JSON, sans markdown."""
 
