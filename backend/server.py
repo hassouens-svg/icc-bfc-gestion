@@ -6566,9 +6566,13 @@ class QuizSubmission(BaseModel):
     answers: List[int]  # Index des réponses choisies
     score: int  # Score calculé côté frontend
 
-class GenerateResumeQuizRequest(BaseModel):
+class FetchTranscriptionRequest(BaseModel):
     youtube_url: str
-    video_title: Optional[str] = None
+
+class GenerateResumeQuizRequest(BaseModel):
+    transcription: str  # La transcription complète
+    titre_message: str  # Le titre configuré par l'admin
+    minute_debut: int = 0  # La minute à partir de laquelle analyser
 
 class SondagePainDuJour(BaseModel):
     date: str  # "YYYY-MM-DD"
