@@ -6939,7 +6939,6 @@ IMPORTANT:
         response = await llm_chat.send_message(user_message)
         
         # Parser le JSON de la réponse
-        import json
         clean_response = response.strip()
         if clean_response.startswith("```json"):
             clean_response = clean_response[7:]
@@ -6949,11 +6948,11 @@ IMPORTANT:
             clean_response = clean_response[:-3]
         clean_response = clean_response.strip()
         
-        result = json.loads(clean_response)
+        result = json_module.loads(clean_response)
         
         return result
         
-    except json.JSONDecodeError as e:
+    except json_module.JSONDecodeError as e:
         logger.error(f"Erreur parsing JSON: {str(e)}")
         raise HTTPException(status_code=500, detail="Erreur lors de la génération du contenu")
     except HTTPException:
