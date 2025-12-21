@@ -760,64 +760,171 @@ const PainDuJourAdminPage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 space-y-4">
-                {/* Génération */}
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg border border-purple-200">
-                  <h4 className="font-medium text-purple-800 mb-2 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4" />
-                    Générer depuis la transcription YouTube
+                
+                {/* Étape 1: Récupérer la transcription */}
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                    📝 Étape 1: Récupérer la transcription
                   </h4>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Récupère les sous-titres de la vidéo YouTube, analyse la prédication et génère:
-                    <br />• <strong>Résumé</strong> fidèle au contenu
-                    <br />• <strong>Points clés</strong> et enseignements
-                    <br />• <strong>Versets</strong> bibliques cités
-                    <br />• <strong>Phrases fortes</strong> du prédicateur
-                    <br />• <strong>Quiz</strong> de 10 questions
-                  </p>
                   {!form.lien_enseignement ? (
                     <p className="text-sm text-amber-600">⚠️ Ajoutez d'abord un lien YouTube dans l'onglet "Contenu"</p>
                   ) : (
-                    <Button 
-                      onClick={generateResumeQuiz} 
-                      className="bg-purple-600 hover:bg-purple-700"
-                      disabled={generatingQuiz}
-                    >
-                      {generatingQuiz ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          Analyse en cours...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="h-4 w-4 mr-2" />
-                          {form.quiz ? 'Régénérer' : 'Générer'} le résumé et quiz
-                        </>
+                    <div className="space-y-3">
+                      <Button 
+                        onClick={fetchTranscription} 
+                        className="bg-blue-600 hover:bg-blue-700"
+                        disabled={fetchingTranscription}
+                      >
+                        {fetchingTranscription ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            Récupération...
+                          </>
+                        ) : (
+                          <>
+                            <Youtube className="h-4 w-4 mr-2" />
+                            Récupérer la transcription YouTube
+                          </>
+                        )}
+                      </Button>
+                      
+                      {/* Affichage de la transcription complète */}
+                      {transcriptionData && (
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium text-blue-800">
+                              Transcription complète ({transcriptionData.duree_minutes} min, {transcriptionData.nombre_caracteres} caractères)
+                            </span>
+                          </div>
+                          <div className="bg-white border rounded-lg p-3 max-h-64 overflow-y-auto">
+                            <pre className="text-xs text-gray-700 whitespace-pre-wrap font-mono leading-relaxed">
+                              {transcriptionData.transcription_complete}
+                            </pre>
+                          </div>
+                        </div>
                       )}
-                    </Button>
+                    </div>
                   )}
                 </div>
+
+                {/* Étape 2: Configurer et générer */}
+                {transcriptionData && (
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg border border-purple-200">
+                    <h4 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                      <Sparkles className="h-4 w-4" />
+                      Étape 2: Configurer et générer
+                    </h4>
+                    
+                    <div className="space-y-4">
+                      {/* Titre du message */}
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Titre du message</Label>
+                        <Input
+                          value={titreMessage}
+                          onChange={(e) => setTitreMessage(e.target.value)}
+                          placeholder="Ex: La puissance de la foi"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      {/* Minute de début */}
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">
+                          Minute de début de la prédication
+                        </Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Input
+                            type="number"
+                            value={minuteDebut}
+                            onChange={(e) => setMinuteDebut(parseInt(e.target.value) || 0)}
+                            min="0"
+                            max={transcriptionData.duree_minutes}
+                            className="w-24"
+                          />
+                          <span className="text-sm text-gray-500">
+                            sur {transcriptionData.duree_minutes} minutes totales
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          💡 Généralement, la prédication commence après les chants (vers 25-30 min)
+                        </p>
+                      </div>
+                      
+                      {/* Bouton Générer */}
+                      <Button 
+                        onClick={generateResumeQuiz} 
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        disabled={generatingQuiz || !titreMessage.trim()}
+                      >
+                        {generatingQuiz ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            Génération en cours...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4 mr-2" />
+                            Créer résumé et quiz
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Prévisualisation du résumé */}
                 {form.resume && (
                   <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-                    <h4 className="font-medium text-amber-800 mb-3 flex items-center gap-2">
+                    <h4 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
                       <FileText className="h-4 w-4" />
                       Résumé généré
                     </h4>
-                    <div className="space-y-3 text-sm">
+                    <div className="space-y-4 text-sm">
                       <div>
-                        <strong>Titre:</strong> {form.resume.titre}
+                        <strong className="text-amber-900">📌 Titre:</strong>
+                        <p className="text-gray-800 mt-1 font-medium">{form.resume.titre}</p>
                       </div>
                       <div>
-                        <strong>Résumé:</strong>
-                        <p className="text-gray-700 mt-1">{form.resume.resume?.substring(0, 300)}...</p>
+                        <strong className="text-amber-900">📖 Résumé:</strong>
+                        <p className="text-gray-700 mt-1 leading-relaxed">{form.resume.resume}</p>
                       </div>
-                      <div>
-                        <strong>Points clés:</strong> {form.resume.points_cles?.length || 0}
-                      </div>
-                      <div>
-                        <strong>Versets cités:</strong> {form.resume.versets_cites?.join(', ') || 'Aucun'}
-                      </div>
+                      {form.resume.references_bibliques?.length > 0 && (
+                        <div>
+                          <strong className="text-amber-900">✝️ Références bibliques:</strong>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {form.resume.references_bibliques.map((ref, idx) => (
+                              <span key={idx} className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                                {ref}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {form.resume.points_cles?.length > 0 && (
+                        <div>
+                          <strong className="text-amber-900">🎯 Points clés:</strong>
+                          <ul className="mt-2 space-y-1">
+                            {form.resume.points_cles.map((point, idx) => (
+                              <li key={idx} className="text-gray-700 flex items-start gap-2">
+                                <span className="text-purple-600 font-bold">{idx + 1}.</span>
+                                {point}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {form.resume.phrases_fortes?.length > 0 && (
+                        <div>
+                          <strong className="text-amber-900">💬 Phrases fortes:</strong>
+                          <div className="mt-2 space-y-2">
+                            {form.resume.phrases_fortes.map((phrase, idx) => (
+                              <blockquote key={idx} className="border-l-3 border-purple-400 pl-3 italic text-gray-700">
+                                "{phrase}"
+                              </blockquote>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -825,7 +932,7 @@ const PainDuJourAdminPage = () => {
                 {/* Prévisualisation du quiz */}
                 {form.quiz && (
                   <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-                    <h4 className="font-medium text-indigo-800 mb-3 flex items-center gap-2">
+                    <h4 className="font-semibold text-indigo-800 mb-3 flex items-center gap-2">
                       <Trophy className="h-4 w-4" />
                       Quiz généré ({form.quiz.length} questions)
                     </h4>
