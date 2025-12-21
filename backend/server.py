@@ -6843,8 +6843,9 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
             # Télécharger l'audio avec yt-dlp (à partir de 25 minutes)
             # On télécharge les 30 dernières minutes environ pour avoir la prédication
             try:
+                yt_dlp_path = "/root/.venv/bin/yt-dlp"
                 download_cmd = [
-                    "yt-dlp",
+                    yt_dlp_path,
                     "-x",  # Extract audio
                     "--audio-format", "mp3",
                     "--audio-quality", "5",  # Qualité moyenne pour réduire la taille
@@ -6861,7 +6862,7 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
                     # Essayer sans la restriction de temps si ça échoue
                     logger.warning(f"Échec téléchargement partiel, essai complet: {result.stderr}")
                     download_cmd_full = [
-                        "yt-dlp",
+                        yt_dlp_path,
                         "-x",
                         "--audio-format", "mp3",
                         "--audio-quality", "5",
