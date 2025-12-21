@@ -6802,15 +6802,16 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
 
 @api_router.post("/pain-du-jour/generate-resume-quiz")
 async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user: dict = Depends(get_current_user)):
-    """Générer le résumé et le quiz à partir de la transcription YouTube - Admin uniquement"""
+    """Générer le résumé et le quiz à partir de la transcription Whisper - Admin uniquement"""
     if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     try:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
-        from youtube_transcript_api import YouTubeTranscriptApi
         import re
         import json as json_module
+        import subprocess
+        import tempfile
         
         api_key = os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
@@ -6831,112 +6832,133 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         if not video_id:
             raise HTTPException(status_code=400, detail="URL YouTube invalide")
         
-        # Récupérer la transcription YouTube
-        logger.info(f"Récupération de la transcription pour: {video_id}")
-        try:
-            # Nouvelle API youtube-transcript-api
-            ytt_api = YouTubeTranscriptApi()
-            
-            # Essayer de récupérer la transcription (priorité: fr, en, puis auto)
-            transcript_data = None
-            try:
-                transcript_data = ytt_api.fetch(video_id, languages=['fr'])
-            except:
-                try:
-                    transcript_data = ytt_api.fetch(video_id, languages=['fr-FR'])
-                except:
-                    try:
-                        transcript_data = ytt_api.fetch(video_id, languages=['en'])
-                    except:
-                        try:
-                            transcript_data = ytt_api.fetch(video_id)  # Auto-detect
-                        except:
-                            pass
-            
-            if not transcript_data:
-                raise HTTPException(status_code=400, detail="Aucune transcription disponible pour cette vidéo. Vérifiez que les sous-titres sont activés sur YouTube.")
-            
-            # Filtrer pour commencer à partir de la 25e minute (1500 secondes)
-            # La prédication commence généralement après les chants
-            full_text_parts = []
-            for entry in transcript_data:
-                start_time = entry.start if hasattr(entry, 'start') else entry.get('start', 0)
-                text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
-                # Commencer à partir de 25 minutes pour ne pas manquer le début
-                if start_time >= 1500:  # 25 minutes en secondes
-                    full_text_parts.append(text)
-            
-            # Si pas assez de contenu après 25 min, prendre tout
-            if len(' '.join(full_text_parts)) < 1000:
-                full_text_parts = []
-                for entry in transcript_data:
-                    text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
-                    full_text_parts.append(text)
-            
-            transcription_text = ' '.join(full_text_parts)
-            
-            # Limiter la taille pour l'API (environ 15000 caractères max)
-            if len(transcription_text) > 15000:
-                transcription_text = transcription_text[:15000] + "..."
-                
-            logger.info(f"Transcription récupérée: {len(transcription_text)} caractères")
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Erreur transcription YouTube: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Impossible de récupérer la transcription: {str(e)}")
-        
         video_title = request.video_title or "Enseignement du jour"
         
+        # Télécharger l'audio et transcrire avec Whisper
+        logger.info(f"Téléchargement et transcription Whisper pour: {video_id}")
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            audio_path = f"{temp_dir}/audio.mp3"
+            
+            # Télécharger l'audio avec yt-dlp (à partir de 25 minutes)
+            # On télécharge les 30 dernières minutes environ pour avoir la prédication
+            try:
+                download_cmd = [
+                    "yt-dlp",
+                    "-x",  # Extract audio
+                    "--audio-format", "mp3",
+                    "--audio-quality", "5",  # Qualité moyenne pour réduire la taille
+                    "-o", audio_path,
+                    "--download-sections", "*25:00-55:00",  # De 25min à 55min (30 min de prédication)
+                    "--no-playlist",
+                    "--quiet",
+                    f"https://www.youtube.com/watch?v={video_id}"
+                ]
+                
+                result = subprocess.run(download_cmd, capture_output=True, text=True, timeout=120)
+                
+                if result.returncode != 0:
+                    # Essayer sans la restriction de temps si ça échoue
+                    logger.warning(f"Échec téléchargement partiel, essai complet: {result.stderr}")
+                    download_cmd_full = [
+                        "yt-dlp",
+                        "-x",
+                        "--audio-format", "mp3",
+                        "--audio-quality", "5",
+                        "-o", audio_path,
+                        "--no-playlist",
+                        "--quiet",
+                        f"https://www.youtube.com/watch?v={video_id}"
+                    ]
+                    result = subprocess.run(download_cmd_full, capture_output=True, text=True, timeout=180)
+                    
+                    if result.returncode != 0:
+                        raise Exception(f"Erreur yt-dlp: {result.stderr}")
+                
+                if not os.path.exists(audio_path):
+                    # Vérifier si le fichier a une extension différente
+                    for f in os.listdir(temp_dir):
+                        if f.startswith("audio"):
+                            audio_path = f"{temp_dir}/{f}"
+                            break
+                    
+                    if not os.path.exists(audio_path):
+                        raise Exception("Fichier audio non trouvé après téléchargement")
+                
+                logger.info(f"Audio téléchargé: {audio_path}")
+                
+            except subprocess.TimeoutExpired:
+                raise HTTPException(status_code=408, detail="Timeout lors du téléchargement de la vidéo")
+            except Exception as e:
+                logger.error(f"Erreur téléchargement: {str(e)}")
+                raise HTTPException(status_code=400, detail=f"Impossible de télécharger l'audio: {str(e)}")
+            
+            # Transcrire avec Whisper
+            try:
+                import whisper
+                
+                logger.info("Chargement du modèle Whisper...")
+                model = whisper.load_model("base")  # "base" pour un bon équilibre vitesse/qualité
+                
+                logger.info("Transcription en cours...")
+                result = model.transcribe(audio_path, language="fr")
+                transcription_text = result["text"]
+                
+                logger.info(f"Transcription terminée: {len(transcription_text)} caractères")
+                
+            except Exception as e:
+                logger.error(f"Erreur Whisper: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Erreur de transcription: {str(e)}")
+        
+        # Limiter la taille pour l'API (environ 12000 caractères max)
+        if len(transcription_text) > 12000:
+            transcription_text = transcription_text[:12000] + "..."
+        
         # Prompt pour analyser la transcription
-        prompt = f"""Analyse la transcription de cette prédication chrétienne et génère un contenu structuré.
+        prompt = f"""Tu es un expert en analyse de prédications chrétiennes. Analyse cette transcription audio et génère un contenu structuré.
 
-TITRE DE LA VIDÉO YOUTUBE: "{video_title}"
+TITRE DU MESSAGE (titre de la vidéo YouTube): "{video_title}"
 
 TRANSCRIPTION DE LA PRÉDICATION:
 {transcription_text}
 
-INSTRUCTIONS:
-1. Fais un résumé complet du message (3-4 paragraphes)
-2. Extrais les points clés abordés (5-7 points)
-3. Liste tous les versets bibliques cités ou mentionnés
-4. Extrais les phrases fortes et citations marquantes du prédicateur
-5. Génère 10 questions de quiz basées sur le CONTENU RÉEL de la prédication
+INSTRUCTIONS IMPORTANTES:
+1. Le titre du résumé DOIT être "{video_title}" (le titre YouTube)
+2. Fais un résumé fidèle du message (3-4 paragraphes) basé UNIQUEMENT sur ce qui est dit dans la transcription
+3. Extrais les points clés et enseignements RÉELLEMENT abordés
+4. Liste les versets bibliques RÉELLEMENT cités ou mentionnés
+5. Extrais les phrases fortes et citations RÉELLES du prédicateur
+6. Génère 10 questions de quiz basées sur le CONTENU RÉEL
 
 Réponds UNIQUEMENT avec ce JSON (sans markdown, sans backticks):
 {{
     "resume": {{
         "titre": "{video_title}",
-        "resume": "Résumé détaillé du message en 3-4 paragraphes...",
-        "points_cles": ["Point clé 1 abordé dans la prédication", "Point clé 2", "Point clé 3", "Point clé 4", "Point clé 5"],
-        "versets_cites": ["Référence biblique 1", "Référence biblique 2"],
-        "citations": ["Phrase forte 1 du prédicateur", "Phrase forte 2", "Phrase forte 3"]
+        "resume": "Résumé fidèle du message en 3-4 paragraphes basé sur la transcription...",
+        "points_cles": ["Enseignement 1 donné", "Enseignement 2 donné", "Leçon 3", "Point clé 4", "Point clé 5"],
+        "versets_cites": ["Verset 1 réellement cité", "Verset 2 mentionné"],
+        "citations": ["Phrase forte 1 du prédicateur", "Citation marquante 2", "Phrase forte 3"]
     }},
     "quiz": [
-        {{"question": "Question basée sur le contenu réel?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
-        {{"question": "Question 2?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 1}},
-        {{"question": "Question 3?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 2}},
-        {{"question": "Question 4?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
-        {{"question": "Question 5?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 1}},
-        {{"question": "Question 6?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 2}},
-        {{"question": "Question 7?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
-        {{"question": "Question 8?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 1}},
-        {{"question": "Question 9?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 2}},
-        {{"question": "Question 10?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}}
+        {{"question": "Question sur le contenu réel?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
+        {{"question": "Question 2?", "options": ["A", "B", "C", "D"], "correct_index": 1}},
+        {{"question": "Question 3?", "options": ["A", "B", "C", "D"], "correct_index": 2}},
+        {{"question": "Question 4?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
+        {{"question": "Question 5?", "options": ["A", "B", "C", "D"], "correct_index": 1}},
+        {{"question": "Question 6?", "options": ["A", "B", "C", "D"], "correct_index": 2}},
+        {{"question": "Question 7?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
+        {{"question": "Question 8?", "options": ["A", "B", "C", "D"], "correct_index": 1}},
+        {{"question": "Question 9?", "options": ["A", "B", "C", "D"], "correct_index": 2}},
+        {{"question": "Question 10?", "options": ["A", "B", "C", "D"], "correct_index": 0}}
     ]
 }}
 
-IMPORTANT: 
-- Les questions du quiz doivent être basées sur le contenu RÉEL de la transcription
-- Inclure des questions sur les versets mentionnés
-- Inclure des questions sur les exemples et illustrations donnés
-- Chaque question a 4 options avec une seule bonne réponse (correct_index de 0 à 3)"""
+CRITIQUE: Base-toi UNIQUEMENT sur la transcription fournie. Ne invente rien."""
 
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu es un expert en analyse de prédications chrétiennes. Tu génères du contenu JSON structuré basé sur les transcriptions."
+            system_message="Tu es un expert en analyse de prédications chrétiennes. Tu génères du contenu JSON structuré basé UNIQUEMENT sur les transcriptions fournies, sans inventer."
         ).with_model("openai", "gpt-4o-mini")
         
         user_message = UserMessage(text=prompt)
