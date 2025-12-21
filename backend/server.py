@@ -6895,115 +6895,70 @@ async def fetch_transcription(request: FetchTranscriptionRequest, current_user: 
 
 @api_router.post("/pain-du-jour/generate-resume-quiz")
 async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user: dict = Depends(get_current_user)):
-    """Générer le résumé et le quiz à partir de la transcription YouTube - Admin uniquement"""
+    """Générer le résumé et le quiz à partir de la transcription - Admin uniquement"""
     if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     try:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
-        from youtube_transcript_api import YouTubeTranscriptApi
-        import re
         import json as json_module
         
         api_key = os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
             raise HTTPException(status_code=500, detail="Clé API LLM non configurée")
         
-        # Extraire l'ID de la vidéo YouTube
-        video_id = None
-        youtube_patterns = [
-            r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})',
-            r'(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})'
-        ]
-        for pattern in youtube_patterns:
-            match = re.search(pattern, request.youtube_url)
-            if match:
-                video_id = match.group(1)
-                break
+        transcription = request.transcription
+        titre_message = request.titre_message
+        minute_debut = request.minute_debut
         
-        if not video_id:
-            raise HTTPException(status_code=400, detail="URL YouTube invalide")
+        # Filtrer la transcription à partir de la minute spécifiée
+        if minute_debut > 0:
+            # Chercher le texte après le timestamp [MM:SS]
+            import re
+            lines = transcription.split('\n')
+            filtered_lines = []
+            for line in lines:
+                match = re.match(r'\[(\d+):(\d+)\]', line)
+                if match:
+                    minutes = int(match.group(1))
+                    if minutes >= minute_debut:
+                        # Enlever le timestamp pour l'analyse
+                        text = re.sub(r'\[\d+:\d+\]\s*', '', line)
+                        filtered_lines.append(text)
+                else:
+                    filtered_lines.append(line)
+            transcription = ' '.join(filtered_lines)
+        else:
+            # Enlever tous les timestamps
+            import re
+            transcription = re.sub(r'\[\d+:\d+\]\s*', '', transcription)
         
-        video_title = request.video_title or "Enseignement du jour"
+        # Limiter la taille
+        if len(transcription) > 14000:
+            transcription = transcription[:14000] + "..."
         
-        # Récupérer la transcription YouTube
-        logger.info(f"Récupération de la transcription pour: {video_id}")
-        try:
-            ytt_api = YouTubeTranscriptApi()
-            
-            # Essayer différentes langues
-            transcript_data = None
-            for lang in ['fr', 'fr-FR', 'en', None]:
-                try:
-                    if lang:
-                        transcript_data = ytt_api.fetch(video_id, languages=[lang])
-                    else:
-                        transcript_data = ytt_api.fetch(video_id)
-                    break
-                except:
-                    continue
-            
-            if not transcript_data:
-                raise HTTPException(status_code=400, detail="Aucune transcription disponible. Vérifiez que les sous-titres sont activés sur YouTube.")
-            
-            # Extraire le texte - filtrer à partir de la 25e minute si vidéo longue
-            full_text_parts = []
-            video_is_long = False
-            
-            for entry in transcript_data:
-                start_time = entry.start if hasattr(entry, 'start') else entry.get('start', 0)
-                text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
-                
-                if start_time > 3600:  # Plus d'1h
-                    video_is_long = True
-                
-                # Pour les vidéos longues, commencer à 25 min
-                if video_is_long or start_time >= 1500:
-                    full_text_parts.append(text)
-                elif not video_is_long:
-                    full_text_parts.append(text)
-            
-            transcription_text = ' '.join(full_text_parts)
-            
-            # Limiter la taille
-            if len(transcription_text) > 14000:
-                transcription_text = transcription_text[:14000] + "..."
-                
-            logger.info(f"Transcription: {len(transcription_text)} caractères")
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Erreur transcription: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Erreur transcription: {str(e)}")
+        logger.info(f"Génération résumé pour '{titre_message}' à partir de minute {minute_debut}")
         
-        # Prompt amélioré pour une analyse fidèle
-        prompt = f"""Tu es un expert en analyse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE au contenu réel.
+        # Prompt pour analyse fidèle
+        prompt = f"""Tu es un expert en analyse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE.
 
-TITRE DU MESSAGE: "{video_title}"
+TITRE DU MESSAGE: "{titre_message}"
 
-TRANSCRIPTION:
-{transcription_text}
+TRANSCRIPTION (à partir de la minute {minute_debut}):
+{transcription}
 
-INSTRUCTIONS CRITIQUES:
-1. Le titre DOIT être exactement: "{video_title}"
-2. Le résumé doit refléter UNIQUEMENT ce qui est dit dans la transcription
-3. Les points clés doivent être les enseignements RÉELLEMENT donnés
-4. Les versets doivent être UNIQUEMENT ceux mentionnés dans la transcription
-5. Les citations doivent être des phrases RÉELLEMENT prononcées
-6. Le quiz doit tester la compréhension du contenu RÉEL
+GÉNÈRE UN JSON AVEC EXACTEMENT CETTE STRUCTURE:
 
-Réponds avec ce JSON (sans markdown):
 {{
     "resume": {{
-        "titre": "{video_title}",
-        "resume": "Résumé fidèle en 3-4 paragraphes basé sur la transcription...",
-        "points_cles": ["Enseignement 1 réellement donné", "Enseignement 2", "Leçon 3", "Point 4", "Point 5"],
-        "versets_cites": ["Verset réellement cité 1", "Verset cité 2"],
-        "citations": ["Phrase forte réellement dite 1", "Citation 2", "Citation 3"]
+        "titre": "{titre_message}",
+        "resume": "Un résumé COMPLET en 5-6 LONGUES phrases qui expliquent TOUT le message. Chaque phrase doit être détaillée et explicative. Ce résumé doit permettre à quelqu'un qui n'a pas vu la vidéo de comprendre l'essentiel du message.",
+        "references_bibliques": ["Jean 3:16", "Romains 8:28", "etc - UNIQUEMENT les versets RÉELLEMENT cités dans la transcription"],
+        "points_cles": ["Point clé 1 tel que cité dans la prédication", "Point clé 2", "Point clé 3", "etc - Les points/enseignements principaux donnés"],
+        "phrases_fortes": ["Citation forte 1 du prédicateur mot pour mot", "Citation 2", "etc - Les phrases marquantes RÉELLEMENT dites"]
     }},
     "quiz": [
-        {{"question": "Question sur le contenu réel?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
+        {{"question": "Question 1 basée sur le contenu?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
         {{"question": "Question 2?", "options": ["A", "B", "C", "D"], "correct_index": 1}},
         {{"question": "Question 3?", "options": ["A", "B", "C", "D"], "correct_index": 2}},
         {{"question": "Question 4?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
@@ -7016,12 +6971,19 @@ Réponds avec ce JSON (sans markdown):
     ]
 }}
 
-RAPPEL: Ne JAMAIS inventer de contenu. Si quelque chose n'est pas dans la transcription, ne l'inclus pas."""
+RÈGLES IMPORTANTES:
+1. Le résumé doit être en 5-6 LONGUES phrases explicatives
+2. Les références bibliques: UNIQUEMENT celles mentionnées dans la transcription (format: Livre Chapitre:Verset)
+3. Les points clés: Les enseignements/leçons principaux donnés
+4. Les phrases fortes: Citations RÉELLES du prédicateur
+5. Le quiz: 10 questions sur le CONTENU RÉEL
+
+Réponds UNIQUEMENT avec le JSON, sans markdown."""
 
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu analyses des transcriptions de prédications. Tu ne génères que du contenu basé sur ce qui est RÉELLEMENT dit dans la transcription."
+            system_message="Tu analyses des transcriptions de prédications. Tu génères du contenu JSON fidèle à la transcription."
         ).with_model("openai", "gpt-4o-mini")
         
         user_message = UserMessage(text=prompt)
