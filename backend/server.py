@@ -6804,6 +6804,95 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
 
 # ==================== RÉSUMÉ ET QUIZ ENSEIGNEMENT ====================
 
+@api_router.post("/pain-du-jour/fetch-transcription")
+async def fetch_transcription(request: FetchTranscriptionRequest, current_user: dict = Depends(get_current_user)):
+    """Récupérer la transcription complète d'une vidéo YouTube - Admin uniquement"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    try:
+        from youtube_transcript_api import YouTubeTranscriptApi
+        import re
+        
+        # Extraire l'ID de la vidéo YouTube
+        video_id = None
+        youtube_patterns = [
+            r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})',
+            r'(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})'
+        ]
+        for pattern in youtube_patterns:
+            match = re.search(pattern, request.youtube_url)
+            if match:
+                video_id = match.group(1)
+                break
+        
+        if not video_id:
+            raise HTTPException(status_code=400, detail="URL YouTube invalide")
+        
+        logger.info(f"Récupération de la transcription pour: {video_id}")
+        
+        ytt_api = YouTubeTranscriptApi()
+        
+        # Essayer différentes langues
+        transcript_data = None
+        for lang in ['fr', 'fr-FR', 'en', None]:
+            try:
+                if lang:
+                    transcript_data = ytt_api.fetch(video_id, languages=[lang])
+                else:
+                    transcript_data = ytt_api.fetch(video_id)
+                break
+            except:
+                continue
+        
+        if not transcript_data:
+            raise HTTPException(status_code=400, detail="Aucune transcription disponible. Vérifiez que les sous-titres sont activés sur YouTube.")
+        
+        # Construire la transcription complète avec timestamps
+        transcription_parts = []
+        full_text_parts = []
+        
+        for entry in transcript_data:
+            start_time = entry.start if hasattr(entry, 'start') else entry.get('start', 0)
+            text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
+            
+            # Convertir en minutes:secondes
+            minutes = int(start_time // 60)
+            seconds = int(start_time % 60)
+            timestamp = f"[{minutes:02d}:{seconds:02d}]"
+            
+            transcription_parts.append(f"{timestamp} {text}")
+            full_text_parts.append(text)
+        
+        # Transcription avec timestamps (pour affichage)
+        transcription_with_timestamps = "\n".join(transcription_parts)
+        
+        # Transcription texte brut (pour analyse)
+        transcription_text = " ".join(full_text_parts)
+        
+        # Calculer la durée totale
+        if transcript_data:
+            last_entry = transcript_data[-1]
+            last_time = last_entry.start if hasattr(last_entry, 'start') else last_entry.get('start', 0)
+            duration_minutes = int(last_time // 60)
+        else:
+            duration_minutes = 0
+        
+        logger.info(f"Transcription récupérée: {len(transcription_text)} caractères, {duration_minutes} minutes")
+        
+        return {
+            "transcription_complete": transcription_with_timestamps,
+            "transcription_text": transcription_text,
+            "duree_minutes": duration_minutes,
+            "nombre_caracteres": len(transcription_text)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur transcription: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Erreur: {str(e)}")
+
 @api_router.post("/pain-du-jour/generate-resume-quiz")
 async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user: dict = Depends(get_current_user)):
     """Générer le résumé et le quiz à partir de la transcription YouTube - Admin uniquement"""
