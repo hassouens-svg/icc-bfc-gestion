@@ -709,10 +709,10 @@ const PainDuJourAdminPage = () => {
                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg border border-purple-200">
                   <h4 className="font-medium text-purple-800 mb-2 flex items-center gap-2">
                     <Sparkles className="h-4 w-4" />
-                    Générer automatiquement
+                    Générer depuis la transcription YouTube
                   </h4>
                   <p className="text-sm text-gray-600 mb-3">
-                    Génère un résumé structuré et un quiz de 10 questions basé sur le titre de l'enseignement YouTube.
+                    Le système récupère automatiquement les sous-titres de la vidéo YouTube, analyse la prédication (à partir de la 25e minute), et génère un résumé structuré avec un quiz de 10 questions.
                   </p>
                   {!form.lien_enseignement ? (
                     <p className="text-sm text-amber-600">⚠️ Ajoutez d'abord un lien YouTube dans l'onglet "Contenu"</p>
@@ -725,7 +725,7 @@ const PainDuJourAdminPage = () => {
                       {generatingQuiz ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          Génération en cours...
+                          Analyse de la transcription...
                         </>
                       ) : (
                         <>
