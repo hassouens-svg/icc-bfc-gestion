@@ -48,6 +48,12 @@ const PainDuJourAdminPage = () => {
   const [newVerset, setNewVerset] = useState({ livre: '', chapitre: '', verset_debut: '', verset_fin: '' });
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
   const [quizStats, setQuizStats] = useState(null);
+  
+  // États pour la transcription
+  const [fetchingTranscription, setFetchingTranscription] = useState(false);
+  const [transcriptionData, setTranscriptionData] = useState(null);
+  const [titreMessage, setTitreMessage] = useState('');
+  const [minuteDebut, setMinuteDebut] = useState(0);
 
   // Check existing auth on mount
   useEffect(() => {
