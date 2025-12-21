@@ -6844,34 +6844,21 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
             # On télécharge les 30 dernières minutes environ pour avoir la prédication
             try:
                 yt_dlp_path = "/root/.venv/bin/yt-dlp"
+                
+                # D'abord essayer de télécharger la vidéo complète (plus fiable)
                 download_cmd = [
                     yt_dlp_path,
                     "-x",  # Extract audio
                     "--audio-format", "mp3",
                     "--audio-quality", "5",  # Qualité moyenne pour réduire la taille
                     "-o", audio_path,
-                    "--download-sections", "*25:00-55:00",  # De 25min à 55min (30 min de prédication)
                     "--no-playlist",
-                    "--quiet",
+                    "--no-check-certificates",
+                    "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                     f"https://www.youtube.com/watch?v={video_id}"
                 ]
                 
-                result = subprocess.run(download_cmd, capture_output=True, text=True, timeout=120)
-                
-                if result.returncode != 0:
-                    # Essayer sans la restriction de temps si ça échoue
-                    logger.warning(f"Échec téléchargement partiel, essai complet: {result.stderr}")
-                    download_cmd_full = [
-                        yt_dlp_path,
-                        "-x",
-                        "--audio-format", "mp3",
-                        "--audio-quality", "5",
-                        "-o", audio_path,
-                        "--no-playlist",
-                        "--quiet",
-                        f"https://www.youtube.com/watch?v={video_id}"
-                    ]
-                    result = subprocess.run(download_cmd_full, capture_output=True, text=True, timeout=180)
+                result = subprocess.run(download_cmd, capture_output=True, text=True, timeout=300)
                     
                     if result.returncode != 0:
                         raise Exception(f"Erreur yt-dlp: {result.stderr}")
