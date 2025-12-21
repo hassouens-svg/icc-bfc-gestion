@@ -6802,36 +6802,114 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
 
 @api_router.post("/pain-du-jour/generate-resume-quiz")
 async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user: dict = Depends(get_current_user)):
-    """Générer le résumé et le quiz à partir d'un lien YouTube - Admin uniquement"""
+    """Générer le résumé et le quiz à partir de la transcription YouTube - Admin uniquement"""
     if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     try:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
+        from youtube_transcript_api import YouTubeTranscriptApi
+        import re
         
         api_key = os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
             raise HTTPException(status_code=500, detail="Clé API LLM non configurée")
         
+        # Extraire l'ID de la vidéo YouTube
+        video_id = None
+        youtube_patterns = [
+            r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})',
+            r'(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})'
+        ]
+        for pattern in youtube_patterns:
+            match = re.search(pattern, request.youtube_url)
+            if match:
+                video_id = match.group(1)
+                break
+        
+        if not video_id:
+            raise HTTPException(status_code=400, detail="URL YouTube invalide")
+        
+        # Récupérer la transcription YouTube
+        logger.info(f"Récupération de la transcription pour: {video_id}")
+        try:
+            # Essayer d'abord en français, puis en anglais, puis auto-généré
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            transcript = None
+            
+            # Priorité: français manuel > français auto > anglais > premier disponible
+            try:
+                transcript = transcript_list.find_transcript(['fr'])
+            except:
+                try:
+                    transcript = transcript_list.find_generated_transcript(['fr'])
+                except:
+                    try:
+                        transcript = transcript_list.find_transcript(['en'])
+                    except:
+                        # Prendre le premier disponible
+                        for t in transcript_list:
+                            transcript = t
+                            break
+            
+            if not transcript:
+                raise HTTPException(status_code=400, detail="Aucune transcription disponible pour cette vidéo")
+            
+            transcript_data = transcript.fetch()
+            
+            # Filtrer pour commencer à partir de la 30e minute (1800 secondes)
+            # La prédication commence généralement après les chants
+            full_text_parts = []
+            for entry in transcript_data:
+                start_time = entry.get('start', 0)
+                # Commencer à partir de 25 minutes pour ne pas manquer le début
+                if start_time >= 1500:  # 25 minutes en secondes
+                    full_text_parts.append(entry.get('text', ''))
+            
+            # Si pas assez de contenu après 25 min, prendre tout
+            if len(' '.join(full_text_parts)) < 1000:
+                full_text_parts = [entry.get('text', '') for entry in transcript_data]
+            
+            transcription_text = ' '.join(full_text_parts)
+            
+            # Limiter la taille pour l'API (environ 15000 caractères max)
+            if len(transcription_text) > 15000:
+                transcription_text = transcription_text[:15000] + "..."
+                
+            logger.info(f"Transcription récupérée: {len(transcription_text)} caractères")
+            
+        except Exception as e:
+            logger.error(f"Erreur transcription YouTube: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Impossible de récupérer la transcription: {str(e)}")
+        
         video_title = request.video_title or "Enseignement du jour"
         
-        # Prompt pour générer le résumé et le quiz
-        prompt = f"""Tu es un expert en analyse de contenu chrétien. À partir du titre de cette vidéo d'enseignement biblique, génère un contenu structuré.
+        # Prompt pour analyser la transcription
+        prompt = f"""Analyse la transcription de cette prédication chrétienne et génère un contenu structuré.
 
-Titre de la vidéo: "{video_title}"
-Lien YouTube: {request.youtube_url}
+TITRE DE LA VIDÉO YOUTUBE: "{video_title}"
 
-Génère un JSON avec cette structure EXACTE (sans markdown, juste le JSON brut):
+TRANSCRIPTION DE LA PRÉDICATION:
+{transcription_text}
+
+INSTRUCTIONS:
+1. Fais un résumé complet du message (3-4 paragraphes)
+2. Extrais les points clés abordés (5-7 points)
+3. Liste tous les versets bibliques cités ou mentionnés
+4. Extrais les phrases fortes et citations marquantes du prédicateur
+5. Génère 10 questions de quiz basées sur le CONTENU RÉEL de la prédication
+
+Réponds UNIQUEMENT avec ce JSON (sans markdown, sans backticks):
 {{
     "resume": {{
-        "titre": "Le titre principal du message",
-        "resume": "Un résumé détaillé de 3-4 paragraphes expliquant le message principal",
-        "points_cles": ["Point clé 1", "Point clé 2", "Point clé 3", "Point clé 4", "Point clé 5"],
-        "versets_cites": ["Jean 3:16", "Romains 8:28", "etc"],
-        "citations": ["Citation marquante 1", "Citation marquante 2"]
+        "titre": "{video_title}",
+        "resume": "Résumé détaillé du message en 3-4 paragraphes...",
+        "points_cles": ["Point clé 1 abordé dans la prédication", "Point clé 2", "Point clé 3", "Point clé 4", "Point clé 5"],
+        "versets_cites": ["Référence biblique 1", "Référence biblique 2"],
+        "citations": ["Phrase forte 1 du prédicateur", "Phrase forte 2", "Phrase forte 3"]
     }},
     "quiz": [
-        {{"question": "Question 1?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
+        {{"question": "Question basée sur le contenu réel?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
         {{"question": "Question 2?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 1}},
         {{"question": "Question 3?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 2}},
         {{"question": "Question 4?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
@@ -6844,19 +6922,16 @@ Génère un JSON avec cette structure EXACTE (sans markdown, juste le JSON brut)
     ]
 }}
 
-Les questions du quiz doivent:
-- Être basées sur le contenu probable de l'enseignement
-- Tester la compréhension du message
-- Inclure des questions sur les versets bibliques mentionnés
-- Avoir 4 options de réponse chacune
-- Avoir une seule bonne réponse (correct_index de 0 à 3)
-
-Réponds UNIQUEMENT avec le JSON, sans texte avant ou après."""
+IMPORTANT: 
+- Les questions du quiz doivent être basées sur le contenu RÉEL de la transcription
+- Inclure des questions sur les versets mentionnés
+- Inclure des questions sur les exemples et illustrations donnés
+- Chaque question a 4 options avec une seule bonne réponse (correct_index de 0 à 3)"""
 
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu es un assistant qui génère du contenu JSON structuré pour des enseignements bibliques."
+            system_message="Tu es un expert en analyse de prédications chrétiennes. Tu génères du contenu JSON structuré basé sur les transcriptions."
         ).with_model("openai", "gpt-4o-mini")
         
         user_message = UserMessage(text=prompt)
@@ -6864,7 +6939,6 @@ Réponds UNIQUEMENT avec le JSON, sans texte avant ou après."""
         
         # Parser le JSON de la réponse
         import json
-        # Nettoyer la réponse (enlever les backticks markdown si présents)
         clean_response = response.strip()
         if clean_response.startswith("```json"):
             clean_response = clean_response[7:]
@@ -6881,6 +6955,8 @@ Réponds UNIQUEMENT avec le JSON, sans texte avant ou après."""
     except json.JSONDecodeError as e:
         logger.error(f"Erreur parsing JSON: {str(e)}")
         raise HTTPException(status_code=500, detail="Erreur lors de la génération du contenu")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Erreur génération résumé/quiz: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
