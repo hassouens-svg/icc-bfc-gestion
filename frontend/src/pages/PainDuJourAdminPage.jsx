@@ -709,10 +709,13 @@ const PainDuJourAdminPage = () => {
                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg border border-purple-200">
                   <h4 className="font-medium text-purple-800 mb-2 flex items-center gap-2">
                     <Sparkles className="h-4 w-4" />
-                    Générer depuis la transcription YouTube
+                    Générer avec Whisper AI
                   </h4>
                   <p className="text-sm text-gray-600 mb-3">
-                    Le système récupère automatiquement les sous-titres de la vidéo YouTube, analyse la prédication (à partir de la 25e minute), et génère un résumé structuré avec un quiz de 10 questions.
+                    Le système télécharge l'audio de la vidéo YouTube, le transcrit avec <strong>OpenAI Whisper</strong>, puis analyse la prédication pour extraire le résumé, les points clés, versets et phrases fortes. Génère aussi un quiz de 10 questions.
+                  </p>
+                  <p className="text-xs text-amber-600 mb-3">
+                    ⏱️ Ce processus peut prendre 1-2 minutes selon la durée de la vidéo.
                   </p>
                   {!form.lien_enseignement ? (
                     <p className="text-sm text-amber-600">⚠️ Ajoutez d'abord un lien YouTube dans l'onglet "Contenu"</p>
@@ -725,7 +728,7 @@ const PainDuJourAdminPage = () => {
                       {generatingQuiz ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          Analyse de la transcription...
+                          Transcription Whisper en cours...
                         </>
                       ) : (
                         <>
