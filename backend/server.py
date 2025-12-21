@@ -6802,16 +6802,15 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
 
 @api_router.post("/pain-du-jour/generate-resume-quiz")
 async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user: dict = Depends(get_current_user)):
-    """Générer le résumé et le quiz à partir de la transcription Whisper - Admin uniquement"""
+    """Générer le résumé et le quiz à partir de la transcription YouTube - Admin uniquement"""
     if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
         raise HTTPException(status_code=403, detail="Permission denied")
     
     try:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
+        from youtube_transcript_api import YouTubeTranscriptApi
         import re
         import json as json_module
-        import subprocess
-        import tempfile
         
         api_key = os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
@@ -6834,98 +6833,81 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         
         video_title = request.video_title or "Enseignement du jour"
         
-        # Télécharger l'audio et transcrire avec Whisper
-        logger.info(f"Téléchargement et transcription Whisper pour: {video_id}")
-        
-        with tempfile.TemporaryDirectory() as temp_dir:
-            audio_path = f"{temp_dir}/audio.mp3"
+        # Récupérer la transcription YouTube
+        logger.info(f"Récupération de la transcription pour: {video_id}")
+        try:
+            ytt_api = YouTubeTranscriptApi()
             
-            # Télécharger l'audio avec yt-dlp (à partir de 25 minutes)
-            # On télécharge les 30 dernières minutes environ pour avoir la prédication
-            try:
-                yt_dlp_path = "/root/.venv/bin/yt-dlp"
-                
-                # D'abord essayer de télécharger la vidéo complète (plus fiable)
-                download_cmd = [
-                    yt_dlp_path,
-                    "-x",  # Extract audio
-                    "--audio-format", "mp3",
-                    "--audio-quality", "5",  # Qualité moyenne pour réduire la taille
-                    "-o", audio_path,
-                    "--no-playlist",
-                    "--no-check-certificates",
-                    "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                    f"https://www.youtube.com/watch?v={video_id}"
-                ]
-                
-                result = subprocess.run(download_cmd, capture_output=True, text=True, timeout=300)
-                    
-                    if result.returncode != 0:
-                        raise Exception(f"Erreur yt-dlp: {result.stderr}")
-                
-                if not os.path.exists(audio_path):
-                    # Vérifier si le fichier a une extension différente
-                    for f in os.listdir(temp_dir):
-                        if f.startswith("audio"):
-                            audio_path = f"{temp_dir}/{f}"
-                            break
-                    
-                    if not os.path.exists(audio_path):
-                        raise Exception("Fichier audio non trouvé après téléchargement")
-                
-                logger.info(f"Audio téléchargé: {audio_path}")
-                
-            except subprocess.TimeoutExpired:
-                raise HTTPException(status_code=408, detail="Timeout lors du téléchargement de la vidéo")
-            except Exception as e:
-                logger.error(f"Erreur téléchargement: {str(e)}")
-                raise HTTPException(status_code=400, detail=f"Impossible de télécharger l'audio: {str(e)}")
+            # Essayer différentes langues
+            transcript_data = None
+            for lang in ['fr', 'fr-FR', 'en', None]:
+                try:
+                    if lang:
+                        transcript_data = ytt_api.fetch(video_id, languages=[lang])
+                    else:
+                        transcript_data = ytt_api.fetch(video_id)
+                    break
+                except:
+                    continue
             
-            # Transcrire avec Whisper
-            try:
-                import whisper
+            if not transcript_data:
+                raise HTTPException(status_code=400, detail="Aucune transcription disponible. Vérifiez que les sous-titres sont activés sur YouTube.")
+            
+            # Extraire le texte - filtrer à partir de la 25e minute si vidéo longue
+            full_text_parts = []
+            video_is_long = False
+            
+            for entry in transcript_data:
+                start_time = entry.start if hasattr(entry, 'start') else entry.get('start', 0)
+                text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
                 
-                logger.info("Chargement du modèle Whisper...")
-                model = whisper.load_model("base")  # "base" pour un bon équilibre vitesse/qualité
+                if start_time > 3600:  # Plus d'1h
+                    video_is_long = True
                 
-                logger.info("Transcription en cours...")
-                result = model.transcribe(audio_path, language="fr")
-                transcription_text = result["text"]
+                # Pour les vidéos longues, commencer à 25 min
+                if video_is_long or start_time >= 1500:
+                    full_text_parts.append(text)
+                elif not video_is_long:
+                    full_text_parts.append(text)
+            
+            transcription_text = ' '.join(full_text_parts)
+            
+            # Limiter la taille
+            if len(transcription_text) > 14000:
+                transcription_text = transcription_text[:14000] + "..."
                 
-                logger.info(f"Transcription terminée: {len(transcription_text)} caractères")
-                
-            except Exception as e:
-                logger.error(f"Erreur Whisper: {str(e)}")
-                raise HTTPException(status_code=500, detail=f"Erreur de transcription: {str(e)}")
+            logger.info(f"Transcription: {len(transcription_text)} caractères")
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Erreur transcription: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Erreur transcription: {str(e)}")
         
-        # Limiter la taille pour l'API (environ 12000 caractères max)
-        if len(transcription_text) > 12000:
-            transcription_text = transcription_text[:12000] + "..."
-        
-        # Prompt pour analyser la transcription
-        prompt = f"""Tu es un expert en analyse de prédications chrétiennes. Analyse cette transcription audio et génère un contenu structuré.
+        # Prompt amélioré pour une analyse fidèle
+        prompt = f"""Tu es un expert en analyse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE au contenu réel.
 
-TITRE DU MESSAGE (titre de la vidéo YouTube): "{video_title}"
+TITRE DU MESSAGE: "{video_title}"
 
-TRANSCRIPTION DE LA PRÉDICATION:
+TRANSCRIPTION:
 {transcription_text}
 
-INSTRUCTIONS IMPORTANTES:
-1. Le titre du résumé DOIT être "{video_title}" (le titre YouTube)
-2. Fais un résumé fidèle du message (3-4 paragraphes) basé UNIQUEMENT sur ce qui est dit dans la transcription
-3. Extrais les points clés et enseignements RÉELLEMENT abordés
-4. Liste les versets bibliques RÉELLEMENT cités ou mentionnés
-5. Extrais les phrases fortes et citations RÉELLES du prédicateur
-6. Génère 10 questions de quiz basées sur le CONTENU RÉEL
+INSTRUCTIONS CRITIQUES:
+1. Le titre DOIT être exactement: "{video_title}"
+2. Le résumé doit refléter UNIQUEMENT ce qui est dit dans la transcription
+3. Les points clés doivent être les enseignements RÉELLEMENT donnés
+4. Les versets doivent être UNIQUEMENT ceux mentionnés dans la transcription
+5. Les citations doivent être des phrases RÉELLEMENT prononcées
+6. Le quiz doit tester la compréhension du contenu RÉEL
 
-Réponds UNIQUEMENT avec ce JSON (sans markdown, sans backticks):
+Réponds avec ce JSON (sans markdown):
 {{
     "resume": {{
         "titre": "{video_title}",
-        "resume": "Résumé fidèle du message en 3-4 paragraphes basé sur la transcription...",
-        "points_cles": ["Enseignement 1 donné", "Enseignement 2 donné", "Leçon 3", "Point clé 4", "Point clé 5"],
-        "versets_cites": ["Verset 1 réellement cité", "Verset 2 mentionné"],
-        "citations": ["Phrase forte 1 du prédicateur", "Citation marquante 2", "Phrase forte 3"]
+        "resume": "Résumé fidèle en 3-4 paragraphes basé sur la transcription...",
+        "points_cles": ["Enseignement 1 réellement donné", "Enseignement 2", "Leçon 3", "Point 4", "Point 5"],
+        "versets_cites": ["Verset réellement cité 1", "Verset cité 2"],
+        "citations": ["Phrase forte réellement dite 1", "Citation 2", "Citation 3"]
     }},
     "quiz": [
         {{"question": "Question sur le contenu réel?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
@@ -6941,18 +6923,18 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown, sans backticks):
     ]
 }}
 
-CRITIQUE: Base-toi UNIQUEMENT sur la transcription fournie. Ne invente rien."""
+RAPPEL: Ne JAMAIS inventer de contenu. Si quelque chose n'est pas dans la transcription, ne l'inclus pas."""
 
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu es un expert en analyse de prédications chrétiennes. Tu génères du contenu JSON structuré basé UNIQUEMENT sur les transcriptions fournies, sans inventer."
+            system_message="Tu analyses des transcriptions de prédications. Tu ne génères que du contenu basé sur ce qui est RÉELLEMENT dit dans la transcription."
         ).with_model("openai", "gpt-4o-mini")
         
         user_message = UserMessage(text=prompt)
         response = await llm_chat.send_message(user_message)
         
-        # Parser le JSON de la réponse
+        # Parser le JSON
         clean_response = response.strip()
         if clean_response.startswith("```json"):
             clean_response = clean_response[7:]
@@ -6963,16 +6945,15 @@ CRITIQUE: Base-toi UNIQUEMENT sur la transcription fournie. Ne invente rien."""
         clean_response = clean_response.strip()
         
         result = json_module.loads(clean_response)
-        
         return result
         
     except json_module.JSONDecodeError as e:
         logger.error(f"Erreur parsing JSON: {str(e)}")
-        raise HTTPException(status_code=500, detail="Erreur lors de la génération du contenu")
+        raise HTTPException(status_code=500, detail="Erreur lors de la génération")
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Erreur génération résumé/quiz: {str(e)}")
+        logger.error(f"Erreur: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
 
 
