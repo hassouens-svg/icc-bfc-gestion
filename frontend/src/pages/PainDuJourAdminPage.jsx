@@ -176,9 +176,54 @@ const PainDuJourAdminPage = () => {
     }
   };
   
-  const generateResumeQuiz = async () => {
+  // Étape 1: Récupérer la transcription complète
+  const fetchTranscription = async () => {
     if (!form.lien_enseignement) {
       toast.error('Veuillez d\'abord ajouter un lien YouTube pour l\'enseignement');
+      return;
+    }
+    
+    setFetchingTranscription(true);
+    setTranscriptionData(null);
+    
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour/fetch-transcription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({
+          youtube_url: form.lien_enseignement
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Erreur lors de la récupération');
+      }
+      
+      const data = await response.json();
+      setTranscriptionData(data);
+      setTitreMessage(form.titre_enseignement || '');
+      toast.success(`Transcription récupérée ! ${data.duree_minutes} minutes de vidéo`);
+    } catch (error) {
+      console.error('Error fetching transcription:', error);
+      toast.error(error.message || 'Erreur lors de la récupération de la transcription');
+    } finally {
+      setFetchingTranscription(false);
+    }
+  };
+  
+  // Étape 2: Générer le résumé et quiz
+  const generateResumeQuiz = async () => {
+    if (!transcriptionData?.transcription_complete) {
+      toast.error('Veuillez d\'abord récupérer la transcription');
+      return;
+    }
+    
+    if (!titreMessage.trim()) {
+      toast.error('Veuillez entrer le titre du message');
       return;
     }
     
@@ -191,12 +236,16 @@ const PainDuJourAdminPage = () => {
           'Authorization': `Bearer ${getToken()}`
         },
         body: JSON.stringify({
-          youtube_url: form.lien_enseignement,
-          video_title: form.titre_enseignement
+          transcription: transcriptionData.transcription_complete,
+          titre_message: titreMessage,
+          minute_debut: minuteDebut
         })
       });
       
-      if (!response.ok) throw new Error('Erreur lors de la génération');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Erreur lors de la génération');
+      }
       
       const data = await response.json();
       setForm(prev => ({
@@ -205,10 +254,10 @@ const PainDuJourAdminPage = () => {
         quiz: data.quiz
       }));
       
-      toast.success('Résumé et quiz générés avec succès ! N\'oubliez pas d\'enregistrer.');
+      toast.success('Résumé et quiz générés ! N\'oubliez pas d\'enregistrer.');
     } catch (error) {
       console.error('Error generating quiz:', error);
-      toast.error('Erreur lors de la génération du résumé et quiz');
+      toast.error(error.message || 'Erreur lors de la génération');
     } finally {
       setGeneratingQuiz(false);
     }
