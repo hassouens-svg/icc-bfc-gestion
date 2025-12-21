@@ -6810,6 +6810,7 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
         from youtube_transcript_api import YouTubeTranscriptApi
         import re
+        import json as json_module
         
         api_key = os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
