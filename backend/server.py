@@ -6834,42 +6834,44 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         # Récupérer la transcription YouTube
         logger.info(f"Récupération de la transcription pour: {video_id}")
         try:
-            # Essayer d'abord en français, puis en anglais, puis auto-généré
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-            transcript = None
+            # Nouvelle API youtube-transcript-api
+            ytt_api = YouTubeTranscriptApi()
             
-            # Priorité: français manuel > français auto > anglais > premier disponible
+            # Essayer de récupérer la transcription (priorité: fr, en, puis auto)
+            transcript_data = None
             try:
-                transcript = transcript_list.find_transcript(['fr'])
+                transcript_data = ytt_api.fetch(video_id, languages=['fr'])
             except:
                 try:
-                    transcript = transcript_list.find_generated_transcript(['fr'])
+                    transcript_data = ytt_api.fetch(video_id, languages=['fr-FR'])
                 except:
                     try:
-                        transcript = transcript_list.find_transcript(['en'])
+                        transcript_data = ytt_api.fetch(video_id, languages=['en'])
                     except:
-                        # Prendre le premier disponible
-                        for t in transcript_list:
-                            transcript = t
-                            break
+                        try:
+                            transcript_data = ytt_api.fetch(video_id)  # Auto-detect
+                        except:
+                            pass
             
-            if not transcript:
-                raise HTTPException(status_code=400, detail="Aucune transcription disponible pour cette vidéo")
+            if not transcript_data:
+                raise HTTPException(status_code=400, detail="Aucune transcription disponible pour cette vidéo. Vérifiez que les sous-titres sont activés sur YouTube.")
             
-            transcript_data = transcript.fetch()
-            
-            # Filtrer pour commencer à partir de la 30e minute (1800 secondes)
+            # Filtrer pour commencer à partir de la 25e minute (1500 secondes)
             # La prédication commence généralement après les chants
             full_text_parts = []
             for entry in transcript_data:
-                start_time = entry.get('start', 0)
+                start_time = entry.start if hasattr(entry, 'start') else entry.get('start', 0)
+                text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
                 # Commencer à partir de 25 minutes pour ne pas manquer le début
                 if start_time >= 1500:  # 25 minutes en secondes
-                    full_text_parts.append(entry.get('text', ''))
+                    full_text_parts.append(text)
             
             # Si pas assez de contenu après 25 min, prendre tout
             if len(' '.join(full_text_parts)) < 1000:
-                full_text_parts = [entry.get('text', '') for entry in transcript_data]
+                full_text_parts = []
+                for entry in transcript_data:
+                    text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
+                    full_text_parts.append(text)
             
             transcription_text = ' '.join(full_text_parts)
             
@@ -6879,6 +6881,8 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
                 
             logger.info(f"Transcription récupérée: {len(transcription_text)} caractères")
             
+        except HTTPException:
+            raise
         except Exception as e:
             logger.error(f"Erreur transcription YouTube: {str(e)}")
             raise HTTPException(status_code=400, detail=f"Impossible de récupérer la transcription: {str(e)}")
