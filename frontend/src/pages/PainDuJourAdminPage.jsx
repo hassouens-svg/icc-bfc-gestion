@@ -921,25 +921,30 @@ const PainDuJourAdminPage = () => {
                           </Button>
                         </div>
                         
-                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                        <div className="space-y-3 max-h-80 overflow-y-auto">
                           {extractedVersets.map((v, idx) => (
-                            <div key={idx} className="bg-white p-3 rounded-lg border border-green-200">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-1 bg-green-600 text-white rounded text-xs font-bold">
+                            <div key={idx} className="bg-white p-4 rounded-lg border border-green-200 shadow-sm">
+                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-bold">
                                   {v.reference}
+                                  {v.timestamp && (
+                                    <span className="ml-1 opacity-80">({v.timestamp})</span>
+                                  )}
                                 </span>
                                 <span className={`px-2 py-0.5 rounded text-xs ${v.type === 'explicite' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
                                   {v.type === 'explicite' ? '📖 Explicite' : '🔍 Implicite'}
                                 </span>
                               </div>
                               {v.citation_dans_transcription && (
-                                <p className="text-xs text-gray-500 italic mb-1">
-                                  "{v.citation_dans_transcription.substring(0, 100)}..."
+                                <p className="text-xs text-gray-500 italic mb-2 bg-gray-50 p-2 rounded">
+                                  "{v.citation_dans_transcription.length > 150 
+                                    ? v.citation_dans_transcription.substring(0, 150) + '...' 
+                                    : v.citation_dans_transcription}"
                                 </p>
                               )}
-                              <p className="text-sm text-gray-700">
-                                <strong>Explication:</strong> {v.explication_predicateur}
-                              </p>
+                              <div className="text-sm text-gray-700 leading-relaxed">
+                                {v.explication_predicateur}
+                              </div>
                             </div>
                           ))}
                         </div>
