@@ -874,6 +874,86 @@ const PainDuJourAdminPage = () => {
                   )}
                 </div>
 
+                {/* Étape 1.5: Extraire les versets */}
+                {transcriptionData && (
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                    <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                      ✝️ Étape 1.5: Extraire les versets bibliques
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Recherche automatique de tous les versets dans la transcription :
+                      <br />• Références explicites (Jean 3:16, Romains 8:28...)
+                      <br />• Citations implicites (contenu du verset cité sans la référence)
+                      <br />• Extraction de l'explication du prédicateur pour chaque verset
+                    </p>
+                    
+                    <Button 
+                      onClick={extractVersets} 
+                      className="bg-green-600 hover:bg-green-700"
+                      disabled={extractingVersets}
+                    >
+                      {extractingVersets ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          Recherche des versets...
+                        </>
+                      ) : (
+                        <>
+                          <Book className="h-4 w-4 mr-2" />
+                          Extraire les versets
+                        </>
+                      )}
+                    </Button>
+                    
+                    {/* Affichage des versets extraits */}
+                    {extractedVersets && extractedVersets.length > 0 && (
+                      <div className="mt-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-green-800">
+                            {extractedVersets.length} verset(s) trouvé(s)
+                          </span>
+                          <Button 
+                            onClick={useExtractedVersets}
+                            size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-700"
+                          >
+                            Utiliser ces versets
+                          </Button>
+                        </div>
+                        
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {extractedVersets.map((v, idx) => (
+                            <div key={idx} className="bg-white p-3 rounded-lg border border-green-200">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="px-2 py-1 bg-green-600 text-white rounded text-xs font-bold">
+                                  {v.reference}
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-xs ${v.type === 'explicite' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
+                                  {v.type === 'explicite' ? '📖 Explicite' : '🔍 Implicite'}
+                                </span>
+                              </div>
+                              {v.citation_dans_transcription && (
+                                <p className="text-xs text-gray-500 italic mb-1">
+                                  "{v.citation_dans_transcription.substring(0, 100)}..."
+                                </p>
+                              )}
+                              <p className="text-sm text-gray-700">
+                                <strong>Explication:</strong> {v.explication_predicateur}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {extractedVersets && extractedVersets.length === 0 && (
+                      <p className="mt-3 text-sm text-amber-600">
+                        ℹ️ Aucun verset biblique trouvé dans la transcription
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 {/* Étape 2: Configurer et générer */}
                 {transcriptionData && (
                   <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-lg border border-purple-200">
