@@ -6832,27 +6832,37 @@ async def extract_versets(request: ExtractVersetsRequest, current_user: dict = D
         
         logger.info("Extraction des versets bibliques avec timestamps...")
         
-        prompt = f"""Tu es un expert biblique. Analyse cette transcription de prédication qui contient des TIMESTAMPS au format [MM:SS].
+        prompt = f"""Tu es un expert biblique. Analyse TOUTE cette transcription de prédication du DÉBUT à la FIN.
 
-TRANSCRIPTION AVEC TIMESTAMPS:
+TRANSCRIPTION COMPLÈTE AVEC TIMESTAMPS:
 {transcription}
 
-INSTRUCTIONS CRITIQUES:
-1. Cherche TOUTES les références bibliques explicites (ex: "Jean 3:16", "Romains chapitre 8 verset 28", "dans Matthieu 5")
-2. Cherche aussi les CITATIONS IMPLICITES - quand le prédicateur cite le contenu d'un verset sans donner la référence
-   - Par exemple s'il dit "Car Dieu a tant aimé le monde qu'il a donné son Fils unique" → c'est Jean 3:16
-   - Compare avec ta connaissance de la Bible pour identifier le verset
+OBJECTIF: Extraire TOUS les versets bibliques mentionnés dans TOUTE la transcription.
 
-3. TIMESTAMP - TRÈS IMPORTANT:
-   - Regarde la transcription et trouve le timestamp [MM:SS] qui apparaît JUSTE AVANT ou SUR la même ligne que le verset
+RÈGLES D'EXTRACTION IMPORTANTES:
+1. VERSETS EXPLICITES (PRIORITÉ ABSOLUE):
+   - Extrais TOUS les versets où le prédicateur mentionne clairement la référence biblique
+   - Exemples: "Jean 3:16", "dans Romains chapitre 8", "le Psaume 23", "Matthieu 5 verset 14", "premier Corinthiens 13"
+   - Parcours TOUTE la transcription du début à la fin pour ne rater AUCUN verset explicite
+   - Pas de limite pour les versets explicites - TOUS doivent être extraits
+
+2. VERSETS IMPLICITES (MAXIMUM 3):
+   - Seulement si le prédicateur cite le CONTENU d'un verset sans donner la référence
+   - Limite stricte: 3 versets implicites MAXIMUM
+   - Choisis uniquement les citations les plus importantes/claires
+
+3. TIMESTAMP - COPIE EXACTE:
+   - Regarde la transcription et trouve le timestamp [MM:SS] qui apparaît JUSTE AVANT le verset
    - Le timestamp doit être EXACTEMENT celui qui est écrit dans la transcription
-   - Exemple: si tu vois "[12:45] Car Dieu a tant aimé le monde", le timestamp est "12:45"
-   - NE PAS INVENTER de timestamp, utilise UNIQUEMENT ceux présents dans la transcription
+   - Exemple: si tu vois "[12:45] Jean 3:16 nous dit", le timestamp est "12:45"
 
-4. Pour CHAQUE verset, écris l'explication du prédicateur en STYLE NARRATIF DIRECT (jamais "il dit", "le prédicateur explique")
+4. EXPLICATION EN STYLE NARRATIF:
+   - Écris directement ce que le prédicateur enseigne APRÈS avoir cité le verset
+   - ❌ JAMAIS: "Il dit que...", "Le prédicateur explique...", "L'homme de Dieu..."
+   - ✅ TOUJOURS: Écrire directement l'enseignement en 2-3 phrases
 
-LIVRES DE LA BIBLE À RECHERCHER:
-Ancien Testament: Genèse, Exode, Lévitique, Nombres, Deutéronome, Josué, Juges, Ruth, 1 Samuel, 2 Samuel, 1 Rois, 2 Rois, 1 Chroniques, 2 Chroniques, Esdras, Néhémie, Esther, Job, Psaumes, Proverbes, Ecclésiaste, Cantique des Cantiques, Ésaïe, Jérémie, Lamentations, Ézéchiel, Daniel, Osée, Joël, Amos, Abdias, Jonas, Michée, Nahum, Habacuc, Sophonie, Aggée, Zacharie, Malachie
+LIVRES DE LA BIBLE:
+Ancien Testament: Genèse, Exode, Lévitique, Nombres, Deutéronome, Josué, Juges, Ruth, 1 Samuel, 2 Samuel, 1 Rois, 2 Rois, 1 Chroniques, 2 Chroniques, Esdras, Néhémie, Esther, Job, Psaumes, Proverbes, Ecclésiaste, Cantique, Ésaïe, Jérémie, Lamentations, Ézéchiel, Daniel, Osée, Joël, Amos, Abdias, Jonas, Michée, Nahum, Habacuc, Sophonie, Aggée, Zacharie, Malachie
 
 Nouveau Testament: Matthieu, Marc, Luc, Jean, Actes, Romains, 1 Corinthiens, 2 Corinthiens, Galates, Éphésiens, Philippiens, Colossiens, 1 Thessaloniciens, 2 Thessaloniciens, 1 Timothée, 2 Timothée, Tite, Philémon, Hébreux, Jacques, 1 Pierre, 2 Pierre, 1 Jean, 2 Jean, 3 Jean, Jude, Apocalypse
 
@@ -6863,26 +6873,22 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown):
             "reference": "Jean 3:16",
             "type": "explicite",
             "timestamp": "12:45",
-            "citation_dans_transcription": "[12:45] Car Dieu a tant aimé le monde qu'il a donné son Fils unique",
-            "explication_predicateur": "L'amour de Dieu est si grand qu'il a sacrifié son propre Fils pour nous. C'est un amour inconditionnel qui ne dépend pas de nos mérites. Chaque être humain peut recevoir le salut en croyant simplement en Jésus-Christ."
+            "citation_dans_transcription": "[12:45] Car Dieu a tant aimé le monde",
+            "explication_predicateur": "L'amour de Dieu est immense et inconditionnel. Il a donné son Fils unique pour que nous ayons la vie éternelle."
         }}
     ]
 }}
 
-RÈGLES CRITIQUES:
-- "type": "explicite" si la référence est donnée (Jean 3:16), "implicite" si c'est juste le contenu cité
-- "timestamp": COPIE EXACTE du timestamp [MM:SS] de la transcription (sans les crochets). Exemple: si c'est [03:42], écris "03:42"
-- "citation_dans_transcription": la ligne COMPLÈTE avec son timestamp telle qu'elle apparaît dans la transcription
-- "explication_predicateur": STYLE NARRATIF DIRECT en 2-4 phrases. 
-  ❌ JAMAIS: "Il dit que...", "Le prédicateur explique que...", "L'homme de Dieu souligne..."
-  ✅ TOUJOURS: Écrire directement le contenu de l'explication comme un enseignement.
-  L'explication doit être FIDÈLE à ce que le prédicateur dit APRÈS avoir cité le verset.
-- Si aucun verset n'est trouvé, retourne {{"versets": []}}"""
+RÉSUMÉ DES RÈGLES:
+- Type "explicite": référence biblique clairement mentionnée → TOUS doivent être extraits
+- Type "implicite": seulement le contenu cité sans référence → MAXIMUM 3
+- Timestamp: copie EXACTE du [MM:SS] de la transcription
+- Explication: style narratif direct, fidèle à ce que dit le prédicateur"""
 
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu es un expert biblique qui identifie les références bibliques dans les prédications. Tu copies les timestamps EXACTEMENT comme ils apparaissent dans la transcription. Tu écris en style narratif direct."
+            system_message="Tu es un expert biblique. Tu extrais TOUS les versets explicites de la transcription entière. Tu copies les timestamps EXACTEMENT. Tu écris en style narratif direct."
         ).with_model("openai", "gpt-4o-mini")
         
         user_message = UserMessage(text=prompt)
@@ -6899,7 +6905,15 @@ RÈGLES CRITIQUES:
         clean_response = clean_response.strip()
         
         result = json_module.loads(clean_response)
-        logger.info(f"Versets extraits: {len(result.get('versets', []))}")
+        
+        # Filtrer pour s'assurer qu'il n'y a pas plus de 3 implicites
+        versets = result.get('versets', [])
+        explicites = [v for v in versets if v.get('type') == 'explicite']
+        implicites = [v for v in versets if v.get('type') == 'implicite'][:3]  # Max 3 implicites
+        
+        result['versets'] = explicites + implicites
+        
+        logger.info(f"Versets extraits: {len(explicites)} explicites, {len(implicites)} implicites")
         
         return result
         
