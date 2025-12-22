@@ -89,6 +89,24 @@
 - User requested event popups from planning_activites (My Event Church)
 - User requested manual entry for shepherd presence page
 
+### Pain du Jour - Résumé & Quiz
+- task: "Pain du Jour Admin - Generate Summary & Quiz from YouTube"
+  implemented: true
+  working: needs_verification
+  file: "/app/backend/server.py, /app/frontend/src/pages/PainDuJourAdminPage.jsx"
+  priority: "high"
+  endpoints:
+    - "POST /api/pain-du-jour/fetch-transcription"
+    - "POST /api/pain-du-jour/extract-versets"
+    - "POST /api/pain-du-jour/generate-resume-quiz"
+    - "POST /api/pain-du-jour"
+    - "GET /api/pain-du-jour/{date}"
+  needs_retesting: true
+  status_history:
+    - working: needs_verification
+      agent: "fork"
+      comment: "Full workflow to test: YouTube URL → Transcription → Extract Verses → Generate Summary/Quiz → Save → View Public Page"
+
 ## Test Credentials
 - superadmin / superadmin123
 - respo_dept_dijon / test123
