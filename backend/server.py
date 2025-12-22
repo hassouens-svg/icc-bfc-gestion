@@ -7041,11 +7041,11 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         logger.info(f"Génération résumé pour '{titre_message}' à partir de minute {minute_debut}")
         
         # Prompt pour analyse fidèle
-        prompt = f"""Tu es un expert en synthèse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE et DÉTAILLÉ.
+        prompt = f"""Tu es un expert en synthèse de prédications chrétiennes. Analyse cette transcription (avec timestamps [MM:SS]) et génère un contenu FIDÈLE et DÉTAILLÉ.
 
 TITRE DU MESSAGE: "{titre_message}"
 
-TRANSCRIPTION (à partir de la minute {minute_debut}):
+TRANSCRIPTION AVEC TIMESTAMPS (à partir de la minute {minute_debut}):
 {transcription}
 
 GÉNÈRE UN JSON AVEC CETTE STRUCTURE:
@@ -7055,8 +7055,8 @@ GÉNÈRE UN JSON AVEC CETTE STRUCTURE:
         "titre": "{titre_message}",
         "resume": "Écris un résumé TRÈS DÉTAILLÉ de 10-12 longues phrases en style NARRATIF DIRECT. Ne dis JAMAIS 'le prédicateur dit', 'il explique', 'l'orateur souligne', 'l'homme de Dieu'. Écris directement le contenu comme si tu enseignais toi-même. Développe chaque idée en profondeur, fais des liens entre les concepts. Le résumé doit capturer TOUT ce qui est enseigné.",
         "versets_expliques": [
-            {{"reference": "Jean 3:16", "explication": "CE QUE LE PRÉDICATEUR DIT RÉELLEMENT après avoir cité ce verset - ses propres mots, son explication, son application"}},
-            {{"reference": "Romains 8:28", "explication": "L'explication EXACTE donnée dans la prédication pour ce verset, pas une explication générique"}}
+            {{"reference": "Jean 3:16", "timestamp": "12:34", "explication": "L'amour de Dieu est si profond qu'il a donné ce qu'il avait de plus précieux. Ce sacrifice n'est pas conditionné par nos mérites mais par sa grâce infinie. Quiconque croit en ce don reçoit la vie éternelle."}},
+            {{"reference": "Romains 8:28", "timestamp": "25:10", "explication": "Même dans les épreuves les plus difficiles, Dieu travaille pour notre bien. Les obstacles ne sont pas des abandons mais des opportunités de voir sa gloire se manifester."}}
         ],
         "points_cles": ["Enseignement 1 formulé clairement", "Enseignement 2", "Enseignement 3", "etc - Chaque point clé doit être une leçon concrète"],
         "phrases_fortes": ["Citation exacte 1 mot pour mot", "Citation exacte 2", "Citation exacte 3", "etc - Les phrases marquantes et puissantes prononcées"]
@@ -7080,10 +7080,11 @@ RÈGLES CRITIQUES:
 
 2. VERSETS EXPLIQUÉS - TRÈS IMPORTANT:
    - Pour CHAQUE verset biblique cité dans la prédication
-   - L'explication doit être CE QUE LE PRÉDICATEUR DIT RÉELLEMENT après avoir cité ce verset
-   - Pas une explication générique ou théologique standard
-   - Capture ses propres mots, son interprétation, son application
-   - Si le prédicateur dit "Jean 3:16 nous montre que Dieu nous aime tellement qu'il a donné son fils unique", l'explication est "Dieu nous aime tellement qu'il a donné son fils unique"
+   - "timestamp": le timestamp [MM:SS] où le verset apparaît dans la transcription (juste MM:SS sans crochets)
+   - L'explication doit être en STYLE NARRATIF DIRECT (2-4 phrases)
+   ❌ JAMAIS: "Il dit que...", "Le prédicateur explique que...", "L'homme de Dieu souligne..."
+   ✅ TOUJOURS: Écrire directement le contenu de l'explication comme un enseignement
+   - Capture fidèlement ce que le prédicateur dit APRÈS avoir cité le verset
 
 3. POINTS CLÉS: Les enseignements principaux, formulés comme des leçons concrètes
 
