@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import uuid
 
 # Configuration
-BASE_URL = "https://spiritualapp-3.preview.emergentagent.com/api"
+BASE_URL = "https://videosum-2.preview.emergentagent.com/api"
 TEST_CREDENTIALS = {
     "username": "superadmin",
     "password": "superadmin123"

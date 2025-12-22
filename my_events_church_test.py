@@ -18,7 +18,7 @@ import os
 from datetime import datetime
 
 # Configuration depuis les variables d'environnement
-REACT_APP_BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://spiritualapp-3.preview.emergentagent.com')
+REACT_APP_BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://videosum-2.preview.emergentagent.com')
 BASE_URL = f"{REACT_APP_BACKEND_URL}/api"
 HEADERS = {"Content-Type": "application/json"}
 

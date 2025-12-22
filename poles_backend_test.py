@@ -24,7 +24,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://spiritualapp-3.preview.emergentagent.com/api"
+BASE_URL = "https://videosum-2.preview.emergentagent.com/api"
 USERNAME = "superadmin"
 PASSWORD = "superadmin123"
 CITY = "Dijon"
