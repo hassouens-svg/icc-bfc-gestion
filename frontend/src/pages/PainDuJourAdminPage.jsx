@@ -888,14 +888,15 @@ const PainDuJourAdminPage = () => {
                         <strong className="text-amber-900">📖 Résumé:</strong>
                         <p className="text-gray-700 mt-1 leading-relaxed">{form.resume.resume}</p>
                       </div>
-                      {form.resume.references_bibliques?.length > 0 && (
+                      {form.resume.versets_expliques?.length > 0 && (
                         <div>
-                          <strong className="text-amber-900">✝️ Références bibliques:</strong>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {form.resume.references_bibliques.map((ref, idx) => (
-                              <span key={idx} className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
-                                {ref}
-                              </span>
+                          <strong className="text-amber-900">✝️ Passages bibliques avec explications:</strong>
+                          <div className="mt-2 space-y-2">
+                            {form.resume.versets_expliques.map((v, idx) => (
+                              <div key={idx} className="bg-green-50 p-2 rounded border border-green-200">
+                                <span className="font-bold text-green-700">{v.reference}</span>
+                                <p className="text-gray-700 text-xs mt-1">{v.explication}</p>
+                              </div>
                             ))}
                           </div>
                         </div>
