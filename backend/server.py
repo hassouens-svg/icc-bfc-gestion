@@ -6842,7 +6842,13 @@ INSTRUCTIONS CRITIQUES:
 2. Cherche aussi les CITATIONS IMPLICITES - quand le prédicateur cite le contenu d'un verset sans donner la référence
    - Par exemple s'il dit "Car Dieu a tant aimé le monde qu'il a donné son Fils unique" → c'est Jean 3:16
    - Compare avec ta connaissance de la Bible pour identifier le verset
-3. Pour CHAQUE verset, IDENTIFIE le timestamp [MM:SS] le plus proche où il est mentionné
+
+3. TIMESTAMP - TRÈS IMPORTANT:
+   - Regarde la transcription et trouve le timestamp [MM:SS] qui apparaît JUSTE AVANT ou SUR la même ligne que le verset
+   - Le timestamp doit être EXACTEMENT celui qui est écrit dans la transcription
+   - Exemple: si tu vois "[12:45] Car Dieu a tant aimé le monde", le timestamp est "12:45"
+   - NE PAS INVENTER de timestamp, utilise UNIQUEMENT ceux présents dans la transcription
+
 4. Pour CHAQUE verset, écris l'explication du prédicateur en STYLE NARRATIF DIRECT (jamais "il dit", "le prédicateur explique")
 
 LIVRES DE LA BIBLE À RECHERCHER:
@@ -6856,24 +6862,17 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown):
         {{
             "reference": "Jean 3:16",
             "type": "explicite",
-            "timestamp": "12:34",
-            "citation_dans_transcription": "La phrase exacte où le verset est mentionné",
+            "timestamp": "12:45",
+            "citation_dans_transcription": "[12:45] Car Dieu a tant aimé le monde qu'il a donné son Fils unique",
             "explication_predicateur": "L'amour de Dieu est si grand qu'il a sacrifié son propre Fils pour nous. C'est un amour inconditionnel qui ne dépend pas de nos mérites. Chaque être humain peut recevoir le salut en croyant simplement en Jésus-Christ."
-        }},
-        {{
-            "reference": "Romains 8:28",
-            "type": "implicite",
-            "timestamp": "25:10",
-            "citation_dans_transcription": "Toutes choses concourent au bien de ceux qui aiment Dieu",
-            "explication_predicateur": "Même dans les moments difficiles, Dieu travaille pour notre bien. Les épreuves ne sont pas le signe de l'abandon de Dieu, mais une opportunité pour lui de manifester sa gloire dans notre vie. Notre confiance doit rester ferme."
         }}
     ]
 }}
 
 RÈGLES CRITIQUES:
 - "type": "explicite" si la référence est donnée (Jean 3:16), "implicite" si c'est juste le contenu cité
-- "timestamp": le timestamp [MM:SS] où le verset apparaît dans la transcription (juste MM:SS sans les crochets)
-- "citation_dans_transcription": la phrase EXACTE de la transcription où le verset apparaît
+- "timestamp": COPIE EXACTE du timestamp [MM:SS] de la transcription (sans les crochets). Exemple: si c'est [03:42], écris "03:42"
+- "citation_dans_transcription": la ligne COMPLÈTE avec son timestamp telle qu'elle apparaît dans la transcription
 - "explication_predicateur": STYLE NARRATIF DIRECT en 2-4 phrases. 
   ❌ JAMAIS: "Il dit que...", "Le prédicateur explique que...", "L'homme de Dieu souligne..."
   ✅ TOUJOURS: Écrire directement le contenu de l'explication comme un enseignement.
@@ -6883,7 +6882,7 @@ RÈGLES CRITIQUES:
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu es un expert biblique qui identifie les références bibliques dans les prédications. Tu écris toujours en style narratif direct, jamais 'il dit' ou 'le prédicateur explique'."
+            system_message="Tu es un expert biblique qui identifie les références bibliques dans les prédications. Tu copies les timestamps EXACTEMENT comme ils apparaissent dans la transcription. Tu écris en style narratif direct."
         ).with_model("openai", "gpt-4o-mini")
         
         user_message = UserMessage(text=prompt)
