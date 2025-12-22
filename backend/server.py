@@ -7010,6 +7010,7 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
     try:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
         import json as json_module
+        import re
         
         api_key = os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
@@ -7019,10 +7020,8 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         titre_message = request.titre_message
         minute_debut = request.minute_debut
         
-        # Filtrer la transcription à partir de la minute spécifiée
+        # Filtrer la transcription à partir de la minute spécifiée mais GARDER les timestamps
         if minute_debut > 0:
-            # Chercher le texte après le timestamp [MM:SS]
-            import re
             lines = transcription.split('\n')
             filtered_lines = []
             for line in lines:
@@ -7030,16 +7029,10 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
                 if match:
                     minutes = int(match.group(1))
                     if minutes >= minute_debut:
-                        # Enlever le timestamp pour l'analyse
-                        text = re.sub(r'\[\d+:\d+\]\s*', '', line)
-                        filtered_lines.append(text)
+                        filtered_lines.append(line)  # Garder le timestamp
                 else:
                     filtered_lines.append(line)
-            transcription = ' '.join(filtered_lines)
-        else:
-            # Enlever tous les timestamps
-            import re
-            transcription = re.sub(r'\[\d+:\d+\]\s*', '', transcription)
+            transcription = '\n'.join(filtered_lines)
         
         # Limiter la taille
         if len(transcription) > 14000:
