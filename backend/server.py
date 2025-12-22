@@ -6823,27 +6823,27 @@ async def extract_versets(request: ExtractVersetsRequest, current_user: dict = D
         
         transcription = request.transcription
         
-        # Enlever les timestamps pour l'analyse
+        # GARDER les timestamps pour pouvoir identifier la minute de chaque verset
         import re
-        transcription_clean = re.sub(r'\[\d+:\d+\]\s*', '', transcription)
         
-        # Limiter la taille
-        if len(transcription_clean) > 14000:
-            transcription_clean = transcription_clean[:14000] + "..."
+        # Limiter la taille mais garder les timestamps
+        if len(transcription) > 14000:
+            transcription = transcription[:14000] + "..."
         
-        logger.info("Extraction des versets bibliques...")
+        logger.info("Extraction des versets bibliques avec timestamps...")
         
-        prompt = f"""Tu es un expert biblique. Analyse cette transcription de prédication et EXTRAIS TOUS les versets bibliques mentionnés.
+        prompt = f"""Tu es un expert biblique. Analyse cette transcription de prédication qui contient des TIMESTAMPS au format [MM:SS].
 
-TRANSCRIPTION:
-{transcription_clean}
+TRANSCRIPTION AVEC TIMESTAMPS:
+{transcription}
 
 INSTRUCTIONS CRITIQUES:
 1. Cherche TOUTES les références bibliques explicites (ex: "Jean 3:16", "Romains chapitre 8 verset 28", "dans Matthieu 5")
 2. Cherche aussi les CITATIONS IMPLICITES - quand le prédicateur cite le contenu d'un verset sans donner la référence
    - Par exemple s'il dit "Car Dieu a tant aimé le monde qu'il a donné son Fils unique" → c'est Jean 3:16
    - Compare avec ta connaissance de la Bible pour identifier le verset
-3. Pour CHAQUE verset trouvé, extrais CE QUE LE PRÉDICATEUR DIT juste après (son explication, son application, son commentaire)
+3. Pour CHAQUE verset, IDENTIFIE le timestamp [MM:SS] le plus proche où il est mentionné
+4. Pour CHAQUE verset, écris l'explication du prédicateur en STYLE NARRATIF DIRECT (jamais "il dit", "le prédicateur explique")
 
 LIVRES DE LA BIBLE À RECHERCHER:
 Ancien Testament: Genèse, Exode, Lévitique, Nombres, Deutéronome, Josué, Juges, Ruth, 1 Samuel, 2 Samuel, 1 Rois, 2 Rois, 1 Chroniques, 2 Chroniques, Esdras, Néhémie, Esther, Job, Psaumes, Proverbes, Ecclésiaste, Cantique des Cantiques, Ésaïe, Jérémie, Lamentations, Ézéchiel, Daniel, Osée, Joël, Amos, Abdias, Jonas, Michée, Nahum, Habacuc, Sophonie, Aggée, Zacharie, Malachie
@@ -6856,28 +6856,34 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown):
         {{
             "reference": "Jean 3:16",
             "type": "explicite",
+            "timestamp": "12:34",
             "citation_dans_transcription": "La phrase exacte où le verset est mentionné",
-            "explication_predicateur": "Ce que le prédicateur dit/explique à propos de ce verset - ses propres mots"
+            "explication_predicateur": "L'amour de Dieu est si grand qu'il a sacrifié son propre Fils pour nous. C'est un amour inconditionnel qui ne dépend pas de nos mérites. Chaque être humain peut recevoir le salut en croyant simplement en Jésus-Christ."
         }},
         {{
             "reference": "Romains 8:28",
             "type": "implicite",
+            "timestamp": "25:10",
             "citation_dans_transcription": "Toutes choses concourent au bien de ceux qui aiment Dieu",
-            "explication_predicateur": "L'explication ou l'application que le prédicateur donne"
+            "explication_predicateur": "Même dans les moments difficiles, Dieu travaille pour notre bien. Les épreuves ne sont pas le signe de l'abandon de Dieu, mais une opportunité pour lui de manifester sa gloire dans notre vie. Notre confiance doit rester ferme."
         }}
     ]
 }}
 
-RÈGLES:
+RÈGLES CRITIQUES:
 - "type": "explicite" si la référence est donnée (Jean 3:16), "implicite" si c'est juste le contenu cité
+- "timestamp": le timestamp [MM:SS] où le verset apparaît dans la transcription (juste MM:SS sans les crochets)
 - "citation_dans_transcription": la phrase EXACTE de la transcription où le verset apparaît
-- "explication_predicateur": ce que le prédicateur dit APRÈS avoir cité le verset (son commentaire, son application)
+- "explication_predicateur": STYLE NARRATIF DIRECT en 2-4 phrases. 
+  ❌ JAMAIS: "Il dit que...", "Le prédicateur explique que...", "L'homme de Dieu souligne..."
+  ✅ TOUJOURS: Écrire directement le contenu de l'explication comme un enseignement.
+  L'explication doit être FIDÈLE à ce que le prédicateur dit APRÈS avoir cité le verset.
 - Si aucun verset n'est trouvé, retourne {{"versets": []}}"""
 
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu es un expert biblique qui identifie les références bibliques dans les prédications, même les citations implicites."
+            system_message="Tu es un expert biblique qui identifie les références bibliques dans les prédications. Tu écris toujours en style narratif direct, jamais 'il dit' ou 'le prédicateur explique'."
         ).with_model("openai", "gpt-4o-mini")
         
         user_message = UserMessage(text=prompt)
