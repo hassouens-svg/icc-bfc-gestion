@@ -6940,7 +6940,7 @@ async def generate_resume_quiz(request: GenerateResumeQuizRequest, current_user:
         logger.info(f"Génération résumé pour '{titre_message}' à partir de minute {minute_debut}")
         
         # Prompt pour analyse fidèle
-        prompt = f"""Tu es un expert en synthèse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE.
+        prompt = f"""Tu es un expert en synthèse de prédications chrétiennes. Analyse cette transcription et génère un contenu FIDÈLE et DÉTAILLÉ.
 
 TITRE DU MESSAGE: "{titre_message}"
 
@@ -6952,13 +6952,16 @@ GÉNÈRE UN JSON AVEC CETTE STRUCTURE:
 {{
     "resume": {{
         "titre": "{titre_message}",
-        "resume": "Écris un résumé TRÈS DÉTAILLÉ de 8-10 longues phrases en style NARRATIF DIRECT. Ne dis JAMAIS 'le prédicateur dit', 'il explique', 'l'orateur souligne'. Écris directement le contenu comme si tu racontais toi-même l'enseignement. Par exemple, au lieu de 'Le prédicateur explique que Jésus est amour', écris 'Jésus est amour et sa grâce nous transforme'. Développe chaque idée en profondeur, fais des liens entre les concepts, et couvre TOUS les points importants du message.",
-        "references_bibliques": ["Jean 3:16", "Romains 8:28", "etc - UNIQUEMENT les versets RÉELLEMENT cités dans la transcription, format Livre Chapitre:Verset"],
-        "points_cles": ["Point clé 1 formulé comme un enseignement direct", "Point clé 2", "Point clé 3", "etc - Les enseignements principaux formulés de façon claire et directe"],
-        "phrases_fortes": ["Citation exacte 1", "Citation exacte 2", "etc - Les phrases marquantes mot pour mot telles que prononcées"]
+        "resume": "Écris un résumé TRÈS DÉTAILLÉ de 10-12 longues phrases en style NARRATIF DIRECT. Ne dis JAMAIS 'le prédicateur dit', 'il explique', 'l'orateur souligne', 'l'homme de Dieu'. Écris directement le contenu comme si tu enseignais toi-même. Développe chaque idée en profondeur, fais des liens entre les concepts. Le résumé doit capturer TOUT ce qui est enseigné.",
+        "versets_expliques": [
+            {{"reference": "Jean 3:16", "explication": "Explication détaillée de comment ce verset est utilisé dans le message, ce qui est enseigné à partir de ce passage"}},
+            {{"reference": "Romains 8:28", "explication": "Ce qui est dit et enseigné à propos de ce verset dans la prédication"}}
+        ],
+        "points_cles": ["Enseignement 1 formulé clairement", "Enseignement 2", "Enseignement 3", "etc - Chaque point clé doit être une leçon concrète"],
+        "phrases_fortes": ["Citation exacte 1 mot pour mot", "Citation exacte 2", "Citation exacte 3", "etc - Les phrases marquantes et puissantes prononcées"]
     }},
     "quiz": [
-        {{"question": "Question 1 basée sur le contenu?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct_index": 0}},
+        {{"question": "Question 1?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
         {{"question": "Question 2?", "options": ["A", "B", "C", "D"], "correct_index": 1}},
         {{"question": "Question 3?", "options": ["A", "B", "C", "D"], "correct_index": 2}},
         {{"question": "Question 4?", "options": ["A", "B", "C", "D"], "correct_index": 0}},
@@ -6971,16 +6974,12 @@ GÉNÈRE UN JSON AVEC CETTE STRUCTURE:
     ]
 }}
 
-RÈGLES CRITIQUES POUR LE RÉSUMÉ:
-1. STYLE NARRATIF DIRECT: Ne jamais écrire "le prédicateur", "il dit", "l'orateur explique", etc.
-2. Écrire comme si TU enseignais toi-même ce message
-3. Résumé TRÈS DÉTAILLÉ: 8-10 longues phrases qui couvrent tout le message
-4. Développer chaque idée, faire des liens entre les concepts
-5. Utiliser un ton engageant et profond
-
-EXEMPLE DE BON STYLE:
-❌ MAUVAIS: "Le prédicateur explique que Jésus est le chemin"
-✅ BON: "Jésus est le chemin, la vérité et la vie. Aucun autre nom sous le ciel ne peut sauver l'humanité."
+RÈGLES CRITIQUES:
+1. RÉSUMÉ: Style narratif direct (JAMAIS "le prédicateur", "il dit", "l'homme de Dieu explique"). 10-12 phrases détaillées.
+2. VERSETS EXPLIQUÉS: Pour CHAQUE verset biblique cité, donne la référence ET ce qui est enseigné à propos de ce verset. Format: {{"reference": "Livre X:Y", "explication": "Ce qui est dit..."}}
+3. POINTS CLÉS: Les enseignements principaux, formulés comme des leçons concrètes
+4. PHRASES FORTES: Les citations EXACTES et puissantes prononcées (mot pour mot)
+5. Si aucun verset n'est cité, mettre une liste vide []
 
 Réponds UNIQUEMENT avec le JSON, sans markdown."""
 
