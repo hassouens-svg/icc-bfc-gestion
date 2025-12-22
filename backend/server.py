@@ -6954,8 +6954,8 @@ GÉNÈRE UN JSON AVEC CETTE STRUCTURE:
         "titre": "{titre_message}",
         "resume": "Écris un résumé TRÈS DÉTAILLÉ de 10-12 longues phrases en style NARRATIF DIRECT. Ne dis JAMAIS 'le prédicateur dit', 'il explique', 'l'orateur souligne', 'l'homme de Dieu'. Écris directement le contenu comme si tu enseignais toi-même. Développe chaque idée en profondeur, fais des liens entre les concepts. Le résumé doit capturer TOUT ce qui est enseigné.",
         "versets_expliques": [
-            {{"reference": "Jean 3:16", "explication": "Explication détaillée de comment ce verset est utilisé dans le message, ce qui est enseigné à partir de ce passage"}},
-            {{"reference": "Romains 8:28", "explication": "Ce qui est dit et enseigné à propos de ce verset dans la prédication"}}
+            {{"reference": "Jean 3:16", "explication": "CE QUE LE PRÉDICATEUR DIT RÉELLEMENT après avoir cité ce verset - ses propres mots, son explication, son application"}},
+            {{"reference": "Romains 8:28", "explication": "L'explication EXACTE donnée dans la prédication pour ce verset, pas une explication générique"}}
         ],
         "points_cles": ["Enseignement 1 formulé clairement", "Enseignement 2", "Enseignement 3", "etc - Chaque point clé doit être une leçon concrète"],
         "phrases_fortes": ["Citation exacte 1 mot pour mot", "Citation exacte 2", "Citation exacte 3", "etc - Les phrases marquantes et puissantes prononcées"]
@@ -6976,10 +6976,19 @@ GÉNÈRE UN JSON AVEC CETTE STRUCTURE:
 
 RÈGLES CRITIQUES:
 1. RÉSUMÉ: Style narratif direct (JAMAIS "le prédicateur", "il dit", "l'homme de Dieu explique"). 10-12 phrases détaillées.
-2. VERSETS EXPLIQUÉS: Pour CHAQUE verset biblique cité, donne la référence ET ce qui est enseigné à propos de ce verset. Format: {{"reference": "Livre X:Y", "explication": "Ce qui est dit..."}}
+
+2. VERSETS EXPLIQUÉS - TRÈS IMPORTANT:
+   - Pour CHAQUE verset biblique cité dans la prédication
+   - L'explication doit être CE QUE LE PRÉDICATEUR DIT RÉELLEMENT après avoir cité ce verset
+   - Pas une explication générique ou théologique standard
+   - Capture ses propres mots, son interprétation, son application
+   - Si le prédicateur dit "Jean 3:16 nous montre que Dieu nous aime tellement qu'il a donné son fils unique", l'explication est "Dieu nous aime tellement qu'il a donné son fils unique"
+
 3. POINTS CLÉS: Les enseignements principaux, formulés comme des leçons concrètes
+
 4. PHRASES FORTES: Les citations EXACTES et puissantes prononcées (mot pour mot)
-5. Si aucun verset n'est cité, mettre une liste vide []
+
+5. Si aucun verset n'est cité dans la transcription, mettre une liste vide []
 
 Réponds UNIQUEMENT avec le JSON, sans markdown."""
 
