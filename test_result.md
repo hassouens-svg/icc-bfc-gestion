@@ -109,6 +109,9 @@
     - working: true
       agent: "testing"
       comment: "✅ VERIFIED: Complete Pain du Jour workflow tested successfully. All 6 steps working: 1) Login with superadmin credentials ✅ 2) Fetch YouTube transcription (217 chars, 0 min duration) ✅ 3) Extract biblical verses (0 verses found in test video) ✅ 4) Generate AI summary & quiz (1349 char summary + 10 questions) using GPT-4o-mini ✅ 5) Save content to database ✅ 6) Retrieve saved content with resume and quiz ✅. All endpoints respond correctly with proper authentication and data validation."
+    - working: true
+      agent: "main"
+      comment: "✅ IMPROVED: Added timestamp (MM:SS) to verse extraction - now shows reference + minute cited. Improved explanations to use narrative style directly (no more 'il dit', 'le prédicateur explique'). Backend and frontend updated."
 
 ## Test Credentials
 - superadmin / superadmin123
