@@ -6933,13 +6933,15 @@ async def fetch_transcription(request: FetchTranscriptionRequest, current_user: 
     
     try:
         from youtube_transcript_api import YouTubeTranscriptApi
+        from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound, VideoUnavailable
         import re
         
         # Extraire l'ID de la vidéo YouTube
         video_id = None
         youtube_patterns = [
             r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})',
-            r'(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})'
+            r'(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})',
+            r'(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})'
         ]
         for pattern in youtube_patterns:
             match = re.search(pattern, request.youtube_url)
@@ -6948,34 +6950,84 @@ async def fetch_transcription(request: FetchTranscriptionRequest, current_user: 
                 break
         
         if not video_id:
-            raise HTTPException(status_code=400, detail="URL YouTube invalide")
+            raise HTTPException(status_code=400, detail="URL YouTube invalide. Formats acceptés: youtube.com/watch?v=..., youtu.be/..., youtube.com/live/...")
         
         logger.info(f"Récupération de la transcription pour: {video_id}")
         
-        ytt_api = YouTubeTranscriptApi()
-        
-        # Essayer différentes langues
+        # Essayer de récupérer la transcription avec différentes méthodes
         transcript_data = None
-        for lang in ['fr', 'fr-FR', 'en', None]:
+        error_message = None
+        
+        try:
+            # Méthode 1: Récupérer la liste des transcriptions disponibles
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            
+            # Essayer d'abord les transcriptions manuelles en français
             try:
-                if lang:
-                    transcript_data = ytt_api.fetch(video_id, languages=[lang])
-                else:
-                    transcript_data = ytt_api.fetch(video_id)
-                break
+                transcript = transcript_list.find_manually_created_transcript(['fr', 'fr-FR'])
+                transcript_data = transcript.fetch()
+                logger.info("Transcription manuelle FR trouvée")
             except:
-                continue
+                # Essayer les transcriptions générées automatiquement en français
+                try:
+                    transcript = transcript_list.find_generated_transcript(['fr', 'fr-FR'])
+                    transcript_data = transcript.fetch()
+                    logger.info("Transcription auto FR trouvée")
+                except:
+                    # Essayer n'importe quelle transcription disponible
+                    try:
+                        for transcript in transcript_list:
+                            transcript_data = transcript.fetch()
+                            logger.info(f"Transcription trouvée en: {transcript.language}")
+                            break
+                    except:
+                        pass
+        except TranscriptsDisabled:
+            error_message = "Les sous-titres sont désactivés pour cette vidéo. Activez les sous-titres dans les paramètres YouTube de la vidéo."
+        except NoTranscriptFound:
+            error_message = "Aucun sous-titre trouvé pour cette vidéo. Assurez-vous que la vidéo a des sous-titres (manuels ou automatiques)."
+        except VideoUnavailable:
+            error_message = "Cette vidéo n'est pas disponible ou est privée."
+        except Exception as e:
+            logger.error(f"Erreur list_transcripts: {str(e)}")
+            # Méthode 2: Essayer la méthode directe
+            try:
+                ytt_api = YouTubeTranscriptApi()
+                for lang in ['fr', 'fr-FR', 'en', 'en-US']:
+                    try:
+                        transcript_data = ytt_api.fetch(video_id, languages=[lang])
+                        if transcript_data:
+                            logger.info(f"Transcription trouvée avec méthode directe: {lang}")
+                            break
+                    except:
+                        continue
+                
+                if not transcript_data:
+                    transcript_data = ytt_api.fetch(video_id)
+            except Exception as e2:
+                error_message = f"Impossible de récupérer la transcription. Vérifiez que la vidéo a des sous-titres activés."
+                logger.error(f"Erreur fetch direct: {str(e2)}")
         
         if not transcript_data:
-            raise HTTPException(status_code=400, detail="Aucune transcription disponible. Vérifiez que les sous-titres sont activés sur YouTube.")
+            raise HTTPException(
+                status_code=400, 
+                detail=error_message or "Aucune transcription disponible. Vérifiez que les sous-titres sont activés sur YouTube."
+            )
         
         # Construire la transcription complète avec timestamps
         transcription_parts = []
         full_text_parts = []
         
         for entry in transcript_data:
-            start_time = entry.start if hasattr(entry, 'start') else entry.get('start', 0)
-            text = entry.text if hasattr(entry, 'text') else entry.get('text', '')
+            # Gérer les différents formats de données
+            if hasattr(entry, 'start'):
+                start_time = entry.start
+                text = entry.text
+            elif isinstance(entry, dict):
+                start_time = entry.get('start', 0)
+                text = entry.get('text', '')
+            else:
+                continue
             
             # Convertir en minutes:secondes
             minutes = int(start_time // 60)
@@ -6994,7 +7046,12 @@ async def fetch_transcription(request: FetchTranscriptionRequest, current_user: 
         # Calculer la durée totale
         if transcript_data:
             last_entry = transcript_data[-1]
-            last_time = last_entry.start if hasattr(last_entry, 'start') else last_entry.get('start', 0)
+            if hasattr(last_entry, 'start'):
+                last_time = last_entry.start
+            elif isinstance(last_entry, dict):
+                last_time = last_entry.get('start', 0)
+            else:
+                last_time = 0
             duration_minutes = int(last_time // 60)
         else:
             duration_minutes = 0
