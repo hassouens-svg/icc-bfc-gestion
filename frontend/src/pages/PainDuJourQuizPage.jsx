@@ -168,37 +168,43 @@ const PainDuJourQuizPage = () => {
             <div className="bg-amber-50 rounded-lg p-4 border-l-4 border-amber-500">
               <h3 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
                 <Book className="h-4 w-4" />
-                Résumé
+                📖 Résumé du Message
               </h3>
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+              <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
                 {content.resume.resume}
               </p>
             </div>
 
-            {/* Points clés */}
-            {content.resume.points_cles && content.resume.points_cles.length > 0 && (
-              <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
-                <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
-                  <ListChecks className="h-4 w-4" />
-                  Points Clés
+            {/* Versets avec explications */}
+            {content.resume.versets_expliques && content.resume.versets_expliques.length > 0 && (
+              <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                <h3 className="font-semibold text-green-800 mb-4 flex items-center gap-2">
+                  <Book className="h-4 w-4" />
+                  ✝️ Passages Bibliques Cités
                 </h3>
-                <ul className="space-y-2">
-                  {content.resume.points_cles.map((point, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-gray-700">
-                      <span className="text-blue-500 font-bold mt-0.5">•</span>
-                      <span>{point}</span>
-                    </li>
+                <div className="space-y-4">
+                  {content.resume.versets_expliques.map((verset, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 border border-green-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-bold">
+                          {verset.reference}
+                        </span>
+                      </div>
+                      <p className="text-gray-700 text-sm leading-relaxed">
+                        {verset.explication}
+                      </p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
 
-            {/* Versets cités */}
-            {content.resume.versets_cites && content.resume.versets_cites.length > 0 && (
+            {/* Ancienne version pour compatibilité */}
+            {!content.resume.versets_expliques && content.resume.versets_cites && content.resume.versets_cites.length > 0 && (
               <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
                 <h3 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
                   <Book className="h-4 w-4" />
-                  Versets Bibliques Cités
+                  ✝️ Versets Bibliques Cités
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {content.resume.versets_cites.map((verset, idx) => (
@@ -210,12 +216,47 @@ const PainDuJourQuizPage = () => {
               </div>
             )}
 
-            {/* Citations */}
-            {content.resume.citations && content.resume.citations.length > 0 && (
+            {/* Points clés */}
+            {content.resume.points_cles && content.resume.points_cles.length > 0 && (
+              <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                  <ListChecks className="h-4 w-4" />
+                  🎯 Points Clés & Enseignements
+                </h3>
+                <ul className="space-y-2">
+                  {content.resume.points_cles.map((point, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-gray-700">
+                      <span className="text-blue-600 font-bold mt-0.5">{idx + 1}.</span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Phrases fortes */}
+            {content.resume.phrases_fortes && content.resume.phrases_fortes.length > 0 && (
               <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
                 <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
                   <Quote className="h-4 w-4" />
-                  Citations Marquantes
+                  💬 Phrases Fortes
+                </h3>
+                <div className="space-y-3">
+                  {content.resume.phrases_fortes.map((phrase, idx) => (
+                    <blockquote key={idx} className="italic text-gray-700 border-l-3 border-purple-400 pl-3 py-1 bg-white rounded-r">
+                      "{phrase}"
+                    </blockquote>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Ancienne version citations pour compatibilité */}
+            {!content.resume.phrases_fortes && content.resume.citations && content.resume.citations.length > 0 && (
+              <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                  <Quote className="h-4 w-4" />
+                  💬 Citations Marquantes
                 </h3>
                 <div className="space-y-3">
                   {content.resume.citations.map((citation, idx) => (
