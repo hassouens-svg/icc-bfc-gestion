@@ -267,6 +267,69 @@ const PainDuJourAdminPage = () => {
     }
   };
 
+  // Extraire les versets de la transcription
+  const extractVersets = async () => {
+    if (!transcriptionData?.transcription_complete) {
+      toast.error('Veuillez d\'abord récupérer la transcription');
+      return;
+    }
+    
+    setExtractingVersets(true);
+    setExtractedVersets(null);
+    
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour/extract-versets`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({
+          transcription: transcriptionData.transcription_complete
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Erreur lors de l\'extraction');
+      }
+      
+      const data = await response.json();
+      setExtractedVersets(data.versets || []);
+      
+      if (data.versets?.length > 0) {
+        toast.success(`${data.versets.length} verset(s) trouvé(s) !`);
+      } else {
+        toast.info('Aucun verset biblique trouvé dans la transcription');
+      }
+    } catch (error) {
+      console.error('Error extracting versets:', error);
+      toast.error(error.message || 'Erreur lors de l\'extraction des versets');
+    } finally {
+      setExtractingVersets(false);
+    }
+  };
+
+  // Utiliser les versets extraits pour le résumé
+  const useExtractedVersets = () => {
+    if (!extractedVersets || extractedVersets.length === 0) return;
+    
+    const versetsExpliques = extractedVersets.map(v => ({
+      reference: v.reference,
+      explication: v.explication_predicateur
+    }));
+    
+    setForm(prev => ({
+      ...prev,
+      resume: {
+        ...(prev.resume || {}),
+        versets_expliques: versetsExpliques
+      }
+    }));
+    
+    toast.success('Versets ajoutés au résumé !');
+  };
+
   const loadLivres = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour/livres`);
