@@ -54,6 +54,10 @@ const PainDuJourAdminPage = () => {
   const [transcriptionData, setTranscriptionData] = useState(null);
   const [titreMessage, setTitreMessage] = useState('');
   const [minuteDebut, setMinuteDebut] = useState(0);
+  
+  // États pour extraction des versets
+  const [extractingVersets, setExtractingVersets] = useState(false);
+  const [extractedVersets, setExtractedVersets] = useState(null);
 
   // Check existing auth on mount
   useEffect(() => {
