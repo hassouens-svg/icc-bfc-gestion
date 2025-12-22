@@ -184,10 +184,13 @@ const PainDuJourQuizPage = () => {
                 </h3>
                 <div className="space-y-4">
                   {content.resume.versets_expliques.map((verset, idx) => (
-                    <div key={idx} className="bg-white rounded-lg p-3 border border-green-200">
-                      <div className="flex items-center gap-2 mb-2">
+                    <div key={idx} className="bg-white rounded-lg p-4 border border-green-200 shadow-sm">
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
                         <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-bold">
                           {verset.reference}
+                          {verset.timestamp && (
+                            <span className="ml-1 opacity-80">({verset.timestamp})</span>
+                          )}
                         </span>
                       </div>
                       <p className="text-gray-700 text-sm leading-relaxed">
