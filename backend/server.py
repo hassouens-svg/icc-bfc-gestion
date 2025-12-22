@@ -6804,6 +6804,108 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
 
 # ==================== RÉSUMÉ ET QUIZ ENSEIGNEMENT ====================
 
+class ExtractVersetsRequest(BaseModel):
+    transcription: str
+
+@api_router.post("/pain-du-jour/extract-versets")
+async def extract_versets(request: ExtractVersetsRequest, current_user: dict = Depends(get_current_user)):
+    """Extraire tous les versets bibliques de la transcription - Admin uniquement"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        import json as json_module
+        
+        api_key = os.environ.get("EMERGENT_LLM_KEY")
+        if not api_key:
+            raise HTTPException(status_code=500, detail="Clé API LLM non configurée")
+        
+        transcription = request.transcription
+        
+        # Enlever les timestamps pour l'analyse
+        import re
+        transcription_clean = re.sub(r'\[\d+:\d+\]\s*', '', transcription)
+        
+        # Limiter la taille
+        if len(transcription_clean) > 14000:
+            transcription_clean = transcription_clean[:14000] + "..."
+        
+        logger.info("Extraction des versets bibliques...")
+        
+        prompt = f"""Tu es un expert biblique. Analyse cette transcription de prédication et EXTRAIS TOUS les versets bibliques mentionnés.
+
+TRANSCRIPTION:
+{transcription_clean}
+
+INSTRUCTIONS CRITIQUES:
+1. Cherche TOUTES les références bibliques explicites (ex: "Jean 3:16", "Romains chapitre 8 verset 28", "dans Matthieu 5")
+2. Cherche aussi les CITATIONS IMPLICITES - quand le prédicateur cite le contenu d'un verset sans donner la référence
+   - Par exemple s'il dit "Car Dieu a tant aimé le monde qu'il a donné son Fils unique" → c'est Jean 3:16
+   - Compare avec ta connaissance de la Bible pour identifier le verset
+3. Pour CHAQUE verset trouvé, extrais CE QUE LE PRÉDICATEUR DIT juste après (son explication, son application, son commentaire)
+
+LIVRES DE LA BIBLE À RECHERCHER:
+Ancien Testament: Genèse, Exode, Lévitique, Nombres, Deutéronome, Josué, Juges, Ruth, 1 Samuel, 2 Samuel, 1 Rois, 2 Rois, 1 Chroniques, 2 Chroniques, Esdras, Néhémie, Esther, Job, Psaumes, Proverbes, Ecclésiaste, Cantique des Cantiques, Ésaïe, Jérémie, Lamentations, Ézéchiel, Daniel, Osée, Joël, Amos, Abdias, Jonas, Michée, Nahum, Habacuc, Sophonie, Aggée, Zacharie, Malachie
+
+Nouveau Testament: Matthieu, Marc, Luc, Jean, Actes, Romains, 1 Corinthiens, 2 Corinthiens, Galates, Éphésiens, Philippiens, Colossiens, 1 Thessaloniciens, 2 Thessaloniciens, 1 Timothée, 2 Timothée, Tite, Philémon, Hébreux, Jacques, 1 Pierre, 2 Pierre, 1 Jean, 2 Jean, 3 Jean, Jude, Apocalypse
+
+Réponds UNIQUEMENT avec ce JSON (sans markdown):
+{{
+    "versets": [
+        {{
+            "reference": "Jean 3:16",
+            "type": "explicite",
+            "citation_dans_transcription": "La phrase exacte où le verset est mentionné",
+            "explication_predicateur": "Ce que le prédicateur dit/explique à propos de ce verset - ses propres mots"
+        }},
+        {{
+            "reference": "Romains 8:28",
+            "type": "implicite",
+            "citation_dans_transcription": "Toutes choses concourent au bien de ceux qui aiment Dieu",
+            "explication_predicateur": "L'explication ou l'application que le prédicateur donne"
+        }}
+    ]
+}}
+
+RÈGLES:
+- "type": "explicite" si la référence est donnée (Jean 3:16), "implicite" si c'est juste le contenu cité
+- "citation_dans_transcription": la phrase EXACTE de la transcription où le verset apparaît
+- "explication_predicateur": ce que le prédicateur dit APRÈS avoir cité le verset (son commentaire, son application)
+- Si aucun verset n'est trouvé, retourne {{"versets": []}}"""
+
+        llm_chat = LlmChat(
+            api_key=api_key,
+            session_id=str(uuid4()),
+            system_message="Tu es un expert biblique qui identifie les références bibliques dans les prédications, même les citations implicites."
+        ).with_model("openai", "gpt-4o-mini")
+        
+        user_message = UserMessage(text=prompt)
+        response = await llm_chat.send_message(user_message)
+        
+        # Parser le JSON
+        clean_response = response.strip()
+        if clean_response.startswith("```json"):
+            clean_response = clean_response[7:]
+        if clean_response.startswith("```"):
+            clean_response = clean_response[3:]
+        if clean_response.endswith("```"):
+            clean_response = clean_response[:-3]
+        clean_response = clean_response.strip()
+        
+        result = json_module.loads(clean_response)
+        logger.info(f"Versets extraits: {len(result.get('versets', []))}")
+        
+        return result
+        
+    except json_module.JSONDecodeError as e:
+        logger.error(f"Erreur parsing JSON: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erreur lors de l'extraction")
+    except Exception as e:
+        logger.error(f"Erreur: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
+
+
 @api_router.post("/pain-du-jour/fetch-transcription")
 async def fetch_transcription(request: FetchTranscriptionRequest, current_user: dict = Depends(get_current_user)):
     """Récupérer la transcription complète d'une vidéo YouTube - Admin uniquement"""
