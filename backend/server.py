@@ -6843,57 +6843,60 @@ TRANSCRIPTION COMPLÈTE AVEC TIMESTAMPS:
 
 OBJECTIF: Extraire TOUS les versets bibliques mentionnés dans TOUTE la transcription.
 
-RÈGLES D'EXTRACTION IMPORTANTES:
-1. VERSETS EXPLICITES (PRIORITÉ ABSOLUE):
-   - Extrais TOUS les versets où le prédicateur mentionne clairement la référence biblique
-   - Exemples: "Jean 3:16", "dans Romains chapitre 8", "le Psaume 23", "Matthieu 5 verset 14", "premier Corinthiens 13"
-   - Parcours TOUTE la transcription du début à la fin pour ne rater AUCUN verset explicite
-   - Pas de limite pour les versets explicites - TOUS doivent être extraits
+COMMENT IDENTIFIER LES VERSETS:
+Cherche ces patterns dans la transcription:
+- "Jean 3:16", "Jean 3 verset 16", "Jean chapitre 3"
+- "dans Romains 8", "Romains chapitre 8 verset 28"
+- "le Psaume 23", "Psaumes 23", "Psaume vingt-trois"
+- "premier Corinthiens", "1 Corinthiens", "première épître aux Corinthiens"
+- "Matthieu 5:14", "dans Matthieu au chapitre 5"
+- "Luc 14:28-30", "Luc 14 à partir du verset 28"
+- "Ecclésiaste 3", "dans l'Ecclésiaste"
+- "Proverbes 3:5-6", "le livre des Proverbes"
+- Toute mention d'un livre biblique suivi d'un numéro
 
-2. VERSETS IMPLICITES (MAXIMUM 3):
-   - Seulement si le prédicateur cite le CONTENU d'un verset sans donner la référence
-   - Limite stricte: 3 versets implicites MAXIMUM
-   - Choisis uniquement les citations les plus importantes/claires
+RÈGLES D'EXTRACTION:
+1. VERSETS EXPLICITES - EXTRAIS TOUS (pas de limite):
+   - Quand le prédicateur cite une référence biblique (livre + chapitre ou verset)
+   - Même si la référence est partielle (ex: "dans Luc 14" sans numéro de verset)
 
-3. TIMESTAMP - COPIE EXACTE:
-   - Regarde la transcription et trouve le timestamp [MM:SS] qui apparaît JUSTE AVANT le verset
-   - Le timestamp doit être EXACTEMENT celui qui est écrit dans la transcription
-   - Exemple: si tu vois "[12:45] Jean 3:16 nous dit", le timestamp est "12:45"
+2. VERSETS IMPLICITES - MAXIMUM 3:
+   - Quand le contenu d'un verset est cité sans la référence
+   - Seulement les plus évidents
 
-4. EXPLICATION EN STYLE NARRATIF:
-   - Écris directement ce que le prédicateur enseigne APRÈS avoir cité le verset
-   - ❌ JAMAIS: "Il dit que...", "Le prédicateur explique...", "L'homme de Dieu..."
-   - ✅ TOUJOURS: Écrire directement l'enseignement en 2-3 phrases
+3. TIMESTAMP - TRÈS IMPORTANT:
+   - Copie EXACTEMENT le timestamp [MM:SS] qui apparaît AVANT le verset
+   - Format: "12:45" (sans les crochets)
 
-LIVRES DE LA BIBLE:
+4. EXPLICATION - STYLE NARRATIF DIRECT:
+   ❌ NE JAMAIS écrire: "Il dit...", "Le prédicateur explique...", "L'homme de Dieu..."
+   ✅ TOUJOURS écrire directement l'enseignement en 2-3 phrases
+
+LIVRES BIBLIQUES À CHERCHER:
 Ancien Testament: Genèse, Exode, Lévitique, Nombres, Deutéronome, Josué, Juges, Ruth, 1 Samuel, 2 Samuel, 1 Rois, 2 Rois, 1 Chroniques, 2 Chroniques, Esdras, Néhémie, Esther, Job, Psaumes, Proverbes, Ecclésiaste, Cantique, Ésaïe, Jérémie, Lamentations, Ézéchiel, Daniel, Osée, Joël, Amos, Abdias, Jonas, Michée, Nahum, Habacuc, Sophonie, Aggée, Zacharie, Malachie
 
 Nouveau Testament: Matthieu, Marc, Luc, Jean, Actes, Romains, 1 Corinthiens, 2 Corinthiens, Galates, Éphésiens, Philippiens, Colossiens, 1 Thessaloniciens, 2 Thessaloniciens, 1 Timothée, 2 Timothée, Tite, Philémon, Hébreux, Jacques, 1 Pierre, 2 Pierre, 1 Jean, 2 Jean, 3 Jean, Jude, Apocalypse
 
-Réponds UNIQUEMENT avec ce JSON (sans markdown):
+IMPORTANT: Si tu trouves AU MOINS UN verset dans la transcription, retourne-le. Ne retourne une liste vide QUE si vraiment il n'y a AUCUNE référence biblique.
+
+Réponds UNIQUEMENT avec ce JSON (sans markdown ni texte autour):
 {{
     "versets": [
         {{
-            "reference": "Jean 3:16",
+            "reference": "Luc 14:28-30",
             "type": "explicite",
-            "timestamp": "12:45",
-            "citation_dans_transcription": "[12:45] Car Dieu a tant aimé le monde",
-            "explication_predicateur": "L'amour de Dieu est immense et inconditionnel. Il a donné son Fils unique pour que nous ayons la vie éternelle."
+            "timestamp": "02:30",
+            "citation_dans_transcription": "[02:30] dans Luc chapitre 14",
+            "explication_predicateur": "La construction d'une tour nécessite une planification préalable. Avant de s'engager dans un projet, il faut calculer les coûts."
         }}
     ]
-}}
-
-RÉSUMÉ DES RÈGLES:
-- Type "explicite": référence biblique clairement mentionnée → TOUS doivent être extraits
-- Type "implicite": seulement le contenu cité sans référence → MAXIMUM 3
-- Timestamp: copie EXACTE du [MM:SS] de la transcription
-- Explication: style narratif direct, fidèle à ce que dit le prédicateur"""
+}}"""
 
         llm_chat = LlmChat(
             api_key=api_key,
             session_id=str(uuid4()),
-            system_message="Tu es un expert biblique. Tu extrais TOUS les versets explicites de la transcription entière. Tu copies les timestamps EXACTEMENT. Tu écris en style narratif direct."
-        ).with_model("openai", "gpt-4o-mini")
+            system_message="Tu es un expert biblique qui trouve TOUS les versets dans une transcription. Tu ne retournes JAMAIS une liste vide s'il y a des références bibliques. Tu copies les timestamps exactement."
+        ).with_model("openai", "gpt-4o")
         
         user_message = UserMessage(text=prompt)
         response = await llm_chat.send_message(user_message)
