@@ -6826,11 +6826,15 @@ async def extract_versets(request: ExtractVersetsRequest, current_user: dict = D
         # GARDER les timestamps pour pouvoir identifier la minute de chaque verset
         import re
         
-        # Limiter la taille mais garder les timestamps
-        if len(transcription) > 14000:
-            transcription = transcription[:14000] + "..."
+        # Augmenter la limite pour les longues prédications (environ 50 minutes de transcription)
+        max_chars = 30000
+        if len(transcription) > max_chars:
+            # Garder le début et la fin pour ne pas perdre de versets
+            half = max_chars // 2
+            transcription = transcription[:half] + "\n...[PARTIE CENTRALE TRONQUÉE]...\n" + transcription[-half:]
+            logger.warning(f"Transcription tronquée de {len(transcription)} à {max_chars} caractères")
         
-        logger.info("Extraction des versets bibliques avec timestamps...")
+        logger.info(f"Extraction des versets bibliques - {len(transcription)} caractères...")
         
         prompt = f"""Tu es un expert biblique. Analyse TOUTE cette transcription de prédication du DÉBUT à la FIN.
 
