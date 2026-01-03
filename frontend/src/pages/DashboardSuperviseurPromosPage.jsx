@@ -207,12 +207,12 @@ const DashboardSuperviseurPromosPage = () => {
 
         {/* KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Nombre de Responsables de Promo */}
+          {/* Nombre de Responsables de Bergerie */}
           <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm">Responsables de Promo</p>
+                  <p className="text-purple-100 text-sm">Bergers</p>
                   <h3 className="text-3xl font-bold mt-2">{responsablesPromo.length}</h3>
                   <p className="text-purple-100 text-xs mt-1">Comptes créés</p>
                 </div>
