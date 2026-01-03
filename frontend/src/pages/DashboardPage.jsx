@@ -11,6 +11,24 @@ import { Users, UserPlus, TrendingUp, Download, BarChart3, Calendar, Edit } from
 import { toast } from 'sonner';
 import { Checkbox } from '../components/ui/checkbox';
 
+// Fonction pour obtenir le nom de la bergerie avec le mois
+const getBergerieName = (assignedMonth) => {
+  if (!assignedMonth) return 'Ma Bergerie';
+  
+  const monthNames = {
+    '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
+    '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
+    '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
+  };
+  
+  // assignedMonth est au format "2024-01" ou juste "01"
+  const parts = assignedMonth.split('-');
+  const monthNum = parts.length > 1 ? parts[1] : parts[0];
+  const monthName = monthNames[monthNum] || assignedMonth;
+  
+  return `Bergerie ${monthName}`;
+};
+
 const DashboardPage = () => {
   const navigate = useNavigate();
   const user = getUser();
