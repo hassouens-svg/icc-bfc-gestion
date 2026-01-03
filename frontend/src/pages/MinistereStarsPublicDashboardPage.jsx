@@ -1,0 +1,246 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Users, TrendingUp, Star, ArrowLeft, Calendar, UserCheck, Eye } from 'lucide-react';
+import { toast } from 'sonner';
+
+const MinistereStarsPublicDashboardPage = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const ville = searchParams.get('ville') || '';
+  
+  const [stats, setStats] = useState(null);
+  const [multiDeptStars, setMultiDeptStars] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const departements = [
+    'MLA', 'Accueil', 'Soins pastoraux', 'Régie', 'Sono', 'Sainte cène',
+    'Impact junior', 'Navette', 'Prière', 'Protocole', 'Sécurité',
+    'Communication', 'Coordination', 'Ministère des promotions', 'Formation',
+    'Finance', 'Ministère des femmes (bureau)', 'Ministère des hommes (bureau)',
+    'Impact santé', 'Évènementiel/Restauration'
+  ];
+
+  useEffect(() => {
+    if (!ville) {
+      navigate('/select-ville-stars');
+      return;
+    }
+    loadData();
+  }, [ville]);
+
+  const loadData = async () => {
+    try {
+      // Utiliser des endpoints publics
+      const [statsRes, multiRes] = await Promise.all([
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/public/stats?ville=${encodeURIComponent(ville)}`),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/public/multi-departements?ville=${encodeURIComponent(ville)}`)
+      ]);
+
+      if (statsRes.ok) {
+        setStats(await statsRes.json());
+      } else {
+        setStats({ total: 0, actifs: 0, non_actifs: 0, par_departement: {} });
+      }
+      
+      if (multiRes.ok) {
+        setMultiDeptStars(await multiRes.json());
+      } else {
+        setMultiDeptStars([]);
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast.error('Erreur de chargement');
+      setStats({ total: 0, actifs: 0, non_actifs: 0, par_departement: {} });
+      setMultiDeptStars([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <Button variant="ghost" onClick={() => navigate('/select-ville-stars')} className="mb-4">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Changer de ville
+          </Button>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                <Star className="h-8 w-8 text-yellow-500" />
+                Ministère des STARS
+              </h1>
+              <p className="text-gray-500 mt-1">
+                Dashboard de suivi • <span className="text-orange-600 font-medium">{ville}</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-amber-700 bg-amber-100 px-3 py-2 rounded-lg">
+              <Eye className="h-4 w-4" />
+              <span className="text-sm font-medium">Accès public</span>
+            </div>
+          </div>
+        </div>
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-orange-100 text-sm">Total Stars</p>
+                  <h3 className="text-3xl font-bold mt-2">{stats?.total || 0}</h3>
+                </div>
+                <Users className="h-12 w-12 text-orange-200 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-sm">Stars Actives</p>
+                  <h3 className="text-3xl font-bold mt-2">{stats?.actifs || 0}</h3>
+                </div>
+                <TrendingUp className="h-12 w-12 text-green-200 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-red-100 text-sm">Non Actives</p>
+                  <h3 className="text-3xl font-bold mt-2">{stats?.non_actifs || 0}</h3>
+                </div>
+                <Calendar className="h-12 w-12 text-red-200 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Lien recensement */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>🔗 Lien de Recensement Public</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600">Partagez ce lien pour permettre aux stars de s'enregistrer</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/recensement-stars`}
+                  className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
+                />
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/recensement-stars`);
+                    toast.success('Lien copié !');
+                  }}
+                >
+                  Copier
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Liste des départements */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>📂 Départements</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {departements.map((dept, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-3 border rounded-lg bg-white"
+                >
+                  <span className="font-medium">{dept}</span>
+                  <span className="text-sm bg-orange-100 text-orange-700 px-2 py-1 rounded">
+                    {stats?.par_departement?.[dept] || 0}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Stars multi-départements */}
+        <Card>
+          <CardHeader>
+            <CardTitle>👥 Stars servant dans plusieurs ministères</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2 px-4">Prénom</th>
+                    <th className="text-left py-2 px-4">Nom</th>
+                    <th className="text-left py-2 px-4">Départements</th>
+                    <th className="text-center py-2 px-4">Nombre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {multiDeptStars.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="text-center py-8 text-gray-500">
+                        Aucune star dans plusieurs ministères
+                      </td>
+                    </tr>
+                  ) : (
+                    multiDeptStars.map((star, idx) => (
+                      <tr key={idx} className="border-b hover:bg-gray-50">
+                        <td className="py-3 px-4">{star.prenom}</td>
+                        <td className="py-3 px-4">{star.nom}</td>
+                        <td className="py-3 px-4">
+                          <div className="flex flex-wrap gap-1">
+                            {star.departements?.map((dept, i) => (
+                              <span key={i} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                {dept}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className="font-bold text-orange-600">{star.departements?.length || 0}</span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bouton retour accueil */}
+        <div className="mt-8 text-center">
+          <Button variant="outline" onClick={() => navigate('/')}>
+            ← Retour à l'accueil
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MinistereStarsPublicDashboardPage;
