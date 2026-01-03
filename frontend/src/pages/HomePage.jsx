@@ -150,8 +150,8 @@ const HomePage = () => {
     {
       id: 'promotions',
       title: 'Bergeries',
-      subtitle: '',
-      description: 'Suivi et reproduction - Accédez à votre bergerie',
+      subtitle: '(promotions)',
+      description: 'Suivi complet des nouveaux arrivants et nouveaux convertis avec les bergers',
       icon: TrendingUp,
       color: 'from-purple-400 to-purple-600'
     },
