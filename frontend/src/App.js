@@ -135,6 +135,11 @@ function App() {
           <Route path="/dashboard-superviseur-promos" element={<DashboardSuperviseurPromosPage />} />
           <Route path="/berger-presences" element={<MarquerPresenceBergersPage />} />
           <Route path="/berger-presences/historique" element={<HistoriquePresenceBergersPage />} />
+          
+          {/* BERGERIES - Nouveau système */}
+          <Route path="/bergeries" element={<SelectBergeriePage />} />
+          <Route path="/bergerie/dashboard" element={<BergerieDashboardPage />} />
+          
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
           {/* Redirection : Ancienne page -> Nouvelle page complète */}
