@@ -1420,6 +1420,12 @@ async def get_cities():
     cities = await db.cities.find({}, {"_id": 0}).to_list(1000)
     return cities
 
+@api_router.get("/cities/public")
+async def get_cities_public():
+    """Get list of city names only - Public endpoint"""
+    cities = await db.cities.find({}, {"_id": 0, "name": 1}).to_list(1000)
+    return [city.get("name") for city in cities if city.get("name")]
+
 @api_router.post("/cities/initialize")
 async def initialize_cities(current_user: dict = Depends(get_current_user)):
     """Initialize all cities with their countries - Creates cities if they don't exist"""
