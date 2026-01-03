@@ -96,11 +96,6 @@ const BergerieDashboardPage = () => {
     loadAllData();
   }, [ville, monthNum]);
 
-  const getAuthHeader = () => {
-    const token = localStorage.getItem('token');
-    return token ? { 'Authorization': `Bearer ${token}` } : {};
-  };
-
   const loadAllData = async () => {
     setLoading(true);
     try {
