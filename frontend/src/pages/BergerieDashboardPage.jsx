@@ -104,10 +104,9 @@ const BergerieDashboardPage = () => {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      // Charger les données de reproduction (contient visitors, objectifs, contacts)
+      // Charger les données de reproduction (utilise endpoint public)
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/reproduction/${ville}/${monthNum}`,
-        { headers: getAuthHeader() }
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/reproduction/${ville}/${monthNum}`
       );
       
       if (response.ok) {
