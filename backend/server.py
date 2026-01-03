@@ -7755,6 +7755,15 @@ async def get_bergerie_reproduction_data(ville: str, bergerie_month: str, curren
 @api_router.get("/bergerie/list/{ville}")
 async def get_bergeries_list(ville: str, current_user: dict = Depends(get_current_user)):
     """Récupérer la liste des 12 bergeries d'une ville avec leurs stats"""
+    return await _get_bergeries_list_internal(ville)
+
+@api_router.get("/bergerie/list-public/{ville}")
+async def get_bergeries_list_public(ville: str):
+    """Récupérer la liste des 12 bergeries d'une ville - Accès public sans authentification"""
+    return await _get_bergeries_list_internal(ville)
+
+async def _get_bergeries_list_internal(ville: str):
+    """Fonction interne pour récupérer la liste des bergeries"""
     month_names = {
         '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
         '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
