@@ -35,7 +35,7 @@ const SelectVilleStarsPage = () => {
   const handleCitySelect = () => {
     if (!selectedCity) return;
     localStorage.setItem('selected_city', selectedCity);
-    navigate(`/ministere-stars/dashboard?ville=${encodeURIComponent(selectedCity)}`);
+    navigate(`/ministere-stars/public-dashboard?ville=${encodeURIComponent(selectedCity)}`);
   };
 
   if (loading) {
