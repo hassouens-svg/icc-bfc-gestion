@@ -698,13 +698,10 @@ const BergerieDashboardPage = () => {
                                     const newValue = parseInt(e.target.value) || null;
                                     try {
                                       await fetch(
-                                        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/objectifs/${obj.id}`,
+                                        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/objectifs/${obj.id}`,
                                         {
                                           method: 'PUT',
-                                          headers: {
-                                            'Content-Type': 'application/json',
-                                            ...getAuthHeader()
-                                          },
+                                          headers: { 'Content-Type': 'application/json' },
                                           body: JSON.stringify({
                                             ...obj,
                                             bergerie_month: monthNum,
