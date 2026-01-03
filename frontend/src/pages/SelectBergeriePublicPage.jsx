@@ -152,7 +152,7 @@ const SelectBergeriePublicPage = () => {
                     <CardHeader className="pb-2">
                       <CardTitle className="flex items-center gap-2 text-lg">
                         <Calendar className="h-5 w-5 text-purple-600" />
-                        {bergerie.nom}
+                        Bergerie {bergerie.month_name}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -161,12 +161,6 @@ const SelectBergeriePublicPage = () => {
                           <Users className="h-4 w-4" />
                           <span>{bergerie.total_personnes} personne(s)</span>
                         </div>
-                        
-                        {bergerie.bergers && bergerie.bergers.length > 0 && (
-                          <div className="text-xs text-gray-500">
-                            Berger(s): {bergerie.bergers.map(b => b.username).join(', ')}
-                          </div>
-                        )}
                       </div>
                       
                       <div className="mt-4 flex justify-end">
