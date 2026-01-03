@@ -77,6 +77,8 @@ import PainDuJourQuizPage from './pages/PainDuJourQuizPage';
 import SelectBergeriePage from './pages/SelectBergeriePage';
 import SelectBergeriePublicPage from './pages/SelectBergeriePublicPage';
 import BergerieDashboardPage from './pages/BergerieDashboardPage';
+import SuiviDisciplesPage from './pages/SuiviDisciplesPage';
+import ReproductionPage from './pages/ReproductionPage';
 
 function App() {
   return (
