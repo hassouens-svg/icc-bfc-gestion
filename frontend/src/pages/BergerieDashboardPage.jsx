@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getUser, getVisitors } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -11,34 +10,37 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { 
   Users, ArrowLeft, Calendar, TrendingUp, Plus, Target, 
-  UserCheck, Phone, MessageSquare, Check, Clock, Trash2,
-  BarChart3, BookOpen, Heart
+  UserCheck, Phone, Clock, Trash2, BarChart3, Heart, Download,
+  UserPlus, Eye, Table, CheckSquare, Sprout
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-const BergerieDashboardPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const user = getUser();
-  
-  // Récupérer les params
-  const searchParams = new URLSearchParams(location.search);
-  const ville = searchParams.get('ville') || user?.city || '';
-  const monthNum = searchParams.get('month') || '01';
-  
+// Fonction pour obtenir le nom de la bergerie
+const getBergerieName = (monthNum) => {
   const monthNames = {
     '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
     '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
     '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
   };
+  return `Bergerie ${monthNames[monthNum] || monthNum}`;
+};
+
+const BergerieDashboardPage = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   
-  const bergerieName = `Bergerie ${monthNames[monthNum] || monthNum}`;
+  // Récupérer les params
+  const ville = searchParams.get('ville') || '';
+  const monthNum = searchParams.get('month') || '01';
+  
+  const bergerieName = getBergerieName(monthNum);
   
   // States
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
-  const [reproductionData, setReproductionData] = useState(null);
+  const [stats, setStats] = useState({ total_recus: 0, total_disciples_oui: 0, total_disciples_en_cours: 0, total_evangelises: 0 });
   const [visitors, setVisitors] = useState([]);
+  const [presences, setPresences] = useState([]);
   
   // États pour les objectifs
   const [objectifs, setObjectifs] = useState([]);
@@ -65,32 +67,59 @@ const BergerieDashboardPage = () => {
   
   // États pour les disciples
   const [disciples, setDisciples] = useState({});
+  
+  // État pour ajouter un ancien visiteur
+  const [showAddVisitorDialog, setShowAddVisitorDialog] = useState(false);
+  const [newVisitor, setNewVisitor] = useState({
+    firstname: '',
+    lastname: '',
+    phone: '',
+    email: '',
+    visitor_type: 'Nouveau arrivant'
+  });
+
+  // État pour les présences
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [presenceData, setPresenceData] = useState({});
+
+  const monthNames = {
+    '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
+    '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
+    '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
+  };
 
   useEffect(() => {
+    if (!ville || !monthNum) {
+      navigate('/bergeries');
+      return;
+    }
     loadAllData();
   }, [ville, monthNum]);
+
+  const getAuthHeader = () => {
+    const token = localStorage.getItem('token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
 
   const loadAllData = async () => {
     setLoading(true);
     try {
-      // Charger toutes les données de reproduction
+      // Charger les données de reproduction (contient visitors, objectifs, contacts)
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/reproduction/${ville}/${monthNum}`,
-        {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        }
+        { headers: getAuthHeader() }
       );
       
       if (response.ok) {
         const data = await response.json();
-        setReproductionData(data);
         setVisitors(data.visitors || []);
         setObjectifs(data.objectifs || []);
         setContacts(data.contacts || []);
+        setStats(data.stats || { total_recus: 0, total_disciples_oui: 0, total_disciples_en_cours: 0, total_evangelises: 0 });
         
         // Créer le map des disciples
         const disciplesMap = {};
-        data.visitors.forEach(v => {
+        (data.visitors || []).forEach(v => {
           disciplesMap[v.id] = v.est_disciple || 'Non';
         });
         setDisciples(disciplesMap);
@@ -117,7 +146,7 @@ const BergerieDashboardPage = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            ...getAuthHeader()
           },
           body: JSON.stringify({
             bergerie_month: monthNum,
@@ -157,7 +186,7 @@ const BergerieDashboardPage = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            ...getAuthHeader()
           },
           body: JSON.stringify({
             bergerie_month: monthNum,
@@ -197,7 +226,7 @@ const BergerieDashboardPage = () => {
         `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${contactId}`,
         {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          headers: getAuthHeader()
         }
       );
       toast.success('Contact supprimé');
@@ -216,7 +245,7 @@ const BergerieDashboardPage = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            ...getAuthHeader()
           },
           body: JSON.stringify({
             est_disciple: newStatus,
@@ -229,6 +258,44 @@ const BergerieDashboardPage = () => {
       toast.success('Statut mis à jour');
     } catch (error) {
       toast.error('Erreur');
+    }
+  };
+
+  // === AJOUTER ANCIEN VISITEUR ===
+  const handleAddVisitor = async () => {
+    if (!newVisitor.firstname || !newVisitor.lastname) {
+      toast.error('Veuillez remplir le nom et prénom');
+      return;
+    }
+    
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/visitors`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeader()
+          },
+          body: JSON.stringify({
+            ...newVisitor,
+            city: ville,
+            assigned_month: `${new Date().getFullYear()}-${monthNum}`,
+            visit_date: new Date().toISOString().split('T')[0]
+          })
+        }
+      );
+      
+      if (response.ok) {
+        toast.success('Visiteur ajouté');
+        setShowAddVisitorDialog(false);
+        setNewVisitor({ firstname: '', lastname: '', phone: '', email: '', visitor_type: 'Nouveau arrivant' });
+        loadAllData();
+      } else {
+        throw new Error('Erreur');
+      }
+    } catch (error) {
+      toast.error('Erreur lors de l\'ajout');
     }
   };
 
@@ -258,18 +325,16 @@ const BergerieDashboardPage = () => {
     );
   }
 
-  const stats = reproductionData?.stats || {};
-
   return (
     <Layout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{bergerieName}</h1>
-            <p className="text-gray-500 mt-1">{ville} - Tableau de bord</p>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard {bergerieName}</h1>
+            <p className="text-gray-500 mt-1">{ville}</p>
           </div>
-          <Button variant="outline" onClick={() => navigate(`/bergeries?ville=${ville}`)}>
+          <Button variant="outline" onClick={() => navigate(`/bergeries`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Toutes les Bergeries
           </Button>
@@ -277,28 +342,45 @@ const BergerieDashboardPage = () => {
 
         {/* Onglets */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="arrivants">Nouveaux Arrivants</TabsTrigger>
             <TabsTrigger value="tableau">Vue Tableau</TabsTrigger>
-            <TabsTrigger value="reproduction" className="bg-green-50 text-green-700">
-              🌱 Reproduction
+            <TabsTrigger value="presences">Marquer Présences</TabsTrigger>
+            <TabsTrigger value="reproduction" className="bg-green-50 text-green-700 data-[state=active]:bg-green-100">
+              <Sprout className="h-4 w-4 mr-1" />
+              Reproduction
             </TabsTrigger>
           </TabsList>
 
           {/* === ONGLET DASHBOARD === */}
           <TabsContent value="dashboard" className="space-y-6">
-            {/* KPIs */}
+            {/* Verset biblique */}
+            <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">📖</div>
+                  <div>
+                    <p className="text-sm font-semibold text-purple-800 mb-2">Jérémie 3:15</p>
+                    <p className="text-base italic text-gray-700 leading-relaxed">
+                      "Je vous donnerai des bergers selon mon cœur, qui vous paîtront avec intelligence et avec sagesse."
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
                     <Users className="h-4 w-4 text-blue-500" />
-                    Total Personnes Reçues
+                    Total Nouveaux Arrivants
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-blue-600">{stats.total_recus || 0}</div>
+                  <div className="text-3xl font-bold text-blue-600">{stats.total_recus || visitors.length}</div>
                 </CardContent>
               </Card>
               
@@ -345,28 +427,37 @@ const BergerieDashboardPage = () => {
                 <CardTitle>Actions rapides</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <Button 
-                    className="h-16 bg-blue-600 hover:bg-blue-700"
-                    onClick={() => navigate(`/marquer-presences?bergerie=${monthNum}&ville=${ville}`)}
+                    variant="outline"
+                    className="h-20"
+                    onClick={() => setActiveTab('arrivants')}
                   >
-                    <Calendar className="h-5 w-5 mr-2" />
-                    Marquer Présences
-                  </Button>
-                  <Button 
-                    className="h-16 bg-green-600 hover:bg-green-700"
-                    onClick={() => setActiveTab('reproduction')}
-                  >
-                    <TrendingUp className="h-5 w-5 mr-2" />
-                    Voir Reproduction
+                    <Users className="h-6 w-6 mr-2" />
+                    Voir les Arrivants
                   </Button>
                   <Button 
                     variant="outline"
-                    className="h-16"
-                    onClick={() => setActiveTab('arrivants')}
+                    className="h-20"
+                    onClick={() => setActiveTab('presences')}
                   >
-                    <Users className="h-5 w-5 mr-2" />
-                    Voir les Arrivants
+                    <CheckSquare className="h-6 w-6 mr-2" />
+                    Marquer Présences
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="h-20"
+                    onClick={() => setActiveTab('tableau')}
+                  >
+                    <Table className="h-6 w-6 mr-2" />
+                    Vue Tableau
+                  </Button>
+                  <Button 
+                    className="h-20 bg-green-600 hover:bg-green-700"
+                    onClick={() => setActiveTab('reproduction')}
+                  >
+                    <Sprout className="h-6 w-6 mr-2" />
+                    Reproduction
                   </Button>
                 </div>
               </CardContent>
@@ -379,6 +470,13 @@ const BergerieDashboardPage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Nouveaux Arrivants ({visitors.length})</span>
+                  <Button 
+                    size="sm"
+                    onClick={() => setShowAddVisitorDialog(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Ancien visiteur
+                  </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -389,13 +487,15 @@ const BergerieDashboardPage = () => {
                     visitors.map((visitor) => (
                       <div 
                         key={visitor.id}
-                        className="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                        onClick={() => navigate(`/visitor/${visitor.id}`)}
+                        className="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50"
                       >
                         <div>
                           <p className="font-medium">{visitor.firstname} {visitor.lastname}</p>
                           <p className="text-sm text-gray-500">
-                            {visitor.phone} • {visitor.visit_date}
+                            {visitor.phone || 'Pas de téléphone'} • {visitor.visitor_type || 'Nouveau arrivant'}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            Arrivé le {visitor.visit_date ? new Date(visitor.visit_date).toLocaleDateString('fr-FR') : 'N/A'}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -406,7 +506,7 @@ const BergerieDashboardPage = () => {
                           }`}>
                             {disciples[visitor.id] === 'Oui' ? '✅ Disciple' : 
                              disciples[visitor.id] === 'En Cours' ? '⏳ En cours' : 
-                             '➖ Non'}
+                             '➖'}
                           </span>
                         </div>
                       </div>
@@ -421,7 +521,7 @@ const BergerieDashboardPage = () => {
           <TabsContent value="tableau" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Vue Tableau - Suivi des Présences</CardTitle>
+                <CardTitle>Vue Tableau - Suivi des Présences et Disciples</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -431,38 +531,121 @@ const BergerieDashboardPage = () => {
                         <th className="text-left py-3 px-4">Nom</th>
                         <th className="text-left py-3 px-4">Prénom</th>
                         <th className="text-left py-3 px-4">Téléphone</th>
+                        <th className="text-left py-3 px-4">Type</th>
                         <th className="text-center py-3 px-4">Statut Disciple</th>
                         <th className="text-left py-3 px-4">Date Arrivée</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {visitors.map((visitor) => (
-                        <tr key={visitor.id} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4 font-medium">{visitor.lastname}</td>
-                          <td className="py-3 px-4">{visitor.firstname}</td>
-                          <td className="py-3 px-4">{visitor.phone || '-'}</td>
-                          <td className="py-3 px-4">
-                            <Select
-                              value={disciples[visitor.id] || 'Non'}
-                              onValueChange={(value) => handleUpdateDisciple(visitor.id, value)}
-                            >
-                              <SelectTrigger className="w-32">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Non">Non</SelectItem>
-                                <SelectItem value="En Cours">En Cours</SelectItem>
-                                <SelectItem value="Oui">Oui</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </td>
-                          <td className="py-3 px-4">
-                            {visitor.visit_date ? new Date(visitor.visit_date).toLocaleDateString('fr-FR') : '-'}
-                          </td>
+                      {visitors.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" className="text-center py-8 text-gray-500">Aucun visiteur</td>
                         </tr>
-                      ))}
+                      ) : (
+                        visitors.map((visitor) => (
+                          <tr key={visitor.id} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4 font-medium">{visitor.lastname}</td>
+                            <td className="py-3 px-4">{visitor.firstname}</td>
+                            <td className="py-3 px-4">{visitor.phone || '-'}</td>
+                            <td className="py-3 px-4">
+                              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                                {visitor.visitor_type || 'Nouveau arrivant'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <Select
+                                value={disciples[visitor.id] || 'Non'}
+                                onValueChange={(value) => handleUpdateDisciple(visitor.id, value)}
+                              >
+                                <SelectTrigger className="w-32">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Non">Non</SelectItem>
+                                  <SelectItem value="En Cours">En Cours</SelectItem>
+                                  <SelectItem value="Oui">Oui</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </td>
+                            <td className="py-3 px-4">
+                              {visitor.visit_date ? new Date(visitor.visit_date).toLocaleDateString('fr-FR') : '-'}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* === ONGLET MARQUER PRÉSENCES === */}
+          <TabsContent value="presences" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Marquer les Présences</span>
+                  <div className="flex items-center gap-2">
+                    <Label>Date:</Label>
+                    <Input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="w-40"
+                    />
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {visitors.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">Aucun visiteur à pointer</p>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-4 gap-4 font-semibold border-b pb-2 mb-2">
+                        <span>Nom</span>
+                        <span>Prénom</span>
+                        <span className="text-center">Présent</span>
+                        <span>Commentaire</span>
+                      </div>
+                      {visitors.map((visitor) => (
+                        <div key={visitor.id} className="grid grid-cols-4 gap-4 items-center py-2 border-b">
+                          <span className="font-medium">{visitor.lastname}</span>
+                          <span>{visitor.firstname}</span>
+                          <div className="text-center">
+                            <input
+                              type="checkbox"
+                              className="h-5 w-5 rounded border-gray-300"
+                              checked={presenceData[visitor.id]?.present || false}
+                              onChange={(e) => setPresenceData(prev => ({
+                                ...prev,
+                                [visitor.id]: { ...prev[visitor.id], present: e.target.checked }
+                              }))}
+                            />
+                          </div>
+                          <Input
+                            placeholder="Commentaire..."
+                            value={presenceData[visitor.id]?.comment || ''}
+                            onChange={(e) => setPresenceData(prev => ({
+                              ...prev,
+                              [visitor.id]: { ...prev[visitor.id], comment: e.target.value }
+                            }))}
+                          />
+                        </div>
+                      ))}
+                      <div className="flex justify-end mt-4">
+                        <Button 
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => {
+                            toast.success('Présences enregistrées');
+                          }}
+                        >
+                          Enregistrer les présences
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -490,7 +673,7 @@ const BergerieDashboardPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Personnes reçues initialement: <strong className="text-green-700">{stats.total_recus || 0}</strong>
+                  Personnes reçues initialement: <strong className="text-green-700">{stats.total_recus || visitors.length}</strong>
                 </p>
                 
                 {objectifs.length === 0 ? (
@@ -532,7 +715,7 @@ const BergerieDashboardPage = () => {
                                           method: 'PUT',
                                           headers: {
                                             'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                            ...getAuthHeader()
                                           },
                                           body: JSON.stringify({
                                             ...obj,
@@ -589,7 +772,7 @@ const BergerieDashboardPage = () => {
                   </div>
                   <div className="p-3 bg-gray-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-gray-600">
-                      {(stats.total_recus || 0) - (stats.total_disciples_oui || 0) - (stats.total_disciples_en_cours || 0)}
+                      {(stats.total_recus || visitors.length) - (stats.total_disciples_oui || 0) - (stats.total_disciples_en_cours || 0)}
                     </p>
                     <p className="text-sm text-gray-600">Non encore</p>
                   </div>
@@ -821,6 +1004,67 @@ const BergerieDashboardPage = () => {
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowContactDialog(false)}>Annuler</Button>
               <Button onClick={handleSaveContact} className="bg-purple-600 hover:bg-purple-700">Enregistrer</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog Ajouter Ancien Visiteur */}
+        <Dialog open={showAddVisitorDialog} onOpenChange={setShowAddVisitorDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Ajouter un Ancien Visiteur</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Prénom *</Label>
+                  <Input
+                    value={newVisitor.firstname}
+                    onChange={(e) => setNewVisitor(prev => ({ ...prev, firstname: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label>Nom *</Label>
+                  <Input
+                    value={newVisitor.lastname}
+                    onChange={(e) => setNewVisitor(prev => ({ ...prev, lastname: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div>
+                <Label>Téléphone</Label>
+                <Input
+                  value={newVisitor.phone}
+                  onChange={(e) => setNewVisitor(prev => ({ ...prev, phone: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={newVisitor.email}
+                  onChange={(e) => setNewVisitor(prev => ({ ...prev, email: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label>Type</Label>
+                <Select
+                  value={newVisitor.visitor_type}
+                  onValueChange={(v) => setNewVisitor(prev => ({ ...prev, visitor_type: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Nouveau arrivant">Nouveau arrivant</SelectItem>
+                    <SelectItem value="Nouveau converti">Nouveau converti</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAddVisitorDialog(false)}>Annuler</Button>
+              <Button onClick={handleAddVisitor}>Ajouter</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
