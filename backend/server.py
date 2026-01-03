@@ -8000,6 +8000,130 @@ async def _get_bergeries_list_internal(ville: str):
     return bergeries
 
 
+# ========== ENDPOINTS PUBLICS - MINISTÈRE DES STARS ==========
+
+@api_router.get("/stars/public/stats")
+async def get_stars_public_stats(ville: Optional[str] = None):
+    """Récupérer les statistiques des Stars - Accès public"""
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    # Total
+    total = await db.stars.count_documents(query)
+    
+    # Actifs
+    query_actifs = {**query, "statut": "Actif"}
+    actifs = await db.stars.count_documents(query_actifs)
+    
+    # Non actifs
+    non_actifs = total - actifs
+    
+    # Par département
+    pipeline = [
+        {"$match": query},
+        {"$unwind": "$departements"},
+        {"$group": {"_id": "$departements", "count": {"$sum": 1}}}
+    ]
+    dept_counts_cursor = db.stars.aggregate(pipeline)
+    dept_counts = {}
+    async for doc in dept_counts_cursor:
+        dept_counts[doc["_id"]] = doc["count"]
+    
+    return {
+        "total": total,
+        "actifs": actifs,
+        "non_actifs": non_actifs,
+        "par_departement": dept_counts
+    }
+
+@api_router.get("/stars/public/multi-departements")
+async def get_stars_public_multi_departements(ville: Optional[str] = None):
+    """Récupérer les stars servant dans plusieurs départements - Accès public"""
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    # Trouver les stars avec plus d'un département
+    stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    multi_dept_stars = [
+        {
+            "prenom": s.get("prenom", ""),
+            "nom": s.get("nom", ""),
+            "departements": s.get("departements", [])
+        }
+        for s in stars
+        if len(s.get("departements", [])) > 1
+    ]
+    
+    # Trier par nombre de départements
+    multi_dept_stars.sort(key=lambda x: len(x["departements"]), reverse=True)
+    
+    return multi_dept_stars
+
+
+# ========== ENDPOINTS PUBLICS - BERGERS ÉGLISE ==========
+
+@api_router.get("/bergers-eglise/public/stats")
+async def get_bergers_eglise_public_stats(ville: Optional[str] = None):
+    """Récupérer les statistiques globales pour un Berger d'Église - Accès public"""
+    query = {}
+    if ville:
+        query = {"city": ville}
+    
+    # Total nouveaux arrivants (cette année)
+    current_year = datetime.now().year
+    visitors_query = {**query, "tracking_stopped": {"$ne": True}}
+    total_visitors = await db.visitors.count_documents(visitors_query)
+    
+    # Total Familles d'Impact
+    fi_query = {"ville": ville} if ville else {}
+    total_fi = await db.familles_impact.count_documents(fi_query)
+    
+    # Total Stars
+    stars_query = {"ville": ville} if ville else {}
+    total_stars = await db.stars.count_documents(stars_query)
+    
+    # Total évangélisés (via bergerie contacts)
+    evangelises_query = {"ville": ville, "type_contact": "Evangelisation"} if ville else {"type_contact": "Evangelisation"}
+    total_evangelises = await db.bergerie_contacts.count_documents(evangelises_query)
+    
+    return {
+        "total_visitors": total_visitors,
+        "total_fi": total_fi,
+        "total_stars": total_stars,
+        "total_evangelises": total_evangelises
+    }
+
+@api_router.get("/public/bergerie/list/{ville}")
+async def get_public_bergerie_list(ville: str):
+    """Récupérer la liste des bergeries pour une ville - Accès public"""
+    month_names = {
+        '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
+        '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
+        '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
+    }
+    
+    bergeries = []
+    
+    for month_num, month_name in month_names.items():
+        # Compter les visiteurs pour cette bergerie
+        visitors_count = await db.visitors.count_documents({
+            "city": ville,
+            "assigned_month": {"$regex": f"-{month_num}$"},
+            "tracking_stopped": {"$ne": True}
+        })
+        
+        bergeries.append({
+            "month": month_num,
+            "name": f"Bergerie {month_name}",
+            "count": visitors_count
+        })
+    
+    return bergeries
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
