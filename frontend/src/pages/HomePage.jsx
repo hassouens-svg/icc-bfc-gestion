@@ -98,13 +98,21 @@ const HomePage = () => {
       return;
     }
     
+    // BERGERIES - Accès direct sans connexion
+    if (deptId === 'promotions') {
+      navigate('/bergeries');
+      return;
+    }
+    
+    // ACCÈS BERGERS ÉGLISE (My Event Church) - Accès direct sans connexion
     if (deptId === 'acces-bergers-eglise') {
-      navigate('/acces-bergers-eglise');
+      navigate('/select-ville-bergers');
       return;
     }
 
+    // MINISTÈRE DES STARS - Accès direct sans connexion
     if (deptId === 'ministere-stars') {
-      navigate('/ministere-stars-login');
+      navigate('/select-ville-stars');
       return;
     }
 
@@ -124,8 +132,6 @@ const HomePage = () => {
     
     if (deptId === 'accueil') {
       navigate('/visitors');
-    } else if (deptId === 'promotions') {
-      navigate('/dashboard');
     } else if (deptId === 'familles-impact') {
       navigate('/familles-impact');
     } else if (deptId === 'evangelisation') {
