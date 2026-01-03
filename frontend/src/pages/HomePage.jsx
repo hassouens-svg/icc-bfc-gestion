@@ -125,8 +125,8 @@ const HomePage = () => {
     if (deptId === 'accueil') {
       navigate('/visitors');
     } else if (deptId === 'promotions') {
-      // Nouveau: aller vers la sélection de ville pour choisir sa bergerie
-      navigate('/select-ville?redirect=bergeries');
+      // Nouveau: aller directement vers la page de sélection des bergeries
+      navigate('/bergeries');
     } else if (deptId === 'familles-impact') {
       navigate('/familles-impact');
     } else if (deptId === 'evangelisation') {
