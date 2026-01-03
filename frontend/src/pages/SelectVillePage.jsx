@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { getCities, getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -9,20 +9,28 @@ import { toast } from 'sonner';
 const SelectVillePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const user = getUser();
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Récupérer le département depuis l'état de navigation
+  // Récupérer le département depuis l'état de navigation ou les query params
   const department = location.state?.department || 'promotions';
+  const redirectTo = searchParams.get('redirect'); // "bergeries" si redirection vers bergeries
 
   useEffect(() => {
+    // Permettre l'accès à la sélection de ville sans connexion pour les bergeries
+    if (redirectTo === 'bergeries') {
+      loadCities();
+      return;
+    }
+    
     if (!user || user.role !== 'super_admin') {
       navigate('/dashboard');
       return;
     }
     loadCities();
-  }, [user, navigate]);
+  }, [user, navigate, redirectTo]);
 
   const loadCities = async () => {
     try {
