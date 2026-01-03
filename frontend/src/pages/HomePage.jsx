@@ -113,6 +113,12 @@ const HomePage = () => {
       return;
     }
 
+    // BERGERIES - Accès sans connexion
+    if (deptId === 'promotions') {
+      navigate('/bergeries');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Veuillez vous connecter');
@@ -124,9 +130,6 @@ const HomePage = () => {
     
     if (deptId === 'accueil') {
       navigate('/visitors');
-    } else if (deptId === 'promotions') {
-      // Nouveau: aller directement vers la page de sélection des bergeries
-      navigate('/bergeries');
     } else if (deptId === 'familles-impact') {
       navigate('/familles-impact');
     } else if (deptId === 'evangelisation') {
