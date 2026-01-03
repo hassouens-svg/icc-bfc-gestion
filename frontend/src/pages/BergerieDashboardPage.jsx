@@ -977,14 +977,14 @@ const BergerieDashboardPage = () => {
               <div>
                 <Label>Statut</Label>
                 <Select
-                  value={newContact.statut}
-                  onValueChange={(v) => setNewContact(prev => ({ ...prev, statut: v }))}
+                  value={newContact.statut || 'none'}
+                  onValueChange={(v) => setNewContact(prev => ({ ...prev, statut: v === 'none' ? '' : v }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionner un statut" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Aucun</SelectItem>
+                    <SelectItem value="none">Aucun</SelectItem>
                     <SelectItem value="Réceptif">Réceptif</SelectItem>
                     <SelectItem value="Prière de salut">Prière de salut</SelectItem>
                     <SelectItem value="Venu à l'église">Venu à l'église</SelectItem>
