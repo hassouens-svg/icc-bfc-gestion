@@ -143,6 +143,8 @@ function App() {
           <Route path="/bergeries" element={<SelectBergeriePublicPage />} />
           <Route path="/bergeries-select" element={<SelectBergeriePage />} />
           <Route path="/bergerie/dashboard" element={<BergerieDashboardPage />} />
+          <Route path="/suivi-disciples" element={<SuiviDisciplesPage />} />
+          <Route path="/reproduction" element={<ReproductionPage />} />
           
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
