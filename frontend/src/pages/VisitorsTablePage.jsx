@@ -517,18 +517,18 @@ const VisitorsTablePage = () => {
                 />
               </div>
 
-              {/* Promo Filter */}
+              {/* Bergerie Filter */}
               <div className="space-y-2">
-                <Label>Promotion</Label>
+                <Label>Bergerie</Label>
                 <Select value={filters.promo} onValueChange={(value) => setFilters({...filters, promo: value})}>
                   <SelectTrigger>
                     <SelectValue placeholder="Toutes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les promos</SelectItem>
+                    <SelectItem value="all">Toutes les bergeries</SelectItem>
                     {uniquePromos.map(promo => (
                       <SelectItem key={promo} value={promo}>
-                        {promo}
+                        Bergerie {promo}
                       </SelectItem>
                     ))}
                   </SelectContent>
