@@ -474,7 +474,7 @@ const VisitorsTablePage = () => {
                 </h3>
                 <p className="text-green-100 text-sm mt-1">
                   {filters.promo !== 'all'
-                    ? `Promo ${filters.promo}`
+                    ? `Bergerie ${filters.promo}`
                     : filters.date 
                       ? `Semaine du ${filters.date}` 
                       : 'Moyenne globale (toutes les semaines)'
