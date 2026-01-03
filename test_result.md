@@ -120,3 +120,24 @@
 ## Agent Communication
 - agent: "testing"
   message: "Pain du Jour module fully tested and verified working. All backend APIs (fetch-transcription, extract-versets, generate-resume-quiz, save/retrieve content) are functioning correctly with proper authentication, AI integration (GPT-4o-mini), and data persistence. The complete workflow from YouTube URL to saved content works as expected. No critical issues found."
+
+### Public Access System - Bergeries, Stars, Bergers Église
+- task: "Public access without login for Bergeries, Ministère des Stars, Accès Bergers Église"
+  implemented: true
+  working: needs_verification
+  file: "/app/frontend/src/pages/MinistereStarsPublicDashboardPage.jsx, /app/frontend/src/pages/BergersEglisePublicDashboardPage.jsx"
+  priority: "high"
+  endpoints:
+    - "GET /api/stars/public/stats?ville={ville}"
+    - "GET /api/stars/public/multi-departements?ville={ville}"
+    - "GET /api/bergers-eglise/public/stats?ville={ville}"
+    - "GET /api/public/bergerie/list/{ville}"
+  status_history:
+    - working: needs_verification
+      agent: "fork"
+      comment: "Implemented public access flows for all 3 departments. Screenshots show correct data display. Testing agent should verify full e2e flows."
+
+## Test Instructions for Testing Agent
+- Test public access flow for Ministère des Stars: Homepage -> Click "Ministère des Stars" -> Select ville "Dijon" -> Verify dashboard shows stats
+- Test public access flow for Accès Bergers Église: Homepage -> Click "Accès Bergers d'Église" -> Select ville "Dijon" -> Verify dashboard shows stats
+- Test Bergeries flow: Homepage -> Click "Bergeries" -> Select ville "Dijon" -> Click on any Bergerie -> Verify dashboard and Reproduction tab work
