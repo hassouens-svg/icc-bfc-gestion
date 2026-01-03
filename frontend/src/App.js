@@ -77,10 +77,6 @@ import PainDuJourQuizPage from './pages/PainDuJourQuizPage';
 import SelectBergeriePage from './pages/SelectBergeriePage';
 import SelectBergeriePublicPage from './pages/SelectBergeriePublicPage';
 import BergerieDashboardPage from './pages/BergerieDashboardPage';
-import SelectVilleBergersPage from './pages/SelectVilleBergersPage';
-import SelectVilleStarsPage from './pages/SelectVilleStarsPage';
-import MinistereStarsPublicDashboardPage from './pages/MinistereStarsPublicDashboardPage';
-import BergersEglisePublicDashboardPage from './pages/BergersEglisePublicDashboardPage';
 
 function App() {
   return (
