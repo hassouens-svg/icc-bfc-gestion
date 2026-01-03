@@ -140,13 +140,10 @@ const BergerieDashboardPage = () => {
     
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/objectifs`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/objectifs`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             bergerie_month: monthNum,
             ville: ville,
