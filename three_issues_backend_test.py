@@ -18,7 +18,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BACKEND_URL = "https://videosum-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://faith-hub-23.preview.emergentagent.com/api"
 USERNAME = "superadmin"
 PASSWORD = "superadmin123"
 CITY = "Dijon"

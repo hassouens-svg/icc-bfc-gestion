@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://videosum-2.preview.emergentagent.com/login
-- **Inscription Publique**: https://videosum-2.preview.emergentagent.com/register
+- **Connexion**: https://faith-hub-23.preview.emergentagent.com/login
+- **Inscription Publique**: https://faith-hub-23.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**
