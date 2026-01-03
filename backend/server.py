@@ -7412,6 +7412,393 @@ async def chatbot_message(chat: ChatMessage):
         }
 
 
+# ==============================================
+# BERGERIE - SYSTÈME DE REPRODUCTION
+# ==============================================
+
+class BergerieObjectif(BaseModel):
+    """Objectifs mensuels d'une bergerie"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bergerie_month: str  # "01" à "12" (le mois de la bergerie)
+    ville: str
+    annee: int  # L'année de référence (ex: 2025)
+    mois_cible: str  # Le mois pour lequel on fixe l'objectif (ex: "2025-09")
+    objectif_nombre: int  # L'objectif de personnes à atteindre
+    nombre_reel: Optional[int] = None  # Le nombre réel atteint
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
+
+class BergerieObjectifCreate(BaseModel):
+    bergerie_month: str
+    ville: str
+    annee: int
+    mois_cible: str
+    objectif_nombre: int
+    nombre_reel: Optional[int] = None
+
+class BergerieContact(BaseModel):
+    """Personnes contactées par la bergerie (évangélisation ou autres)"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bergerie_month: str  # "01" à "12"
+    ville: str
+    nom: str
+    prenom: str
+    telephone: Optional[str] = None
+    date_contact: str  # Date du contact YYYY-MM-DD
+    type_contact: str  # "Evangelisation" ou "Autres"
+    precision_autres: Optional[str] = None  # Précision si type = "Autres"
+    statut: Optional[str] = None  # "Réceptif", "Prière de salut", "Venu à l'église", etc.
+    notes: Optional[str] = None
+    created_by: str  # ID de l'utilisateur qui a créé
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BergerieContactCreate(BaseModel):
+    bergerie_month: str
+    ville: str
+    nom: str
+    prenom: str
+    telephone: Optional[str] = None
+    date_contact: str
+    type_contact: str  # "Evangelisation" ou "Autres"
+    precision_autres: Optional[str] = None
+    statut: Optional[str] = None
+    notes: Optional[str] = None
+
+class BergerieDisciple(BaseModel):
+    """Suivi des disciples dans une bergerie"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    visitor_id: str  # ID du visiteur
+    bergerie_month: str  # "01" à "12"
+    ville: str
+    est_disciple: str  # "Oui", "En Cours", "Non"
+    date_devenu_disciple: Optional[str] = None
+    notes: Optional[str] = None
+    updated_by: str
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BergerieDiscipleUpdate(BaseModel):
+    est_disciple: str  # "Oui", "En Cours", "Non"
+    date_devenu_disciple: Optional[str] = None
+    notes: Optional[str] = None
+
+
+# --- Endpoints Bergerie Objectifs ---
+
+@api_router.get("/bergerie/objectifs/{ville}/{bergerie_month}")
+async def get_bergerie_objectifs(ville: str, bergerie_month: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer tous les objectifs d'une bergerie"""
+    objectifs = await db.bergerie_objectifs.find(
+        {"ville": ville, "bergerie_month": bergerie_month},
+        {"_id": 0}
+    ).sort("mois_cible", 1).to_list(100)
+    return objectifs
+
+@api_router.post("/bergerie/objectifs")
+async def create_bergerie_objectif(objectif: BergerieObjectifCreate, current_user: dict = Depends(get_current_user)):
+    """Créer ou mettre à jour un objectif de bergerie"""
+    # Vérifier si l'objectif existe déjà pour ce mois_cible
+    existing = await db.bergerie_objectifs.find_one({
+        "bergerie_month": objectif.bergerie_month,
+        "ville": objectif.ville,
+        "mois_cible": objectif.mois_cible
+    })
+    
+    if existing:
+        # Mettre à jour
+        await db.bergerie_objectifs.update_one(
+            {"id": existing["id"]},
+            {"$set": {
+                "objectif_nombre": objectif.objectif_nombre,
+                "nombre_reel": objectif.nombre_reel,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        return {"message": "Objectif mis à jour", "id": existing["id"]}
+    else:
+        # Créer nouveau
+        new_objectif = BergerieObjectif(**objectif.model_dump())
+        await db.bergerie_objectifs.insert_one(new_objectif.model_dump())
+        return {"message": "Objectif créé", "id": new_objectif.id}
+
+@api_router.put("/bergerie/objectifs/{objectif_id}")
+async def update_bergerie_objectif(objectif_id: str, objectif: BergerieObjectifCreate, current_user: dict = Depends(get_current_user)):
+    """Mettre à jour un objectif"""
+    result = await db.bergerie_objectifs.update_one(
+        {"id": objectif_id},
+        {"$set": {
+            "objectif_nombre": objectif.objectif_nombre,
+            "nombre_reel": objectif.nombre_reel,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Objectif non trouvé")
+    return {"message": "Objectif mis à jour"}
+
+
+# --- Endpoints Bergerie Contacts (Évangélisation) ---
+
+@api_router.get("/bergerie/contacts/{ville}/{bergerie_month}")
+async def get_bergerie_contacts(ville: str, bergerie_month: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer tous les contacts d'une bergerie"""
+    contacts = await db.bergerie_contacts.find(
+        {"ville": ville, "bergerie_month": bergerie_month},
+        {"_id": 0}
+    ).sort("date_contact", -1).to_list(500)
+    return contacts
+
+@api_router.post("/bergerie/contacts")
+async def create_bergerie_contact(contact: BergerieContactCreate, current_user: dict = Depends(get_current_user)):
+    """Ajouter un nouveau contact"""
+    new_contact = BergerieContact(
+        **contact.model_dump(),
+        created_by=current_user["id"]
+    )
+    await db.bergerie_contacts.insert_one(new_contact.model_dump())
+    return {"message": "Contact ajouté", "id": new_contact.id}
+
+@api_router.put("/bergerie/contacts/{contact_id}")
+async def update_bergerie_contact(contact_id: str, contact: BergerieContactCreate, current_user: dict = Depends(get_current_user)):
+    """Mettre à jour un contact"""
+    result = await db.bergerie_contacts.update_one(
+        {"id": contact_id},
+        {"$set": {
+            "nom": contact.nom,
+            "prenom": contact.prenom,
+            "telephone": contact.telephone,
+            "date_contact": contact.date_contact,
+            "type_contact": contact.type_contact,
+            "precision_autres": contact.precision_autres,
+            "statut": contact.statut,
+            "notes": contact.notes
+        }}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Contact non trouvé")
+    return {"message": "Contact mis à jour"}
+
+@api_router.delete("/bergerie/contacts/{contact_id}")
+async def delete_bergerie_contact(contact_id: str, current_user: dict = Depends(get_current_user)):
+    """Supprimer un contact"""
+    result = await db.bergerie_contacts.delete_one({"id": contact_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Contact non trouvé")
+    return {"message": "Contact supprimé"}
+
+
+# --- Endpoints Bergerie Disciples ---
+
+@api_router.get("/bergerie/disciples/{ville}/{bergerie_month}")
+async def get_bergerie_disciples(ville: str, bergerie_month: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer le statut disciple de tous les visiteurs d'une bergerie"""
+    disciples = await db.bergerie_disciples.find(
+        {"ville": ville, "bergerie_month": bergerie_month},
+        {"_id": 0}
+    ).to_list(500)
+    return disciples
+
+@api_router.post("/bergerie/disciples/{visitor_id}")
+async def update_bergerie_disciple(visitor_id: str, disciple: BergerieDiscipleUpdate, current_user: dict = Depends(get_current_user)):
+    """Mettre à jour le statut disciple d'un visiteur"""
+    # Récupérer le visiteur pour avoir son assigned_month
+    visitor = await db.visitors.find_one({"id": visitor_id})
+    if not visitor:
+        raise HTTPException(status_code=404, detail="Visiteur non trouvé")
+    
+    bergerie_month = visitor.get("assigned_month", "").split("-")[1] if visitor.get("assigned_month") else "01"
+    ville = visitor.get("city", "")
+    
+    # Vérifier si un enregistrement existe déjà
+    existing = await db.bergerie_disciples.find_one({"visitor_id": visitor_id})
+    
+    if existing:
+        # Mettre à jour
+        await db.bergerie_disciples.update_one(
+            {"visitor_id": visitor_id},
+            {"$set": {
+                "est_disciple": disciple.est_disciple,
+                "date_devenu_disciple": disciple.date_devenu_disciple,
+                "notes": disciple.notes,
+                "updated_by": current_user["id"],
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+    else:
+        # Créer nouveau
+        new_disciple = BergerieDisciple(
+            visitor_id=visitor_id,
+            bergerie_month=bergerie_month,
+            ville=ville,
+            est_disciple=disciple.est_disciple,
+            date_devenu_disciple=disciple.date_devenu_disciple,
+            notes=disciple.notes,
+            updated_by=current_user["id"]
+        )
+        await db.bergerie_disciples.insert_one(new_disciple.model_dump())
+    
+    return {"message": "Statut disciple mis à jour"}
+
+
+# --- Endpoints Stats Bergerie pour Dynamique Évangélisation ---
+
+@api_router.get("/bergerie/stats/evangelisation/{ville}")
+async def get_bergerie_evangelisation_stats(ville: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer les statistiques d'évangélisation de toutes les bergeries d'une ville"""
+    # Récupérer tous les contacts de type "Evangelisation"
+    contacts = await db.bergerie_contacts.find(
+        {"ville": ville, "type_contact": "Evangelisation"},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Grouper par bergerie
+    stats_by_bergerie = {}
+    month_names = {
+        '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
+        '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
+        '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
+    }
+    
+    for contact in contacts:
+        bergerie_month = contact.get("bergerie_month", "01")
+        bergerie_name = f"Bergerie {month_names.get(bergerie_month, bergerie_month)}"
+        
+        if bergerie_name not in stats_by_bergerie:
+            stats_by_bergerie[bergerie_name] = {
+                "bergerie_month": bergerie_month,
+                "bergerie_name": bergerie_name,
+                "total_evangelises": 0,
+                "receptifs": 0,
+                "priere_salut": 0,
+                "venus_eglise": 0
+            }
+        
+        stats_by_bergerie[bergerie_name]["total_evangelises"] += 1
+        statut = contact.get("statut", "").lower()
+        if "réceptif" in statut or "receptif" in statut:
+            stats_by_bergerie[bergerie_name]["receptifs"] += 1
+        if "prière" in statut or "salut" in statut:
+            stats_by_bergerie[bergerie_name]["priere_salut"] += 1
+        if "venu" in statut or "église" in statut or "eglise" in statut:
+            stats_by_bergerie[bergerie_name]["venus_eglise"] += 1
+    
+    # Calculer les totaux
+    totals = {
+        "total_evangelises": sum(s["total_evangelises"] for s in stats_by_bergerie.values()),
+        "receptifs": sum(s["receptifs"] for s in stats_by_bergerie.values()),
+        "priere_salut": sum(s["priere_salut"] for s in stats_by_bergerie.values()),
+        "venus_eglise": sum(s["venus_eglise"] for s in stats_by_bergerie.values())
+    }
+    
+    return {
+        "by_bergerie": list(stats_by_bergerie.values()),
+        "totals": totals
+    }
+
+@api_router.get("/bergerie/reproduction/{ville}/{bergerie_month}")
+async def get_bergerie_reproduction_data(ville: str, bergerie_month: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer toutes les données de reproduction d'une bergerie"""
+    
+    # 1. Récupérer les visiteurs assignés à cette bergerie
+    visitors = await db.visitors.find(
+        {"city": ville, "assigned_month": {"$regex": f"-{bergerie_month}$"}},
+        {"_id": 0}
+    ).to_list(500)
+    
+    # 2. Récupérer les objectifs
+    objectifs = await db.bergerie_objectifs.find(
+        {"ville": ville, "bergerie_month": bergerie_month},
+        {"_id": 0}
+    ).sort("mois_cible", 1).to_list(100)
+    
+    # 3. Récupérer les contacts
+    contacts = await db.bergerie_contacts.find(
+        {"ville": ville, "bergerie_month": bergerie_month},
+        {"_id": 0}
+    ).sort("date_contact", -1).to_list(500)
+    
+    # 4. Récupérer les statuts disciples
+    disciples = await db.bergerie_disciples.find(
+        {"ville": ville, "bergerie_month": bergerie_month},
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Créer un map pour les statuts disciples
+    disciples_map = {d["visitor_id"]: d for d in disciples}
+    
+    # Enrichir les visiteurs avec leur statut disciple
+    for visitor in visitors:
+        visitor_disciple = disciples_map.get(visitor["id"], {})
+        visitor["est_disciple"] = visitor_disciple.get("est_disciple", "Non")
+        visitor["date_devenu_disciple"] = visitor_disciple.get("date_devenu_disciple")
+    
+    # Calculer les stats
+    total_recus = len([v for v in visitors if not v.get("tracking_stopped")])
+    total_disciples_oui = len([v for v in visitors if v.get("est_disciple") == "Oui"])
+    total_disciples_en_cours = len([v for v in visitors if v.get("est_disciple") == "En Cours"])
+    total_evangelises = len([c for c in contacts if c.get("type_contact") == "Evangelisation"])
+    
+    return {
+        "visitors": visitors,
+        "objectifs": objectifs,
+        "contacts": contacts,
+        "stats": {
+            "total_recus": total_recus,
+            "total_disciples_oui": total_disciples_oui,
+            "total_disciples_en_cours": total_disciples_en_cours,
+            "total_evangelises": total_evangelises
+        }
+    }
+
+@api_router.get("/bergerie/list/{ville}")
+async def get_bergeries_list(ville: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer la liste des 12 bergeries d'une ville avec leurs stats"""
+    month_names = {
+        '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
+        '05': 'Mai', '06': 'Juin', '07': 'Juillet', '08': 'Août',
+        '09': 'Septembre', '10': 'Octobre', '11': 'Novembre', '12': 'Décembre'
+    }
+    
+    bergeries = []
+    
+    for month_num, month_name in month_names.items():
+        # Compter les visiteurs pour cette bergerie
+        visitors_count = await db.visitors.count_documents({
+            "city": ville,
+            "assigned_month": {"$regex": f"-{month_num}$"},
+            "tracking_stopped": {"$ne": True}
+        })
+        
+        # Récupérer les bergers assignés
+        bergers = await db.users.find(
+            {
+                "city": ville,
+                "role": {"$in": ["referent", "berger"]},
+                "assigned_month": {"$regex": f"-{month_num}$"}
+            },
+            {"_id": 0, "id": 1, "username": 1, "promo_name": 1}
+        ).to_list(10)
+        
+        # Nom personnalisé s'il existe
+        custom_name = None
+        for b in bergers:
+            if b.get("promo_name"):
+                custom_name = b["promo_name"]
+                break
+        
+        bergeries.append({
+            "month_num": month_num,
+            "month_name": month_name,
+            "nom": custom_name or f"Bergerie {month_name}",
+            "total_personnes": visitors_count,
+            "bergers": bergers
+        })
+    
+    return bergeries
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
