@@ -1055,6 +1055,23 @@ async def create_visitor(visitor_data: VisitorCreate, current_user: dict = Depen
     await db.visitors.insert_one(doc)
     return {"message": "Visitor created successfully", "id": visitor.id}
 
+@api_router.post("/visitors/public")
+async def create_visitor_public(visitor_data: VisitorCreate):
+    """Créer un visiteur - Public (pour les bergeries)"""
+    # Calculate assigned_month
+    try:
+        visit_dt = datetime.fromisoformat(visitor_data.visit_date)
+        assigned_month = visit_dt.strftime("%Y-%m")
+    except:
+        assigned_month = datetime.now(timezone.utc).strftime("%Y-%m")
+    
+    visitor = Visitor(**visitor_data.model_dump(), assigned_month=assigned_month)
+    doc = visitor.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.visitors.insert_one(doc)
+    return {"message": "Visitor created successfully", "id": visitor.id}
+
 @api_router.post("/visitors/bulk-ancien")
 async def create_bulk_ancien_visitors(visitors_data: List[VisitorCreate], current_user: dict = Depends(get_current_user)):
     # Only superviseur_promos, responsable_promo, referent, super_admin, pasteur can create
