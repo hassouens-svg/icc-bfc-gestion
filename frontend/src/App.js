@@ -138,7 +138,8 @@ function App() {
           <Route path="/berger-presences/historique" element={<HistoriquePresenceBergersPage />} />
           
           {/* BERGERIES - Nouveau système */}
-          <Route path="/bergeries" element={<SelectBergeriePage />} />
+          <Route path="/bergeries" element={<SelectBergeriePublicPage />} />
+          <Route path="/bergeries-select" element={<SelectBergeriePage />} />
           <Route path="/bergerie/dashboard" element={<BergerieDashboardPage />} />
           
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
