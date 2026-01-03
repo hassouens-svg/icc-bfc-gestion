@@ -74,6 +74,8 @@ import RecensementStarsPage from './pages/RecensementStarsPage';
 import PainDuJourPage from './pages/PainDuJourPage';
 import PainDuJourAdminPage from './pages/PainDuJourAdminPage';
 import PainDuJourQuizPage from './pages/PainDuJourQuizPage';
+import SelectBergeriePage from './pages/SelectBergeriePage';
+import BergerieDashboardPage from './pages/BergerieDashboardPage';
 
 function App() {
   return (
