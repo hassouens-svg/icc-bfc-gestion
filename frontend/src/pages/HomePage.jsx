@@ -98,21 +98,21 @@ const HomePage = () => {
       return;
     }
     
-    // BERGERIES - Accès direct sans connexion
+    // BERGERIES - Accès direct sans connexion (sélecteur de ville uniquement)
     if (deptId === 'promotions') {
       navigate('/bergeries');
       return;
     }
     
-    // ACCÈS BERGERS ÉGLISE (My Event Church) - Accès direct sans connexion
+    // ACCÈS BERGERS ÉGLISE - Requiert connexion (comme avant)
     if (deptId === 'acces-bergers-eglise') {
-      navigate('/select-ville-bergers');
+      navigate('/acces-bergers-eglise');
       return;
     }
 
-    // MINISTÈRE DES STARS - Accès direct sans connexion
+    // MINISTÈRE DES STARS - Requiert connexion (comme avant)
     if (deptId === 'ministere-stars') {
-      navigate('/select-ville-stars');
+      navigate('/ministere-stars-login');
       return;
     }
 
