@@ -171,10 +171,19 @@ const DashboardSuperviseurPromosPage = () => {
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard Superviseur Promotions</h1>
-            <p className="text-gray-500 mt-1">Vue d'ensemble de toutes les promotions - {user.city}</p>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard Superviseur Bergeries</h1>
+            <p className="text-gray-500 mt-1">Vue d'ensemble de toutes les bergeries - {user.city}</p>
           </div>
           <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/bergeries?ville=' + encodeURIComponent(user.city))}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              Toutes les Bergeries
+            </button>
             <button
               onClick={() => navigate('/berger-presences')}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
