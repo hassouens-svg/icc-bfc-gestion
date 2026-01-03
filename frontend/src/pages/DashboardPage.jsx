@@ -174,7 +174,7 @@ const DashboardPage = () => {
           <div>
             <div className="flex items-center space-x-3">
               <h2 className="text-3xl font-bold text-gray-900" data-testid="dashboard-title">
-                Tableau de bord - {user?.promo_name || user?.assigned_month || 'Bergerie'}
+                Dashboard Bergerie - {user?.promo_name || user?.assigned_month || 'Ma Bergerie'}
               </h2>
               {(['promotions', 'responsable_promos', 'referent', 'berger'].includes(user?.role)) && (
                 <Button 
