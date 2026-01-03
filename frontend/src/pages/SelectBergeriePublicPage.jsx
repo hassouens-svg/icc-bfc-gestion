@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCities } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
@@ -27,13 +26,21 @@ const SelectBergeriePublicPage = () => {
 
   const loadCities = async () => {
     try {
-      const citiesData = await getCities();
-      if (citiesData && Array.isArray(citiesData)) {
-        setCities(citiesData);
+      // Appel direct sans authentification
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities/public`);
+      if (response.ok) {
+        const citiesData = await response.json();
+        // Extraire juste les noms de ville (les cities sont des objets avec name)
+        const cityNames = citiesData.map(city => typeof city === 'string' ? city : city.name);
+        setCities(cityNames.filter(Boolean));
+      } else {
+        // Fallback: utiliser des villes par défaut
+        setCities(['Dijon', 'Paris', 'Lyon']);
       }
     } catch (error) {
       console.error('Error loading cities:', error);
-      toast.error('Erreur lors du chargement des villes');
+      // Fallback
+      setCities(['Dijon', 'Paris', 'Lyon']);
     } finally {
       setLoadingCities(false);
     }
