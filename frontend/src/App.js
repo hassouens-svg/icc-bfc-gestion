@@ -75,6 +75,7 @@ import PainDuJourPage from './pages/PainDuJourPage';
 import PainDuJourAdminPage from './pages/PainDuJourAdminPage';
 import PainDuJourQuizPage from './pages/PainDuJourQuizPage';
 import SelectBergeriePage from './pages/SelectBergeriePage';
+import SelectBergeriePublicPage from './pages/SelectBergeriePublicPage';
 import BergerieDashboardPage from './pages/BergerieDashboardPage';
 
 function App() {
