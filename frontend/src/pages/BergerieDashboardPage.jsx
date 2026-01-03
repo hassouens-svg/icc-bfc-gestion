@@ -177,17 +177,15 @@ const BergerieDashboardPage = () => {
     
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/contacts`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             bergerie_month: monthNum,
             ville: ville,
-            ...newContact
+            ...newContact,
+            statut: newContact.statut === 'none' ? '' : newContact.statut
           })
         }
       );
@@ -219,11 +217,8 @@ const BergerieDashboardPage = () => {
     
     try {
       await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${contactId}`,
-        {
-          method: 'DELETE',
-          headers: getAuthHeader()
-        }
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/contacts/${contactId}`,
+        { method: 'DELETE' }
       );
       toast.success('Contact supprimé');
       loadAllData();
