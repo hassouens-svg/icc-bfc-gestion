@@ -231,13 +231,10 @@ const BergerieDashboardPage = () => {
   const handleUpdateDisciple = async (visitorId, newStatus) => {
     try {
       await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/disciples/${visitorId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/disciples/${visitorId}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             est_disciple: newStatus,
             date_devenu_disciple: newStatus === 'Oui' ? new Date().toISOString().split('T')[0] : null
