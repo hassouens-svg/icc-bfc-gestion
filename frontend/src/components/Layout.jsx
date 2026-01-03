@@ -65,9 +65,9 @@ const Layout = ({ children }) => {
     { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['superviseur_promos', 'referent', 'promotions', 'berger'], department: 'promotions' },
     { path: '/suivi-disciples', label: 'Suivi Disciples', icon: UserPlus, roles: ['superviseur_promos', 'referent', 'promotions', 'berger'], department: 'promotions' },
     { path: '/reproduction', label: 'Reproduction', icon: TrendingUp, roles: ['superviseur_promos', 'referent', 'promotions', 'berger'], department: 'promotions' },
-    { path: '/referents', label: 'Bergers', icon: UserPlus, roles: ['superviseur_promos', 'promotions', 'berger'], department: 'promotions' },
-    { path: '/analytics', label: 'Analytics Bergeries', icon: BarChart3, roles: ['superviseur_promos', 'promotions', 'berger'], department: 'promotions' },
-    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['superviseur_promos', 'promotions', 'berger'], department: 'promotions' },
+    { path: '/referents', label: 'Bergers', icon: UserPlus, roles: ['superviseur_promos'], department: 'promotions' },
+    { path: '/analytics', label: 'Analytics Bergeries', icon: BarChart3, roles: ['superviseur_promos'], department: 'promotions' },
+    { path: '/stopped-visitors', label: 'Suivi Arrêté', icon: UserX, roles: ['superviseur_promos'], department: 'promotions' },
     
     // FAMILLES D'IMPACT - visible uniquement si département FI ou rôles FI
     { path: '/familles-impact/dashboard-pilote', label: 'Tableau de Bord Pilote', icon: Home, roles: ['pilote_fi'], department: 'familles-impact' },
