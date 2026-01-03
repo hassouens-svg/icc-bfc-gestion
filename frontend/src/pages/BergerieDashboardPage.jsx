@@ -253,13 +253,10 @@ const BergerieDashboardPage = () => {
     
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/visitors`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/visitors/public`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...newVisitor,
             city: ville,
