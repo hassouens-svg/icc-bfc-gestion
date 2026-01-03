@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { 
   Users, ArrowLeft, Calendar, TrendingUp, Plus, Target, 
   UserCheck, Phone, Clock, Trash2, BarChart3, Heart, Download,
-  UserPlus, Eye, Table, CheckSquare, Sprout
+  UserPlus, Eye, Table, CheckSquare, Sprout, Edit
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -38,11 +38,19 @@ const BergerieDashboardPage = () => {
   // States
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ total_recus: 0, total_disciples_oui: 0, total_disciples_en_cours: 0, total_evangelises: 0 });
+  const [stats, setStats] = useState({ 
+    total_visitors: 0, 
+    total_referents: 0, 
+    formation_pcnc: 0, 
+    formation_au_coeur_bible: 0, 
+    formation_star: 0,
+    by_month: [],
+    by_type: [],
+    by_channel: []
+  });
   const [visitors, setVisitors] = useState([]);
-  const [presences, setPresences] = useState([]);
   
-  // États pour les objectifs
+  // États pour les objectifs (Reproduction)
   const [objectifs, setObjectifs] = useState([]);
   const [showObjectifDialog, setShowObjectifDialog] = useState(false);
   const [newObjectif, setNewObjectif] = useState({
@@ -51,7 +59,7 @@ const BergerieDashboardPage = () => {
     nombre_reel: ''
   });
   
-  // États pour les contacts
+  // États pour les contacts (Reproduction)
   const [contacts, setContacts] = useState([]);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [newContact, setNewContact] = useState({
@@ -101,7 +109,7 @@ const BergerieDashboardPage = () => {
     try {
       // Charger les données de reproduction (utilise endpoint public)
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/reproduction/${ville}/${monthNum}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/reproduction/${encodeURIComponent(ville)}/${monthNum}`
       );
       
       if (response.ok) {
@@ -109,11 +117,39 @@ const BergerieDashboardPage = () => {
         setVisitors(data.visitors || []);
         setObjectifs(data.objectifs || []);
         setContacts(data.contacts || []);
-        setStats(data.stats || { total_recus: 0, total_disciples_oui: 0, total_disciples_en_cours: 0, total_evangelises: 0 });
+        
+        // Calculer les stats comme dans DashboardPage
+        const visitorsData = data.visitors || [];
+        const totalVisitors = visitorsData.filter(v => !v.tracking_stopped).length;
+        const formationPcnc = visitorsData.filter(v => v.formation_pcnc).length;
+        const formationBible = visitorsData.filter(v => v.formation_au_coeur_bible).length;
+        const formationStar = visitorsData.filter(v => v.formation_star).length;
+        
+        // Grouper par type
+        const byType = {};
+        visitorsData.forEach(v => {
+          const type = v.visitor_type || 'Non défini';
+          byType[type] = (byType[type] || 0) + 1;
+        });
+        
+        setStats({
+          total_visitors: totalVisitors,
+          total_referents: 0,
+          formation_pcnc: formationPcnc,
+          formation_au_coeur_bible: formationBible,
+          formation_star: formationStar,
+          by_type: Object.entries(byType).map(([_id, count]) => ({ _id, count })),
+          by_month: [],
+          by_channel: [],
+          // Stats disciples
+          total_disciples_oui: data.stats?.total_disciples_oui || 0,
+          total_disciples_en_cours: data.stats?.total_disciples_en_cours || 0,
+          total_evangelises: data.stats?.total_evangelises || 0
+        });
         
         // Créer le map des disciples
         const disciplesMap = {};
-        (data.visitors || []).forEach(v => {
+        visitorsData.forEach(v => {
           disciplesMap[v.id] = v.est_disciple || 'Non';
         });
         setDisciples(disciplesMap);
@@ -299,7 +335,7 @@ const BergerieDashboardPage = () => {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
         </div>
       </Layout>
     );
@@ -308,124 +344,140 @@ const BergerieDashboardPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Verset biblique pour les Bergers */}
+        <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="text-4xl">📖</div>
+              <div>
+                <p className="text-sm font-semibold text-purple-800 mb-2">Jérémie 3:15</p>
+                <p className="text-base italic text-gray-700 leading-relaxed">
+                  "Je vous donnerai des bergers selon mon cœur, qui vous paîtront avec intelligence et avec sagesse."
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard {bergerieName}</h1>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Dashboard {bergerieName}
+            </h2>
             <p className="text-gray-500 mt-1">{ville}</p>
           </div>
-          <Button variant="outline" onClick={() => navigate(`/bergeries`)}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Toutes les Bergeries
-          </Button>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => navigate('/bergeries')}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Toutes les Bergeries
+            </Button>
+            <Button 
+              onClick={() => navigate(`/marquer-presences?ville=${encodeURIComponent(ville)}&month=${monthNum}`)} 
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Marquer les Présences
+            </Button>
+          </div>
         </div>
 
         {/* Onglets */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="arrivants">Nouveaux Arrivants</TabsTrigger>
+            <TabsTrigger value="visitors">Nouveaux Arrivants</TabsTrigger>
             <TabsTrigger value="tableau">Vue Tableau</TabsTrigger>
-            <TabsTrigger value="presences">Marquer Présences</TabsTrigger>
             <TabsTrigger value="reproduction" className="bg-green-50 text-green-700 data-[state=active]:bg-green-100">
               <Sprout className="h-4 w-4 mr-1" />
               Reproduction
             </TabsTrigger>
           </TabsList>
 
-          {/* === ONGLET DASHBOARD === */}
+          {/* === ONGLET DASHBOARD (comme avant) === */}
           <TabsContent value="dashboard" className="space-y-6">
-            {/* Verset biblique */}
-            <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-4">
-                  <div className="text-4xl">📖</div>
-                  <div>
-                    <p className="text-sm font-semibold text-purple-800 mb-2">Jérémie 3:15</p>
-                    <p className="text-base italic text-gray-700 leading-relaxed">
-                      "Je vous donnerai des bergers selon mon cœur, qui vous paîtront avec intelligence et avec sagesse."
-                    </p>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Nouveaux Arrivants</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.total_visitors || 0}</div>
+                  <p className="text-xs text-muted-foreground">Nouveaux Arrivants actifs</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Bergers</CardTitle>
+                  <UserPlus className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.total_referents || 0}</div>
+                  <p className="text-xs text-muted-foreground">Membres de l'équipe</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Canaux</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.by_channel?.length || 0}</div>
+                  <p className="text-xs text-muted-foreground">Sources d'arrivée</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* KPIs Formations */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <BarChart3 className="h-5 w-5 mr-2" />
+                  KPIs Formations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 border rounded-lg bg-blue-50">
+                    <p className="text-sm text-gray-600">Formation PCNC</p>
+                    <p className="text-3xl font-bold text-blue-600">{stats.formation_pcnc || 0}</p>
+                    <p className="text-xs text-gray-500 mt-1">personnes formées</p>
+                  </div>
+                  <div className="p-4 border rounded-lg bg-green-50">
+                    <p className="text-sm text-gray-600">Au Cœur de la Bible</p>
+                    <p className="text-3xl font-bold text-green-600">{stats.formation_au_coeur_bible || 0}</p>
+                    <p className="text-xs text-gray-500 mt-1">personnes formées</p>
+                  </div>
+                  <div className="p-4 border rounded-lg bg-purple-50">
+                    <p className="text-sm text-gray-600">Formation STAR</p>
+                    <p className="text-3xl font-bold text-purple-600">{stats.formation_star || 0}</p>
+                    <p className="text-xs text-gray-500 mt-1">personnes devenues stars</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Users className="h-4 w-4 text-blue-500" />
-                    Total Nouveaux Arrivants
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-blue-600">{stats.total_recus || visitors.length}</div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <UserCheck className="h-4 w-4 text-green-500" />
-                    Devenus Disciples
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-green-600">{stats.total_disciples_oui || 0}</div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-orange-500" />
-                    En Cours
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-orange-600">{stats.total_disciples_en_cours || 0}</div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-purple-500" />
-                    Évangélisés
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-purple-600">{stats.total_evangelises || 0}</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Actions rapides */}
+            {/* Quick Actions */}
             <Card>
               <CardHeader>
                 <CardTitle>Actions rapides</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Button 
-                    variant="outline"
+                    variant="outline" 
                     className="h-20"
-                    onClick={() => setActiveTab('arrivants')}
+                    onClick={() => setActiveTab('visitors')}
                   >
                     <Users className="h-6 w-6 mr-2" />
-                    Voir les Arrivants
+                    Voir les nouveaux arrivants
                   </Button>
                   <Button 
-                    variant="outline"
-                    className="h-20"
-                    onClick={() => setActiveTab('presences')}
-                  >
-                    <CheckSquare className="h-6 w-6 mr-2" />
-                    Marquer Présences
-                  </Button>
-                  <Button 
-                    variant="outline"
+                    variant="outline" 
                     className="h-20"
                     onClick={() => setActiveTab('tableau')}
                   >
@@ -439,13 +491,40 @@ const BergerieDashboardPage = () => {
                     <Sprout className="h-6 w-6 mr-2" />
                     Reproduction
                   </Button>
+                  <Button 
+                    variant="outline" 
+                    className="h-20"
+                    onClick={() => setShowAddVisitorDialog(true)}
+                  >
+                    <UserPlus className="h-6 w-6 mr-2" />
+                    + Ancien visiteur
+                  </Button>
                 </div>
               </CardContent>
             </Card>
+
+            {/* By Type */}
+            {stats.by_type && stats.by_type.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Par type de nouveaux arrivants</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {stats.by_type.map((item) => (
+                      <div key={item._id} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                        <span className="font-medium">{item._id}</span>
+                        <span className="text-gray-600">{item.count} personne(s)</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           {/* === ONGLET NOUVEAUX ARRIVANTS === */}
-          <TabsContent value="arrivants" className="space-y-4">
+          <TabsContent value="visitors" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -479,15 +558,19 @@ const BergerieDashboardPage = () => {
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            disciples[visitor.id] === 'Oui' ? 'bg-green-100 text-green-700' :
-                            disciples[visitor.id] === 'En Cours' ? 'bg-orange-100 text-orange-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
-                            {disciples[visitor.id] === 'Oui' ? '✅ Disciple' : 
-                             disciples[visitor.id] === 'En Cours' ? '⏳ En cours' : 
-                             '➖'}
-                          </span>
+                          <Select
+                            value={disciples[visitor.id] || 'Non'}
+                            onValueChange={(value) => handleUpdateDisciple(visitor.id, value)}
+                          >
+                            <SelectTrigger className="w-28">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Non">Non</SelectItem>
+                              <SelectItem value="En Cours">En Cours</SelectItem>
+                              <SelectItem value="Oui">Oui ✓</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     ))
@@ -512,7 +595,7 @@ const BergerieDashboardPage = () => {
                         <th className="text-left py-3 px-4">Prénom</th>
                         <th className="text-left py-3 px-4">Téléphone</th>
                         <th className="text-left py-3 px-4">Type</th>
-                        <th className="text-center py-3 px-4">Statut Disciple</th>
+                        <th className="text-center py-3 px-4">Disciple</th>
                         <th className="text-left py-3 px-4">Date Arrivée</th>
                       </tr>
                     </thead>
@@ -543,7 +626,7 @@ const BergerieDashboardPage = () => {
                                 <SelectContent>
                                   <SelectItem value="Non">Non</SelectItem>
                                   <SelectItem value="En Cours">En Cours</SelectItem>
-                                  <SelectItem value="Oui">Oui</SelectItem>
+                                  <SelectItem value="Oui">Oui ✓</SelectItem>
                                 </SelectContent>
                               </Select>
                             </td>
@@ -555,77 +638,6 @@ const BergerieDashboardPage = () => {
                       )}
                     </tbody>
                   </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* === ONGLET MARQUER PRÉSENCES === */}
-          <TabsContent value="presences" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Marquer les Présences</span>
-                  <div className="flex items-center gap-2">
-                    <Label>Date:</Label>
-                    <Input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-40"
-                    />
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {visitors.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8">Aucun visiteur à pointer</p>
-                  ) : (
-                    <>
-                      <div className="grid grid-cols-4 gap-4 font-semibold border-b pb-2 mb-2">
-                        <span>Nom</span>
-                        <span>Prénom</span>
-                        <span className="text-center">Présent</span>
-                        <span>Commentaire</span>
-                      </div>
-                      {visitors.map((visitor) => (
-                        <div key={visitor.id} className="grid grid-cols-4 gap-4 items-center py-2 border-b">
-                          <span className="font-medium">{visitor.lastname}</span>
-                          <span>{visitor.firstname}</span>
-                          <div className="text-center">
-                            <input
-                              type="checkbox"
-                              className="h-5 w-5 rounded border-gray-300"
-                              checked={presenceData[visitor.id]?.present || false}
-                              onChange={(e) => setPresenceData(prev => ({
-                                ...prev,
-                                [visitor.id]: { ...prev[visitor.id], present: e.target.checked }
-                              }))}
-                            />
-                          </div>
-                          <Input
-                            placeholder="Commentaire..."
-                            value={presenceData[visitor.id]?.comment || ''}
-                            onChange={(e) => setPresenceData(prev => ({
-                              ...prev,
-                              [visitor.id]: { ...prev[visitor.id], comment: e.target.value }
-                            }))}
-                          />
-                        </div>
-                      ))}
-                      <div className="flex justify-end mt-4">
-                        <Button 
-                          className="bg-green-600 hover:bg-green-700"
-                          onClick={() => {
-                            toast.success('Présences enregistrées');
-                          }}
-                        >
-                          Enregistrer les présences
-                        </Button>
-                      </div>
-                    </>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -653,7 +665,7 @@ const BergerieDashboardPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Personnes reçues initialement: <strong className="text-green-700">{stats.total_recus || visitors.length}</strong>
+                  Personnes reçues initialement: <strong className="text-green-700">{stats.total_visitors || visitors.length}</strong>
                 </p>
                 
                 {objectifs.length === 0 ? (
@@ -749,14 +761,14 @@ const BergerieDashboardPage = () => {
                   </div>
                   <div className="p-3 bg-gray-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-gray-600">
-                      {(stats.total_recus || visitors.length) - (stats.total_disciples_oui || 0) - (stats.total_disciples_en_cours || 0)}
+                      {(stats.total_visitors || visitors.length) - (stats.total_disciples_oui || 0) - (stats.total_disciples_en_cours || 0)}
                     </p>
                     <p className="text-sm text-gray-600">Non encore</p>
                   </div>
                 </div>
                 
                 <p className="text-sm text-gray-500 italic">
-                  Pour modifier le statut d'un disciple, allez dans l'onglet "Vue Tableau"
+                  Pour modifier le statut d'un disciple, allez dans l'onglet "Vue Tableau" ou "Nouveaux Arrivants"
                 </p>
               </CardContent>
             </Card>
