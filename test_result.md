@@ -126,6 +126,7 @@
   implemented: true
   working: true
   priority: "high"
+  needs_retesting: false
   changes_made:
     - Public access via city selector (no login required)
     - Dashboard keeps all original features (KPIs, Formations PCNC/Bible/Star, Actions rapides)
@@ -136,4 +137,10 @@
     - "POST /api/bergerie/public/objectifs"
     - "POST /api/bergerie/public/contacts"
     - "POST /api/bergerie/public/disciples/{visitor_id}"
-  status: "verified via screenshots and curl"
+  status_history:
+    - working: true
+      agent: "main"
+      comment: "verified via screenshots and curl"
+    - working: true
+      agent: "testing"
+      comment: "✅ COMPREHENSIVE TESTING COMPLETED: Complete Bergeries flow tested successfully. 1) Homepage → Bergeries navigation ✅ 2) City selector (Dijon) with 12 bergeries displayed ✅ 3) Bergerie dashboard access (Promo Pasteur KARAMBIRI) ✅ 4) All 4 tabs functional (Dashboard, Nouveaux Arrivants, Vue Tableau, Reproduction) ✅ 5) Biblical verse (Jérémie 3:15) displayed ✅ 6) All KPIs visible (Total Nouveaux Arrivants: 8, Bergers, Canaux, Formation PCNC/Bible/STAR) ✅ 7) Reproduction tab with 3 sections (Objectifs de Multiplication, Suivi des Disciples, Personnes Contactées) ✅ 8) Disciple selectors (Non/En Cours/Oui) working on both Nouveaux Arrivants and Vue Tableau tabs (8 selectors found) ✅ 9) '+ Ancien visiteur' dialog with all required fields (Prénom, Nom, Téléphone, Email, Type) ✅ 10) Public access confirmed - NO LOGIN REQUIRED ✅. All functionality working as expected with real data (8 visitors for Bergerie Janvier in Dijon)."
