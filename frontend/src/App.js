@@ -137,18 +137,10 @@ function App() {
           <Route path="/berger-presences" element={<MarquerPresenceBergersPage />} />
           <Route path="/berger-presences/historique" element={<HistoriquePresenceBergersPage />} />
           
-          {/* BERGERIES - Nouveau système */}
+          {/* BERGERIES - Nouveau système (accès public avec sélecteur de ville) */}
           <Route path="/bergeries" element={<SelectBergeriePublicPage />} />
           <Route path="/bergeries-select" element={<SelectBergeriePage />} />
           <Route path="/bergerie/dashboard" element={<BergerieDashboardPage />} />
-          
-          {/* Accès Bergers Église - Public (sans login) */}
-          <Route path="/select-ville-bergers" element={<SelectVilleBergersPage />} />
-          <Route path="/acces-bergers-eglise/dashboard" element={<BergersEglisePublicDashboardPage />} />
-          
-          {/* Ministère des Stars - Public (sans login) */}
-          <Route path="/select-ville-stars" element={<SelectVilleStarsPage />} />
-          <Route path="/ministere-stars/public-dashboard" element={<MinistereStarsPublicDashboardPage />} />
           
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
