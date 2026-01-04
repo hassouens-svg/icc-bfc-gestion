@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { Users, TrendingUp, UserCheck, Shield, Church, Heart, Star, Book } from 'lucide-react';
+import { Users, TrendingUp, UserCheck, Shield, Church, Heart, Star, Book, GraduationCap } from 'lucide-react';
 import ChatbotAudrey from '../components/ChatbotAudrey';
 
 const HomePage = () => {
