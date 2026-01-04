@@ -104,15 +104,21 @@ const HomePage = () => {
       return;
     }
     
-    // ACCÈS BERGERS ÉGLISE - Requiert connexion (comme avant)
+    // ACCÈS BERGERS ÉGLISE - Sélecteur de ville uniquement (sans connexion)
     if (deptId === 'acces-bergers-eglise') {
-      navigate('/acces-bergers-eglise');
+      navigate('/select-ville-bergers-eglise');
       return;
     }
 
-    // MINISTÈRE DES STARS - Requiert connexion (comme avant)
+    // MINISTÈRE DES STARS - Sélecteur de ville uniquement (sans connexion)
     if (deptId === 'ministere-stars') {
-      navigate('/ministere-stars-login');
+      navigate('/select-ville-stars');
+      return;
+    }
+
+    // PCNC - Parcours de Croissance
+    if (deptId === 'pcnc') {
+      navigate('/pcnc');
       return;
     }
 
