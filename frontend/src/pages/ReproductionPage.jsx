@@ -262,6 +262,50 @@ const ReproductionPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Navigation rapide pour mobile */}
+        <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 sm:hidden">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/dashboard')}
+          >
+            Dashboard
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/visitors')}
+          >
+            Nouveaux
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/visitors-table')}
+          >
+            Vue Tableau
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/suivi-disciples')}
+          >
+            Disciples
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm"
+            className="flex-shrink-0 bg-green-600"
+            onClick={() => navigate('/reproduction')}
+          >
+            Reproduction
+          </Button>
+        </div>
+
         <div>
           <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
             <Sprout className="h-8 w-8 text-green-600" />
