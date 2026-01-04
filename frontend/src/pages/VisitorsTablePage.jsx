@@ -439,6 +439,50 @@ const VisitorsTablePage = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Navigation rapide pour mobile - TOUJOURS visible sur mobile */}
+        <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 md:hidden bg-white sticky top-0 z-50 pt-2 border-b">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/dashboard')}
+          >
+            Dashboard
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/visitors')}
+          >
+            Nouveaux
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm"
+            className="flex-shrink-0 bg-indigo-600"
+            onClick={() => navigate('/visitors-table')}
+          >
+            Vue Tableau
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/suivi-disciples')}
+          >
+            Disciples
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0 bg-green-50 text-green-700 border-green-200"
+            onClick={() => navigate('/reproduction')}
+          >
+            Reproduction
+          </Button>
+        </div>
+
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Nouveaux Arrivants - Vue Tableau</h2>
