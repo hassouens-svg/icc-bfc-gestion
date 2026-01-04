@@ -202,6 +202,13 @@ const HomePage = () => {
       description: 'Enseignements, prières prophétiques et versets quotidiens',
       icon: Book,
       color: 'from-amber-400 to-orange-600'
+    },
+    {
+      id: 'pcnc',
+      title: 'PCNC',
+      description: 'Parcours de Croissance de la Nouvelle Création',
+      icon: GraduationCap,
+      color: 'from-teal-400 to-cyan-600'
     }
   ];
 
