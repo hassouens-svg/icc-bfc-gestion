@@ -213,22 +213,24 @@ const Layout = ({ children }) => {
             <Button 
               onClick={() => navigate('/')} 
               variant="outline"
+              size="sm"
               className="hover:bg-indigo-50 text-indigo-600 border-indigo-200"
               title="Retour à l'accueil"
             >
-              <Home className="h-4 w-4 mr-2" />
-              Accueil
+              <Home className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Accueil</span>
             </Button>
 
             {/* Bouton Retour universel */}
             <Button 
               onClick={() => navigate(-1)} 
               variant="outline"
+              size="sm"
               className="hover:bg-gray-100"
               title="Retour à la page précédente"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour
+              <ArrowLeft className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Retour</span>
             </Button>
 
             {localStorage.getItem('is_impersonating') === 'true' && (
@@ -242,15 +244,16 @@ const Layout = ({ children }) => {
                   window.location.reload();
                 }} 
                 variant="outline"
+                size="sm"
                 className="bg-yellow-50 border-yellow-300 hover:bg-yellow-100"
               >
-                <UserX className="h-4 w-4 mr-2" />
-                Revenir à mon compte
+                <UserX className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Revenir</span>
               </Button>
             )}
-            <Button onClick={handleLogout} variant="outline" data-testid="logout-button">
-              <LogOut className="h-4 w-4 mr-2" />
-              Déconnexion
+            <Button onClick={handleLogout} variant="outline" size="sm" data-testid="logout-button">
+              <LogOut className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Déconnexion</span>
             </Button>
           </div>
         </div>
