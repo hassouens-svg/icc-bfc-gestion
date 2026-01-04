@@ -262,8 +262,8 @@ const ReproductionPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Navigation rapide pour mobile */}
-        <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 sm:hidden">
+        {/* Navigation rapide pour mobile - TOUJOURS visible sur mobile */}
+        <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 md:hidden bg-white sticky top-0 z-50 pt-2 border-b">
           <Button 
             variant="outline" 
             size="sm"
