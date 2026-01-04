@@ -170,6 +170,52 @@ const DashboardPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Navigation rapide pour mobile - visible pour les bergers */}
+        {(user?.role === 'berger' || user?.role === 'referent' || user?.role === 'promotions') && (
+          <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 sm:hidden">
+            <Button 
+              variant="default" 
+              size="sm"
+              className="flex-shrink-0 bg-indigo-600"
+              onClick={() => navigate('/dashboard')}
+            >
+              Dashboard
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="flex-shrink-0"
+              onClick={() => navigate('/visitors')}
+            >
+              Nouveaux
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="flex-shrink-0"
+              onClick={() => navigate('/visitors-table')}
+            >
+              Vue Tableau
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="flex-shrink-0"
+              onClick={() => navigate('/suivi-disciples')}
+            >
+              Disciples
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="flex-shrink-0 bg-green-50 text-green-700 border-green-200"
+              onClick={() => navigate('/reproduction')}
+            >
+              Reproduction
+            </Button>
+          </div>
+        )}
+
         {/* Verset biblique pour les Bergers */}
         {(user?.role === 'berger' || user?.role === 'referent') && (
           <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
