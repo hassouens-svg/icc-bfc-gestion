@@ -20,7 +20,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://faith-hub-23.preview.emergentagent.com/api"
+BACKEND_URL = "https://churchflow-9.preview.emergentagent.com/api"
 
 class TestCorrectionsAPI:
     def __init__(self):
