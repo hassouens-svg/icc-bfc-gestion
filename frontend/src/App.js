@@ -152,7 +152,16 @@ function App() {
           {/* BERGERIES - Nouveau système (accès public avec sélecteur de ville) */}
           <Route path="/bergeries" element={<SelectBergeriePublicPage />} />
           <Route path="/bergeries-select" element={<SelectBergeriePage />} />
-          <Route path="/bergerie/dashboard" element={<BergerieDashboardPage />} />
+          
+          {/* Public Bergerie Routes - UI identique à l'authentifié */}
+          <Route path="/bergerie/dashboard" element={<PublicBergerieDashboardPage />} />
+          <Route path="/bergerie/visitors" element={<PublicBergerieVisitorsPage />} />
+          <Route path="/bergerie/visitors-table" element={<PublicBergerieVisitorsTablePage />} />
+          <Route path="/bergerie/suivi-disciples" element={<PublicBergerieSuiviDisciplesPage />} />
+          <Route path="/bergerie/reproduction" element={<PublicBergerieReproductionPage />} />
+          <Route path="/bergerie/marquer-presences" element={<PublicBergerieMarquerPresencesPage />} />
+          
+          {/* Legacy routes - redirect to new public routes */}
           <Route path="/suivi-disciples" element={<SuiviDisciplesPage />} />
           <Route path="/reproduction" element={<ReproductionPage />} />
           
