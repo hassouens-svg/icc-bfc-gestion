@@ -149,6 +149,16 @@ function App() {
           <Route path="/suivi-disciples" element={<SuiviDisciplesPage />} />
           <Route path="/reproduction" element={<ReproductionPage />} />
           
+          {/* PCNC - Parcours de Croissance */}
+          <Route path="/pcnc" element={<PCNCPage />} />
+          <Route path="/pcnc/:classeId" element={<PCNCPage />} />
+          
+          {/* Ministère des Stars - Sélecteur de ville public */}
+          <Route path="/select-ville-stars" element={<SelectVilleStarsPage />} />
+          
+          {/* Accès Bergers Église - Sélecteur de ville public */}
+          <Route path="/select-ville-bergers-eglise" element={<SelectVilleBergersEglisePage />} />
+          
           <Route path="/familles-impact/dashboard-responsable-secteur" element={<DashboardResponsableSecteurPage />} />
           <Route path="/dashboard-pasteur" element={<DashboardSuperAdminCompletPage />} />
           {/* Redirection : Ancienne page -> Nouvelle page complète */}
