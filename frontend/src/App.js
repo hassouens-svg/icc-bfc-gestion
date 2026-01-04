@@ -157,6 +157,7 @@ function App() {
           {/* Public Bergerie Routes - UI identique à l'authentifié */}
           <Route path="/bergerie/dashboard" element={<PublicBergerieDashboardPage />} />
           <Route path="/bergerie/visitors" element={<PublicBergerieVisitorsPage />} />
+          <Route path="/bergerie/visitor/:id" element={<PublicBergerieVisitorDetailPage />} />
           <Route path="/bergerie/visitors-table" element={<PublicBergerieVisitorsTablePage />} />
           <Route path="/bergerie/suivi-disciples" element={<PublicBergerieSuiviDisciplesPage />} />
           <Route path="/bergerie/reproduction" element={<PublicBergerieReproductionPage />} />
