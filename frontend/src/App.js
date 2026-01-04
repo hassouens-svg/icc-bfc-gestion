@@ -86,6 +86,7 @@ import PublicBergerieVisitorsTablePage from './pages/PublicBergerieVisitorsTable
 import PublicBergerieSuiviDisciplesPage from './pages/PublicBergerieSuiviDisciplesPage';
 import PublicBergerieReproductionPage from './pages/PublicBergerieReproductionPage';
 import PublicBergerieMarquerPresencesPage from './pages/PublicBergerieMarquerPresencesPage';
+import PublicBergerieVisitorDetailPage from './pages/PublicBergerieVisitorDetailPage';
 import PCNCPage from './pages/PCNCPage';
 import SelectVilleStarsPage from './pages/SelectVilleStarsPage';
 import SelectVilleBergersEglisePage from './pages/SelectVilleBergersEglisePage';
