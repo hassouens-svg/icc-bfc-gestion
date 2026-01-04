@@ -6,8 +6,8 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
-import { Users, Plus, Search, Phone, Mail, Calendar, UserCheck } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '../components/ui/dialog';
+import { Plus, Search, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const monthNames = {
@@ -35,14 +35,11 @@ const PublicBergerieVisitorsPage = () => {
   const [filteredVisitors, setFilteredVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [newVisitor, setNewVisitor] = useState({
-    firstname: '',
-    lastname: '',
-    phone: '',
-    email: '',
-    visitor_type: 'Nouveau arrivant'
-  });
+  
+  const [isBulkDialogOpen, setIsBulkDialogOpen] = useState(false);
+  const [bulkVisitors, setBulkVisitors] = useState([
+    { firstname: '', lastname: '', phone: '', visit_date: new Date().toISOString().split('T')[0], types: ['Nouveau Arrivant'] }
+  ]);
 
   useEffect(() => {
     if (!ville || !monthNum) {
@@ -78,55 +75,77 @@ const PublicBergerieVisitorsPage = () => {
     }
   };
 
-  const handleAddVisitor = async () => {
-    if (!newVisitor.firstname || !newVisitor.lastname) {
-      toast.error('Prénom et nom requis');
-      return;
-    }
+  const handleDeleteVisitor = async (visitorId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce visiteur ?')) return;
     
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/visitors/public`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...newVisitor,
-            city: ville,
-            assigned_month: `${new Date().getFullYear()}-${monthNum}`,
-            visit_date: new Date().toISOString().split('T')[0]
-          })
-        }
+        `${process.env.REACT_APP_BACKEND_URL}/api/visitors/public/${visitorId}`,
+        { method: 'DELETE' }
       );
-      
       if (response.ok) {
-        toast.success('Visiteur ajouté');
-        setShowAddDialog(false);
-        setNewVisitor({ firstname: '', lastname: '', phone: '', email: '', visitor_type: 'Nouveau arrivant' });
+        toast.success('Visiteur supprimé');
         loadVisitors();
+      } else {
+        toast.error('Erreur lors de la suppression');
       }
     } catch (error) {
-      toast.error('Erreur lors de l\'ajout');
+      toast.error('Erreur');
     }
   };
 
-  const handleUpdateDisciple = async (visitorId, newStatus) => {
+  const addBulkRow = () => {
+    if (bulkVisitors.length < 40) {
+      setBulkVisitors([...bulkVisitors, { 
+        firstname: '', lastname: '', phone: '', 
+        visit_date: new Date().toISOString().split('T')[0], 
+        types: ['Nouveau Arrivant'] 
+      }]);
+    }
+  };
+
+  const removeBulkRow = (index) => {
+    setBulkVisitors(bulkVisitors.filter((_, i) => i !== index));
+  };
+
+  const updateBulkRow = (index, field, value) => {
+    const updated = [...bulkVisitors];
+    updated[index][field] = value;
+    setBulkVisitors(updated);
+  };
+
+  const handleBulkCreate = async (e) => {
+    e.preventDefault();
+    const validVisitors = bulkVisitors.filter(v => v.firstname && v.lastname);
+    
+    if (validVisitors.length === 0) {
+      toast.error('Veuillez remplir au moins un visiteur');
+      return;
+    }
+
     try {
-      await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/public/disciples/${visitorId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            est_disciple: newStatus,
-            date_devenu_disciple: newStatus === 'Oui' ? new Date().toISOString().split('T')[0] : null
-          })
-        }
-      );
-      toast.success('Statut mis à jour');
+      for (const visitor of validVisitors) {
+        await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/visitors/public`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...visitor,
+              city: ville,
+              assigned_month: `${new Date().getFullYear()}-${monthNum}`,
+              arrival_channel: 'Ancien Visiteur'
+            })
+          }
+        );
+      }
+      
+      toast.success(`${validVisitors.length} visiteur(s) ajouté(s)`);
+      setIsBulkDialogOpen(false);
+      setBulkVisitors([{ firstname: '', lastname: '', phone: '', visit_date: new Date().toISOString().split('T')[0], types: ['Nouveau Arrivant'] }]);
       loadVisitors();
     } catch (error) {
-      toast.error('Erreur');
+      toast.error('Erreur lors de l\'ajout');
     }
   };
 
@@ -143,168 +162,172 @@ const PublicBergerieVisitorsPage = () => {
   return (
     <PublicBergerieLayout guestContext={guestContext}>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        {/* Header - identique à VisitorsPage.jsx */}
+        <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Nouveaux Arrivants</h2>
-            <p className="text-gray-500 mt-1">
-              {filteredVisitors.length} personne(s) • Bergerie {monthNames[monthNum]}
-            </p>
+            <h2 className="text-3xl font-bold text-gray-900">Nouveaux Arrivants</h2>
+            <p className="text-gray-500 mt-1">Gérez vos nouveaux arrivants et nouveaux convertis</p>
           </div>
-          <Button onClick={() => setShowAddDialog(true)} className="bg-indigo-600 hover:bg-indigo-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Ajouter
-          </Button>
+          <div className="flex gap-2">
+            <Dialog open={isBulkDialogOpen} onOpenChange={setIsBulkDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Ancien Visiteur
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Ajouter des Anciens Visiteurs (jusqu'à 40)</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleBulkCreate} className="space-y-4">
+                  <div className="max-h-96 overflow-y-auto border rounded p-2">
+                    {bulkVisitors.map((visitor, index) => (
+                      <div key={index} className="grid grid-cols-6 gap-2 mb-2 items-center border-b pb-2">
+                        <Input
+                          placeholder="Prénom *"
+                          value={visitor.firstname}
+                          onChange={(e) => updateBulkRow(index, 'firstname', e.target.value)}
+                          required
+                        />
+                        <Input
+                          placeholder="Nom *"
+                          value={visitor.lastname}
+                          onChange={(e) => updateBulkRow(index, 'lastname', e.target.value)}
+                          required
+                        />
+                        <Input
+                          placeholder="Téléphone"
+                          value={visitor.phone}
+                          onChange={(e) => updateBulkRow(index, 'phone', e.target.value)}
+                        />
+                        <Input
+                          type="date"
+                          value={visitor.visit_date}
+                          onChange={(e) => updateBulkRow(index, 'visit_date', e.target.value)}
+                        />
+                        <Select 
+                          value={visitor.types?.[0] || 'Nouveau Arrivant'} 
+                          onValueChange={(value) => updateBulkRow(index, 'types', [value])}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Nouveau Arrivant">NA</SelectItem>
+                            <SelectItem value="Nouveau Converti">NC</SelectItem>
+                            <SelectItem value="De Passage">DP</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button 
+                          type="button"
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => removeBulkRow(index)}
+                          disabled={bulkVisitors.length === 1}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      onClick={addBulkRow}
+                      disabled={bulkVisitors.length >= 40}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Ajouter une ligne ({bulkVisitors.length}/40)
+                    </Button>
+                    <Button type="submit">
+                      Enregistrer tous ({bulkVisitors.length})
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Rechercher par nom ou téléphone..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+        {/* Filters - identique à VisitorsPage.jsx */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Recherche</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Nom ou prénom..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Visitors List */}
-        <div className="space-y-3">
-          {filteredVisitors.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Users className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500">Aucun nouveau arrivant trouvé</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredVisitors.map((visitor) => (
-              <Card key={visitor.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="py-4">
-                  <div className="flex flex-col sm:flex-row justify-between gap-4">
-                    <div className="flex-1">
+        {/* Visitors List - identique à VisitorsPage.jsx avec icône poubelle */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Liste des nouveaux arrivants et nouveaux convertis ({filteredVisitors.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {filteredVisitors.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">Aucun nouveaux arrivants et nouveaux convertis trouvé</p>
+              ) : (
+                filteredVisitors.map((visitor) => (
+                  <div
+                    key={visitor.id}
+                    className="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 transition"
+                  >
+                    <div 
+                      className="flex-1 cursor-pointer" 
+                      onClick={() => navigate(`/bergerie/visitor/${visitor.id}?ville=${encodeURIComponent(ville)}&month=${monthNum}`)}
+                    >
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-lg">
-                          {visitor.firstname} {visitor.lastname}
-                        </h3>
                         {visitor.ejp && (
-                          <span className="px-2 py-0.5 bg-purple-600 text-white rounded-full text-xs font-bold">
+                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold bg-purple-600 text-white shadow-lg flex-shrink-0" title="EJP">
                             EJP
                           </span>
                         )}
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-2 text-sm text-gray-500">
-                        {visitor.phone && (
-                          <span className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" /> {visitor.phone}
-                          </span>
-                        )}
-                        {visitor.email && (
-                          <span className="flex items-center gap-1">
-                            <Mail className="h-3 w-3" /> {visitor.email}
-                          </span>
-                        )}
-                        {visitor.visit_date && (
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" /> {new Date(visitor.visit_date).toLocaleDateString('fr-FR')}
-                          </span>
-                        )}
+                        <p className="font-medium text-lg">{visitor.firstname} {visitor.lastname}</p>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {(visitor.types || [visitor.visitor_type]).filter(Boolean).map((type, idx) => (
-                          <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                          <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
                             {type}
                           </span>
                         ))}
                       </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {visitor.arrival_channel || 'Non défini'} • {visitor.visit_date || '-'}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <UserCheck className="h-4 w-4 text-gray-400" />
-                        <Select
-                          value={visitor.est_disciple || 'Non'}
-                          onValueChange={(value) => handleUpdateDisciple(visitor.id, value)}
-                        >
-                          <SelectTrigger className="w-28">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Non">Non</SelectItem>
-                            <SelectItem value="En Cours">En Cours</SelectItem>
-                            <SelectItem value="Oui">Oui ✓</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteVisitor(visitor.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-
-        {/* Add Dialog */}
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Ajouter un Nouveau Arrivant</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Prénom *</Label>
-                  <Input
-                    value={newVisitor.firstname}
-                    onChange={(e) => setNewVisitor({ ...newVisitor, firstname: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>Nom *</Label>
-                  <Input
-                    value={newVisitor.lastname}
-                    onChange={(e) => setNewVisitor({ ...newVisitor, lastname: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label>Téléphone</Label>
-                <Input
-                  value={newVisitor.phone}
-                  onChange={(e) => setNewVisitor({ ...newVisitor, phone: e.target.value })}
-                  placeholder="+33..."
-                />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input
-                  type="email"
-                  value={newVisitor.email}
-                  onChange={(e) => setNewVisitor({ ...newVisitor, email: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Type</Label>
-                <Select
-                  value={newVisitor.visitor_type}
-                  onValueChange={(value) => setNewVisitor({ ...newVisitor, visitor_type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Nouveau arrivant">Nouveau Arrivant</SelectItem>
-                    <SelectItem value="Nouveau Converti">Nouveau Converti</SelectItem>
-                    <SelectItem value="De Passage">De Passage</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                ))
+              )}
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAddDialog(false)}>Annuler</Button>
-              <Button onClick={handleAddVisitor}>Ajouter</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          </CardContent>
+        </Card>
       </div>
     </PublicBergerieLayout>
   );
