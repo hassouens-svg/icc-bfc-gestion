@@ -70,15 +70,18 @@ const SelectBergeriePublicPage = () => {
   };
 
   const handleSelectBergerie = (bergerie) => {
-    // Sauvegarder la bergerie sélectionnée
-    localStorage.setItem('selected_bergerie', JSON.stringify({
+    // Sauvegarder le contexte invité pour les pages publiques
+    const guestContext = {
       month_num: bergerie.month_num,
       month_name: bergerie.month_name,
-      nom: bergerie.nom,
+      nom: `Bergerie ${bergerie.month_name}`,
       ville: selectedCity
-    }));
+    };
     
-    // Naviguer vers le dashboard bergerie
+    localStorage.setItem('guest_bergerie_context', JSON.stringify(guestContext));
+    localStorage.setItem('selected_department', 'promotions');
+    
+    // Naviguer vers le nouveau dashboard public
     navigate(`/bergerie/dashboard?ville=${encodeURIComponent(selectedCity)}&month=${bergerie.month_num}`);
   };
 
