@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import LayoutMinistereStars from '../components/LayoutMinistereStars';
 import { getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Users, TrendingUp, Star, Calendar, Eye, UserCheck } from 'lucide-react';
+import { Users, TrendingUp, Star, Calendar, Eye, UserCheck, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSelectedCity } from '../contexts/SelectedCityContext';
 
 const MinistereStarsDashboardPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const user = getUser();
   const { selectedCity } = useSelectedCity();
   const [stats, setStats] = useState(null);
   const [multiDeptStars, setMultiDeptStars] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Ville depuis URL (mode public) ou contexte (mode connecté)
+  const villeFromUrl = searchParams.get('ville');
+  const isPublicMode = !!villeFromUrl && !user;
   
   // États pour le dialog "Stars en service"
   const [showServiceDialog, setShowServiceDialog] = useState(false);
