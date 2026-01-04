@@ -257,9 +257,9 @@ const Layout = ({ children }) => {
       </header>
 
       {/* Navigation */}
-      <nav className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8 overflow-x-auto">
+      <nav className="bg-white border-b sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+          <div className="flex space-x-2 sm:space-x-8 overflow-x-auto scrollbar-hide py-1">
             {filteredNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -267,15 +267,16 @@ const Layout = ({ children }) => {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`flex items-center px-3 py-4 text-sm font-medium border-b-2 whitespace-nowrap ${
+                  className={`flex items-center px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap ${
                     isActive
-                      ? 'border-indigo-500 text-indigo-600'
+                      ? 'border-indigo-500 text-indigo-600 bg-indigo-50'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                   data-testid={`nav-${item.path.replace('/', '')}`}
                 >
-                  <Icon className="h-4 w-4 mr-2" />
-                  {item.label}
+                  <Icon className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">{item.label}</span>
+                  <span className="sm:hidden">{item.label.split(' ')[0]}</span>
                 </button>
               );
             })}
