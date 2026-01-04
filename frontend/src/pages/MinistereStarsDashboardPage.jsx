@@ -58,10 +58,15 @@ const MinistereStarsDashboardPage = () => {
   const years = [2025, 2026, 2027, 2028, 2029, 2030];
 
   // Permissions: pasteur/superadmin = tout, responsable_eglise = sa ville, respo_departement = tout, star = lecture
-  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role);
+  // En mode public, on autorise l'accès en lecture seule
+  const canView = isPublicMode || (user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role));
 
   // Déterminer la ville effective pour le filtrage
   const getEffectiveCity = () => {
+    // Mode public : ville depuis URL
+    if (isPublicMode) {
+      return villeFromUrl;
+    }
     if (user?.role === 'responsable_eglise') {
       return user.city;
     }
@@ -72,29 +77,29 @@ const MinistereStarsDashboardPage = () => {
   };
 
   useEffect(() => {
-    if (!user || !canView) {
+    if (!canView) {
       navigate('/');
       return;
     }
     loadData();
-  }, [selectedCity]);
+  }, [selectedCity, villeFromUrl]);
 
   const loadData = async () => {
     try {
       const effectiveCity = getEffectiveCity();
       const villeParam = effectiveCity ? `?ville=${encodeURIComponent(effectiveCity)}` : '';
       
+      // En mode public, utiliser les endpoints publics
+      const headers = isPublicMode ? {} : { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
+      const baseUrl = isPublicMode ? '/api/stars/public' : '/api/stars';
+      
       const [statsRes, multiRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/stats/overview${villeParam}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        }),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/multi-departements${villeParam}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        })
+        fetch(`${process.env.REACT_APP_BACKEND_URL}${baseUrl}/stats/overview${villeParam}`, { headers }),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}${baseUrl}/multi-departements${villeParam}`, { headers })
       ]);
 
-      setStats(await statsRes.json());
-      setMultiDeptStars(await multiRes.json());
+      if (statsRes.ok) setStats(await statsRes.json());
+      if (multiRes.ok) setMultiDeptStars(await multiRes.json());
     } catch (error) {
       toast.error('Erreur de chargement');
     } finally {
