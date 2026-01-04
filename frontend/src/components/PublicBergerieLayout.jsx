@@ -117,7 +117,8 @@ const PublicBergerieLayout = ({ children, guestContext }) => {
                   <span className="sm:hidden">{item.label.split(' ')[0]}</span>
                 </button>
               );
-            })}n          </div>
+            })}
+          </div>
         </div>
       </nav>
 
