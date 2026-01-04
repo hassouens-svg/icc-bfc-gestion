@@ -105,6 +105,50 @@ const SuiviDisciplesPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Navigation rapide pour mobile */}
+        <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 sm:hidden">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/dashboard')}
+          >
+            Dashboard
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/visitors')}
+          >
+            Nouveaux
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0"
+            onClick={() => navigate('/visitors-table')}
+          >
+            Vue Tableau
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm"
+            className="flex-shrink-0 bg-blue-600"
+            onClick={() => navigate('/suivi-disciples')}
+          >
+            Disciples
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-shrink-0 bg-green-50 text-green-700 border-green-200"
+            onClick={() => navigate('/reproduction')}
+          >
+            Reproduction
+          </Button>
+        </div>
+
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Suivi Disciples</h2>
           <p className="text-gray-500 mt-1">
