@@ -79,6 +79,9 @@ import SelectBergeriePublicPage from './pages/SelectBergeriePublicPage';
 import BergerieDashboardPage from './pages/BergerieDashboardPage';
 import SuiviDisciplesPage from './pages/SuiviDisciplesPage';
 import ReproductionPage from './pages/ReproductionPage';
+import PCNCPage from './pages/PCNCPage';
+import SelectVilleStarsPage from './pages/SelectVilleStarsPage';
+import SelectVilleBergersEglisePage from './pages/SelectVilleBergersEglisePage';
 
 function App() {
   return (
