@@ -6397,6 +6397,49 @@ async def get_stars_stats(ville: Optional[str] = None, current_user: dict = Depe
     }
 
 
+# ========== ENDPOINTS PUBLICS MINISTÈRE DES STARS ==========
+
+@api_router.get("/stars/public/stats/overview")
+async def get_stars_stats_public(ville: Optional[str] = None):
+    """Statistiques globales des stars - Accès public"""
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    all_stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    total = len(all_stars)
+    actifs = len([s for s in all_stars if s.get("statut") == "actif"])
+    non_actifs = len([s for s in all_stars if s.get("statut") == "non_actif"])
+    
+    # Compter par département
+    dept_counts = {}
+    for star in all_stars:
+        for dept in star.get("departements", []):
+            dept_counts[dept] = dept_counts.get(dept, 0) + 1
+    
+    return {
+        "total": total,
+        "actifs": actifs,
+        "non_actifs": non_actifs,
+        "par_departement": dept_counts
+    }
+
+@api_router.get("/stars/public/multi-departements")
+async def get_stars_multi_departements_public(ville: Optional[str] = None):
+    """Récupérer les stars qui servent dans plusieurs départements - Accès public"""
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    all_stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    # Filtrer ceux qui ont plus d'un département
+    multi_dept_stars = [s for s in all_stars if len(s.get("departements", [])) > 1]
+    
+    return multi_dept_stars
+
+
 # ==================== PLANNINGS STARS ====================
 
 class PlanningEntry(BaseModel):
