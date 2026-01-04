@@ -135,11 +135,11 @@ const Layout = ({ children }) => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-2 sm:py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 sm:gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-indigo-600">ICC BFC-ITALIE {canSelectCity ? '' : user?.city}</h1>
-              <p className="text-sm text-gray-500">
+              <h1 className="text-lg sm:text-2xl font-bold text-indigo-600">ICC BFC-ITALIE {canSelectCity ? '' : user?.city}</h1>
+              <p className="text-xs sm:text-sm text-gray-500">
                 {user?.username} ({user?.role === 'superviseur_promos' ? 'Superviseur Promotions' : 
                   user?.role === 'superviseur_fi' ? 'Superviseur FI' :
                   user?.role === 'super_admin' ? 'Super Administrateur' :
@@ -158,9 +158,9 @@ const Layout = ({ children }) => {
             {/* Sélecteur de ville pour super_admin et pasteur */}
             {canSelectCity && (
               <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger className="w-[180px] bg-indigo-50 border-indigo-200">
-                  <MapPin className="h-4 w-4 mr-2 text-indigo-600" />
-                  <SelectValue placeholder="Sélectionner une ville" />
+                <SelectTrigger className="w-[120px] sm:w-[180px] bg-indigo-50 border-indigo-200 text-xs sm:text-sm">
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-indigo-600" />
+                  <SelectValue placeholder="Ville" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">🌍 Toutes les villes</SelectItem>
@@ -172,7 +172,7 @@ const Layout = ({ children }) => {
             )}
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             {/* Notifications */}
             <Popover>
               <PopoverTrigger asChild>
