@@ -184,6 +184,25 @@ const SelectBergeriePublicPage = () => {
             <p>Sélectionnez une ville pour voir les bergeries disponibles</p>
           </div>
         )}
+
+        {/* Bannière 2026 - Objectif Disciples */}
+        <div className="mt-12 mb-8">
+          <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 rounded-2xl p-8 text-center text-white shadow-xl">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              🎯 2026, année du discipolat
+            </h2>
+            <p className="text-lg md:text-xl font-medium opacity-95 leading-relaxed">
+              Objectif <span className="text-yellow-300 font-bold text-2xl md:text-3xl">1000</span> disciples affermis du Christ
+              <br />
+              en Bourgogne Franche-Comté en 2026
+            </p>
+            <div className="mt-6 flex justify-center">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                <span className="text-sm font-medium">🙏 Ensemble, faisons des disciples !</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
