@@ -79,6 +79,13 @@ import SelectBergeriePublicPage from './pages/SelectBergeriePublicPage';
 import BergerieDashboardPage from './pages/BergerieDashboardPage';
 import SuiviDisciplesPage from './pages/SuiviDisciplesPage';
 import ReproductionPage from './pages/ReproductionPage';
+// Public Bergerie Pages (identical UI to authenticated)
+import PublicBergerieDashboardPage from './pages/PublicBergerieDashboardPage';
+import PublicBergerieVisitorsPage from './pages/PublicBergerieVisitorsPage';
+import PublicBergerieVisitorsTablePage from './pages/PublicBergerieVisitorsTablePage';
+import PublicBergerieSuiviDisciplesPage from './pages/PublicBergerieSuiviDisciplesPage';
+import PublicBergerieReproductionPage from './pages/PublicBergerieReproductionPage';
+import PublicBergerieMarquerPresencesPage from './pages/PublicBergerieMarquerPresencesPage';
 import PCNCPage from './pages/PCNCPage';
 import SelectVilleStarsPage from './pages/SelectVilleStarsPage';
 import SelectVilleBergersEglisePage from './pages/SelectVilleBergersEglisePage';
