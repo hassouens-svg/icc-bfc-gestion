@@ -1072,6 +1072,90 @@ async def create_visitor_public(visitor_data: VisitorCreate):
     await db.visitors.insert_one(doc)
     return {"message": "Visitor created successfully", "id": visitor.id}
 
+# PUBLIC VISITOR ENDPOINTS - Pour les bergeries publiques
+@api_router.get("/visitors/public/{visitor_id}")
+async def get_visitor_public(visitor_id: str):
+    """Récupérer un visiteur - Public"""
+    visitor = await db.visitors.find_one({"id": visitor_id}, {"_id": 0})
+    if not visitor:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    return visitor
+
+@api_router.put("/visitors/public/{visitor_id}")
+async def update_visitor_public(visitor_id: str, update_data: dict):
+    """Mettre à jour un visiteur - Public"""
+    # Remove protected fields
+    protected = ['id', 'created_at', 'assigned_month']
+    for field in protected:
+        update_data.pop(field, None)
+    
+    result = await db.visitors.update_one(
+        {"id": visitor_id},
+        {"$set": update_data}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    return {"message": "Visitor updated successfully"}
+
+@api_router.delete("/visitors/public/{visitor_id}")
+async def delete_visitor_public(visitor_id: str):
+    """Supprimer un visiteur - Public"""
+    result = await db.visitors.delete_one({"id": visitor_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    return {"message": "Visitor deleted successfully"}
+
+@api_router.post("/visitors/public/{visitor_id}/comment")
+async def add_visitor_comment_public(visitor_id: str, comment_data: dict):
+    """Ajouter un commentaire - Public"""
+    comment = {
+        "text": comment_data.get("text", ""),
+        "date": datetime.now(timezone.utc).isoformat(),
+        "author": "Public"
+    }
+    
+    result = await db.visitors.update_one(
+        {"id": visitor_id},
+        {"$push": {"comments": comment}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    return {"message": "Comment added successfully"}
+
+@api_router.post("/visitors/public/{visitor_id}/formation")
+async def update_visitor_formation_public(visitor_id: str, formation_data: dict):
+    """Mettre à jour une formation - Public"""
+    formation_type = formation_data.get("formation_type")
+    value = formation_data.get("value", False)
+    
+    if formation_type not in ["formation_pcnc", "formation_au_coeur_bible", "formation_star"]:
+        raise HTTPException(status_code=400, detail="Invalid formation type")
+    
+    result = await db.visitors.update_one(
+        {"id": visitor_id},
+        {"$set": {formation_type: value}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    return {"message": "Formation updated successfully"}
+
+@api_router.post("/visitors/public/{visitor_id}/stop")
+async def stop_visitor_tracking_public(visitor_id: str, stop_data: dict):
+    """Arrêter le suivi d'un visiteur - Public"""
+    reason = stop_data.get("reason", "")
+    
+    result = await db.visitors.update_one(
+        {"id": visitor_id},
+        {"$set": {
+            "tracking_stopped": True,
+            "tracking_stopped_reason": reason,
+            "tracking_stopped_date": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    return {"message": "Tracking stopped successfully"}
+
 @api_router.post("/visitors/bulk-ancien")
 async def create_bulk_ancien_visitors(visitors_data: List[VisitorCreate], current_user: dict = Depends(get_current_user)):
     # Only superviseur_promos, responsable_promo, referent, super_admin, pasteur can create
