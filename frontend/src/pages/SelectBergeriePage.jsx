@@ -14,16 +14,32 @@ const SelectBergeriePage = () => {
   const [bergeries, setBergeries] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Récupérer la ville depuis les query params ou l'utilisateur
+  // Récupérer la ville depuis les query params, session storage ou l'utilisateur
   const searchParams = new URLSearchParams(location.search);
-  const ville = searchParams.get('ville') || user?.city || '';
+  const storedBergerie = sessionStorage.getItem('selectedBergerie');
+  const parsedBergerie = storedBergerie ? JSON.parse(storedBergerie) : null;
+  const ville = searchParams.get('ville') || parsedBergerie?.ville || user?.city || '';
 
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté
     if (!isAuthenticated()) {
-      // Stocker la destination après connexion
       sessionStorage.setItem('redirectAfterLogin', '/bergeries');
       navigate('/login');
+      return;
+    }
+    
+    // Si une bergerie était préselectionnée, aller directement au dashboard
+    if (parsedBergerie && location.pathname === '/bergeries-dashboard') {
+      // Mettre à jour le user pour cette bergerie
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      currentUser.assigned_month = `${new Date().getFullYear()}-${parsedBergerie.month_num}`;
+      currentUser.promo_name = parsedBergerie.nom;
+      currentUser.city = parsedBergerie.ville;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      
+      // Nettoyer et rediriger
+      sessionStorage.removeItem('selectedBergerie');
+      navigate('/dashboard');
       return;
     }
     
@@ -32,7 +48,7 @@ const SelectBergeriePage = () => {
       return;
     }
     loadBergeries();
-  }, [ville, navigate]);
+  }, [ville, navigate, location.pathname]);
 
   const loadBergeries = async () => {
     try {
