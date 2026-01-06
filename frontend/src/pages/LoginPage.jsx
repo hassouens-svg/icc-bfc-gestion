@@ -72,11 +72,15 @@ const LoginPage = () => {
       sessionStorage.removeItem('selectedCity');
       sessionStorage.removeItem('selectedDepartment');
       
+      // Check if there's a redirect destination stored
+      const redirectAfterLogin = sessionStorage.getItem('redirectAfterLogin');
+      sessionStorage.removeItem('redirectAfterLogin');
+      
       // Redirect pasteur/superadmin to account selection page
       if (isSpecialAccess) {
-        navigate('/select-account');
+        navigate(redirectAfterLogin || '/select-account');
       } else {
-        navigate('/dashboard');
+        navigate(redirectAfterLogin || '/dashboard');
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur de connexion');
