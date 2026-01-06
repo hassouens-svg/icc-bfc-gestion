@@ -58,8 +58,15 @@ const SelectBergeriePage = () => {
       ville: ville
     }));
     
-    // Naviguer vers le dashboard bergerie
-    navigate(`/bergerie/dashboard?ville=${ville}&month=${bergerie.month_num}`);
+    // Mettre à jour le user pour qu'il soit considéré comme berger de cette bergerie
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    user.assigned_month = `${new Date().getFullYear()}-${bergerie.month_num}`;
+    user.promo_name = bergerie.nom;
+    user.city = ville;
+    localStorage.setItem('user', JSON.stringify(user));
+    
+    // Naviguer vers le dashboard authentifié standard
+    navigate('/dashboard');
   };
 
   if (loading) {
