@@ -156,6 +156,7 @@ const BergeriesPublicPage = () => {
                     className="w-full mt-4 bg-purple-600 hover:bg-purple-700 group-hover:bg-purple-700"
                     size="sm"
                   >
+                    <Lock className="h-4 w-4 mr-2" />
                     Accéder
                   </Button>
                 </CardContent>
