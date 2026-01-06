@@ -132,6 +132,19 @@ const SelectBergeriePage = () => {
             </Card>
           ))}
         </div>
+
+        {/* Bannière 2026 */}
+        <div className="mt-8">
+          <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 rounded-2xl p-6 text-center text-white shadow-xl">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2">
+              🎯 2026, année du discipolat
+            </h2>
+            <p className="text-sm md:text-base font-medium opacity-95">
+              Objectif <span className="text-yellow-300 font-bold text-xl">1000</span> disciples affermis du Christ
+              en Bourgogne Franche-Comté en 2026
+            </p>
+          </div>
+        </div>
       </div>
     </Layout>
   );
