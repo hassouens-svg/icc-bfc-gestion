@@ -52,7 +52,8 @@ const MinistereStarsDashboardPage = () => {
     'Ministère des femmes (bureau)',
     'Ministère des hommes (bureau)',
     'Impact santé',
-    'Évènementiel/Restauration'
+    'Évènementiel/Restauration',
+    'Modération'
   ];
 
   const typesCulte = ['Culte 1', 'Culte 2', 'EJP', 'Tous les cultes', 'Événements spéciaux'];
