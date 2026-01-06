@@ -105,7 +105,7 @@ const SelectBergeriePage = () => {
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Calendar className="h-5 w-5 text-purple-600" />
-                  {bergerie.nom}
+                  Bergerie {bergerie.month_name}
                 </CardTitle>
               </CardHeader>
               <CardContent>
