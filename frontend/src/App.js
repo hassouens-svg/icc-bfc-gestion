@@ -88,6 +88,7 @@ import PublicBergerieReproductionPage from './pages/PublicBergerieReproductionPa
 import PublicBergerieMarquerPresencesPage from './pages/PublicBergerieMarquerPresencesPage';
 import PublicBergerieVisitorDetailPage from './pages/PublicBergerieVisitorDetailPage';
 import BergeriesLoginPage from './pages/BergeriesLoginPage';
+import BergeriesPublicPage from './pages/BergeriesPublicPage';
 import PCNCPage from './pages/PCNCPage';
 import SelectVilleStarsPage from './pages/SelectVilleStarsPage';
 import SelectVilleBergersEglisePage from './pages/SelectVilleBergersEglisePage';
