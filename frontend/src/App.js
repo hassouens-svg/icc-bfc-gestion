@@ -152,9 +152,10 @@ function App() {
           <Route path="/berger-presences" element={<MarquerPresenceBergersPage />} />
           <Route path="/berger-presences/historique" element={<HistoriquePresenceBergersPage />} />
           
-          {/* BERGERIES - Redirection vers login standard puis sélection */}
-          <Route path="/bergeries" element={<SelectBergeriePage />} />
+          {/* BERGERIES - Page publique pour voir les bergeries, puis login */}
+          <Route path="/bergeries" element={<BergeriesPublicPage />} />
           <Route path="/bergeries-select" element={<SelectBergeriePage />} />
+          <Route path="/bergeries-dashboard" element={<SelectBergeriePage />} />
           
           {/* Public Bergerie Routes - UI identique à l'authentifié */}
           <Route path="/bergerie/dashboard" element={<PublicBergerieDashboardPage />} />
