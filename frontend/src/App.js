@@ -202,6 +202,7 @@ function App() {
           {/* Ministère des STARS */}
           <Route path="/ministere-stars-login" element={<MinistereStarsLoginPage />} />
           <Route path="/ministere-stars/dashboard" element={<MinistereStarsDashboardPage />} />
+          <Route path="/ministere-stars/:ville" element={<MinistereStarsDashboardPage />} />
           <Route path="/ministere-stars/departement/:departement" element={<MinistereStarsDepartementPage />} />
           <Route path="/recensement-stars" element={<RecensementStarsPage />} />
           
