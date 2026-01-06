@@ -28,13 +28,9 @@ const SelectBergeriePage = () => {
 
   const loadBergeries = async () => {
     try {
+      // Utiliser l'endpoint public qui ne nécessite pas d'authentification
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/list/${ville}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/list-public/${encodeURIComponent(ville)}`
       );
       
       if (!response.ok) throw new Error('Erreur chargement');
