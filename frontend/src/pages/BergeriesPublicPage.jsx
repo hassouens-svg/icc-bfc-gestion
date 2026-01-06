@@ -71,19 +71,18 @@ const BergeriesPublicPage = () => {
   };
 
   const handleSelectBergerie = (bergerie) => {
-    // Stocker le contexte de la bergerie pour les pages publiques
-    const guestContext = {
+    // Stocker la bergerie sélectionnée pour après connexion
+    sessionStorage.setItem('selectedBergerie', JSON.stringify({
       month_num: bergerie.month_num,
       month_name: bergerie.month_name,
       nom: `Bergerie ${bergerie.month_name}`,
       ville: selectedCity
-    };
+    }));
+    sessionStorage.setItem('redirectAfterLogin', '/bergeries-dashboard');
+    sessionStorage.setItem('selectedCity', selectedCity);
     
-    localStorage.setItem('guest_bergerie_context', JSON.stringify(guestContext));
-    localStorage.setItem('selected_department', 'promotions');
-    
-    // Accès direct au dashboard public (sans login)
-    navigate(`/bergerie/dashboard?ville=${encodeURIComponent(selectedCity)}&month=${bergerie.month_num}`);
+    // Rediriger vers la page de connexion
+    navigate('/login');
   };
 
   return (
