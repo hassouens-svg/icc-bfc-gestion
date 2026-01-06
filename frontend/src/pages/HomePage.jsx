@@ -214,14 +214,33 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Bannière défilante 2026 - en haut */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white py-2 shadow-lg">
+        <div className="overflow-hidden whitespace-nowrap">
+          <div className="animate-marquee inline-block">
+            <span className="mx-8">🎯 <strong>2026, Année du Discipolat</strong></span>
+            <span className="mx-8">•</span>
+            <span className="mx-8">Objectif <span className="text-yellow-300 font-bold">1000</span> Disciples affermis du Christ en Bourgogne Franche-Comté</span>
+            <span className="mx-8">•</span>
+            <span className="mx-8">🙏 <strong>La BFC pour Christ</strong></span>
+            <span className="mx-8">•</span>
+            <span className="mx-8">🎯 <strong>2026, Année du Discipolat</strong></span>
+            <span className="mx-8">•</span>
+            <span className="mx-8">Objectif <span className="text-yellow-300 font-bold">1000</span> Disciples affermis du Christ en Bourgogne Franche-Comté</span>
+            <span className="mx-8">•</span>
+            <span className="mx-8">🙏 <strong>La BFC pour Christ</strong></span>
+          </div>
+        </div>
+      </div>
+      
       {/* Gradient circles for background decoration */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-6xl">
+      {/* Content - avec padding-top pour la bannière */}
+      <div className="relative z-10 w-full max-w-6xl pt-8">
         {/* Logo */}
         <div className="flex justify-center mb-6 animate-fade-in">
           <div className="w-40 h-40 rounded-full bg-white shadow-2xl flex items-center justify-center border-8 border-white/20 backdrop-blur-sm">
