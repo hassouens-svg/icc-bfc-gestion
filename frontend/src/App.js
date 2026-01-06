@@ -151,8 +151,8 @@ function App() {
           <Route path="/berger-presences" element={<MarquerPresenceBergersPage />} />
           <Route path="/berger-presences/historique" element={<HistoriquePresenceBergersPage />} />
           
-          {/* BERGERIES - Système avec connexion pour bergers et responsables de promo */}
-          <Route path="/bergeries" element={<BergeriesLoginPage />} />
+          {/* BERGERIES - Redirection vers login standard puis sélection */}
+          <Route path="/bergeries" element={<SelectBergeriePage />} />
           <Route path="/bergeries-select" element={<SelectBergeriePage />} />
           
           {/* Public Bergerie Routes - UI identique à l'authentifié */}
