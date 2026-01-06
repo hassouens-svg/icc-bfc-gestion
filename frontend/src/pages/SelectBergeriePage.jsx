@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getUser } from '../utils/api';
+import { getUser, isAuthenticated } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Users, ArrowLeft, Calendar } from 'lucide-react';
@@ -19,12 +19,20 @@ const SelectBergeriePage = () => {
   const ville = searchParams.get('ville') || user?.city || '';
 
   useEffect(() => {
+    // Vérifier si l'utilisateur est connecté
+    if (!isAuthenticated()) {
+      // Stocker la destination après connexion
+      sessionStorage.setItem('redirectAfterLogin', '/bergeries');
+      navigate('/login');
+      return;
+    }
+    
     if (!ville) {
       navigate('/select-ville?redirect=bergeries');
       return;
     }
     loadBergeries();
-  }, [ville]);
+  }, [ville, navigate]);
 
   const loadBergeries = async () => {
     try {
