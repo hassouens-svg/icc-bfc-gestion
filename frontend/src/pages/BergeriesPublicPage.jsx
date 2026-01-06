@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { MapPin, Calendar, Users, ArrowLeft, Lock } from 'lucide-react';
+import { MapPin, Calendar, Users, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 const monthNames = {
