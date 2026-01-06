@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import LayoutMinistereStars from '../components/LayoutMinistereStars';
 import { getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -13,14 +13,15 @@ import { useSelectedCity } from '../contexts/SelectedCityContext';
 const MinistereStarsDashboardPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { ville: villeParam } = useParams(); // Support pour /ministere-stars/:ville
   const user = getUser();
   const { selectedCity } = useSelectedCity();
   const [stats, setStats] = useState(null);
   const [multiDeptStars, setMultiDeptStars] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Ville depuis URL (mode public) ou contexte (mode connecté)
-  const villeFromUrl = searchParams.get('ville');
+  // Ville depuis URL param, query param ou contexte
+  const villeFromUrl = villeParam || searchParams.get('ville');
   const isPublicMode = !!villeFromUrl && !user;
   
   // États pour le dialog "Stars en service"
