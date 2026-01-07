@@ -22,7 +22,7 @@ const MinistereStarsDashboardPage = () => {
   
   // Ville depuis URL param, query param ou contexte
   const villeFromUrl = villeParam || searchParams.get('ville');
-  const isPublicMode = !!villeFromUrl && !user;
+  const isPublicMode = !!villeFromUrl;
   
   // États pour le dialog "Stars en service"
   const [showServiceDialog, setShowServiceDialog] = useState(false);
@@ -59,8 +59,8 @@ const MinistereStarsDashboardPage = () => {
   const typesCulte = ['Culte 1', 'Culte 2', 'EJP', 'Tous les cultes', 'Événements spéciaux'];
   const years = [2025, 2026, 2027, 2028, 2029, 2030];
 
-  // Permissions: pasteur/superadmin = tout, responsable_eglise = sa ville, respo_departement = tout, star = lecture
-  // En mode public, on autorise l'accès en lecture seule
+  // En mode public (avec ville dans l'URL), on autorise toujours l'accès
+  // En mode connecté, on vérifie les permissions
   const canView = isPublicMode || (user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role));
 
   // Déterminer la ville effective pour le filtrage
