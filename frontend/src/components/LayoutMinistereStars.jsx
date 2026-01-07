@@ -7,11 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useCities } from '../contexts/CitiesContext';
 import { useSelectedCity } from '../contexts/SelectedCityContext';
 
-const LayoutMinistereStars = ({ children }) => {
+const LayoutMinistereStars = ({ children, ville }) => {
   const navigate = useNavigate();
   const user = getUser();
   const { cities } = useCities();
   const { selectedCity, setSelectedCity } = useSelectedCity();
+  
+  // Mode public si pas d'utilisateur connecté
+  const isPublicMode = !user;
 
   const handleLogout = () => {
     logout();
@@ -22,7 +25,7 @@ const LayoutMinistereStars = ({ children }) => {
   // respo_departement aussi
   // responsable_eglise voit seulement sa ville
   // star voit seulement sa ville ou le filtre global
-  const canSelectCity = ['super_admin', 'pasteur', 'respo_departement'].includes(user?.role);
+  const canSelectCity = !isPublicMode && ['super_admin', 'pasteur', 'respo_departement'].includes(user?.role);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,6 +38,9 @@ const LayoutMinistereStars = ({ children }) => {
               <Star className="h-8 w-8 text-white" />
               <div>
                 <h1 className="text-xl font-bold text-white">Ministère des STARS</h1>
+                {isPublicMode && ville && (
+                  <p className="text-sm text-white/80">{ville} - Accès Public</p>
+                )}
               </div>
               
               {/* Sélecteur de ville - pour ceux qui peuvent sélectionner */}
@@ -53,8 +59,16 @@ const LayoutMinistereStars = ({ children }) => {
                 </Select>
               )}
               
+              {/* Affichage ville en mode public */}
+              {isPublicMode && ville && (
+                <div className="px-3 py-1.5 bg-white/20 rounded-lg text-white text-sm border border-white/30 flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  {ville}
+                </div>
+              )}
+              
               {/* Affichage ville pour responsable_eglise (fixe sur sa ville) */}
-              {user?.role === 'responsable_eglise' && (
+              {!isPublicMode && user?.role === 'responsable_eglise' && (
                 <div className="px-3 py-1.5 bg-white/20 rounded-lg text-white text-sm border border-white/30 flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   {user?.city}
