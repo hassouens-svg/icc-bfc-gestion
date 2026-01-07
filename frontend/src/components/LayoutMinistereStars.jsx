@@ -76,7 +76,7 @@ const LayoutMinistereStars = ({ children, ville }) => {
               )}
               
               {/* Affichage pour star (lecture seule mais peut voir le filtre) */}
-              {user?.role === 'star' && (
+              {!isPublicMode && user?.role === 'star' && (
                 <div className="px-3 py-1.5 bg-white/20 rounded-lg text-white text-sm border border-white/30 flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   {selectedCity && selectedCity !== 'all' ? selectedCity : 'Toutes les villes'}
@@ -96,23 +96,36 @@ const LayoutMinistereStars = ({ children, ville }) => {
                 Accueil
               </Button>
 
-              <Button 
-                onClick={() => navigate(-1)} 
-                variant="outline"
-                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Retour
-              </Button>
+              {isPublicMode ? (
+                <Button 
+                  onClick={() => navigate('/select-ville-stars')} 
+                  variant="outline"
+                  className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Changer de ville
+                </Button>
+              ) : (
+                <>
+                  <Button 
+                    onClick={() => navigate(-1)} 
+                    variant="outline"
+                    className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Retour
+                  </Button>
 
-              <Button 
-                onClick={handleLogout} 
-                variant="outline"
-                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Déconnexion
-              </Button>
+                  <Button 
+                    onClick={handleLogout} 
+                    variant="outline"
+                    className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Déconnexion
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
