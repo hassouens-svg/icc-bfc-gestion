@@ -65,10 +65,11 @@ const MinistereStarsDashboardPage = () => {
 
   // Déterminer la ville effective pour le filtrage
   const getEffectiveCity = () => {
-    // Mode public : ville depuis URL
-    if (isPublicMode) {
+    // Si ville dans l'URL, l'utiliser en priorité
+    if (villeFromUrl) {
       return villeFromUrl;
     }
+    // Mode connecté
     if (user?.role === 'responsable_eglise') {
       return user.city;
     }
@@ -79,6 +80,12 @@ const MinistereStarsDashboardPage = () => {
   };
 
   useEffect(() => {
+    // En mode public avec ville, toujours autoriser
+    if (villeFromUrl) {
+      loadData();
+      return;
+    }
+    // En mode connecté, vérifier les permissions
     if (!canView) {
       navigate('/');
       return;
@@ -91,9 +98,10 @@ const MinistereStarsDashboardPage = () => {
       const effectiveCity = getEffectiveCity();
       const villeParam = effectiveCity ? `?ville=${encodeURIComponent(effectiveCity)}` : '';
       
-      // En mode public, utiliser les endpoints publics
-      const headers = isPublicMode ? {} : { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
-      const baseUrl = isPublicMode ? '/api/stars/public' : '/api/stars';
+      // Utiliser les endpoints publics si mode public (pas d'utilisateur connecté)
+      const usePublicEndpoint = !user;
+      const headers = usePublicEndpoint ? {} : { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
+      const baseUrl = usePublicEndpoint ? '/api/public/stars' : '/api/stars';
       
       const [statsRes, multiRes] = await Promise.all([
         fetch(`${process.env.REACT_APP_BACKEND_URL}${baseUrl}/stats/overview${villeParam}`, { headers }),
@@ -103,6 +111,7 @@ const MinistereStarsDashboardPage = () => {
       if (statsRes.ok) setStats(await statsRes.json());
       if (multiRes.ok) setMultiDeptStars(await multiRes.json());
     } catch (error) {
+      console.error('Erreur:', error);
       toast.error('Erreur de chargement');
     } finally {
       setLoading(false);
