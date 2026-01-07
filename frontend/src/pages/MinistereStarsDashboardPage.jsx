@@ -160,7 +160,7 @@ const MinistereStarsDashboardPage = () => {
 
   if (loading) {
     return (
-      <LayoutMinistereStars>
+      <LayoutMinistereStars ville={villeFromUrl}>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
         </div>
@@ -173,7 +173,7 @@ const MinistereStarsDashboardPage = () => {
   const cityDisplay = user?.role === 'responsable_eglise' ? user.city : (selectedCity && selectedCity !== 'all' ? selectedCity : null);
 
   return (
-    <LayoutMinistereStars>
+    <LayoutMinistereStars ville={villeFromUrl}>
       <div className="space-y-6 p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
