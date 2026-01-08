@@ -233,6 +233,8 @@ class VisitorUpdate(BaseModel):
     formation_au_coeur_bible: Optional[bool] = None
     formation_star: Optional[bool] = None
     ejp: Optional[bool] = None
+    est_disciple: Optional[str] = None  # "Oui", "En Cours", "Non"
+    date_devenu_disciple: Optional[str] = None
 
 class CommentAdd(BaseModel):
     text: str
