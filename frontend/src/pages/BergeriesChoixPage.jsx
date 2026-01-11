@@ -31,7 +31,7 @@ const BergeriesChoixPage = () => {
             className="cursor-pointer hover:shadow-xl transition-all hover:border-purple-400 hover:bg-purple-50 group"
             onClick={() => navigate('/bergeries-promotions')}
           >
-            <CardHeader className="text-center pb-2">
+            <CardHeader className="text-center pb-4">
               <div className="mx-auto w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-700 transition-colors">
                 <Users className="h-8 w-8 text-white" />
               </div>
@@ -39,9 +39,6 @@ const BergeriesChoixPage = () => {
               <p className="text-sm text-gray-500">(ex Promotions)</p>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-gray-600 text-sm mb-4">
-                Gérez les promotions mensuelles avec leurs nouveaux arrivants, le suivi des présences et des formations.
-              </p>
               <Button className="w-full bg-purple-600 hover:bg-purple-700">
                 Accéder
               </Button>
@@ -53,7 +50,7 @@ const BergeriesChoixPage = () => {
             className="cursor-pointer hover:shadow-xl transition-all hover:border-green-400 hover:bg-green-50 group"
             onClick={() => navigate('/bergeries-disciples')}
           >
-            <CardHeader className="text-center pb-2">
+            <CardHeader className="text-center pb-4">
               <div className="mx-auto w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-700 transition-colors">
                 <UserPlus className="h-8 w-8 text-white" />
               </div>
@@ -61,9 +58,6 @@ const BergeriesChoixPage = () => {
               <p className="text-sm text-gray-500">(ex Groupes de Disciples)</p>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-gray-600 text-sm mb-4">
-                Gérez les groupes de disciples avec le suivi des membres, objectifs de croissance et évangélisation.
-              </p>
               <Button className="w-full bg-green-600 hover:bg-green-700">
                 Accéder
               </Button>
