@@ -6,7 +6,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
-import { MapPin, Users, ArrowLeft, Plus, Loader2 } from 'lucide-react';
+import { MapPin, Users, ArrowLeft, Plus, Loader2, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BergeriesDisciplesPage = () => {
@@ -20,6 +20,16 @@ const BergeriesDisciplesPage = () => {
   const [showAddBergerie, setShowAddBergerie] = useState(false);
   const [newBergerie, setNewBergerie] = useState({ nom: '', responsable: '', ville: 'Dijon' });
   const [creating, setCreating] = useState(false);
+  
+  // Dialog pour modifier une bergerie
+  const [showEditBergerie, setShowEditBergerie] = useState(false);
+  const [editBergerie, setEditBergerie] = useState(null);
+  const [saving, setSaving] = useState(false);
+  
+  // Dialog pour confirmer la suppression
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [bergerieToDelete, setBergerieToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadCities();
