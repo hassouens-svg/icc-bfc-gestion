@@ -112,6 +112,41 @@ const BergeriesDisciplesPage = () => {
     navigate(`/bergerie-disciple/${bergerie.id}`);
   };
 
+  const handleCreateBergerie = async () => {
+    if (!newBergerie.nom || !newBergerie.responsable || !newBergerie.ville) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+    
+    setCreating(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newBergerie)
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setBergeries([...bergeries, data.bergerie]);
+        toast.success('Bergerie créée avec succès!');
+        setShowAddBergerie(false);
+        setNewBergerie({ nom: '', responsable: '', ville: 'Dijon' });
+        
+        // Naviguer vers la nouvelle bergerie
+        localStorage.setItem('selected_bergerie_disciple', JSON.stringify(data.bergerie));
+        navigate(`/bergerie-disciple/${data.bergerie.id}`);
+      } else {
+        toast.error('Erreur lors de la création');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erreur de connexion');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const filteredBergeries = selectedCity === 'all' 
     ? bergeries 
     : bergeries.filter(b => b.ville === selectedCity);
