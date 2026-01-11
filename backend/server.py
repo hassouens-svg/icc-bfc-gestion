@@ -7077,20 +7077,6 @@ async def save_programmation_semaine(data: dict, current_user: dict = Depends(ge
     
     return {"message": "Programmation enregistrée et appliquée aux dates"}
 
-@api_router.get("/pain-du-jour/programmations")
-async def get_all_programmations(current_user: dict = Depends(get_current_user)):
-    """Récupérer toutes les programmations futures"""
-    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
-        raise HTTPException(status_code=403, detail="Permission denied")
-    
-    # Récupérer les programmations triées par semaine
-    programmations = await db.pain_du_jour_programmation.find(
-        {},
-        {"_id": 0}
-    ).sort("semaine", -1).to_list(52)  # Maximum 1 an
-    
-    return programmations
-
 
 # ==================== RÉSUMÉ ET QUIZ ENSEIGNEMENT ====================
 
