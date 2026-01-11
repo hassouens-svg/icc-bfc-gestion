@@ -163,4 +163,6 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 - **Session**: 
   - Feature "Groupes de Disciples" avec création manuelle ✅
   - Pain du Jour programmation hebdomadaire ✅
-  - Tests: 100% pass (12/12 backend)
+  - Données Google Sheet corrigées (42 bergeries avec vrais membres) ✅
+  - "Ambassadeurs de Christ" → Besançon (corrigé) ✅
+  - Tests: 100% pass
