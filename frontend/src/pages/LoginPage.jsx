@@ -76,11 +76,14 @@ const LoginPage = () => {
       const redirectAfterLogin = sessionStorage.getItem('redirectAfterLogin');
       sessionStorage.removeItem('redirectAfterLogin');
       
-      // Redirect pasteur/superadmin to account selection page
-      if (isSpecialAccess) {
-        navigate(redirectAfterLogin || '/select-account');
+      // PRIORITY: Always use redirectAfterLogin if it exists (even for superadmin)
+      if (redirectAfterLogin) {
+        navigate(redirectAfterLogin);
+      } else if (isSpecialAccess) {
+        // Only go to select-account if no specific redirect is set
+        navigate('/select-account');
       } else {
-        navigate(redirectAfterLogin || '/dashboard');
+        navigate('/dashboard');
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Erreur de connexion');
