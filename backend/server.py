@@ -6870,6 +6870,21 @@ async def get_pain_du_jour_today():
     return content or {"date": today, "versets": []}
 
 
+@api_router.get("/pain-du-jour/programmations")
+async def get_all_programmations(current_user: dict = Depends(get_current_user)):
+    """Récupérer toutes les programmations futures"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Récupérer les programmations triées par semaine
+    programmations = await db.pain_du_jour_programmation.find(
+        {},
+        {"_id": 0}
+    ).sort("semaine", -1).to_list(52)  # Maximum 1 an
+    
+    return programmations
+
+
 @api_router.get("/pain-du-jour/{date}")
 async def get_pain_du_jour(date: str):
     """Récupère le contenu d'une date spécifique (public)"""
