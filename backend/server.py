@@ -8349,7 +8349,7 @@ STATIC_BERGERIES_DISCIPLES = [
 async def get_bergeries_disciples_list():
     """Récupérer la liste des groupes de disciples - Public"""
     # D'abord, essayer de récupérer depuis la DB
-    bergeries = await db.bergeries_disciples.find({}, {"_id": 0}).to_list(100)
+    bergeries = await db.bergeries_disciples.find({}, {"_id": 0}).to_list(200)
     
     if bergeries:
         # Mettre à jour le nombre de membres pour chaque bergerie
@@ -8358,8 +8358,31 @@ async def get_bergeries_disciples_list():
             b["membres_count"] = membres_count
         return bergeries
     
-    # Sinon, retourner la liste statique
+    # Sinon, retourner la liste statique et l'initialiser dans la DB
+    for b in STATIC_BERGERIES_DISCIPLES:
+        existing = await db.bergeries_disciples.find_one({"id": b["id"]})
+        if not existing:
+            await db.bergeries_disciples.insert_one({**b, "created_at": datetime.now(timezone.utc).isoformat()})
+    
     return STATIC_BERGERIES_DISCIPLES
+
+@api_router.post("/bergeries-disciples/create")
+async def create_bergerie_disciple(data: dict):
+    """Créer une nouvelle bergerie manuellement"""
+    from uuid import uuid4
+    
+    bergerie = {
+        "id": f"bg-{str(uuid4())[:8]}",
+        "nom": data.get("nom", "Nouvelle Bergerie"),
+        "responsable": data.get("responsable", ""),
+        "ville": data.get("ville", "Dijon"),
+        "membres_count": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.bergeries_disciples.insert_one(bergerie)
+    
+    return {"id": bergerie["id"], "message": "Bergerie créée avec succès", "bergerie": bergerie}
 
 @api_router.get("/bergeries-disciples/{bergerie_id}")
 async def get_bergerie_disciple_info(bergerie_id: str):
