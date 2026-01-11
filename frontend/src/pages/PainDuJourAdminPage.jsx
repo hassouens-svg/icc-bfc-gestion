@@ -805,6 +805,118 @@ const PainDuJourAdminPage = () => {
             </Button>
           </TabsContent>
 
+          {/* Programmation Tab */}
+          <TabsContent value="programmation" className="space-y-4">
+            <Card className="border-indigo-200">
+              <CardHeader className="bg-indigo-50 py-3">
+                <CardTitle className="text-base text-indigo-800 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Programmation Hebdomadaire
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="week"
+                      value={selectedWeek}
+                      onChange={(e) => setSelectedWeek(e.target.value)}
+                      className="w-48"
+                    />
+                    {loadingProgrammation && <Loader2 className="h-4 w-4 animate-spin" />}
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-6">
+                <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                  💡 Remplissez les liens des enseignements et versets pour chaque jour de la semaine. 
+                  Le système appliquera automatiquement le contenu aux dates correspondantes.
+                </p>
+
+                {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'].map((jour) => (
+                  <div key={jour} className="border rounded-lg p-4 bg-white">
+                    <h4 className="font-semibold text-lg mb-3 capitalize flex items-center gap-2">
+                      📅 {jour}
+                      {programmation[jour]?.lien_enseignement && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">✓ Configuré</span>
+                      )}
+                    </h4>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {/* Enseignement */}
+                      <div className="space-y-2">
+                        <Label className="text-blue-700">📚 Enseignement</Label>
+                        <Input
+                          value={programmation[jour]?.lien_enseignement || ''}
+                          onChange={(e) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], lien_enseignement: e.target.value }
+                          }))}
+                          placeholder="Lien YouTube enseignement"
+                        />
+                        <Input
+                          value={programmation[jour]?.titre_enseignement || ''}
+                          onChange={(e) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], titre_enseignement: e.target.value }
+                          }))}
+                          placeholder="Titre de l'enseignement (optionnel)"
+                        />
+                      </div>
+                      
+                      {/* Prière */}
+                      <div className="space-y-2">
+                        <Label className="text-purple-700">🙏 Temps de prière</Label>
+                        <Input
+                          value={programmation[jour]?.lien_priere || ''}
+                          onChange={(e) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], lien_priere: e.target.value }
+                          }))}
+                          placeholder="Lien YouTube prière (optionnel)"
+                        />
+                        <Input
+                          value={programmation[jour]?.titre_priere || ''}
+                          onChange={(e) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], titre_priere: e.target.value }
+                          }))}
+                          placeholder="Titre du temps de prière"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Versets */}
+                    <div className="mt-3">
+                      <Label className="text-green-700">📖 Versets du jour</Label>
+                      <Input
+                        value={programmation[jour]?.versets_text || ''}
+                        onChange={(e) => setProgrammation(prev => ({
+                          ...prev,
+                          [jour]: { ...prev[jour], versets_text: e.target.value }
+                        }))}
+                        placeholder="Ex: Jean 3:16, Romains 8:28, Psaumes 23"
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Séparez les versets par des virgules</p>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Save Button */}
+                <Button 
+                  onClick={saveProgrammation} 
+                  className="w-full bg-indigo-600 hover:bg-indigo-700" 
+                  disabled={savingProgrammation}
+                >
+                  {savingProgrammation ? (
+                    <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Enregistrement...</>
+                  ) : (
+                    <><Save className="h-4 w-4 mr-2" /> Enregistrer la semaine {selectedWeek}</>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Versets Tab */}
           <TabsContent value="versets" className="space-y-4">
             <Card className="border-green-200">
