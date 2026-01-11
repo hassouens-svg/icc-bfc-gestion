@@ -1,0 +1,69 @@
+{
+  "summary": "Completed testing of 'Groupes de Disciples' (Bergeries) feature. All backend APIs and frontend UI working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/tests/test_bergeries_disciples.py",
+    "/app/test_reports/pytest/pytest_bergeries_disciples.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/tests/test_bergeries_disciples.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "Test data created via API: TEST_Jean Dupont (member), TEST_Pierre Test (member), TEST_Sophie Contact (contact), objectives for Février 2026 and Mars 2026",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Bergeries Disciples feature fully tested. 41 groups available via /api/bergeries-disciples/list. Detail page at /bergerie-disciple/{id} has 3 tabs: Membres, Suivi Disciples, Reproduction. All CRUD operations working.",
+  "test_results": {
+    "backend_tests": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        "test_get_list_returns_41_groups - PASSED",
+        "test_list_contains_required_fields - PASSED",
+        "test_list_contains_expected_cities - PASSED",
+        "test_get_bergerie_by_id - PASSED",
+        "test_get_bergerie_not_found - PASSED",
+        "test_get_membres_for_bergerie - PASSED",
+        "test_add_membre - PASSED",
+        "test_add_objectif - PASSED",
+        "test_add_contact - PASSED",
+        "test_get_cities_public - PASSED"
+      ]
+    },
+    "frontend_tests": {
+      "pages_tested": [
+        "/bergeries - Choice page with 2 cards (Promotions and Groupes de Disciples)",
+        "/bergeries-disciples - List of 41 groups with city filter",
+        "/bergerie-disciple/bg-1 - Detail page with 3 tabs"
+      ],
+      "features_verified": [
+        "Page /bergeries displays 2 choice cards correctly",
+        "Click on 'Groupes de Disciples' navigates to /bergeries-disciples",
+        "Page /bergeries-disciples shows 41 groups",
+        "City filter dropdown works",
+        "Click on group navigates to detail page",
+        "Detail page shows bergerie name, responsable, ville",
+        "3 tabs visible: Membres, Suivi Disciples, Reproduction",
+        "Add member dialog opens correctly",
+        "Suivi Disciples tab shows stats (Oui, En Cours, Non) and status dropdowns",
+        "Reproduction tab shows Objectifs de Multiplication and Personnes Contactées",
+        "Add objectif dialog opens correctly",
+        "Add contact dialog opens correctly"
+      ]
+    }
+  }
+}
