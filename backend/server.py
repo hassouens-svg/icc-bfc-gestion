@@ -8361,6 +8361,24 @@ async def get_bergeries_disciples_list():
     # Sinon, retourner la liste statique
     return STATIC_BERGERIES_DISCIPLES
 
+@api_router.get("/bergeries-disciples/{bergerie_id}")
+async def get_bergerie_disciple_info(bergerie_id: str):
+    """Récupérer les infos d'un groupe de disciples par ID"""
+    # D'abord essayer depuis la DB
+    bergerie = await db.bergeries_disciples.find_one({"id": bergerie_id}, {"_id": 0})
+    
+    if bergerie:
+        membres_count = await db.membres_disciples.count_documents({"bergerie_id": bergerie_id})
+        bergerie["membres_count"] = membres_count
+        return bergerie
+    
+    # Sinon, chercher dans la liste statique
+    for b in STATIC_BERGERIES_DISCIPLES:
+        if b["id"] == bergerie_id:
+            return b
+    
+    raise HTTPException(status_code=404, detail="Bergerie non trouvée")
+
 @api_router.get("/bergeries-disciples/{bergerie_id}/membres")
 async def get_bergerie_disciples_membres(bergerie_id: str):
     """Récupérer les membres d'un groupe de disciples"""
