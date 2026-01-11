@@ -45,13 +45,26 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 #### Groupes de Disciples (NEW - Jan 2026)
 - Page intermédiaire de choix (/bergeries)
-- Liste de 41 groupes (/bergeries-disciples)
+- Liste de 47+ groupes (/bergeries-disciples)
+  - 41 groupes statiques issus du Google Sheet
+  - Nouvelles bergeries créées manuellement
 - Filtrage par ville
+- **Création manuelle de bergeries** (nom, responsable, ville) ✅ NEW
 - Page de détail avec 3 onglets:
   - Membres (CRUD)
   - Suivi Disciples (statut)
   - Reproduction (objectifs, contacts)
 - API complète backend
+
+#### Pain du Jour
+- Méditation quotidienne
+- Quiz interactif
+- Admin panel avec 5 onglets:
+  - Contenu (date spécifique)
+  - **Semaine** (programmation hebdomadaire Lundi-Vendredi) ✅ NEW
+  - Versets
+  - Quiz
+  - Stats
 
 #### Ministère des Stars
 - Dashboard par département
@@ -69,20 +82,12 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 - Système RSVP public
 - Statistiques de participation
 
-#### Pain du Jour
-- Méditation quotidienne
-- Quiz interactif
-- Admin panel
-
 ---
 
 ## Known Issues
 
 ### P1 - High Priority
 - **Session Loss on Navigation**: Utilisateurs déconnectés lors de certaines navigations (récurrent)
-
-### P2 - Medium Priority
-- ~~Redirect issue superadmin via Bergerie flow~~ → FIXED (Jan 2026)
 
 ### P3 - Low Priority / Blocked
 - **Brevo API Key Invalid**: Emails transactionnels non fonctionnels (besoin nouvelle clé)
@@ -109,7 +114,8 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /api/bergeries-disciples/list | Liste des 41 groupes |
+| GET | /api/bergeries-disciples/list | Liste des groupes (statiques + créés) |
+| POST | /api/bergeries-disciples/create | Créer une nouvelle bergerie |
 | GET | /api/bergeries-disciples/{id} | Info d'un groupe |
 | GET | /api/bergeries-disciples/{id}/membres | Membres, objectifs, contacts |
 | POST | /api/bergeries-disciples/{id}/membres | Ajouter un membre |
@@ -118,6 +124,14 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 | POST | /api/bergeries-disciples/membres/{id}/disciple | Maj statut disciple |
 | POST | /api/bergeries-disciples/{id}/objectifs | Ajouter objectif |
 | POST | /api/bergeries-disciples/{id}/contacts | Ajouter contact évangélisé |
+
+## API Endpoints - Pain du Jour Programmation
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/pain-du-jour/programmation/{semaine} | Récupérer programmation d'une semaine |
+| POST | /api/pain-du-jour/programmation | Sauvegarder et appliquer programmation |
+| GET | /api/pain-du-jour/programmations | Liste toutes les programmations |
 
 ---
 
@@ -130,18 +144,23 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 ├── frontend/src/
 │   ├── pages/
 │   │   ├── BergeriesChoixPage.jsx      # Choix Promotions/Groupes
-│   │   ├── BergeriesDisciplesPage.jsx  # Liste 41 groupes
+│   │   ├── BergeriesDisciplesPage.jsx  # Liste groupes + création
 │   │   ├── BergerieDiscipleDetailPage.jsx # Détail groupe
+│   │   ├── PainDuJourAdminPage.jsx     # Admin avec 5 onglets
 │   │   ├── BergeriesPublicPage.jsx     # Liste promotions
 │   │   ├── HomePage.jsx                # Accueil avec bannière
 │   │   └── LoginPage.jsx               # Connexion
 │   └── App.js                          # Routing
 └── tests/
-    └── test_bergeries_disciples.py     # Tests API
+    ├── test_bergeries_disciples.py
+    └── test_bergeries_pain_du_jour.py
 ```
 
 ---
 
 ## Last Updated
 - **Date**: January 11, 2026
-- **Session**: Feature "Groupes de Disciples" implementée et testée (100% pass)
+- **Session**: 
+  - Feature "Groupes de Disciples" avec création manuelle ✅
+  - Pain du Jour programmation hebdomadaire ✅
+  - Tests: 100% pass (12/12 backend)
