@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { MapPin, Users, ArrowLeft, UserPlus } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+import { MapPin, Users, ArrowLeft, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BergeriesDisciplesPage = () => {
@@ -12,6 +15,11 @@ const BergeriesDisciplesPage = () => {
   const [selectedCity, setSelectedCity] = useState('all');
   const [bergeries, setBergeries] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Dialog pour créer une nouvelle bergerie
+  const [showAddBergerie, setShowAddBergerie] = useState(false);
+  const [newBergerie, setNewBergerie] = useState({ nom: '', responsable: '', ville: 'Dijon' });
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     loadCities();
