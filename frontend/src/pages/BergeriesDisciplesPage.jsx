@@ -273,7 +273,9 @@ const BergeriesDisciplesPage = () => {
         {/* Title + Add Button */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
           <div className="text-center sm:text-left">
-            <h1 className="text-3xl font-bold text-gray-900">🌿 Bergeries - Groupes de Disciples</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              🌿 Bergeries <span className="text-lg font-normal text-gray-500">(Groupes de Disciples)</span>
+            </h1>
             <p className="text-gray-600 mt-2">
               {filteredBergeries.length} groupe(s) • {totalMembres} membre(s)
               {selectedCity !== 'all' && ` • ${selectedCity}`}
