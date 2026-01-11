@@ -8533,6 +8533,54 @@ async def get_bergerie_disciple_info(bergerie_id: str):
     
     raise HTTPException(status_code=404, detail="Bergerie non trouvée")
 
+@api_router.put("/bergeries-disciples/{bergerie_id}")
+async def update_bergerie_disciple(bergerie_id: str, data: dict):
+    """Modifier une bergerie"""
+    update_data = {
+        "nom": data.get("nom"),
+        "responsable": data.get("responsable"),
+        "ville": data.get("ville"),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Supprimer les clés None
+    update_data = {k: v for k, v in update_data.items() if v is not None}
+    
+    # D'abord vérifier si la bergerie existe en DB
+    existing = await db.bergeries_disciples.find_one({"id": bergerie_id})
+    
+    if existing:
+        # Mettre à jour
+        await db.bergeries_disciples.update_one(
+            {"id": bergerie_id},
+            {"$set": update_data}
+        )
+    else:
+        # C'est une bergerie statique, on la crée en DB pour pouvoir la modifier
+        for static_b in STATIC_BERGERIES_DISCIPLES:
+            if static_b["id"] == bergerie_id:
+                new_bergerie = {**static_b, **update_data, "created_at": datetime.now(timezone.utc).isoformat()}
+                new_bergerie.pop("membres", None)  # Ne pas stocker la liste des membres
+                await db.bergeries_disciples.insert_one(new_bergerie.copy())
+                break
+    
+    return {"message": "Bergerie modifiée avec succès"}
+
+@api_router.delete("/bergeries-disciples/{bergerie_id}")
+async def delete_bergerie_disciple(bergerie_id: str):
+    """Supprimer une bergerie et ses données associées"""
+    # Supprimer la bergerie de la DB
+    result = await db.bergeries_disciples.delete_one({"id": bergerie_id})
+    
+    # Supprimer tous les membres associés
+    await db.membres_disciples.delete_many({"bergerie_id": bergerie_id})
+    
+    # Supprimer les objectifs et contacts associés
+    await db.objectifs_multiplication.delete_many({"bergerie_id": bergerie_id})
+    await db.contacts_evangile.delete_many({"bergerie_id": bergerie_id})
+    
+    return {"message": "Bergerie et données associées supprimées"}
+
 @api_router.get("/bergeries-disciples/{bergerie_id}/membres")
 async def get_bergerie_disciples_membres(bergerie_id: str):
     """Récupérer les membres d'un groupe de disciples"""
