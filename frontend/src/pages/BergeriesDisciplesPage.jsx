@@ -291,6 +291,71 @@ const BergeriesDisciplesPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialog Créer Bergerie */}
+      <Dialog open={showAddBergerie} onOpenChange={setShowAddBergerie}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>🌿 Créer une nouvelle Bergerie</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Nom de la Bergerie *</Label>
+              <Input 
+                value={newBergerie.nom} 
+                onChange={(e) => setNewBergerie({...newBergerie, nom: e.target.value})}
+                placeholder="Ex: Les Conquérants de Dieu"
+              />
+            </div>
+            <div>
+              <Label>Nom du Responsable *</Label>
+              <Input 
+                value={newBergerie.responsable} 
+                onChange={(e) => setNewBergerie({...newBergerie, responsable: e.target.value})}
+                placeholder="Ex: Jean-Pierre"
+              />
+            </div>
+            <div>
+              <Label>Ville *</Label>
+              <Select 
+                value={newBergerie.ville} 
+                onValueChange={(v) => setNewBergerie({...newBergerie, ville: v})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez une ville" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddBergerie(false)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleCreateBergerie} 
+              className="bg-green-600 hover:bg-green-700"
+              disabled={creating}
+            >
+              {creating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Création...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Créer la Bergerie
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
