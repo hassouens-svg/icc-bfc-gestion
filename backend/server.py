@@ -6961,6 +6961,122 @@ async def get_pain_du_jour_stats(annee: int, current_user: dict = Depends(get_cu
     return stats
 
 
+# ==================== PROGRAMMATION HEBDOMADAIRE PAIN DU JOUR ====================
+
+@api_router.get("/pain-du-jour/programmation/{semaine}")
+async def get_programmation_semaine(semaine: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer la programmation pour une semaine donnée"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    programmation = await db.pain_du_jour_programmation.find_one(
+        {"semaine": semaine},
+        {"_id": 0}
+    )
+    
+    if not programmation:
+        # Retourner un template vide
+        return {
+            "semaine": semaine,
+            "jours": {
+                "lundi": {"lien_enseignement": "", "titre_enseignement": "", "versets": []},
+                "mardi": {"lien_enseignement": "", "titre_enseignement": "", "versets": []},
+                "mercredi": {"lien_enseignement": "", "titre_enseignement": "", "versets": []},
+                "jeudi": {"lien_enseignement": "", "titre_enseignement": "", "versets": []},
+                "vendredi": {"lien_enseignement": "", "titre_enseignement": "", "versets": []}
+            }
+        }
+    
+    return programmation
+
+@api_router.post("/pain-du-jour/programmation")
+async def save_programmation_semaine(data: dict, current_user: dict = Depends(get_current_user)):
+    """Sauvegarder la programmation pour une semaine entière"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    semaine = data.get("semaine")
+    jours = data.get("jours", {})
+    
+    if not semaine:
+        raise HTTPException(status_code=400, detail="Semaine requise")
+    
+    await db.pain_du_jour_programmation.update_one(
+        {"semaine": semaine},
+        {"$set": {
+            "semaine": semaine,
+            "jours": jours,
+            "created_by": current_user["username"],
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    
+    # Optionnel: Appliquer automatiquement la programmation aux dates correspondantes
+    # Calculer les dates pour cette semaine
+    import re
+    match = re.match(r'(\d{4})-W(\d{2})', semaine)
+    if match:
+        year = int(match.group(1))
+        week = int(match.group(2))
+        
+        # Calculer le lundi de cette semaine
+        from datetime import timedelta
+        jan1 = datetime(year, 1, 1)
+        days_to_first_monday = (7 - jan1.weekday()) % 7
+        first_monday = jan1 + timedelta(days=days_to_first_monday)
+        target_monday = first_monday + timedelta(weeks=week - 1)
+        if jan1.weekday() <= 3:  # Si 1er janvier est avant jeudi
+            target_monday -= timedelta(weeks=1)
+        
+        jour_mapping = {
+            "lundi": 0,
+            "mardi": 1,
+            "mercredi": 2,
+            "jeudi": 3,
+            "vendredi": 4
+        }
+        
+        for jour_nom, jour_data in jours.items():
+            if jour_nom in jour_mapping and jour_data.get("lien_enseignement"):
+                jour_offset = jour_mapping[jour_nom]
+                date_jour = target_monday + timedelta(days=jour_offset)
+                date_str = date_jour.strftime("%Y-%m-%d")
+                
+                # Créer/mettre à jour le contenu pour ce jour
+                await db.pain_du_jour.update_one(
+                    {"date": date_str},
+                    {"$set": {
+                        "date": date_str,
+                        "lien_enseignement": jour_data.get("lien_enseignement", ""),
+                        "titre_enseignement": jour_data.get("titre_enseignement", ""),
+                        "versets": jour_data.get("versets", []),
+                        "lien_priere": jour_data.get("lien_priere", ""),
+                        "titre_priere": jour_data.get("titre_priere", ""),
+                        "created_by": current_user["username"],
+                        "programmation_auto": True,
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }},
+                    upsert=True
+                )
+    
+    return {"message": "Programmation enregistrée et appliquée aux dates"}
+
+@api_router.get("/pain-du-jour/programmations")
+async def get_all_programmations(current_user: dict = Depends(get_current_user)):
+    """Récupérer toutes les programmations futures"""
+    if current_user["role"] not in ["super_admin", "pasteur", "gestion_projet"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Récupérer les programmations triées par semaine
+    programmations = await db.pain_du_jour_programmation.find(
+        {},
+        {"_id": 0}
+    ).sort("semaine", -1).to_list(52)  # Maximum 1 an
+    
+    return programmations
+
+
 # ==================== RÉSUMÉ ET QUIZ ENSEIGNEMENT ====================
 
 class ExtractVersetsRequest(BaseModel):
