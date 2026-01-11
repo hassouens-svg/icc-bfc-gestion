@@ -58,6 +58,24 @@ const PainDuJourAdminPage = () => {
   // États pour extraction des versets
   const [extractingVersets, setExtractingVersets] = useState(false);
   const [extractedVersets, setExtractedVersets] = useState(null);
+  
+  // États pour la programmation hebdomadaire
+  const [selectedWeek, setSelectedWeek] = useState(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const onejan = new Date(year, 0, 1);
+    const week = Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+    return `${year}-W${String(week).padStart(2, '0')}`;
+  });
+  const [programmation, setProgrammation] = useState({
+    lundi: { lien_enseignement: '', titre_enseignement: '', versets: [], lien_priere: '', titre_priere: '' },
+    mardi: { lien_enseignement: '', titre_enseignement: '', versets: [], lien_priere: '', titre_priere: '' },
+    mercredi: { lien_enseignement: '', titre_enseignement: '', versets: [], lien_priere: '', titre_priere: '' },
+    jeudi: { lien_enseignement: '', titre_enseignement: '', versets: [], lien_priere: '', titre_priere: '' },
+    vendredi: { lien_enseignement: '', titre_enseignement: '', versets: [], lien_priere: '', titre_priere: '' }
+  });
+  const [loadingProgrammation, setLoadingProgrammation] = useState(false);
+  const [savingProgrammation, setSavingProgrammation] = useState(false);
 
   // Check existing auth on mount
   useEffect(() => {
