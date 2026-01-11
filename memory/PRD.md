@@ -161,8 +161,9 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 ## Last Updated
 - **Date**: January 11, 2026
 - **Session**: 
-  - Feature "Groupes de Disciples" avec création manuelle ✅
-  - Pain du Jour programmation hebdomadaire ✅
+  - Page choix Bergeries simplifiée (descriptions retirées) ✅
+  - Titre "Bergeries (Groupes de Disciples)" avec sous-titre en petit ✅
+  - Boutons Modifier/Supprimer sur chaque bergerie ✅
+  - API PUT/DELETE pour bergeries ✅
   - Données Google Sheet corrigées (42 bergeries avec vrais membres) ✅
-  - "Ambassadeurs de Christ" → Besançon (corrigé) ✅
-  - Tests: 100% pass
+  - "Ambassadeurs de Christ" → Besançon ✅
