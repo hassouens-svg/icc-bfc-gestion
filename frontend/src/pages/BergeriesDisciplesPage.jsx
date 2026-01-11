@@ -157,6 +157,77 @@ const BergeriesDisciplesPage = () => {
     }
   };
 
+  const handleEditBergerie = async () => {
+    if (!editBergerie?.nom || !editBergerie?.responsable) {
+      toast.error('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/${editBergerie.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nom: editBergerie.nom,
+          responsable: editBergerie.responsable,
+          ville: editBergerie.ville
+        })
+      });
+      
+      if (response.ok) {
+        setBergeries(bergeries.map(b => b.id === editBergerie.id ? {...b, ...editBergerie} : b));
+        toast.success('Bergerie modifiée avec succès!');
+        setShowEditBergerie(false);
+        setEditBergerie(null);
+      } else {
+        toast.error('Erreur lors de la modification');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erreur de connexion');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteBergerie = async () => {
+    if (!bergerieToDelete) return;
+    
+    setDeleting(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/${bergerieToDelete.id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        setBergeries(bergeries.filter(b => b.id !== bergerieToDelete.id));
+        toast.success('Bergerie supprimée avec succès!');
+        setShowDeleteConfirm(false);
+        setBergerieToDelete(null);
+      } else {
+        toast.error('Erreur lors de la suppression');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erreur de connexion');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const openEditDialog = (bergerie, e) => {
+    e.stopPropagation();
+    setEditBergerie({...bergerie});
+    setShowEditBergerie(true);
+  };
+
+  const openDeleteDialog = (bergerie, e) => {
+    e.stopPropagation();
+    setBergerieToDelete(bergerie);
+    setShowDeleteConfirm(true);
+  };
+
   const filteredBergeries = selectedCity === 'all' 
     ? bergeries 
     : bergeries.filter(b => b.ville === selectedCity);
