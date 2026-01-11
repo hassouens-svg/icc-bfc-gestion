@@ -327,11 +327,31 @@ const BergeriesDisciplesPage = () => {
           {filteredBergeries.map((bergerie) => (
             <Card 
               key={bergerie.id}
-              className="cursor-pointer hover:shadow-lg transition-all hover:border-green-400 hover:bg-green-50 group"
+              className="cursor-pointer hover:shadow-lg transition-all hover:border-green-400 hover:bg-green-50 group relative"
               onClick={() => handleSelectBergerie(bergerie)}
             >
+              {/* Boutons Modifier/Supprimer */}
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 bg-white/80 hover:bg-blue-100"
+                  onClick={(e) => openEditDialog(bergerie, e)}
+                >
+                  <Pencil className="h-3.5 w-3.5 text-blue-600" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 bg-white/80 hover:bg-red-100"
+                  onClick={(e) => openDeleteDialog(bergerie, e)}
+                >
+                  <Trash2 className="h-3.5 w-3.5 text-red-600" />
+                </Button>
+              </div>
+              
               <CardHeader className="pb-2">
-                <CardTitle className="text-base leading-tight line-clamp-2">
+                <CardTitle className="text-base leading-tight line-clamp-2 pr-16">
                   {bergerie.nom}
                 </CardTitle>
               </CardHeader>
@@ -342,7 +362,7 @@ const BergeriesDisciplesPage = () => {
                     <span>{bergerie.membres_count || 0} membre(s)</span>
                   </div>
                   <div className="text-xs text-gray-500">
-                    👤 {bergerie.responsable}
+                    👤 {bergerie.responsable || 'Non défini'}
                   </div>
                   <div className="text-xs text-gray-400">
                     📍 {bergerie.ville}
