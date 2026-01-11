@@ -92,6 +92,9 @@ import BergeriesPublicPage from './pages/BergeriesPublicPage';
 import PCNCPage from './pages/PCNCPage';
 import SelectVilleStarsPage from './pages/SelectVilleStarsPage';
 import SelectVilleBergersEglisePage from './pages/SelectVilleBergersEglisePage';
+import BergeriesChoixPage from './pages/BergeriesChoixPage';
+import BergeriesDisciplesPage from './pages/BergeriesDisciplesPage';
+import BergerieDiscipleDetailPage from './pages/BergerieDiscipleDetailPage';
 
 function App() {
   return (
@@ -152,10 +155,15 @@ function App() {
           <Route path="/berger-presences" element={<MarquerPresenceBergersPage />} />
           <Route path="/berger-presences/historique" element={<HistoriquePresenceBergersPage />} />
           
-          {/* BERGERIES - Page publique pour voir les bergeries, puis login */}
-          <Route path="/bergeries" element={<BergeriesPublicPage />} />
+          {/* BERGERIES - Page de choix (Promotions vs Groupes de disciples) */}
+          <Route path="/bergeries" element={<BergeriesChoixPage />} />
+          <Route path="/bergeries-promotions" element={<BergeriesPublicPage />} />
           <Route path="/bergeries-select" element={<SelectBergeriePage />} />
           <Route path="/bergeries-dashboard" element={<SelectBergeriePage />} />
+          
+          {/* BERGERIES - Groupes de Disciples */}
+          <Route path="/bergeries-disciples" element={<BergeriesDisciplesPage />} />
+          <Route path="/bergerie-disciple/:id" element={<BergerieDiscipleDetailPage />} />
           
           {/* Public Bergerie Routes - UI identique à l'authentifié */}
           <Route path="/bergerie/dashboard" element={<PublicBergerieDashboardPage />} />
