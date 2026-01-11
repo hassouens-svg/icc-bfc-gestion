@@ -24,7 +24,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://churchflow-9.preview.emergentagent.com/api"
+BASE_URL = "https://faithflow-14.preview.emergentagent.com/api"
 USERNAME = "superadmin"
 PASSWORD = "superadmin123"
 CITY = "Dijon"

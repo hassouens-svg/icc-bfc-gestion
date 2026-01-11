@@ -11,7 +11,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BACKEND_URL = "https://churchflow-9.preview.emergentagent.com"
+BACKEND_URL = "https://faithflow-14.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test credentials

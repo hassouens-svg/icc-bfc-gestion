@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://churchflow-9.preview.emergentagent.com/api"
+BASE_URL = "https://faithflow-14.preview.emergentagent.com/api"
 
 def test_fi_public_endpoint_with_time_fields():
     """
