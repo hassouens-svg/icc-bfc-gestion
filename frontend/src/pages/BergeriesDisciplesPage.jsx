@@ -189,13 +189,22 @@ const BergeriesDisciplesPage = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-8">
-        {/* Title */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">🌿 Bergeries - Groupes de Disciples</h1>
-          <p className="text-gray-600 mt-2">
-            {filteredBergeries.length} groupe(s) • {totalMembres} membre(s)
-            {selectedCity !== 'all' && ` • ${selectedCity}`}
-          </p>
+        {/* Title + Add Button */}
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <div className="text-center sm:text-left">
+            <h1 className="text-3xl font-bold text-gray-900">🌿 Bergeries - Groupes de Disciples</h1>
+            <p className="text-gray-600 mt-2">
+              {filteredBergeries.length} groupe(s) • {totalMembres} membre(s)
+              {selectedCity !== 'all' && ` • ${selectedCity}`}
+            </p>
+          </div>
+          <Button 
+            onClick={() => setShowAddBergerie(true)} 
+            className="bg-green-600 hover:bg-green-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nouvelle Bergerie
+          </Button>
         </div>
 
         {/* Stats Cards */}
