@@ -371,6 +371,61 @@ const PainDuJourAdminPage = () => {
     }
   };
 
+  const loadProgrammation = async (week) => {
+    setLoadingProgrammation(true);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour/programmation/${week}`,
+        { headers: { 'Authorization': `Bearer ${getToken()}` } }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (data.jours) {
+          setProgrammation(data.jours);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading programmation:', error);
+    } finally {
+      setLoadingProgrammation(false);
+    }
+  };
+
+  const saveProgrammation = async () => {
+    setSavingProgrammation(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pain-du-jour/programmation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({
+          semaine: selectedWeek,
+          jours: programmation
+        })
+      });
+      
+      if (response.ok) {
+        toast.success('Programmation enregistrée et appliquée !');
+      } else {
+        toast.error('Erreur lors de l\'enregistrement');
+      }
+    } catch (error) {
+      console.error('Error saving programmation:', error);
+      toast.error('Erreur de connexion');
+    } finally {
+      setSavingProgrammation(false);
+    }
+  };
+
+  // Charger la programmation quand la semaine change
+  useEffect(() => {
+    if (isAuthenticated && selectedWeek) {
+      loadProgrammation(selectedWeek);
+    }
+  }, [isAuthenticated, selectedWeek]);
+
   const fetchYoutubeInfo = useCallback(async (url, type) => {
     if (!url || url.length < 10) return;
     
