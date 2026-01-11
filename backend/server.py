@@ -8471,23 +8471,28 @@ STATIC_BERGERIES_DISCIPLES = [
 @api_router.get("/bergeries-disciples/list")
 async def get_bergeries_disciples_list():
     """Récupérer la liste des groupes de disciples - Public"""
-    # D'abord, essayer de récupérer depuis la DB
-    bergeries = await db.bergeries_disciples.find({}, {"_id": 0}).to_list(200)
+    # Récupérer les bergeries depuis la DB
+    db_bergeries = await db.bergeries_disciples.find({}, {"_id": 0}).to_list(500)
     
-    if bergeries:
-        # Mettre à jour le nombre de membres pour chaque bergerie
-        for b in bergeries:
-            membres_count = await db.membres_disciples.count_documents({"bergerie_id": b["id"]})
+    # Créer un set des IDs existants
+    existing_ids = {b["id"] for b in db_bergeries}
+    
+    # Ajouter les bergeries statiques qui ne sont pas encore dans la DB
+    all_bergeries = list(db_bergeries)
+    for static in STATIC_BERGERIES_DISCIPLES:
+        if static["id"] not in existing_ids:
+            all_bergeries.append(static)
+    
+    # Mettre à jour le nombre de membres pour chaque bergerie
+    for b in all_bergeries:
+        membres_count = await db.membres_disciples.count_documents({"bergerie_id": b["id"]})
+        if membres_count > 0:
             b["membres_count"] = membres_count
-        return bergeries
     
-    # Sinon, retourner la liste statique et l'initialiser dans la DB
-    for b in STATIC_BERGERIES_DISCIPLES:
-        existing = await db.bergeries_disciples.find_one({"id": b["id"]})
-        if not existing:
-            await db.bergeries_disciples.insert_one({**b, "created_at": datetime.now(timezone.utc).isoformat()})
+    # Trier par ville puis par nom
+    all_bergeries.sort(key=lambda x: (x.get("ville", ""), x.get("nom", "")))
     
-    return STATIC_BERGERIES_DISCIPLES
+    return all_bergeries
 
 @api_router.post("/bergeries-disciples/create")
 async def create_bergerie_disciple(data: dict):
