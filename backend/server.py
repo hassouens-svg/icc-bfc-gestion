@@ -8253,6 +8253,223 @@ async def get_public_bergerie_list(ville: str):
     return bergeries
 
 
+# ========== BERGERIES - GROUPES DE DISCIPLES ==========
+
+class BergerieDisciple(BaseModel):
+    """Modèle pour un groupe de disciples"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nom: str
+    responsable: str
+    ville: str
+    membres_count: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class MembreDisciple(BaseModel):
+    """Modèle pour un membre d'un groupe de disciples"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bergerie_id: str
+    prenom: str
+    nom: Optional[str] = ""
+    telephone: Optional[str] = ""
+    profession: Optional[str] = ""
+    est_disciple: str = "Non"  # Non, En Cours, Oui
+    informations: List[dict] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ObjectifMultiplication(BaseModel):
+    """Modèle pour un objectif de multiplication"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bergerie_id: str
+    mois: str
+    objectif: int
+    reel: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ContactEvangile(BaseModel):
+    """Modèle pour un contact évangélisé"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    bergerie_id: str
+    prenom: str
+    nom: Optional[str] = ""
+    telephone: Optional[str] = ""
+    date: str
+    type: str = "Évangélisation"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Liste statique des groupes de disciples (basée sur le Google Sheet)
+STATIC_BERGERIES_DISCIPLES = [
+    {"id": "bg-1", "nom": "Choisies de Dieu ICC", "responsable": "Ps Nathalie", "ville": "Dijon", "membres_count": 27},
+    {"id": "bg-2", "nom": "Les perles Besançon", "responsable": "Olive", "ville": "Besançon", "membres_count": 16},
+    {"id": "bg-3", "nom": "Ambassadeurs de Christ", "responsable": "Eddy Marc", "ville": "Dijon", "membres_count": 20},
+    {"id": "bg-4", "nom": "Groupe NEHEMI", "responsable": "Tonton Frank", "ville": "Dijon", "membres_count": 15},
+    {"id": "bg-5", "nom": "Les Prunelles de Dieu", "responsable": "Xaviera", "ville": "Dijon", "membres_count": 19},
+    {"id": "bg-6", "nom": "Femmes Fortes et Puissantes", "responsable": "Félicie", "ville": "Dijon", "membres_count": 17},
+    {"id": "bg-7", "nom": "Lampe Allumée", "responsable": "Rebecca", "ville": "Besançon", "membres_count": 13},
+    {"id": "bg-8", "nom": "Les disciples de Bérée", "responsable": "Jules", "ville": "Dijon", "membres_count": 16},
+    {"id": "bg-9", "nom": "ROYALTY", "responsable": "Jemima", "ville": "Dijon", "membres_count": 16},
+    {"id": "bg-10", "nom": "Vaillante Héroïne", "responsable": "Lesti", "ville": "Dijon", "membres_count": 12},
+    {"id": "bg-11", "nom": "HUIOS", "responsable": "Pierre Christian", "ville": "Besançon", "membres_count": 6},
+    {"id": "bg-12", "nom": "Les Déboras", "responsable": "Queren", "ville": "Dijon", "membres_count": 11},
+    {"id": "bg-13", "nom": "Les Princesses de Dieu", "responsable": "Ps Nathalie", "ville": "Dijon", "membres_count": 11},
+    {"id": "bg-14", "nom": "Perles AUXERRE", "responsable": "Ornella", "ville": "Auxerre", "membres_count": 11},
+    {"id": "bg-15", "nom": "Vaillants Héros de Dieu", "responsable": "Gloire", "ville": "Besançon", "membres_count": 13},
+    {"id": "bg-16", "nom": "ESTHER", "responsable": "Arielle", "ville": "Dijon", "membres_count": 16},
+    {"id": "bg-17", "nom": "FEMMES D'EXPÉRIENCE MFI-B", "responsable": "Florence", "ville": "Dijon", "membres_count": 10},
+    {"id": "bg-18", "nom": "Groupe de disciple – Esther", "responsable": "Fr Steve", "ville": "Besançon", "membres_count": 12},
+    {"id": "bg-19", "nom": "Femmes de Destinée", "responsable": "Béthsabée", "ville": "Besançon", "membres_count": 10},
+    {"id": "bg-20", "nom": "Les HÉRITIERS", "responsable": "Bertin", "ville": "Dijon", "membres_count": 11},
+    {"id": "bg-21", "nom": "Les Princesses intimes du SAI", "responsable": "Olivette", "ville": "Dijon", "membres_count": 11},
+    {"id": "bg-22", "nom": "DISCIPLES PST NATHALIE", "responsable": "Ps Nathalie", "ville": "Dijon", "membres_count": 6},
+    {"id": "bg-23", "nom": "Medi'Time", "responsable": "Joseph", "ville": "Dijon", "membres_count": 8},
+    {"id": "bg-24", "nom": "Sacerdocce royal", "responsable": "Priscillia", "ville": "Dijon", "membres_count": 14},
+    {"id": "bg-25", "nom": "Disciples Parfait", "responsable": "Parfait", "ville": "Dijon", "membres_count": 7},
+    {"id": "bg-26", "nom": "Les saintes", "responsable": "Sabrina", "ville": "Dijon", "membres_count": 7},
+    {"id": "bg-27", "nom": "Gloire GDD", "responsable": "Dorine", "ville": "Dijon", "membres_count": 10},
+    {"id": "bg-28", "nom": "ÉLITES DE DIEU", "responsable": "Anael", "ville": "Dijon", "membres_count": 6},
+    {"id": "bg-29", "nom": "Kingdom's Fighter", "responsable": "Dorcas", "ville": "Dijon", "membres_count": 11},
+    {"id": "bg-30", "nom": "Les Justes GDD", "responsable": "Carine", "ville": "Dijon", "membres_count": 6},
+    {"id": "bg-31", "nom": "Amies de Dieu", "responsable": "Carole", "ville": "Dijon", "membres_count": 9},
+    {"id": "bg-32", "nom": "RUTH", "responsable": "Ruth", "ville": "Dijon", "membres_count": 9},
+    {"id": "bg-33", "nom": "Groupe des disciples S", "responsable": "Serge", "ville": "Dijon", "membres_count": 9},
+    {"id": "bg-34", "nom": "Groupe des disciples P", "responsable": "Patrick", "ville": "Dijon", "membres_count": 13},
+    {"id": "bg-35", "nom": "Fleur de lys", "responsable": "Gracia", "ville": "Dijon", "membres_count": 9},
+    {"id": "bg-36", "nom": "Kingdom's Keepers", "responsable": "Daniella", "ville": "Dijon", "membres_count": 11},
+    {"id": "bg-37", "nom": "L'Éternel m'a exaucée", "responsable": "Solange", "ville": "Dijon", "membres_count": 8},
+    {"id": "bg-38", "nom": "Les Disciples de Dieu", "responsable": "Adélaïde", "ville": "Besançon", "membres_count": 12},
+    {"id": "bg-39", "nom": "Power Ladies", "responsable": "Yolande", "ville": "Dijon", "membres_count": 11},
+    {"id": "bg-40", "nom": "Femmes de Valeur", "responsable": "Ruth T.", "ville": "Dijon", "membres_count": 8},
+    {"id": "bg-41", "nom": "Les Conquérants", "responsable": "Cédric", "ville": "Chalon-sur-Saône", "membres_count": 10},
+]
+
+@api_router.get("/bergeries-disciples/list")
+async def get_bergeries_disciples_list():
+    """Récupérer la liste des groupes de disciples - Public"""
+    # D'abord, essayer de récupérer depuis la DB
+    bergeries = await db.bergeries_disciples.find({}, {"_id": 0}).to_list(100)
+    
+    if bergeries:
+        # Mettre à jour le nombre de membres pour chaque bergerie
+        for b in bergeries:
+            membres_count = await db.membres_disciples.count_documents({"bergerie_id": b["id"]})
+            b["membres_count"] = membres_count
+        return bergeries
+    
+    # Sinon, retourner la liste statique
+    return STATIC_BERGERIES_DISCIPLES
+
+@api_router.get("/bergeries-disciples/{bergerie_id}/membres")
+async def get_bergerie_disciples_membres(bergerie_id: str):
+    """Récupérer les membres d'un groupe de disciples"""
+    membres = await db.membres_disciples.find({"bergerie_id": bergerie_id}, {"_id": 0}).to_list(500)
+    objectifs = await db.objectifs_multiplication.find({"bergerie_id": bergerie_id}, {"_id": 0}).to_list(100)
+    contacts = await db.contacts_evangile.find({"bergerie_id": bergerie_id}, {"_id": 0}).to_list(500)
+    
+    return {
+        "membres": membres,
+        "objectifs": objectifs,
+        "contacts": contacts
+    }
+
+@api_router.post("/bergeries-disciples/{bergerie_id}/membres")
+async def add_membre_disciple(bergerie_id: str, membre_data: dict):
+    """Ajouter un membre à un groupe de disciples"""
+    membre = MembreDisciple(
+        bergerie_id=bergerie_id,
+        prenom=membre_data.get("prenom", ""),
+        nom=membre_data.get("nom", ""),
+        telephone=membre_data.get("telephone", ""),
+        profession=membre_data.get("profession", ""),
+        est_disciple=membre_data.get("est_disciple", "Non")
+    )
+    
+    doc = membre.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    
+    await db.membres_disciples.insert_one(doc)
+    return {"id": membre.id, "message": "Membre ajouté avec succès"}
+
+@api_router.put("/bergeries-disciples/membres/{membre_id}")
+async def update_membre_disciple(membre_id: str, update_data: dict):
+    """Mettre à jour un membre"""
+    # Enlever les champs protégés
+    protected = ["id", "created_at", "bergerie_id"]
+    for field in protected:
+        update_data.pop(field, None)
+    
+    result = await db.membres_disciples.update_one(
+        {"id": membre_id},
+        {"$set": update_data}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Membre non trouvé")
+    
+    return {"message": "Membre mis à jour"}
+
+@api_router.delete("/bergeries-disciples/membres/{membre_id}")
+async def delete_membre_disciple(membre_id: str):
+    """Supprimer un membre"""
+    result = await db.membres_disciples.delete_one({"id": membre_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Membre non trouvé")
+    
+    return {"message": "Membre supprimé"}
+
+@api_router.post("/bergeries-disciples/membres/{membre_id}/disciple")
+async def update_membre_disciple_status(membre_id: str, status_data: dict):
+    """Mettre à jour le statut disciple d'un membre"""
+    est_disciple = status_data.get("est_disciple", "Non")
+    
+    result = await db.membres_disciples.update_one(
+        {"id": membre_id},
+        {"$set": {"est_disciple": est_disciple}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Membre non trouvé")
+    
+    return {"message": "Statut mis à jour"}
+
+@api_router.post("/bergeries-disciples/{bergerie_id}/objectifs")
+async def add_objectif_multiplication(bergerie_id: str, objectif_data: dict):
+    """Ajouter un objectif de multiplication"""
+    objectif = ObjectifMultiplication(
+        bergerie_id=bergerie_id,
+        mois=objectif_data.get("mois", ""),
+        objectif=int(objectif_data.get("objectif", 0)),
+        reel=int(objectif_data.get("reel", 0))
+    )
+    
+    doc = objectif.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    
+    await db.objectifs_multiplication.insert_one(doc)
+    return {"id": objectif.id, "message": "Objectif ajouté"}
+
+@api_router.post("/bergeries-disciples/{bergerie_id}/contacts")
+async def add_contact_evangile(bergerie_id: str, contact_data: dict):
+    """Ajouter un contact évangélisé"""
+    contact = ContactEvangile(
+        bergerie_id=bergerie_id,
+        prenom=contact_data.get("prenom", ""),
+        nom=contact_data.get("nom", ""),
+        telephone=contact_data.get("telephone", ""),
+        date=contact_data.get("date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
+        type=contact_data.get("type", "Évangélisation")
+    )
+    
+    doc = contact.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    
+    await db.contacts_evangile.insert_one(doc)
+    return {"id": contact.id, "message": "Contact ajouté"}
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
