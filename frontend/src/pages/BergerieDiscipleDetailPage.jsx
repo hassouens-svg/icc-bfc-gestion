@@ -47,10 +47,17 @@ const BergerieDiscipleDetailPage = () => {
 
   const loadData = async () => {
     try {
-      // Charger la bergerie depuis localStorage ou API
-      const storedBergerie = localStorage.getItem('selected_bergerie_disciple');
-      if (storedBergerie) {
-        setBergerie(JSON.parse(storedBergerie));
+      // D'abord, essayer de charger les infos de la bergerie depuis l'API
+      const bergerieResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/${id}`);
+      if (bergerieResponse.ok) {
+        const bergerieData = await bergerieResponse.json();
+        setBergerie(bergerieData);
+      } else {
+        // Fallback: charger depuis localStorage
+        const storedBergerie = localStorage.getItem('selected_bergerie_disciple');
+        if (storedBergerie) {
+          setBergerie(JSON.parse(storedBergerie));
+        }
       }
       
       // Charger les membres depuis l'API
