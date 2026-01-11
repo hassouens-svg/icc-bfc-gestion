@@ -8537,6 +8537,27 @@ async def get_bergerie_disciple_info(bergerie_id: str):
 async def get_bergerie_disciples_membres(bergerie_id: str):
     """Récupérer les membres d'un groupe de disciples"""
     membres = await db.membres_disciples.find({"bergerie_id": bergerie_id}, {"_id": 0}).to_list(500)
+    
+    # Si pas de membres en DB, initialiser depuis les données statiques
+    if not membres:
+        for static_bergerie in STATIC_BERGERIES_DISCIPLES:
+            if static_bergerie["id"] == bergerie_id and "membres" in static_bergerie:
+                for prenom in static_bergerie["membres"]:
+                    if prenom:  # Ignorer les noms vides
+                        membre = {
+                            "id": str(uuid.uuid4()),
+                            "bergerie_id": bergerie_id,
+                            "prenom": prenom,
+                            "nom": "",
+                            "telephone": "",
+                            "profession": "",
+                            "est_disciple": "Non",
+                            "created_at": datetime.now(timezone.utc).isoformat()
+                        }
+                        await db.membres_disciples.insert_one(membre.copy())
+                        membres.append(membre)
+                break
+    
     objectifs = await db.objectifs_multiplication.find({"bergerie_id": bergerie_id}, {"_id": 0}).to_list(100)
     contacts = await db.contacts_evangile.find({"bergerie_id": bergerie_id}, {"_id": 0}).to_list(500)
     
