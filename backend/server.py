@@ -8503,8 +8503,9 @@ async def create_bergerie_disciple(data: dict):
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.bergeries_disciples.insert_one(bergerie)
+    await db.bergeries_disciples.insert_one(bergerie.copy())
     
+    # Ne pas retourner _id
     return {"id": bergerie["id"], "message": "Bergerie créée avec succès", "bergerie": bergerie}
 
 @api_router.get("/bergeries-disciples/{bergerie_id}")
