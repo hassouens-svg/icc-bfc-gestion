@@ -6713,6 +6713,13 @@ class PainDuJourContent(BaseModel):
     created_by: Optional[str] = None
     created_at: Optional[str] = None
 
+class PainDuJourProgrammation(BaseModel):
+    """Modèle pour la programmation hebdomadaire"""
+    semaine: str  # Format: "2026-W02" (année-semaine)
+    jours: Dict  # {"lundi": {...}, "mardi": {...}, etc.}
+    created_by: Optional[str] = None
+    created_at: Optional[str] = None
+
 class QuizSubmission(BaseModel):
     date: str  # "YYYY-MM-DD"
     answers: List[int]  # Index des réponses choisies
