@@ -459,6 +459,110 @@ const BergeriesDisciplesPage = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Dialog Modifier Bergerie */}
+      <Dialog open={showEditBergerie} onOpenChange={setShowEditBergerie}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>✏️ Modifier la Bergerie</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Nom de la Bergerie *</Label>
+              <Input 
+                value={editBergerie?.nom || ''} 
+                onChange={(e) => setEditBergerie({...editBergerie, nom: e.target.value})}
+                placeholder="Ex: Les Conquérants de Dieu"
+              />
+            </div>
+            <div>
+              <Label>Nom du Responsable *</Label>
+              <Input 
+                value={editBergerie?.responsable || ''} 
+                onChange={(e) => setEditBergerie({...editBergerie, responsable: e.target.value})}
+                placeholder="Ex: Jean-Pierre"
+              />
+            </div>
+            <div>
+              <Label>Ville</Label>
+              <Select 
+                value={editBergerie?.ville || 'Dijon'} 
+                onValueChange={(v) => setEditBergerie({...editBergerie, ville: v})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez une ville" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditBergerie(false)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleEditBergerie} 
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={saving}
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Enregistrement...
+                </>
+              ) : (
+                <>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Enregistrer
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Confirmer Suppression */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>🗑️ Supprimer la Bergerie</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-600">
+              Êtes-vous sûr de vouloir supprimer la bergerie <span className="font-bold text-gray-900">"{bergerieToDelete?.nom}"</span> ?
+            </p>
+            <p className="text-sm text-red-600 mt-2">
+              ⚠️ Cette action est irréversible. Tous les membres et données associés seront également supprimés.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleDeleteBergerie} 
+              className="bg-red-600 hover:bg-red-700"
+              disabled={deleting}
+            >
+              {deleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Suppression...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
