@@ -610,7 +610,7 @@ const PainDuJourAdminPage = () => {
             <Button 
               variant="ghost" 
               className="w-full" 
-              onClick={() => navigate('/pain-du-jour')}
+              onClick={() => navigate('/')}
             >
               ← Retour à la page publique
             </Button>
@@ -631,7 +631,7 @@ const PainDuJourAdminPage = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate('/pain-du-jour')}
+                onClick={() => navigate('/')}
                 className="text-white hover:bg-white/20"
               >
                 <Home className="h-5 w-5" />

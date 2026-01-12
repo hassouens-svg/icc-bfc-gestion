@@ -9,7 +9,8 @@ import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Book, Play, Settings, CheckCircle, BarChart3, ExternalLink, Youtube, Loader2, Clock, Eye, ThumbsUp, X, Calendar, ChevronLeft, ChevronRight, Home, FileText } from 'lucide-react';
 import { toast } from 'sonner';
-import { getUser } from '../utils/api';
+// Standalone mode - no auth required
+const getUser = () => null;
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
@@ -345,7 +346,7 @@ const PainDuJourPage = () => {
               </div>
             </div>
             <Button 
-              onClick={() => navigate('/pain-du-jour/admin')} 
+              onClick={() => navigate('/admin')} 
               variant="outline" 
               size="sm" 
               className="bg-white/20 hover:bg-white/30 border-white/30"
