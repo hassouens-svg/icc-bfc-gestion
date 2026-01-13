@@ -394,7 +394,7 @@ const DashboardSuperAdminPage = () => {
             {/* Fidélisation par Responsable */}
             <Card>
               <CardHeader>
-                <CardTitle>Fidélisation par Responsable de Promos</CardTitle>
+                <CardTitle>Fidélisation par Responsable Bergerie</CardTitle>
               </CardHeader>
               <CardContent>
                 {promosFidelisation && promosFidelisation.length > 0 ? (
