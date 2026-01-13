@@ -173,7 +173,7 @@ const PublicBergerieVisitorsPage = () => {
               <DialogTrigger asChild>
                 <Button variant="outline">
                   <Plus className="h-4 w-4 mr-2" />
-                  Ancien Visiteur
+                  Ajouter une personne
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

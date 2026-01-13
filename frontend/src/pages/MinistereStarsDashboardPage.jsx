@@ -46,7 +46,7 @@ const MinistereStarsDashboardPage = () => {
     'Sécurité',
     'Communication',
     'Coordination',
-    'Ministère des promotions',
+    'Bergeries',
     'Formation',
     'Finance',
     'Ministère des femmes (bureau)',
