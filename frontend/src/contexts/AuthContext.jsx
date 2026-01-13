@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Create guest session for public bergerie access
-  const createGuestSession = (bergerieData) => {
+  const createGuestSession = useCallback((bergerieData) => {
     const guestData = {
       ville: bergerieData.ville,
       month_num: bergerieData.month_num,
@@ -68,8 +68,12 @@ export const AuthProvider = ({ children }) => {
       nom: bergerieData.nom || `Bergerie ${bergerieData.month_name}`
     };
     
-    localStorage.setItem('guest_bergerie_context', JSON.stringify(guestData));
-    localStorage.setItem('selected_department', 'promotions');
+    try {
+      localStorage.setItem('guest_bergerie_context', JSON.stringify(guestData));
+      localStorage.setItem('selected_department', 'promotions');
+    } catch (e) {
+      console.error('Error saving guest session:', e);
+    }
     
     setGuestContext(guestData);
     setIsGuest(true);
@@ -84,33 +88,48 @@ export const AuthProvider = ({ children }) => {
     });
     
     return guestData;
-  };
+  }, []);
 
   // Clear guest session
-  const clearGuestSession = () => {
-    localStorage.removeItem('guest_bergerie_context');
+  const clearGuestSession = useCallback(() => {
+    try {
+      localStorage.removeItem('guest_bergerie_context');
+    } catch (e) {
+      console.error('Error clearing guest session:', e);
+    }
     setGuestContext(null);
     setIsGuest(false);
     setUser(null);
-  };
+  }, []);
 
   // Login real user
-  const loginUser = (userData, token) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', token);
-    clearGuestSession(); // Clear any guest session
-    setUser(userData);
+  const loginUser = useCallback((userData, token) => {
+    try {
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', token);
+      // Clear any guest session
+      localStorage.removeItem('guest_bergerie_context');
+    } catch (e) {
+      console.error('Error saving user session:', e);
+    }
+    setGuestContext(null);
     setIsGuest(false);
-  };
+    setUser(userData);
+  }, []);
 
   // Logout
-  const logoutUser = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    clearGuestSession();
+  const logoutUser = useCallback(() => {
+    try {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('guest_bergerie_context');
+    } catch (e) {
+      console.error('Error clearing session:', e);
+    }
     setUser(null);
     setIsGuest(false);
-  };
+    setGuestContext(null);
+  }, []);
 
   const value = {
     user,
