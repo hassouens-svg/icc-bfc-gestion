@@ -1070,7 +1070,7 @@ const DashboardSuperAdminCompletPage = () => {
               </CardContent>
             </Card>
 
-            {/* Actions Rapides Promotions */}
+            {/* Actions Rapides Bergeries */}
             {canEdit && (
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Button onClick={() => navigate(`/visitors${selectedCity !== 'all' ? `?city=${selectedCity}` : ''}`)} variant="outline" className="h-20">
