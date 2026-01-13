@@ -446,17 +446,17 @@ const VisitorsPage = () => {
           {(user?.role !== 'accueil') && (
             <div className="flex gap-2">
             
-            {/* Ancien Visiteur Dialog */}
+            {/* Ajouter une personne Dialog */}
             <Dialog open={isBulkDialogOpen} onOpenChange={setIsBulkDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline">
                   <Plus className="h-4 w-4 mr-2" />
-                  Ancien Visiteur
+                  Ajouter une personne
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Ajouter des Anciens Visiteurs (jusqu'à 40)</DialogTitle>
+                  <DialogTitle>Ajouter des personnes (jusqu'à 40)</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleBulkCreate} className="space-y-4">
                   <div className="max-h-96 overflow-y-auto border rounded p-2">
