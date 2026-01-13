@@ -138,14 +138,25 @@ const MinistereStarsDepartementPage = () => {
   const loadStars = async () => {
     try {
       const effectiveCity = getEffectiveCity();
-      let url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/departement/${encodeURIComponent(departement)}`;
-      if (effectiveCity) {
-        url += `?ville=${encodeURIComponent(effectiveCity)}`;
+      
+      // Utiliser l'endpoint public en mode public, sinon l'endpoint authentifié
+      let url;
+      let headers = {};
+      
+      if (isPublicMode) {
+        url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/departement/${encodeURIComponent(departement)}`;
+        if (effectiveCity) {
+          url += `?ville=${encodeURIComponent(effectiveCity)}`;
+        }
+      } else {
+        url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/departement/${encodeURIComponent(departement)}`;
+        if (effectiveCity) {
+          url += `?ville=${encodeURIComponent(effectiveCity)}`;
+        }
+        headers = { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
       }
       
-      const response = await fetch(url, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
+      const response = await fetch(url, { headers });
       const data = await response.json();
       setStars(data);
     } catch (error) {
