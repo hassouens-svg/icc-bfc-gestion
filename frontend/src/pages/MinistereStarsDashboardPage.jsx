@@ -480,7 +480,9 @@ const MinistereStarsDashboardPage = () => {
                           onClick={() => {
                             setShowWeekDetailDialog(false);
                             setShowServiceDialog(false);
-                            navigate(`/ministere-stars/departement/${encodeURIComponent(dept)}`);
+                            navigate(`/ministere-stars/departement/${encodeURIComponent(dept)}`, {
+                              state: { publicMode: isPublicMode, ville: getEffectiveCity() }
+                            });
                           }}
                         >
                           {dept}
