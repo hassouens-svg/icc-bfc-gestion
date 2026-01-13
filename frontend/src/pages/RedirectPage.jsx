@@ -103,15 +103,28 @@ const RedirectPage = () => {
             </a>
           </div>
           
-          {/* Countdown */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-blue-200 text-sm">
-                Redirection automatique dans <span className="text-white font-bold">{countdown}</span> secondes
-              </span>
+          {/* Countdown - only show if not in test mode */}
+          {!isTestMode && (
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-blue-200 text-sm">
+                  Redirection automatique dans <span className="text-white font-bold">{countdown}</span> secondes
+                </span>
+              </div>
             </div>
-          </div>
+          )}
+          
+          {/* Test mode indicator */}
+          {isTestMode && (
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-yellow-500/20 px-4 py-2 rounded-full border border-yellow-500/30">
+                <span className="text-yellow-300 text-sm">
+                  ⚠️ Mode test - Pas de redirection automatique
+                </span>
+              </div>
+            </div>
+          )}
           
           {/* Footer */}
           <div className="mt-8 pt-6 border-t border-white/10 text-center">
