@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -11,34 +11,53 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isGuest, setIsGuest] = useState(false);
-  const [guestContext, setGuestContext] = useState(null);
-
-  // Initialize from localStorage on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedGuestContext = localStorage.getItem('guest_bergerie_context');
-    
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      setIsGuest(false);
-    } else if (storedGuestContext) {
-      const guestData = JSON.parse(storedGuestContext);
-      setGuestContext(guestData);
-      setIsGuest(true);
-      // Create a virtual user for guest mode
-      setUser({
-        id: 'guest',
-        username: `Bergerie ${guestData.month_name}`,
-        role: 'berger', // Give berger role for UI display
-        city: guestData.ville,
-        assigned_month: `${new Date().getFullYear()}-${guestData.month_num}`,
-        promo_name: `Bergerie ${guestData.month_name}`,
-        is_guest: true
-      });
+  const [user, setUser] = useState(() => {
+    // Initialize from localStorage synchronously to avoid flash
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        return JSON.parse(storedUser);
+      }
+      // Check for guest context
+      const storedGuestContext = localStorage.getItem('guest_bergerie_context');
+      if (storedGuestContext) {
+        const guestData = JSON.parse(storedGuestContext);
+        return {
+          id: 'guest',
+          username: guestData.nom || `Bergerie ${guestData.month_name}`,
+          role: 'berger',
+          city: guestData.ville,
+          assigned_month: `${new Date().getFullYear()}-${guestData.month_num}`,
+          promo_name: guestData.nom || `Bergerie ${guestData.month_name}`,
+          is_guest: true
+        };
+      }
+    } catch (e) {
+      console.error('Error reading auth from localStorage:', e);
     }
-  }, []);
+    return null;
+  });
+  
+  const [isGuest, setIsGuest] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      const storedGuestContext = localStorage.getItem('guest_bergerie_context');
+      return !storedUser && !!storedGuestContext;
+    } catch (e) {
+      return false;
+    }
+  });
+  
+  const [guestContext, setGuestContext] = useState(() => {
+    try {
+      const storedGuestContext = localStorage.getItem('guest_bergerie_context');
+      return storedGuestContext ? JSON.parse(storedGuestContext) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+  
+  const [isLoading, setIsLoading] = useState(false);
 
   // Create guest session for public bergerie access
   const createGuestSession = (bergerieData) => {
