@@ -88,10 +88,10 @@ const PainDuJourAdminPage = () => {
   
   // Fonction pour générer le lien SmartBible
   const getSmartBibleLink = (livre, chapitre) => {
-    const livreInfo = LIVRES_BIBLE.find(l => l.nom === livre);
-    if (!livreInfo) return null;
+    if (!livre) return null;
     const chap = chapitre ? String(chapitre).split(',')[0].trim() : '1';
-    return `https://smartbible.fr/${livreInfo.slug}/${chap}`;
+    // Format: https://smartbible.fr/bible/lsg/Genèse/1
+    return `https://smartbible.fr/bible/lsg/${encodeURIComponent(livre)}/${chap}`;
   };
   
   // Auth state
