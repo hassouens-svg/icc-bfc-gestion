@@ -101,11 +101,18 @@ const MinistereStarsDashboardPage = () => {
       // Utiliser les endpoints publics si mode public (pas d'utilisateur connecté)
       const usePublicEndpoint = !user;
       const headers = usePublicEndpoint ? {} : { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
-      const baseUrl = usePublicEndpoint ? '/api/public/stars' : '/api/stars';
+      
+      // Les endpoints publics sont sous /api/stars/public/...
+      const statsUrl = usePublicEndpoint 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/stats${villeParam}`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/stars/stats/overview${villeParam}`;
+      const multiUrl = usePublicEndpoint 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/multi-departements${villeParam}`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/stars/multi-departements${villeParam}`;
       
       const [statsRes, multiRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_BACKEND_URL}${baseUrl}/stats/overview${villeParam}`, { headers }),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}${baseUrl}/multi-departements${villeParam}`, { headers })
+        fetch(statsUrl, { headers }),
+        fetch(multiUrl, { headers })
       ]);
 
       if (statsRes.ok) setStats(await statsRes.json());
