@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const RedirectPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [countdown, setCountdown] = useState(10);
   const newDomain = 'https://mychurchiccapp.com';
   
-  // Check if we're on the old domain
+  // Check if we're on the old domain or in test mode
+  const isTestMode = location.pathname === '/redirect-test';
   const isOldDomain = window.location.hostname.includes('italian-church-app.emergent.host') || 
                       window.location.hostname.includes('emergent.host');
   
+  const shouldShowRedirect = isTestMode || isOldDomain;
+  
   useEffect(() => {
-    if (!isOldDomain) {
-      // If not on old domain, proceed to normal app
+    if (!shouldShowRedirect) {
       navigate('/');
       return;
     }
+    
+    // Don't auto-redirect in test mode
+    if (isTestMode) return;
     
     // Countdown timer
     const timer = setInterval(() => {
@@ -30,9 +36,9 @@ const RedirectPage = () => {
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [isOldDomain, navigate]);
+  }, [shouldShowRedirect, isTestMode, navigate]);
 
-  if (!isOldDomain) {
+  if (!shouldShowRedirect) {
     return null;
   }
 
