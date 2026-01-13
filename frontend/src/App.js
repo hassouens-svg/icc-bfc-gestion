@@ -98,6 +98,17 @@ import BergeriesDisciplesPage from './pages/BergeriesDisciplesPage';
 import BergerieDiscipleDetailPage from './pages/BergerieDiscipleDetailPage';
 
 function App() {
+  // Check if we're on the old domain
+  const isOldDomain = typeof window !== 'undefined' && (
+    window.location.hostname.includes('italian-church-app.emergent.host') ||
+    window.location.hostname.includes('emergent.host')
+  );
+  
+  // If on old domain, show redirect page
+  if (isOldDomain) {
+    return <RedirectPage />;
+  }
+  
   return (
     <div className="App">
       <CitiesProvider>
