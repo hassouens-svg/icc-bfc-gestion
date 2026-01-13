@@ -14,6 +14,86 @@ const PainDuJourAdminPage = () => {
   const navigate = useNavigate();
   const today = new Date().toISOString().split('T')[0];
   
+  // Liste des livres de la Bible avec leurs slugs pour SmartBible
+  const LIVRES_BIBLE = [
+    // Ancien Testament
+    { nom: 'Genèse', slug: 'genese', testament: 'AT' },
+    { nom: 'Exode', slug: 'exode', testament: 'AT' },
+    { nom: 'Lévitique', slug: 'levitique', testament: 'AT' },
+    { nom: 'Nombres', slug: 'nombres', testament: 'AT' },
+    { nom: 'Deutéronome', slug: 'deuteronome', testament: 'AT' },
+    { nom: 'Josué', slug: 'josue', testament: 'AT' },
+    { nom: 'Juges', slug: 'juges', testament: 'AT' },
+    { nom: 'Ruth', slug: 'ruth', testament: 'AT' },
+    { nom: '1 Samuel', slug: '1-samuel', testament: 'AT' },
+    { nom: '2 Samuel', slug: '2-samuel', testament: 'AT' },
+    { nom: '1 Rois', slug: '1-rois', testament: 'AT' },
+    { nom: '2 Rois', slug: '2-rois', testament: 'AT' },
+    { nom: '1 Chroniques', slug: '1-chroniques', testament: 'AT' },
+    { nom: '2 Chroniques', slug: '2-chroniques', testament: 'AT' },
+    { nom: 'Esdras', slug: 'esdras', testament: 'AT' },
+    { nom: 'Néhémie', slug: 'nehemie', testament: 'AT' },
+    { nom: 'Esther', slug: 'esther', testament: 'AT' },
+    { nom: 'Job', slug: 'job', testament: 'AT' },
+    { nom: 'Psaumes', slug: 'psaumes', testament: 'AT' },
+    { nom: 'Proverbes', slug: 'proverbes', testament: 'AT' },
+    { nom: 'Ecclésiaste', slug: 'ecclesiaste', testament: 'AT' },
+    { nom: 'Cantique des Cantiques', slug: 'cantique-des-cantiques', testament: 'AT' },
+    { nom: 'Ésaïe', slug: 'esaie', testament: 'AT' },
+    { nom: 'Jérémie', slug: 'jeremie', testament: 'AT' },
+    { nom: 'Lamentations', slug: 'lamentations', testament: 'AT' },
+    { nom: 'Ézéchiel', slug: 'ezechiel', testament: 'AT' },
+    { nom: 'Daniel', slug: 'daniel', testament: 'AT' },
+    { nom: 'Osée', slug: 'osee', testament: 'AT' },
+    { nom: 'Joël', slug: 'joel', testament: 'AT' },
+    { nom: 'Amos', slug: 'amos', testament: 'AT' },
+    { nom: 'Abdias', slug: 'abdias', testament: 'AT' },
+    { nom: 'Jonas', slug: 'jonas', testament: 'AT' },
+    { nom: 'Michée', slug: 'michee', testament: 'AT' },
+    { nom: 'Nahum', slug: 'nahum', testament: 'AT' },
+    { nom: 'Habacuc', slug: 'habacuc', testament: 'AT' },
+    { nom: 'Sophonie', slug: 'sophonie', testament: 'AT' },
+    { nom: 'Aggée', slug: 'aggee', testament: 'AT' },
+    { nom: 'Zacharie', slug: 'zacharie', testament: 'AT' },
+    { nom: 'Malachie', slug: 'malachie', testament: 'AT' },
+    // Nouveau Testament
+    { nom: 'Matthieu', slug: 'matthieu', testament: 'NT' },
+    { nom: 'Marc', slug: 'marc', testament: 'NT' },
+    { nom: 'Luc', slug: 'luc', testament: 'NT' },
+    { nom: 'Jean', slug: 'jean', testament: 'NT' },
+    { nom: 'Actes', slug: 'actes', testament: 'NT' },
+    { nom: 'Romains', slug: 'romains', testament: 'NT' },
+    { nom: '1 Corinthiens', slug: '1-corinthiens', testament: 'NT' },
+    { nom: '2 Corinthiens', slug: '2-corinthiens', testament: 'NT' },
+    { nom: 'Galates', slug: 'galates', testament: 'NT' },
+    { nom: 'Éphésiens', slug: 'ephesiens', testament: 'NT' },
+    { nom: 'Philippiens', slug: 'philippiens', testament: 'NT' },
+    { nom: 'Colossiens', slug: 'colossiens', testament: 'NT' },
+    { nom: '1 Thessaloniciens', slug: '1-thessaloniciens', testament: 'NT' },
+    { nom: '2 Thessaloniciens', slug: '2-thessaloniciens', testament: 'NT' },
+    { nom: '1 Timothée', slug: '1-timothee', testament: 'NT' },
+    { nom: '2 Timothée', slug: '2-timothee', testament: 'NT' },
+    { nom: 'Tite', slug: 'tite', testament: 'NT' },
+    { nom: 'Philémon', slug: 'philemon', testament: 'NT' },
+    { nom: 'Hébreux', slug: 'hebreux', testament: 'NT' },
+    { nom: 'Jacques', slug: 'jacques', testament: 'NT' },
+    { nom: '1 Pierre', slug: '1-pierre', testament: 'NT' },
+    { nom: '2 Pierre', slug: '2-pierre', testament: 'NT' },
+    { nom: '1 Jean', slug: '1-jean', testament: 'NT' },
+    { nom: '2 Jean', slug: '2-jean', testament: 'NT' },
+    { nom: '3 Jean', slug: '3-jean', testament: 'NT' },
+    { nom: 'Jude', slug: 'jude', testament: 'NT' },
+    { nom: 'Apocalypse', slug: 'apocalypse', testament: 'NT' }
+  ];
+  
+  // Fonction pour générer le lien SmartBible
+  const getSmartBibleLink = (livre, chapitre) => {
+    const livreInfo = LIVRES_BIBLE.find(l => l.nom === livre);
+    if (!livreInfo) return null;
+    const chap = chapitre ? String(chapitre).split(',')[0].trim() : '1';
+    return `https://smartbible.fr/${livreInfo.slug}/${chap}`;
+  };
+  
   // Auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
