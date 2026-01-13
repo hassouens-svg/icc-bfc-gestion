@@ -266,7 +266,9 @@ const DashboardSuperAdminCompletPage = () => {
             const assignedMonth = v.assigned_month; // Format: "2025-01"
             if (!assignedMonth) return false;
             
-            const [year, month] = assignedMonth.split('-');
+            // Assurer que c'est une string
+            const monthStr = String(assignedMonth);
+            const [year, month] = monthStr.split('-');
             
             const monthMatch = selectedMonth === 'all' || month === selectedMonth;
             const yearMatch = selectedYear === 'all' || year === selectedYear;
