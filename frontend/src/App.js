@@ -99,19 +99,18 @@ import BergeriesDisciplesPage from './pages/BergeriesDisciplesPage';
 import BergerieDiscipleDetailPage from './pages/BergerieDiscipleDetailPage';
 
 function App() {
-  // Check if we're on the old domain
-  const isOldDomain = typeof window !== 'undefined' && (
-    window.location.hostname.includes('italian-church-app.emergent.host') ||
-    window.location.hostname.includes('emergent.host')
-  );
+  // Check if we're on the OLD production domain specifically (not preview domains)
+  const isOldProductionDomain = typeof window !== 'undefined' && 
+    window.location.hostname === 'italian-church-app.emergent.host';
   
-  // If on old domain, show redirect page
-  if (isOldDomain) {
+  // If on old production domain, show redirect page
+  if (isOldProductionDomain) {
     return <RedirectPage />;
   }
   
   return (
     <div className="App">
+      <AuthProvider>
       <CitiesProvider>
         <SelectedCityProvider>
         <BrowserRouter>
