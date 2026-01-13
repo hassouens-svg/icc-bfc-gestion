@@ -631,7 +631,7 @@ const MinistereStarsDepartementPage = () => {
                 <Label>Ville *</Label>
                 <select value={newStar.ville} onChange={(e) => setNewStar({...newStar, ville: e.target.value})} className="w-full px-3 py-2 border rounded-md">
                   <option value="">...</option>
-                  {cities.map(city => <option key={city.id} value={city.name}>{city.name}</option>)}
+                  {cities.map(city => <option key={city.id} value={city.name}>{formatCityWithCountry(city)}</option>)}
                 </select>
               </div>
               <div className="flex gap-2 pt-4">
