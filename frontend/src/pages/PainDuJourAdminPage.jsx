@@ -1041,13 +1041,24 @@ const PainDuJourAdminPage = () => {
                         />
                         <Input
                           type="number"
-                          placeholder="v."
+                          placeholder="v.début"
                           min="1"
                           className="h-8 text-xs"
                           value={programmation[jour]?.newVerset?.verset_debut || ''}
                           onChange={(e) => setProgrammation(prev => ({
                             ...prev,
                             [jour]: { ...prev[jour], newVerset: { ...prev[jour]?.newVerset, verset_debut: e.target.value } }
+                          }))}
+                        />
+                        <Input
+                          type="number"
+                          placeholder="v.fin"
+                          min="1"
+                          className="h-8 text-xs"
+                          value={programmation[jour]?.newVerset?.verset_fin || ''}
+                          onChange={(e) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], newVerset: { ...prev[jour]?.newVerset, verset_fin: e.target.value } }
                           }))}
                         />
                         <Button 
@@ -1064,7 +1075,7 @@ const PainDuJourAdminPage = () => {
                               [jour]: {
                                 ...prev[jour],
                                 versets: [...(prev[jour]?.versets || []), { ...nv }],
-                                newVerset: { livre: '', chapitre: '', verset_debut: '' }
+                                newVerset: { livre: '', chapitre: '', verset_debut: '', verset_fin: '' }
                               }
                             }));
                             toast.success('Verset ajouté !');
