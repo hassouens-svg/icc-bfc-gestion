@@ -108,7 +108,7 @@ class TestDashboardAPIs:
     def test_users_api(self, auth_token):
         """Test users API for gestion-acces"""
         headers = {"Authorization": f"Bearer {auth_token}"}
-        response = requests.get(f"{BASE_URL}/api/users/", headers=headers)
+        response = requests.get(f"{BASE_URL}/api/users/referents", headers=headers)
         
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         data = response.json()
