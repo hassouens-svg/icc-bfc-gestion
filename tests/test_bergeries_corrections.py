@@ -95,20 +95,20 @@ class TestDashboardAPIs:
         assert response.status_code in [200, 404], f"Unexpected status: {response.status_code}"
         print(f"✅ Promotions/Bergeries detailed API accessible")
     
-    def test_visitors_table_api(self, auth_token):
-        """Test visitors table API"""
+    def test_visitors_api(self, auth_token):
+        """Test visitors API"""
         headers = {"Authorization": f"Bearer {auth_token}"}
-        response = requests.get(f"{BASE_URL}/api/visitors/table", headers=headers)
+        response = requests.get(f"{BASE_URL}/api/visitors", headers=headers)
         
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         data = response.json()
         assert isinstance(data, list), "Response should be a list"
-        print(f"✅ Visitors table API returns {len(data)} visitors")
+        print(f"✅ Visitors API returns {len(data)} visitors")
     
     def test_users_api(self, auth_token):
         """Test users API for gestion-acces"""
         headers = {"Authorization": f"Bearer {auth_token}"}
-        response = requests.get(f"{BASE_URL}/api/users", headers=headers)
+        response = requests.get(f"{BASE_URL}/api/users/", headers=headers)
         
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         data = response.json()
@@ -122,9 +122,9 @@ class TestDashboardAPIs:
 class TestBergeriesPages:
     """Test Bergeries-related pages APIs"""
     
-    def test_bergeries_disciples_api(self):
-        """Test bergeries disciples API"""
-        response = requests.get(f"{BASE_URL}/api/bergeries-disciples")
+    def test_bergeries_disciples_list_api(self):
+        """Test bergeries disciples list API"""
+        response = requests.get(f"{BASE_URL}/api/bergeries-disciples/list")
         
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         data = response.json()
