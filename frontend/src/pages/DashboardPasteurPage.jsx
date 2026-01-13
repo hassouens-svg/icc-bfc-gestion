@@ -157,7 +157,7 @@ const DashboardPasteurPage = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="promotions">Promotions</SelectItem>
+                <SelectItem value="promotions">Bergeries</SelectItem>
                 <SelectItem value="fi">Familles Impact</SelectItem>
               </SelectContent>
             </Select>
