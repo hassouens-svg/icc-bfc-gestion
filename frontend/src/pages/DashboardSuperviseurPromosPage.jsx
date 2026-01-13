@@ -80,7 +80,8 @@ const DashboardSuperviseurPromosPage = () => {
     // Assigner les bergers aux promos correspondantes
     resposPromo.forEach(respo => {
       if (respo.assigned_month) {
-        const monthPart = respo.assigned_month.split('-')[1];
+        const monthStr = String(respo.assigned_month);
+        const monthPart = monthStr.split('-')[1];
         if (promoGroups[monthPart]) {
           // Mettre à jour le nom de la promo si défini
           if (respo.promo_name) {
@@ -101,8 +102,9 @@ const DashboardSuperviseurPromosPage = () => {
     visitorsData.forEach(visitor => {
       if (!visitor.assigned_month) return;
       
-      // Extract month and year parts
-      const [year, monthPart] = visitor.assigned_month.split('-');
+      // Extract month and year parts - assurer que c'est une string
+      const monthStr = String(visitor.assigned_month);
+      const [year, monthPart] = monthStr.split('-');
       
       if (!promoGroups[monthPart]) return;
       
