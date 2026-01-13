@@ -288,7 +288,9 @@ const MinistereStarsDashboardPage = () => {
               {departements.map((dept, idx) => (
                 <Button
                   key={idx}
-                  onClick={() => navigate(`/ministere-stars/departement/${encodeURIComponent(dept)}`)}
+                  onClick={() => navigate(`/ministere-stars/departement/${encodeURIComponent(dept)}`, {
+                    state: { publicMode: isPublicMode, ville: getEffectiveCity() }
+                  })}
                   variant="outline"
                   className="h-auto py-4 justify-between"
                 >
