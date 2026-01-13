@@ -162,7 +162,14 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ## Last Updated
 - **Date**: January 13, 2026
-- **Session**: 
+- **Session 2**: 
+  - ✅ Bouton "+ Ancien Visiteur" → "Ajouter une personne" (PublicBergerieVisitorsPage)
+  - ✅ "Ministère des promotions" → "Bergeries" dans la liste des départements Stars
+  - ✅ Clic sur département Stars ne redirige plus vers l'accueil (mode public ajouté)
+  - ✅ Nouvel endpoint `/api/stars/public/departement/{dept}` pour accès public
+  - ✅ Villes affichées avec pays entre parenthèses (cityUtils.js créé)
+  - ✅ Navigation vers département conserve le contexte (ville, mode public)
+- **Session 1**: 
   - ✅ Page de redirection corrigée (RedirectPage sans hooks router)
   - ✅ AuthProvider ajouté dans App.js
   - ✅ AuthContext avec initialisation synchrone (résout perte de session)
@@ -171,4 +178,4 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
   - Carte Bergeries sur homepage sans description ✅
   - Tous les textes "Promotion/Promo" → "Bergerie" ✅
   - Doublon ville Chalon corrigé ✅
-  - Bouton "Ajouter une personne" ✅
+
