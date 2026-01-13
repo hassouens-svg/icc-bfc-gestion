@@ -492,11 +492,11 @@ const PainDuJourPage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => window.open('https://emcitv.com/bible/', '_blank')}
+                onClick={() => window.open('https://smartbible.fr', '_blank')}
                 className="bg-white/20 hover:bg-white/30 border-white/30 text-white text-xs"
               >
                 <ExternalLink className="h-3 w-3 mr-1" />
-                Lire sur EMCI TV
+                SmartBible
               </Button>
             </CardTitle>
           </CardHeader>
