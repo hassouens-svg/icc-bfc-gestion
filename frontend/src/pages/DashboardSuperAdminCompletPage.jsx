@@ -62,6 +62,13 @@ const DashboardSuperAdminCompletPage = () => {
   const navigate = useNavigate();
   const user = getUser();
   
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+  
   // Check permissions - Pasteur a les mêmes droits que Super Admin
   const canEdit = ['super_admin', 'pasteur', 'responsable_eglise'].includes(user?.role);
   const isReadOnly = false; // Pasteur n'est plus en lecture seule
