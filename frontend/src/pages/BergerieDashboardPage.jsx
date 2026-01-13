@@ -524,7 +524,7 @@ const BergerieDashboardPage = () => {
                 <h2 className="text-xl font-bold">Nouveaux Arrivants ({visitors.length})</h2>
                 <Button size="sm" onClick={() => setShowAddVisitorDialog(true)}>
                   <Plus className="h-4 w-4 mr-1" />
-                  Ajouter
+                  Ajouter une personne
                 </Button>
               </div>
               
