@@ -162,20 +162,19 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ## Last Updated
 - **Date**: January 13, 2026
-- **Session 2**: 
-  - ✅ Bouton "+ Ancien Visiteur" → "Ajouter une personne" (PublicBergerieVisitorsPage)
-  - ✅ "Ministère des promotions" → "Bergeries" dans la liste des départements Stars
-  - ✅ Clic sur département Stars ne redirige plus vers l'accueil (mode public ajouté)
-  - ✅ Nouvel endpoint `/api/stars/public/departement/{dept}` pour accès public
-  - ✅ Villes affichées avec pays entre parenthèses (cityUtils.js créé)
-  - ✅ Navigation vers département conserve le contexte (ville, mode public)
+- **Session 2 - Corrections finales**: 
+  - ✅ Bouton "+ Ancien Visiteur" → "Ajouter une personne" (VisitorsPage.jsx + PublicBergerieVisitorsPage.jsx)
+  - ✅ "Ministère des promotions" → "Bergeries" dans MinistereStarsDashboardPage.jsx
+  - ✅ Clic département Stars ne redirige plus vers l'accueil (mode public ajouté)
+  - ✅ Nouvel endpoint `/api/stars/public/departement/{dept}` créé
+  - ✅ **Villes avec pays** : Endpoint `/api/cities/public` retourne maintenant objets complets
+  - ✅ Format "Ville (Pays)" appliqué sur : RecensementStarsPage, SelectVilleStarsPage, BergeriesPublicPage, BergeriesDisciplesPage, MinistereStarsDepartementPage
+  - ✅ Correction bugs `assignedMonth.split is not a function` dans DashboardPage, DashboardSuperAdminCompletPage, DashboardSuperviseurPromosPage, HistoriquePresenceBergersPage
+  - ✅ Correction endpoints publics Stars (stats + multi-departements)
 - **Session 1**: 
   - ✅ Page de redirection corrigée (RedirectPage sans hooks router)
   - ✅ AuthProvider ajouté dans App.js
   - ✅ AuthContext avec initialisation synchrone (résout perte de session)
   - ✅ Formulaire Recensement Stars fonctionne
-  - ✅ Tests: 100% pass (13/13 backend, 5/5 frontend)
-  - Carte Bergeries sur homepage sans description ✅
-  - Tous les textes "Promotion/Promo" → "Bergerie" ✅
-  - Doublon ville Chalon corrigé ✅
+  - Tests: 100% pass (13/13 backend, 5/5 frontend)
 
