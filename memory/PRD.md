@@ -104,7 +104,7 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ### P1 - High
 - [ ] Intégration données Bergerie avec "Dynamique d'Évangélisation"
-- [ ] Stabilité session utilisateur
+- [x] ~~Stabilité session utilisateur~~ ✅ CORRIGÉ
 
 ### P2 - Medium
 - [ ] Refactoring grands composants frontend (DashboardPage.jsx)
