@@ -69,11 +69,16 @@ const MinistereStarsDepartementPage = () => {
   const years = [2025, 2026, 2027, 2028, 2029, 2030];
 
   // Permissions: pasteur/superadmin = tout, responsable_eglise = sa ville, respo_departement = tout, star = lecture
-  const canEdit = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement'].includes(user.role);
-  const canView = user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role);
+  // En mode public, autoriser l'accès en lecture seule
+  const canEdit = !isPublicMode && user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement'].includes(user.role);
+  const canView = isPublicMode || (user?.role && ['super_admin', 'pasteur', 'responsable_eglise', 'respo_departement', 'star'].includes(user.role));
 
   // Déterminer la ville effective pour le filtrage
   const getEffectiveCity = () => {
+    // Mode public: utiliser la ville passée en state
+    if (isPublicMode && publicVille) {
+      return publicVille;
+    }
     // responsable_eglise voit seulement sa ville
     if (user?.role === 'responsable_eglise') {
       return user.city;
@@ -91,14 +96,15 @@ const MinistereStarsDepartementPage = () => {
 
   // Recharger quand selectedCity change
   useEffect(() => {
-    if (!user || !canView) {
+    // En mode public, toujours autoriser l'accès
+    if (!isPublicMode && !user) {
       navigate('/');
       return;
     }
     setLoading(true);
     loadStars();
     loadCities();
-  }, [departement, selectedCity]);
+  }, [departement, selectedCity, isPublicMode, publicVille]);
 
   useEffect(() => {
     if (showPlanningDialog) {
