@@ -1048,39 +1048,68 @@ const PainDuJourAdminPage = () => {
                 {/* Add New Verset */}
                 <div className="border-t pt-4">
                   <Label className="mb-3 block font-medium">Ajouter un nouveau verset</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
                     <Select value={newVerset.livre} onValueChange={(v) => setNewVerset({ ...newVerset, livre: v })}>
-                      <SelectTrigger className="col-span-2 md:col-span-1">
-                        <SelectValue placeholder="Livre..." />
+                      <SelectTrigger className="col-span-1 md:col-span-2">
+                        <SelectValue placeholder="📖 Sélectionner un livre..." />
                       </SelectTrigger>
-                      <SelectContent className="max-h-60">
-                        {livresBible.map(livre => (
-                          <SelectItem key={livre} value={livre}>{livre}</SelectItem>
+                      <SelectContent className="max-h-72">
+                        <div className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100">ANCIEN TESTAMENT</div>
+                        {LIVRES_BIBLE.filter(l => l.testament === 'AT').map(livre => (
+                          <SelectItem key={livre.nom} value={livre.nom}>{livre.nom}</SelectItem>
+                        ))}
+                        <div className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100 mt-1">NOUVEAU TESTAMENT</div>
+                        {LIVRES_BIBLE.filter(l => l.testament === 'NT').map(livre => (
+                          <SelectItem key={livre.nom} value={livre.nom}>{livre.nom}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     <Input
-                      type="text"
-                      placeholder="Chapitres (ex: 1, 2, 3)"
+                      type="number"
+                      placeholder="Chapitre"
+                      min="1"
                       value={newVerset.chapitre}
                       onChange={(e) => setNewVerset({ ...newVerset, chapitre: e.target.value })}
                     />
                     <Input
-                      type="text"
+                      type="number"
                       placeholder="Verset début"
+                      min="1"
                       value={newVerset.verset_debut}
                       onChange={(e) => setNewVerset({ ...newVerset, verset_debut: e.target.value })}
                     />
                     <Input
-                      type="text"
+                      type="number"
                       placeholder="Verset fin (opt.)"
+                      min="1"
                       value={newVerset.verset_fin}
                       onChange={(e) => setNewVerset({ ...newVerset, verset_fin: e.target.value })}
                     />
-                    <Button onClick={addVerset} className="bg-green-600 hover:bg-green-700">
-                      <Plus className="h-4 w-4 mr-1" /> Ajouter
-                    </Button>
                   </div>
+                  
+                  {/* Aperçu du lien SmartBible */}
+                  {newVerset.livre && (
+                    <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">
+                          <strong>Aperçu :</strong> {newVerset.livre} {newVerset.chapitre || '1'}{newVerset.verset_debut ? `:${newVerset.verset_debut}` : ''}{newVerset.verset_fin ? `-${newVerset.verset_fin}` : ''}
+                        </span>
+                        <a 
+                          href={getSmartBibleLink(newVerset.livre, newVerset.chapitre)} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm font-medium"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          Voir sur SmartBible
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <Button onClick={addVerset} className="bg-green-600 hover:bg-green-700 mt-3 w-full md:w-auto">
+                    <Plus className="h-4 w-4 mr-1" /> Ajouter ce verset
+                  </Button>
                 </div>
 
                 {/* Save Button */}
