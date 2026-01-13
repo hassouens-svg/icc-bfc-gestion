@@ -238,9 +238,9 @@ const GestionAccesPage = () => {
 
   const getRoleLabel = (role) => {
     const labels = {
-      'superviseur_promos': 'Superviseur Promotions',
+      'superviseur_promos': 'Superviseur Bergeries',
       'superviseur_fi': 'Superviseur Familles d\'Impact',
-      'referent': 'Responsable de Promos',
+      'referent': 'Responsable Bergerie',
       'pilote_fi': 'Pilote FI',
       'responsable_secteur': 'Responsable Secteur',
       'accueil': 'Accueil et Intégration',
@@ -409,7 +409,7 @@ const GestionAccesPage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {user?.role === 'superviseur_promos' ? (
-                        <SelectItem value="referent">Responsable de Promos</SelectItem>
+                        <SelectItem value="referent">Responsable Bergerie</SelectItem>
                       ) : user?.role === 'superviseur_fi' ? (
                         <>
                           <SelectItem value="pilote_fi">Pilote FI</SelectItem>
@@ -419,9 +419,9 @@ const GestionAccesPage = () => {
                         <SelectItem value="pilote_fi">Pilote FI</SelectItem>
                       ) : (
                         <>
-                          <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
+                          <SelectItem value="superviseur_promos">Superviseur Bergeries</SelectItem>
                           <SelectItem value="superviseur_fi">Superviseur Familles d'Impact</SelectItem>
-                          <SelectItem value="referent">Responsable de Promos</SelectItem>
+                          <SelectItem value="referent">Responsable Bergerie</SelectItem>
                           <SelectItem value="pilote_fi">Pilote FI</SelectItem>
                           <SelectItem value="responsable_secteur">Responsable Secteur</SelectItem>
                           <SelectItem value="accueil">Accueil et Intégration</SelectItem>
@@ -440,7 +440,7 @@ const GestionAccesPage = () => {
                     </SelectContent>
                   </Select>
                   {user?.role === 'superviseur_promos' && (
-                    <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Responsable de Promos</p>
+                    <p className="text-xs text-gray-500">Vous ne pouvez créer que des comptes Responsable Bergerie</p>
                   )}
                   {user?.role === 'superviseur_fi' && (
                     <p className="text-xs text-gray-500">Vous pouvez créer: Pilote FI et Responsable Secteur</p>
@@ -734,7 +734,7 @@ const GestionAccesPage = () => {
                       <SelectItem value="super_admin">Super Administrateur</SelectItem>
                       <SelectItem value="pasteur">Pasteur</SelectItem>
                       <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
-                      <SelectItem value="superviseur_promos">Superviseur Promotions</SelectItem>
+                      <SelectItem value="superviseur_promos">Superviseur Bergeries</SelectItem>
                       <SelectItem value="superviseur_fi">Superviseur Familles d'Impact</SelectItem>
                       <SelectItem value="resp_bergers">Responsable Bergers</SelectItem>
                       <SelectItem value="berger">Berger</SelectItem>
