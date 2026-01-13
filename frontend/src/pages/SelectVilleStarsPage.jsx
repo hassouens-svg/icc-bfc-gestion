@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { MapPin, Star, ArrowLeft } from 'lucide-react';
+import { formatCityWithCountry } from '../utils/cityUtils';
 
 const SelectVilleStarsPage = () => {
   const navigate = useNavigate();
@@ -20,14 +21,14 @@ const SelectVilleStarsPage = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities/public`);
       if (response.ok) {
         const citiesData = await response.json();
-        const cityNames = citiesData.map(city => typeof city === 'string' ? city : city.name);
-        setCities(cityNames.filter(Boolean));
+        // Garder les objets complets pour avoir accès au pays
+        setCities(citiesData.filter(c => c && c.name));
       } else {
-        setCities(['Dijon', 'Paris', 'Lyon']);
+        setCities([{ name: 'Dijon', country: 'France' }, { name: 'Paris', country: 'France' }, { name: 'Lyon', country: 'France' }]);
       }
     } catch (error) {
       console.error('Error loading cities:', error);
-      setCities(['Dijon', 'Paris', 'Lyon']);
+      setCities([{ name: 'Dijon', country: 'France' }, { name: 'Paris', country: 'France' }, { name: 'Lyon', country: 'France' }]);
     } finally {
       setLoading(false);
     }
