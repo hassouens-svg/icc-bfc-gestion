@@ -36,7 +36,6 @@ const BergeriesChoixPage = () => {
                 <Users className="h-8 w-8 text-white" />
               </div>
               <CardTitle className="text-xl">Bergerie</CardTitle>
-              <p className="text-sm text-gray-500">(ex Promotions)</p>
             </CardHeader>
             <CardContent className="text-center">
               <Button className="w-full bg-purple-600 hover:bg-purple-700">
