@@ -19,6 +19,13 @@ const DashboardPasteurPage = () => {
   const navigate = useNavigate();
   const user = getUser();
   
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+  
   const [selectedDepartment, setSelectedDepartment] = useState('promotions');
   const [selectedCity, setSelectedCity] = useState('all');
   const [loading, setLoading] = useState(false);
