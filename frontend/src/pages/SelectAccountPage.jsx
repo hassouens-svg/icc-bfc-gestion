@@ -40,13 +40,13 @@ const SelectAccountPage = () => {
         let dept = 'Autres';
         
         if (['referent', 'responsable_promos', 'promotions', 'berger'].includes(user.role)) {
-          dept = 'Bergerie (Promotions)';
+          dept = 'Bergeries';
         } else if (['resp_bergers', 'berger'].includes(user.role)) {
           dept = 'Bergers';
         } else if (['accueil_integration'].includes(user.role)) {
           dept = 'Accueil et Intégration';
         } else if (['superviseur_promos'].includes(user.role)) {
-          dept = 'Supervision Promotions';
+          dept = 'Supervision Bergeries';
         }
         
         if (!groupedByDept[dept]) {
