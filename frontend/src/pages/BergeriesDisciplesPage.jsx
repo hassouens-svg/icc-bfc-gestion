@@ -42,8 +42,8 @@ const BergeriesDisciplesPage = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities/public`);
       if (response.ok) {
         const citiesData = await response.json();
-        const cityNames = citiesData.map(city => typeof city === 'string' ? city : city.name).filter(Boolean);
-        setCities(cityNames);
+        // Garder les objets complets avec pays
+        setCities(citiesData.filter(c => c && c.name));
       }
     } catch (error) {
       console.error('Error loading cities:', error);
