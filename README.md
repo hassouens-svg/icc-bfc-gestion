@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://faithflow-14.preview.emergentagent.com/login
-- **Inscription Publique**: https://faithflow-14.preview.emergentagent.com/register
+- **Connexion**: https://ministry-app-7.preview.emergentagent.com/login
+- **Inscription Publique**: https://ministry-app-7.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**

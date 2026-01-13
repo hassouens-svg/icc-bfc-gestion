@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import uuid
 
 # Configuration
-BASE_URL = "https://faithflow-14.preview.emergentagent.com/api"
+BASE_URL = "https://ministry-app-7.preview.emergentagent.com/api"
 TEST_CREDENTIALS = {
     "username": "superadmin",
     "password": "superadmin123"

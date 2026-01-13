@@ -12,7 +12,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://faithflow-14.preview.emergentagent.com/api"
+BASE_URL = "https://ministry-app-7.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 # Test credentials
