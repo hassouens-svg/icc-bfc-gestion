@@ -99,13 +99,13 @@ const BergeriesPublicPage = () => {
         <div className="flex items-center gap-2">
           <MapPin className="h-4 w-4 text-purple-600" />
           <Select value={selectedCity} onValueChange={setSelectedCity}>
-            <SelectTrigger className="w-40 bg-white">
+            <SelectTrigger className="w-48 bg-white">
               <SelectValue placeholder="Ville" />
             </SelectTrigger>
             <SelectContent>
               {cities.map((city) => (
-                <SelectItem key={city} value={city}>
-                  {city}
+                <SelectItem key={city.name || city} value={city.name || city}>
+                  {formatCityWithCountry(city)}
                 </SelectItem>
               ))}
             </SelectContent>
