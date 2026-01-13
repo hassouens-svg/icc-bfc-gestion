@@ -85,12 +85,12 @@ const SelectAccountPage = () => {
   const getRoleLabel = (role) => {
     const labels = {
       'referent': 'Référent',
-      'responsable_promos': 'Responsable de Promos',
-      'promotions': 'Promotions',
+      'responsable_promos': 'Responsable Bergerie',
+      'promotions': 'Bergerie',
       'berger': 'Berger',
       'resp_bergers': 'Responsable Bergers',
       'accueil_integration': 'Accueil et Intégration',
-      'superviseur_promos': 'Superviseur Promotions',
+      'superviseur_promos': 'Superviseur Bergeries',
       'pasteur': 'Pasteur',
       'super_admin': 'Super Admin',
       'responsable_eglise': 'Responsable d\'Église'
