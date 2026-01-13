@@ -86,11 +86,13 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ## Known Issues
 
-### P1 - High Priority
-- **Session Loss on Navigation**: Utilisateurs déconnectés lors de certaines navigations (récurrent)
+### ✅ RESOLVED (Jan 13, 2026)
+- **~~Session Loss on Navigation~~**: CORRIGÉ - AuthContext utilise maintenant une initialisation synchrone dans useState
+- **~~Page de redirection vide~~**: CORRIGÉ - RedirectPage réécrit sans hooks react-router
+- **~~Erreur Recensement Stars~~**: CORRIGÉ - Endpoint /api/stars/public/register fonctionne
 
 ### P3 - Low Priority / Blocked
-- **Brevo API Key Invalid**: Emails transactionnels non fonctionnels (besoin nouvelle clé)
+- **Brevo API Key Invalid**: Emails transactionnels non fonctionnels (besoin nouvelle clé utilisateur)
 
 ---
 
