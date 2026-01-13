@@ -684,10 +684,10 @@ const DashboardSuperAdminCompletPage = () => {
           </CardContent>
         </Card>
 
-        {/* PROMOTIONS VIEW */}
+        {/* BERGERIES VIEW */}
         {selectedView === 'promotions' && promosData && (
           <>
-            <DepartmentAlert view="Promotions" />
+            <DepartmentAlert view="Bergeries" />
             {/* Global KPIs - 5 cartes (NA et NC supprimées car peuvent être mêmes personnes) */}
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
               {/* 1. Total Personnes Reçues (toutes sont NA) */}
