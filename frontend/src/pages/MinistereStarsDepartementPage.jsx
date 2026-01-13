@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import LayoutMinistereStars from '../components/LayoutMinistereStars';
 import { getUser } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -15,9 +15,15 @@ import { useSelectedCity } from '../contexts/SelectedCityContext';
 
 const MinistereStarsDepartementPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { departement } = useParams();
   const user = getUser();
   const { selectedCity } = useSelectedCity();
+  
+  // Détecter le mode public (venant de /select-ville-stars ou accès direct sans login)
+  const isPublicMode = location.state?.publicMode || !user;
+  const publicVille = location.state?.ville;
+  
   const [stars, setStars] = useState([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showPlanningDialog, setShowPlanningDialog] = useState(false);
