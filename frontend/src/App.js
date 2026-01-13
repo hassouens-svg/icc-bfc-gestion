@@ -219,6 +219,9 @@ function App() {
           <Route path="/affectation-responsables-secteur" element={<AffectationResponsablesSecteurPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           
+          {/* Page de redirection (pour test) */}
+          <Route path="/redirect-test" element={<RedirectPage />} />
+          
           {/* Ministère des STARS */}
           <Route path="/ministere-stars-login" element={<MinistereStarsLoginPage />} />
           <Route path="/ministere-stars/dashboard" element={<MinistereStarsDashboardPage />} />
