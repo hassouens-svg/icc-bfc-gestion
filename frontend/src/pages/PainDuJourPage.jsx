@@ -524,7 +524,7 @@ const PainDuJourPage = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => window.open('https://emcitv.com/bible/', '_blank')}
+                            onClick={() => window.open(getSmartBibleLink(v.livre, v.chapitre), '_blank')}
                             className="text-green-600 hover:text-green-700 hover:bg-green-50"
                           >
                             <ExternalLink className="h-4 w-4" />
