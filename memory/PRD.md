@@ -163,24 +163,21 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 ## Last Updated
 - **Date**: January 13, 2026
 - **Session 2 - Pain du Jour & Corrections finales**: 
-  - ✅ **Pain du Jour - Sélecteur de versets amélioré** :
-    - Liste complète des 66 livres de la Bible (AT + NT)
-    - Sélecteur dropdown avec séparation Ancien/Nouveau Testament
-    - Champs : Livre (dropdown), Chapitre (number), Verset début, Verset fin (opt.)
-    - Aperçu du verset avec lien SmartBible automatique
-    - Format lien : `https://smartbible.fr/bible/lsg/{Livre}/{Chapitre}`
-  - ✅ Bouton "+ Ancien Visiteur" → "Ajouter une personne" (VisitorsPage.jsx + PublicBergerieVisitorsPage.jsx)
-  - ✅ "Ministère des promotions" → "Bergeries" dans MinistereStarsDashboardPage.jsx
-  - ✅ Clic département Stars ne redirige plus vers l'accueil (mode public ajouté)
-  - ✅ Nouvel endpoint `/api/stars/public/departement/{dept}` créé
-  - ✅ **Villes avec pays** : Endpoint `/api/cities/public` retourne maintenant objets complets
-  - ✅ Format "Ville (Pays)" appliqué sur : RecensementStarsPage, SelectVilleStarsPage, BergeriesPublicPage, BergeriesDisciplesPage, MinistereStarsDepartementPage
-  - ✅ Correction bugs `assignedMonth.split is not a function` dans DashboardPage, DashboardSuperAdminCompletPage, DashboardSuperviseurPromosPage, HistoriquePresenceBergersPage
-  - ✅ Correction endpoints publics Stars (stats + multi-departements)
+  - ✅ **Pain du Jour - Sélecteur de versets complet** :
+    - Liste des 66 livres de la Bible (AT + NT) avec séparateurs
+    - Format standard : Livre (dropdown), Chapitre, Verset début, Verset fin
+    - Lien SmartBible automatique : `https://smartbible.fr/bible/lsg/{Livre}/{Chapitre}`
+    - **Page publique** : "EMCI TV" → "SmartBible" partout
+    - **Page admin Semaine** : formulaire complet avec v.début et v.fin
+    - **Page admin Versets** : aperçu en temps réel avec lien SmartBible
+  - ✅ Bouton "+ Ancien Visiteur" → "Ajouter une personne"
+  - ✅ "Ministère des promotions" → "Bergeries"
+  - ✅ Clic département Stars ne redirige plus vers l'accueil
+  - ✅ Villes avec pays : "Dijon (France)", "Milan (Italie)"
+  - ✅ Bugs assignedMonth.split corrigés
+  - ✅ Endpoints publics Stars corrigés
 - **Session 1**: 
-  - ✅ Page de redirection corrigée (RedirectPage sans hooks router)
-  - ✅ AuthProvider ajouté dans App.js
-  - ✅ AuthContext avec initialisation synchrone (résout perte de session)
+  - ✅ Page de redirection corrigée
+  - ✅ AuthProvider + AuthContext synchrone
   - ✅ Formulaire Recensement Stars fonctionne
-  - Tests: 100% pass (13/13 backend, 5/5 frontend)
 
