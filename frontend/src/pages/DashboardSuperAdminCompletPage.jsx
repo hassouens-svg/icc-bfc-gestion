@@ -597,7 +597,7 @@ const DashboardSuperAdminCompletPage = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="promotions">Promotions</SelectItem>
+                    <SelectItem value="promotions">Bergeries</SelectItem>
                     <SelectItem value="fi">Familles d'Impact</SelectItem>
                     <SelectItem value="evangelisation">Évangélisation</SelectItem>
                     <SelectItem value="cultes">Statistiques des Cultes</SelectItem>
