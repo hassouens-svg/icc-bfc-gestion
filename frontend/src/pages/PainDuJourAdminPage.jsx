@@ -965,18 +965,114 @@ const PainDuJourAdminPage = () => {
                     </div>
                     
                     {/* Versets */}
-                    <div className="mt-3">
+                    <div className="mt-3 space-y-2">
                       <Label className="text-green-700">📖 Versets du jour</Label>
-                      <Input
-                        value={programmation[jour]?.versets_text || ''}
-                        onChange={(e) => setProgrammation(prev => ({
-                          ...prev,
-                          [jour]: { ...prev[jour], versets_text: e.target.value }
-                        }))}
-                        placeholder="Ex: Jean 3:16, Romains 8:28, Psaumes 23"
-                        className="mt-1"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Séparez les versets par des virgules</p>
+                      
+                      {/* Versets ajoutés pour ce jour */}
+                      {programmation[jour]?.versets?.length > 0 && (
+                        <div className="space-y-1">
+                          {programmation[jour].versets.map((v, vIdx) => {
+                            const link = getSmartBibleLink(v.livre, v.chapitre);
+                            return (
+                              <div key={vIdx} className="flex items-center justify-between bg-green-50 px-2 py-1 rounded text-sm">
+                                <span>{v.livre} {v.chapitre}{v.verset_debut ? `:${v.verset_debut}` : ''}{v.verset_fin ? `-${v.verset_fin}` : ''}</span>
+                                <div className="flex items-center gap-1">
+                                  {link && (
+                                    <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  )}
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="h-6 w-6 p-0 text-red-500"
+                                    onClick={() => {
+                                      setProgrammation(prev => ({
+                                        ...prev,
+                                        [jour]: {
+                                          ...prev[jour],
+                                          versets: prev[jour].versets.filter((_, i) => i !== vIdx)
+                                        }
+                                      }));
+                                    }}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                      
+                      {/* Formulaire d'ajout de verset */}
+                      <div className="grid grid-cols-5 gap-1">
+                        <Select 
+                          value={programmation[jour]?.newVerset?.livre || ''} 
+                          onValueChange={(v) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], newVerset: { ...prev[jour]?.newVerset, livre: v } }
+                          }))}
+                        >
+                          <SelectTrigger className="col-span-2 h-8 text-xs">
+                            <SelectValue placeholder="Livre" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60">
+                            <div className="px-2 py-1 text-xs font-semibold text-gray-400">AT</div>
+                            {LIVRES_BIBLE.filter(l => l.testament === 'AT').map(livre => (
+                              <SelectItem key={livre.nom} value={livre.nom} className="text-xs">{livre.nom}</SelectItem>
+                            ))}
+                            <div className="px-2 py-1 text-xs font-semibold text-gray-400">NT</div>
+                            {LIVRES_BIBLE.filter(l => l.testament === 'NT').map(livre => (
+                              <SelectItem key={livre.nom} value={livre.nom} className="text-xs">{livre.nom}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          type="number"
+                          placeholder="Ch."
+                          min="1"
+                          className="h-8 text-xs"
+                          value={programmation[jour]?.newVerset?.chapitre || ''}
+                          onChange={(e) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], newVerset: { ...prev[jour]?.newVerset, chapitre: e.target.value } }
+                          }))}
+                        />
+                        <Input
+                          type="number"
+                          placeholder="v."
+                          min="1"
+                          className="h-8 text-xs"
+                          value={programmation[jour]?.newVerset?.verset_debut || ''}
+                          onChange={(e) => setProgrammation(prev => ({
+                            ...prev,
+                            [jour]: { ...prev[jour], newVerset: { ...prev[jour]?.newVerset, verset_debut: e.target.value } }
+                          }))}
+                        />
+                        <Button 
+                          size="sm"
+                          className="h-8 bg-green-600 hover:bg-green-700 text-xs"
+                          onClick={() => {
+                            const nv = programmation[jour]?.newVerset;
+                            if (!nv?.livre) {
+                              toast.error('Sélectionnez un livre');
+                              return;
+                            }
+                            setProgrammation(prev => ({
+                              ...prev,
+                              [jour]: {
+                                ...prev[jour],
+                                versets: [...(prev[jour]?.versets || []), { ...nv }],
+                                newVerset: { livre: '', chapitre: '', verset_debut: '' }
+                              }
+                            }));
+                            toast.success('Verset ajouté !');
+                          }}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
