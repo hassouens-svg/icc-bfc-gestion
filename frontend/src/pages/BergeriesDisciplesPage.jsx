@@ -257,13 +257,13 @@ const BergeriesDisciplesPage = () => {
         <div className="flex items-center gap-2">
           <MapPin className="h-4 w-4 text-green-600" />
           <Select value={selectedCity} onValueChange={setSelectedCity}>
-            <SelectTrigger className="w-48 bg-white">
+            <SelectTrigger className="w-56 bg-white">
               <SelectValue placeholder="Toutes les villes" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">🌍 Toutes les villes</SelectItem>
               {cities.map((city) => (
-                <SelectItem key={city} value={city}>{city}</SelectItem>
+                <SelectItem key={city.name || city} value={city.name || city}>{formatCityWithCountry(city)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
