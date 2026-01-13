@@ -66,8 +66,8 @@ const RedirectPage = () => {
             </p>
           </div>
           
-          {/* Message */}
-          <div className="bg-white/10 rounded-2xl p-6 mb-8 border border-white/10">
+          {/* Message principal */}
+          <div className="bg-white/10 rounded-2xl p-6 mb-6 border border-white/10">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0">
                 <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
@@ -82,6 +82,32 @@ const RedirectPage = () => {
                   Notre application a désormais son <strong className="text-yellow-300">propre nom de domaine</strong>. 
                   Veuillez mettre à jour vos favoris avec notre nouvelle adresse.
                 </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Message important */}
+          <div className="bg-blue-500/20 rounded-2xl p-5 mb-8 border border-blue-400/30">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">ℹ️</span>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Rien ne change, juste le lien d'accès !
+                </h3>
+                <ul className="text-blue-100 space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Toutes vos données sont <strong className="text-white">conservées</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>L'application reste <strong className="text-white">identique</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400">⚠️</span>
+                    <span>Si vous aviez des identifiants, vous devrez <strong className="text-yellow-300">vous reconnecter</strong> une seule fois sur le nouveau lien</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
