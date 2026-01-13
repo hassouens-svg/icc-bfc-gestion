@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { MapPin, Calendar, Users, ArrowLeft, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatCityWithCountry } from '../utils/cityUtils';
 
 const monthNames = {
   '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril',
@@ -31,22 +32,22 @@ const BergeriesPublicPage = () => {
 
   const loadCitiesAndBergeries = async () => {
     try {
-      // Charger les villes
+      // Charger les villes (objets complets avec pays)
       const citiesResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cities/public`);
-      let cityNames = ['Dijon'];
+      let citiesData = [{ name: 'Dijon', country: 'France' }];
       if (citiesResponse.ok) {
-        const citiesData = await citiesResponse.json();
-        cityNames = citiesData.map(city => typeof city === 'string' ? city : city.name).filter(Boolean);
+        citiesData = await citiesResponse.json();
+        citiesData = citiesData.filter(c => c && c.name);
       }
-      setCities(cityNames);
+      setCities(citiesData);
       
       // Charger les bergeries de la première ville par défaut
-      const defaultCity = cityNames[0] || 'Dijon';
+      const defaultCity = citiesData[0]?.name || 'Dijon';
       setSelectedCity(defaultCity);
       await loadBergeries(defaultCity);
     } catch (error) {
       console.error('Error:', error);
-      setCities(['Dijon']);
+      setCities([{ name: 'Dijon', country: 'France' }]);
       setSelectedCity('Dijon');
       await loadBergeries('Dijon');
     }
