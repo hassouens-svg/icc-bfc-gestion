@@ -135,6 +135,7 @@ export const AuthProvider = ({ children }) => {
     user,
     isGuest,
     guestContext,
+    isLoading,
     isAuthenticated: !!user && !isGuest,
     isGuestAuthenticated: !!user && isGuest,
     createGuestSession,
