@@ -1006,7 +1006,7 @@ const PainDuJourAdminPage = () => {
                       )}
                       
                       {/* Formulaire d'ajout de verset */}
-                      <div className="grid grid-cols-5 gap-1">
+                      <div className="grid grid-cols-6 gap-1">
                         <Select 
                           value={programmation[jour]?.newVerset?.livre || ''} 
                           onValueChange={(v) => setProgrammation(prev => ({
