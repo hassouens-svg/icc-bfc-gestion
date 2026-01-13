@@ -66,7 +66,8 @@ const HistoriquePresenceBergersPage = () => {
       const promoGroups = {};
       bergersList.forEach(berger => {
         if (berger.assigned_month) {
-          const monthPart = berger.assigned_month.split('-')[1];
+          const monthStr = String(berger.assigned_month);
+          const monthPart = monthStr.split('-')[1];
           const monthName = monthNames[monthPart];
           const promoKey = `Promo ${monthName}`;
           
