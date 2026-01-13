@@ -1015,16 +1015,32 @@ const PainDuJourAdminPage = () => {
                   <div className="space-y-2">
                     <Label>Versets ajoutés</Label>
                     <div className="space-y-2">
-                      {form.versets.map((v, idx) => (
-                        <div key={idx} className="flex items-center justify-between bg-green-50 p-3 rounded-lg">
-                          <span className="font-medium">
-                            📖 {v.livre} {v.chapitre ? `${v.chapitre}` : ''}{v.verset_debut ? `:${v.verset_debut}` : ''}{v.verset_fin ? `-${v.verset_fin}` : ''}
-                          </span>
-                          <Button variant="ghost" size="sm" onClick={() => removeVerset(idx)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
+                      {form.versets.map((v, idx) => {
+                        const smartBibleLink = getSmartBibleLink(v.livre, v.chapitre);
+                        return (
+                          <div key={idx} className="flex items-center justify-between bg-green-50 p-3 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <span className="font-medium">
+                                📖 {v.livre} {v.chapitre ? `${v.chapitre}` : ''}{v.verset_debut ? `:${v.verset_debut}` : ''}{v.verset_fin ? `-${v.verset_fin}` : ''}
+                              </span>
+                              {smartBibleLink && (
+                                <a 
+                                  href={smartBibleLink} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm bg-blue-50 px-2 py-1 rounded"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  SmartBible
+                                </a>
+                              )}
+                            </div>
+                            <Button variant="ghost" size="sm" onClick={() => removeVerset(idx)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
