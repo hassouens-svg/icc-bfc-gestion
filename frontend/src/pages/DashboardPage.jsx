@@ -455,15 +455,15 @@ const DashboardPage = () => {
           </Card>
         )}
 
-        {/* Rename Promo Dialog */}
+        {/* Rename Bergerie Dialog */}
         <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Modifier les informations de la promo</DialogTitle>
+              <DialogTitle>Modifier les informations de la Bergerie</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Nom de la promo (optionnel)</Label>
+                <Label>Nom de la Bergerie (optionnel)</Label>
                 <Input
                   value={newPromoName}
                   onChange={(e) => setNewPromoName(e.target.value)}
