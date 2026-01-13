@@ -541,11 +541,11 @@ const PainDuJourPage = () => {
                 <p className="text-gray-500">Aucun verset configuré pour cette date</p>
                 <Button
                   variant="link"
-                  onClick={() => window.open('https://emcitv.com/bible/', '_blank')}
+                  onClick={() => window.open('https://smartbible.fr', '_blank')}
                   className="text-green-600 mt-2"
                 >
                   <ExternalLink className="h-4 w-4 mr-1" />
-                  Lire la Bible sur EMCI TV
+                  Lire la Bible sur SmartBible
                 </Button>
               </div>
             )}
