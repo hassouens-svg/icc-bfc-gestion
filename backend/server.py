@@ -6549,6 +6549,20 @@ async def get_stars_multi_departements_public(ville: Optional[str] = None):
     return multi_dept_stars
 
 
+
+@api_router.get("/stars/public/departement/{departement}")
+async def get_stars_by_departement_public(departement: str, ville: Optional[str] = None):
+    """Récupérer les stars d'un département spécifique - Accès public"""
+    query = {"departements": departement}
+    
+    # Filtrer par ville si spécifié
+    if ville and ville != 'all':
+        query["ville"] = ville
+    
+    stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    return stars
+
+
 # ==================== PLANNINGS STARS ====================
 
 class PlanningEntry(BaseModel):
