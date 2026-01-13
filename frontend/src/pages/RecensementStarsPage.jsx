@@ -48,13 +48,14 @@ const RecensementStarsPage = () => {
     'Sécurité',
     'Communication',
     'Coordination',
-    'Ministère des promotions',
+    'Bergeries',
     'Formation',
     'Finance',
     'Ministère des femmes (bureau)',
     'Ministère des hommes (bureau)',
     'Impact santé',
-    'Évènementiel/Restauration'
+    'Évènementiel/Restauration',
+    'Modération'
   ];
 
   const mois = [
