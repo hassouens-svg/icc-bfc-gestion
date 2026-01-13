@@ -162,7 +162,13 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ## Last Updated
 - **Date**: January 13, 2026
-- **Session 2 - Corrections finales**: 
+- **Session 2 - Pain du Jour & Corrections finales**: 
+  - ✅ **Pain du Jour - Sélecteur de versets amélioré** :
+    - Liste complète des 66 livres de la Bible (AT + NT)
+    - Sélecteur dropdown avec séparation Ancien/Nouveau Testament
+    - Champs : Livre (dropdown), Chapitre (number), Verset début, Verset fin (opt.)
+    - Aperçu du verset avec lien SmartBible automatique
+    - Format lien : `https://smartbible.fr/bible/lsg/{Livre}/{Chapitre}`
   - ✅ Bouton "+ Ancien Visiteur" → "Ajouter une personne" (VisitorsPage.jsx + PublicBergerieVisitorsPage.jsx)
   - ✅ "Ministère des promotions" → "Bergeries" dans MinistereStarsDashboardPage.jsx
   - ✅ Clic département Stars ne redirige plus vers l'accueil (mode public ajouté)
