@@ -163,9 +163,12 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 ## Last Updated
 - **Date**: January 13, 2026
 - **Session**: 
+  - ✅ Page de redirection corrigée (RedirectPage sans hooks router)
+  - ✅ AuthProvider ajouté dans App.js
+  - ✅ AuthContext avec initialisation synchrone (résout perte de session)
+  - ✅ Formulaire Recensement Stars fonctionne
+  - ✅ Tests: 100% pass (13/13 backend, 5/5 frontend)
   - Carte Bergeries sur homepage sans description ✅
   - Tous les textes "Promotion/Promo" → "Bergerie" ✅
   - Doublon ville Chalon corrigé ✅
-  - Session utilisateur stabilisée ✅
   - Bouton "Ajouter une personne" ✅
-  - Tests: 100% pass (8/8 backend, 5/5 frontend)
