@@ -231,7 +231,7 @@ const BergeriesDisciplesPage = () => {
 
   const filteredBergeries = selectedCity === 'all' 
     ? bergeries 
-    : bergeries.filter(b => b.ville === selectedCity);
+    : bergeries.filter(b => b.ville === selectedCity || b.ville === cities.find(c => c.name === selectedCity)?.name);
 
   // Statistiques
   const totalMembres = filteredBergeries.reduce((sum, b) => sum + (b.membres_count || 0), 0);
