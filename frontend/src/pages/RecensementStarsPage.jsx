@@ -200,7 +200,7 @@ const RecensementStarsPage = () => {
               >
                 <option value="">Sélectionnez votre ville</option>
                 {cities.map((city, idx) => (
-                  <option key={idx} value={city.name}>{city.name}</option>
+                  <option key={idx} value={city.name}>{formatCityWithCountry(city)}</option>
                 ))}
               </select>
             </div>
