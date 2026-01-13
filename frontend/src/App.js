@@ -237,6 +237,7 @@ function App() {
       </BrowserRouter>
       </SelectedCityProvider>
       </CitiesProvider>
+      </AuthProvider>
     </div>
   );
 }
