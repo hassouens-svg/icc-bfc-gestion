@@ -110,11 +110,11 @@ const RecensementStarsPage = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars`, {
+      // Utiliser l'endpoint public (pas besoin d'authentification)
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/public/register`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           prenom: formData.prenom,
@@ -126,7 +126,10 @@ const RecensementStarsPage = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Erreur');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Erreur lors de l\'inscription');
+      }
 
       toast.success('✅ Inscription réussie ! Merci pour votre service ! ⭐');
       
