@@ -430,7 +430,7 @@ const BergeriesDisciplesPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {cities.map((city) => (
-                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                    <SelectItem key={city.name || city} value={city.name || city}>{formatCityWithCountry(city)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
