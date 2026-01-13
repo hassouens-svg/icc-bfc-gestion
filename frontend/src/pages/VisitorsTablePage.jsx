@@ -843,7 +843,7 @@ const VisitorsTablePage = () => {
                     {!filters.date && (
                       <p className="text-sm text-gray-600">
                         {filters.promo !== 'all' 
-                          ? `Moyenne promo ${filters.promo}: `
+                          ? `Moyenne bergerie ${filters.promo}: `
                           : 'Moyenne globale: '}
                         <span className="font-bold text-indigo-600 text-lg">
                           {filters.promo !== 'all' 

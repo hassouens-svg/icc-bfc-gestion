@@ -455,7 +455,7 @@ const GestionAccesPage = () => {
 
                 {(newUser.role === 'referent' || newUser.role === 'promotions') && (
                   <div className="space-y-2">
-                    <Label>Nom de la promo (optionnel)</Label>
+                    <Label>Nom de la bergerie (optionnel)</Label>
                     <Input
                       value={newUser.promo_name || ''}
                       onChange={(e) => setNewUser({...newUser, promo_name: e.target.value})}

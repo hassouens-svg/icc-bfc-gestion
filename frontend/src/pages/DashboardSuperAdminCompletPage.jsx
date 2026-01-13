@@ -859,7 +859,7 @@ const DashboardSuperAdminCompletPage = () => {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Fidélisation par Promo (Mois)</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Label htmlFor="promo-filter" className="text-sm">Filtre Promo:</Label>
+                  <Label htmlFor="promo-filter" className="text-sm">Filtre Bergerie:</Label>
                   <Select value={selectedPromoFilter} onValueChange={setSelectedPromoFilter}>
                     <SelectTrigger id="promo-filter" className="w-[200px]">
                       <SelectValue placeholder="Toutes les promos" />
