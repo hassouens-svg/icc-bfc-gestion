@@ -42,7 +42,7 @@ const SelectDepartmentPage = () => {
     },
     {
       id: 'promotions',
-      title: 'Promotions',
+      title: 'Bergeries',
       description: 'Suivi complet des nouveaux arrivants et nouveaux convertis',
       icon: TrendingUp,
       color: 'from-purple-400 to-purple-600'

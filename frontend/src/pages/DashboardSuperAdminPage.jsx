@@ -223,7 +223,7 @@ const DashboardSuperAdminPage = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="promotions">Promotions</SelectItem>
+                    <SelectItem value="promotions">Bergeries</SelectItem>
                     <SelectItem value="familles-impact">Familles d'Impact</SelectItem>
                   </SelectContent>
                 </Select>

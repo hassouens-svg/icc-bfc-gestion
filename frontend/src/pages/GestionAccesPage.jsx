@@ -244,7 +244,7 @@ const GestionAccesPage = () => {
       'pilote_fi': 'Pilote FI',
       'responsable_secteur': 'Responsable Secteur',
       'accueil': 'Accueil et Intégration',
-      'promotions': 'Promotions',
+      'promotions': 'Bergeries',
       'pasteur': 'Pasteur',
       'super_admin': 'Super Administrateur',
       'responsable_eglise': 'Responsable d\'Église',
@@ -430,7 +430,7 @@ const GestionAccesPage = () => {
                           <SelectItem value="star">Star (Lecture seule)</SelectItem>
                           {user?.role === 'super_admin' && (
                             <>
-                              <SelectItem value="promotions">Promotions</SelectItem>
+                              <SelectItem value="promotions">Bergeries</SelectItem>
                               <SelectItem value="responsable_eglise">Responsable d'Église</SelectItem>
                               <SelectItem value="gestion_projet">Gestion de Projet</SelectItem>
                             </>

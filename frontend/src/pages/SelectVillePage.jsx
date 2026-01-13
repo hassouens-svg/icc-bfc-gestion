@@ -106,7 +106,7 @@ const SelectVillePage = () => {
           <p className="text-gray-600">
             Département : <span className="font-semibold">
               {department === 'familles-impact' ? 'Familles d\'Impact' : 
-               department === 'promotions' ? 'Promotions' : 
+               department === 'promotions' ? 'Bergeries' : 
                'Accueil et Intégration'}
             </span>
           </p>

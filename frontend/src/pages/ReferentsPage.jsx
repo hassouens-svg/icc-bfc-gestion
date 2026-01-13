@@ -259,7 +259,7 @@ const ReferentsPage = () => {
                     <SelectContent>
                       <SelectItem value="referent">Berger (mois spécifique)</SelectItem>
                       <SelectItem value="accueil">Accueil et Intégration</SelectItem>
-                      <SelectItem value="promotions">Promotions</SelectItem>
+                      <SelectItem value="promotions">Bergeries</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -316,7 +316,7 @@ const ReferentsPage = () => {
                         <p className="text-sm text-gray-500">
                           {referent.role === 'referent' ? 'Berger' : 
                            referent.role === 'accueil' ? 'Accueil et Intégration' : 
-                           'Promotions'}
+                           'Bergeries'}
                           {referent.assigned_month && ` - ${referent.assigned_month}`}
                         </p>
                       </div>
@@ -366,7 +366,7 @@ const ReferentsPage = () => {
                       id="manage-role"
                       value={selectedReferent.role === 'referent' ? 'Berger' : 
                              selectedReferent.role === 'accueil' ? 'Accueil et Intégration' : 
-                             selectedReferent.role === 'promotions' ? 'Promotions' : 
+                             selectedReferent.role === 'promotions' ? 'Bergeries' : 
                              selectedReferent.role}
                       disabled
                       className="bg-gray-100"
