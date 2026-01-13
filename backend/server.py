@@ -6281,7 +6281,7 @@ async def delete_notification(notification_id: str, current_user: dict = Depends
 
 @api_router.post("/stars")
 async def create_star(star: StarCreate, current_user: dict = Depends(get_current_user)):
-    """Créer une star (recensement public ou admin)"""
+    """Créer une star (admin authentifié)"""
     # Si ville non fournie, utiliser celle de l'utilisateur connecté
     ville = star.ville if star.ville else current_user.get("city", "")
     
@@ -6297,6 +6297,29 @@ async def create_star(star: StarCreate, current_user: dict = Depends(get_current
     
     await db.stars.insert_one(star_obj.model_dump())
     return {"message": "Star créée avec succès", "id": star_obj.id}
+
+
+@api_router.post("/stars/public/register")
+async def create_star_public(star: StarCreate):
+    """Créer une star (recensement public - sans authentification)"""
+    if not star.ville:
+        raise HTTPException(status_code=400, detail="La ville est obligatoire")
+    
+    if not star.departements or len(star.departements) == 0:
+        raise HTTPException(status_code=400, detail="Au moins un département est obligatoire")
+    
+    star_obj = Star(
+        prenom=star.prenom,
+        nom=star.nom,
+        jour_naissance=star.jour_naissance,
+        mois_naissance=star.mois_naissance,
+        departements=star.departements,
+        ville=star.ville,
+        statut="actif"
+    )
+    
+    await db.stars.insert_one(star_obj.model_dump())
+    return {"message": "Inscription réussie! Merci pour votre engagement.", "id": star_obj.id}
 
 
 @api_router.get("/stars")
