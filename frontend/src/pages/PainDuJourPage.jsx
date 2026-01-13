@@ -13,6 +13,13 @@ import { getUser } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
+// Fonction pour générer le lien SmartBible
+const getSmartBibleLink = (livre, chapitre) => {
+  if (!livre) return 'https://smartbible.fr';
+  const chap = chapitre ? String(chapitre).split(',')[0].trim() : '1';
+  return `https://smartbible.fr/bible/lsg/${encodeURIComponent(livre)}/${chap}`;
+};
+
 const PainDuJourPage = () => {
   const navigate = useNavigate();
   const user = getUser();
