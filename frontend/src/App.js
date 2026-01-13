@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import '@/App.css';
 import { CitiesProvider } from './contexts/CitiesContext';
 import { SelectedCityProvider } from './contexts/SelectedCityContext';
+import { AuthProvider } from './contexts/AuthContext';
 import RedirectPage from './pages/RedirectPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
