@@ -582,27 +582,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 @api_router.post("/auth/login")
 async def login(user_login: UserLogin):
-    import logging
-    logger = logging.getLogger("uvicorn")
-    
     # Chercher l'utilisateur uniquement par username
     query = {"username": user_login.username}
     user = await db.users.find_one(query, {"_id": 0})
     
-    # Debug
-    logger.info(f"LOGIN - username: {user_login.username}, user found: {user is not None}")
-    if user:
-        logger.info(f"LOGIN - role: {user.get('role')}, city: {user.get('city')}")
-        try:
-            password_ok = verify_password(user_login.password, user["password"])
-            logger.info(f"LOGIN - password verify: {password_ok}")
-        except Exception as e:
-            logger.error(f"LOGIN - password error: {e}")
-            password_ok = False
-    else:
-        password_ok = False
-    
-    if not user or not password_ok:
+    if not user or not verify_password(user_login.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Check if user is blocked
