@@ -582,22 +582,9 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 @api_router.post("/auth/login")
 async def login(user_login: UserLogin):
-    # Pour pasteur et superadmin, chercher uniquement par username
-    # Pour les autres, chercher par username + city
+    # Chercher l'utilisateur uniquement par username
     query = {"username": user_login.username}
-    
-    # Chercher d'abord par username seul pour vérifier le rôle
-    user_by_username = await db.users.find_one(query, {"_id": 0})
-    
-    # Si l'utilisateur existe et est pasteur/superadmin/respo_departement/star, pas besoin de ville pour la connexion
-    if user_by_username and user_by_username["role"] in ["pasteur", "super_admin", "respo_departement", "star"]:
-        user = user_by_username
-    else:
-        # Pour les autres rôles, la ville est obligatoire
-        if not user_login.city:
-            raise HTTPException(status_code=401, detail="City is required for this role")
-        query["city"] = user_login.city
-        user = await db.users.find_one(query, {"_id": 0})
+    user = await db.users.find_one(query, {"_id": 0})
     
     if not user or not verify_password(user_login.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -606,30 +593,34 @@ async def login(user_login: UserLogin):
     if user.get("is_blocked", False):
         raise HTTPException(status_code=403, detail="Votre compte a été bloqué. Contactez l'administrateur.")
     
+    # Utiliser la ville du compte utilisateur (déjà attribuée à la création)
+    user_city = user.get("city", "")
+    
     # If department is specified, use it; otherwise use user's default role
     final_role = user["role"]
     if user_login.department:
         # Map department choices to roles
         dept_to_role = {
-            "accueil": "accueil",  # Accueil et Intégration ensemble
+            "accueil": "accueil",
             "promotions": "promotions"
         }
         final_role = dept_to_role.get(user_login.department, user["role"])
     
-    # Create token
-    token = create_access_token({"sub": user["id"], "role": final_role, "city": user["city"]})
+    # Create token with user's city from account
+    token = create_access_token({"sub": user["id"], "role": final_role, "city": user_city})
     
     return {
         "token": token,
         "user": {
             "id": user["id"],
             "username": user["username"],
-            "city": user["city"],
+            "city": user_city,
             "role": final_role,
             "assigned_month": user.get("assigned_month"),
             "assigned_secteur_id": user.get("assigned_secteur_id"),
             "assigned_fi_id": user.get("assigned_fi_id"),
-            "team_members": user.get("team_members", [])
+            "team_members": user.get("team_members", []),
+            "promo_name": user.get("promo_name")
         }
     }
 
