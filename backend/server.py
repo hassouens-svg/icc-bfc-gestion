@@ -586,7 +586,21 @@ async def login(user_login: UserLogin):
     query = {"username": user_login.username}
     user = await db.users.find_one(query, {"_id": 0})
     
-    if not user or not verify_password(user_login.password, user["password"]):
+    # Debug
+    print(f"DEBUG Login - username: {user_login.username}")
+    print(f"DEBUG Login - user found: {user is not None}")
+    if user:
+        print(f"DEBUG Login - user role: {user.get('role')}, city: {user.get('city')}")
+        try:
+            password_ok = verify_password(user_login.password, user["password"])
+            print(f"DEBUG Login - password verify: {password_ok}")
+        except Exception as e:
+            print(f"DEBUG Login - password verify error: {e}")
+            password_ok = False
+    else:
+        password_ok = False
+    
+    if not user or not password_ok:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Check if user is blocked
