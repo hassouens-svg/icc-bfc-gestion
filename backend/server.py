@@ -1555,6 +1555,31 @@ async def get_all_visitors_kpi_statuses(current_user: dict = Depends(get_current
     return result
 
 
+class ManualStatusUpdate(BaseModel):
+    manual_status: Optional[str] = None
+    manual_commentaire: str = ""
+
+
+@api_router.post("/visitors/{visitor_id}/manual-status")
+async def update_manual_status(visitor_id: str, data: ManualStatusUpdate, current_user: dict = Depends(get_current_user)):
+    """Définir un statut manuel pour un visiteur (remplace le calcul automatique)"""
+    visitor = await db.visitors.find_one({"id": visitor_id})
+    if not visitor:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    
+    await db.visitors.update_one(
+        {"id": visitor_id},
+        {"$set": {
+            "manual_discipolat_status": data.manual_status,
+            "manual_discipolat_commentaire": data.manual_commentaire,
+            "manual_status_updated_at": datetime.now(timezone.utc).isoformat(),
+            "manual_status_updated_by": current_user["username"]
+        }}
+    )
+    
+    return {"message": "Manual status updated successfully"}
+
+
 @api_router.post("/visitors/{visitor_id}/presence")
 async def add_presence(visitor_id: str, presence: PresenceAdd, current_user: dict = Depends(get_current_user)):
     visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
