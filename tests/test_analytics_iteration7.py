@@ -41,16 +41,16 @@ class TestAnalyticsEndpoints:
         assert "promos" in data, "Missing 'promos' key"
         assert "summary" in data, "Missing 'summary' key"
         
-        # Verify summary has expected fields
+        # Verify summary has expected fields (correct field names)
         summary = data["summary"]
-        assert "total_recus" in summary, "Missing total_recus in summary"
-        assert "total_de_passage" in summary, "Missing total_de_passage in summary"
+        assert "total_personnes_recues" in summary, "Missing total_personnes_recues in summary"
+        assert "total_dp" in summary, "Missing total_dp in summary"
         assert "total_suivis_arretes" in summary, "Missing total_suivis_arretes in summary"
-        assert "total_suivis" in summary, "Missing total_suivis in summary"
+        assert "total_personnes_suivies" in summary, "Missing total_personnes_suivies in summary"
         
         # Verify we have data (67 visitors in DB)
-        assert summary["total_recus"] > 0, f"Expected visitors, got {summary['total_recus']}"
-        print(f"✓ Promotions detailed (no filter): {summary['total_recus']} visitors")
+        assert summary["total_personnes_recues"] > 0, f"Expected visitors, got {summary['total_personnes_recues']}"
+        print(f"✓ Promotions detailed (no filter): {summary['total_personnes_recues']} visitors")
     
     def test_promotions_detailed_filter_year_2024(self):
         """Test promotions-detailed with year 2024 filter"""
