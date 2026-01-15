@@ -57,6 +57,30 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 - **Carte sur la page d'accueil** avec "À venir" comme description
 - **Carte dans Planning des Activités** (EJP Dijon) en rose/pink
 
+#### EJP - Église des Jeunes Prodiges ✅ NEW Jan 2026
+- **Page principale** (`/ejp`) avec 2 cartes
+- **Cultes** (`/ejp/cultes`) :
+  - Upload audio (MP3, WAV)
+  - Date, titre, nom de l'orateur
+  - Lecture audio intégrée dans l'app
+  - CRUD complet
+- **Planning Exhortation** (`/ejp/planning-exhortation`) :
+  - Date format "Dimanche 14 janvier"
+  - Nom de l'exhortateur
+  - CRUD complet (ajouter, modifier, supprimer)
+  - Groupé par mois
+- **Départements EJP** ajoutés au recensement Stars :
+  - EJP-Prière - Intercession
+  - EJP-Coordination, EJP-MLA, EJP-Sono
+  - EJP-Modération, EJP-COM, EJP-Accueil
+  - EJP-Communion Fraternelle
+
+#### Accès Administration (Superadmin/Pasteur) ✅ NEW Jan 2026
+- **Page** `/admin/bergeries` pour accéder à toutes les bergeries/promotions
+- **Filtres** : Type (Bergeries/Promotions), Ville, Recherche
+- **Lien dans le menu** pour superadmin et pasteur
+- Permet de voir et entrer dans n'importe quelle bergerie comme si on était le berger
+
 #### Authentication & Authorization
 - Login avec sélection de ville
 - Rôles multiples (super_admin, pasteur, superviseur_promos, referent, etc.)
