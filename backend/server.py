@@ -3483,14 +3483,21 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
     # Get ALL visitors (y compris tracking_stopped pour les statistiques)
     all_visitors = await db.visitors.find(base_query, {"_id": 0}).to_list(10000)
     
-    # Filtrer les visiteurs pour les indicateurs globaux si mois/année spécifiés
+    # Filtrer les visiteurs pour les indicateurs globaux si mois et/ou année spécifiés
     visitors_for_summary = all_visitors
-    if mois and mois != "all" and annee and annee != "all":
-        # Filtrer les visiteurs dont assigned_month correspond au mois/année
-        visitors_for_summary = [v for v in all_visitors if v.get("assigned_month", "").startswith(f"{annee}-{mois}")]
+    if annee and annee != "all":
+        if mois and mois != "all":
+            # Filtrer par mois ET année
+            visitors_for_summary = [v for v in all_visitors if v.get("assigned_month", "").startswith(f"{annee}-{mois}")]
+        else:
+            # Filtrer par année seulement
+            visitors_for_summary = [v for v in all_visitors if v.get("assigned_month", "").startswith(f"{annee}-")]
+    elif mois and mois != "all":
+        # Filtrer par mois seulement (tous les années)
+        visitors_for_summary = [v for v in all_visitors if v.get("assigned_month", "").split("-")[1] == mois if "-" in v.get("assigned_month", "")]
     
-    # Utiliser all_visitors pour les stats détaillées (toutes les promos)
-    visitors = all_visitors
+    # Utiliser visitors_for_summary pour les stats (filtrées)
+    visitors = visitors_for_summary if (annee and annee != "all") or (mois and mois != "all") else all_visitors
     
     # Déterminer le mois filtré pour le calcul des dimanches/jeudis
     if mois and mois != "all" and annee and annee != "all":
@@ -3505,7 +3512,7 @@ async def get_promotions_detailed(ville: str = None, mois: str = None, annee: st
         num_sundays = 4
         num_thursdays = 4
     
-    # Group by assigned_month (Promo) - on garde TOUTES les promos
+    # Group by assigned_month (Promo) - on garde les promos filtrées
     promos_by_month = {}
     for visitor in visitors:
         month = visitor.get("assigned_month", "N/A")
