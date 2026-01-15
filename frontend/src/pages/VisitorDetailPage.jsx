@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getVisitor, getUser, addComment, updateVisitor } from '../utils/api';
+import { getVisitor, getUser, addComment, updateVisitor, stopTracking } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Checkbox } from '../components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
-import { ArrowLeft, MessageSquare, Award, StopCircle, Edit } from 'lucide-react';
+import { ArrowLeft, StopCircle, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import KPIDiscipolat from '../components/KPIDiscipolat';
 
@@ -70,32 +71,6 @@ const VisitorDetailPage = () => {
       loadVisitor();
     } catch (error) {
       toast.error('Erreur lors de l\'ajout du commentaire');
-    }
-  };
-
-  const handleAddPresence = async () => {
-    if (!selectedDate) {
-      toast.error('Veuillez sélectionner une date');
-      return;
-    }
-
-    try {
-      await addPresence(id, selectedDate, selectedPresence === 'oui', selectedType);
-      toast.success('Présence enregistrée!');
-      setSelectedDate('');
-      loadVisitor();
-    } catch (error) {
-      toast.error('Erreur lors de l\'enregistrement');
-    }
-  };
-
-  const handleFormationToggle = async (formationType, currentValue) => {
-    try {
-      await updateFormation(id, formationType, !currentValue);
-      toast.success('Formation mise à jour!');
-      loadVisitor();
-    } catch (error) {
-      toast.error('Erreur lors de la mise à jour');
     }
   };
 
