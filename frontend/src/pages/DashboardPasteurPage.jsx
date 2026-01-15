@@ -236,11 +236,13 @@ const DashboardPasteurPage = () => {
             {/* Référents */}
             <Card>
               <CardHeader>
-                <CardTitle>Référents ({referentsData.length})</CardTitle>
+                <CardTitle>Référents ({referentsData.filter(ref => selectedCity === 'all' || ref.city === selectedCity).length})</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {referentsData.map((ref, index) => (
+                  {referentsData
+                    .filter(ref => selectedCity === 'all' || ref.city === selectedCity)
+                    .map((ref, index) => (
                     <div key={index} className="p-2 bg-gray-50 rounded flex justify-between">
                       <span className="font-medium">{ref.firstname} {ref.lastname}</span>
                       <span className="text-gray-500">{ref.assigned_month}</span>
