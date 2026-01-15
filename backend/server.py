@@ -1379,7 +1379,7 @@ async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict =
 
 # ==================== KPI DISCIPOLAT ====================
 class KPIDiscipolatEntry(BaseModel):
-    visitor_id: str
+    visitor_id: Optional[str] = None  # Optionnel car fourni dans l'URL
     mois: str  # Format: "2024-01"
     presence_dimanche: int = 0  # 1-4 (1fois, 2fois, 3fois, 4-5fois)
     presence_fi: int = 0  # 1-4
