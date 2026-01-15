@@ -34,6 +34,7 @@ const SuiviDisciplesPage = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [disciples, setDisciples] = useState({});
+  const [kpiStatuses, setKpiStatuses] = useState({});
   const [showMethodHelp, setShowMethodHelp] = useState(false);
 
   useEffect(() => {
@@ -56,6 +57,20 @@ const SuiviDisciplesPage = () => {
         disciplesMap[v.id] = v.est_disciple || 'Non';
       });
       setDisciples(disciplesMap);
+      
+      // Charger les statuts KPI de tous les visiteurs
+      const kpiResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/visitors/kpi/all-statuses`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      if (kpiResponse.ok) {
+        const kpiData = await kpiResponse.json();
+        setKpiStatuses(kpiData);
+      }
       
       // Charger les contacts (personnes contactées)
       if (user.assigned_month) {
