@@ -6,15 +6,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Users, UserCheck, Phone, Calendar, Heart, TrendingUp, Info, HelpCircle } from 'lucide-react';
+import { Users, Phone, Calendar, Heart, TrendingUp, Info, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Configuration des KPIs pour l'affichage de la méthode
+const KPI_CONFIG = {
+  presence_dimanche: { label: "Présence Culte Dimanche", poids: 3 },
+  presence_fi: { label: "Présence FI", poids: 3 },
+  presence_reunion_disciples: { label: "Présence Réunion Disciples", poids: 2 },
+  service_eglise: { label: "Service à l'Église", poids: 2 },
+  consommation_pain_jour: { label: "Consommation Pain du Jour", poids: 1 },
+  bapteme: { label: "Baptême", poids: 1 }
+};
 
 // Niveaux de discipolat pour l'affichage
 const DISCIPOLAT_LEVELS = {
-  "Non classé": { color: "bg-gray-100 text-gray-600", emoji: "⚪" },
-  "Débutant": { color: "bg-blue-100 text-blue-700", emoji: "🔵" },
-  "Intermédiaire": { color: "bg-yellow-100 text-yellow-700", emoji: "🟡" },
-  "Confirmé": { color: "bg-green-100 text-green-700", emoji: "🟢" }
+  "Non classé": { color: "bg-gray-100 text-gray-600", emoji: "⚪", min: 0, max: 14 },
+  "Débutant": { color: "bg-blue-100 text-blue-700", emoji: "🔵", min: 15, max: 30 },
+  "Intermédiaire": { color: "bg-yellow-100 text-yellow-700", emoji: "🟡", min: 31, max: 51 },
+  "Confirmé": { color: "bg-green-100 text-green-700", emoji: "🟢", min: 52, max: 100 }
 };
 
 const SuiviDisciplesPage = () => {
