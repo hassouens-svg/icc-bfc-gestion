@@ -70,18 +70,21 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 - Suivi des disciples (statut Oui/Non/En cours)
 - Reproduction et évangélisation
 
-#### Groupes de Disciples (NEW - Jan 2026)
+#### Groupes de Disciples (Bergeries) ✅ UPDATED Jan 2026
 - Page intermédiaire de choix (/bergeries)
 - Liste de 47+ groupes (/bergeries-disciples)
   - 41 groupes statiques issus du Google Sheet
   - Nouvelles bergeries créées manuellement
 - Filtrage par ville
-- **Création manuelle de bergeries** (nom, responsable, ville) ✅ NEW
+- **Création manuelle de bergeries** (nom, responsable, ville)
 - Page de détail avec 3 onglets:
   - Membres (CRUD)
-  - Suivi Disciples (statut)
+  - Suivi Disciples avec **boutons "Voir KPIs"** par membre ✅ NEW
   - Reproduction (objectifs, contacts)
-- API complète backend
+- **Page détail membre** (/bergeries-disciples/:bergerieId/membre/:membreId) ✅ NEW
+  - Informations de base (nom, téléphone, profession)
+  - Composant KPIDiscipolat complet avec les 6 critères
+- API complète backend incluant endpoints KPI membres
 
 #### Pain du Jour
 - Méditation quotidienne
