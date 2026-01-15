@@ -5,26 +5,28 @@ import { getUser, getVisitors } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Users, Phone, Calendar, Heart, TrendingUp, Info, HelpCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+import { Textarea } from '../components/ui/textarea';
+import { Label } from '../components/ui/label';
+import { Users, Phone, Calendar, Heart, Info, HelpCircle, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Configuration des KPIs pour l'affichage de la méthode
 const KPI_CONFIG = {
-  presence_dimanche: { label: "Présence Culte Dimanche", poids: 3 },
-  presence_fi: { label: "Présence FI", poids: 3 },
-  presence_reunion_disciples: { label: "Présence Réunion Disciples", poids: 2 },
-  service_eglise: { label: "Service à l'Église", poids: 2 },
-  consommation_pain_jour: { label: "Consommation Pain du Jour", poids: 1 },
-  bapteme: { label: "Baptême", poids: 1 }
+  presence_dimanche: { label: "Présence Dimanche Église", poids: 5 },
+  presence_fi: { label: "Présence FI", poids: 2 },
+  presence_reunion_disciples: { label: "Présence Réunion Disciples", poids: 3 },
+  service_eglise: { label: "Service à l'Église", poids: 6 },
+  consommation_pain_jour: { label: "Consommation Pain du Jour", poids: 5 },
+  bapteme: { label: "Baptême", poids: 2 }
 };
 
 // Niveaux de discipolat pour l'affichage
 const DISCIPOLAT_LEVELS = {
-  "Non classé": { color: "bg-gray-100 text-gray-600", emoji: "⚪", min: 0, max: 14 },
-  "Débutant": { color: "bg-blue-100 text-blue-700", emoji: "🔵", min: 15, max: 30 },
-  "Intermédiaire": { color: "bg-yellow-100 text-yellow-700", emoji: "🟡", min: 31, max: 51 },
-  "Confirmé": { color: "bg-green-100 text-green-700", emoji: "🟢", min: 52, max: 100 }
+  "Non classé": { color: "bg-gray-100 text-gray-600", emoji: "⚪", min: 0, max: 19 },
+  "Débutant": { color: "bg-blue-100 text-blue-700", emoji: "🔵", min: 20, max: 39 },
+  "Intermédiaire": { color: "bg-yellow-100 text-yellow-700", emoji: "🟡", min: 40, max: 59 },
+  "Confirmé": { color: "bg-green-100 text-green-700", emoji: "🟢", min: 60, max: 200 }
 };
 
 const SuiviDisciplesPage = () => {
@@ -33,9 +35,11 @@ const SuiviDisciplesPage = () => {
   const [visitors, setVisitors] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [disciples, setDisciples] = useState({});
   const [kpiStatuses, setKpiStatuses] = useState({});
   const [showMethodHelp, setShowMethodHelp] = useState(false);
+  const [showManualStatusDialog, setShowManualStatusDialog] = useState(false);
+  const [selectedVisitor, setSelectedVisitor] = useState(null);
+  const [manualStatusForm, setManualStatusForm] = useState({ level: '', commentaire: '' });
 
   useEffect(() => {
     if (!user) {
@@ -47,16 +51,8 @@ const SuiviDisciplesPage = () => {
 
   const loadData = async () => {
     try {
-      // Charger les visiteurs assignés
       const visitorsData = await getVisitors();
       setVisitors(visitorsData);
-      
-      // Créer le map des disciples
-      const disciplesMap = {};
-      visitorsData.forEach(v => {
-        disciplesMap[v.id] = v.est_disciple || 'Non';
-      });
-      setDisciples(disciplesMap);
       
       // Charger les statuts KPI de tous les visiteurs
       const kpiResponse = await fetch(
@@ -72,7 +68,7 @@ const SuiviDisciplesPage = () => {
         setKpiStatuses(kpiData);
       }
       
-      // Charger les contacts (personnes contactées)
+      // Charger les contacts
       if (user.assigned_month) {
         const monthStr = String(user.assigned_month);
         const monthNum = monthStr.split('-')[1] || monthStr;
@@ -97,36 +93,57 @@ const SuiviDisciplesPage = () => {
     }
   };
 
-  const handleUpdateDisciple = async (visitorId, newStatus) => {
+  const openManualStatusDialog = (visitor, e) => {
+    e.stopPropagation();
+    setSelectedVisitor(visitor);
+    const kpiData = kpiStatuses[visitor.id] || {};
+    setManualStatusForm({
+      level: kpiData.manual_status || '',
+      commentaire: kpiData.manual_commentaire || ''
+    });
+    setShowManualStatusDialog(true);
+  };
+
+  const handleSaveManualStatus = async () => {
+    if (!selectedVisitor) return;
+    
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${selectedVisitor.id}/manual-status`,
         {
-          method: 'PUT',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           },
           body: JSON.stringify({
-            est_disciple: newStatus,
-            date_devenu_disciple: newStatus === 'Oui' ? new Date().toISOString().split('T')[0] : null
+            manual_status: manualStatusForm.level || null,
+            manual_commentaire: manualStatusForm.commentaire
           })
         }
       );
       
       if (response.ok) {
-        setDisciples(prev => ({ ...prev, [visitorId]: newStatus }));
-        toast.success('Statut mis à jour');
+        toast.success('Statut manuel enregistré');
+        setShowManualStatusDialog(false);
+        loadData();
+      } else {
+        toast.error('Erreur lors de l\'enregistrement');
       }
     } catch (error) {
-      toast.error('Erreur');
+      toast.error('Erreur de connexion');
     }
   };
 
-  // Calculer les stats
-  const totalDisciplesOui = Object.values(disciples).filter(d => d === 'Oui').length;
-  const totalDisciplesEnCours = Object.values(disciples).filter(d => d === 'En Cours').length;
-  const totalNon = visitors.length - totalDisciplesOui - totalDisciplesEnCours;
+  // Calculer les stats par niveau
+  const countByLevel = Object.entries(DISCIPOLAT_LEVELS).map(([name, info]) => {
+    const count = visitors.filter(v => {
+      const kpiData = kpiStatuses[v.id] || {};
+      const status = kpiData.manual_status || kpiData.level || "Non classé";
+      return status === name;
+    }).length;
+    return { name, count, ...info };
+  });
 
   if (loading) {
     return (
@@ -141,38 +158,18 @@ const SuiviDisciplesPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Navigation rapide pour mobile - TOUJOURS visible sur mobile */}
+        {/* Navigation mobile */}
         <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 md:hidden bg-white sticky top-0 z-50 pt-2 border-b">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="flex-shrink-0"
-            onClick={() => navigate('/dashboard')}
-          >
+          <Button variant="outline" size="sm" className="flex-shrink-0" onClick={() => navigate('/dashboard')}>
             Dashboard
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="flex-shrink-0"
-            onClick={() => navigate('/visitors')}
-          >
+          <Button variant="outline" size="sm" className="flex-shrink-0" onClick={() => navigate('/visitors')}>
             Nouveaux
           </Button>
-          <Button 
-            variant="default" 
-            size="sm"
-            className="flex-shrink-0 bg-blue-600"
-            onClick={() => navigate('/suivi-disciples')}
-          >
+          <Button variant="default" size="sm" className="flex-shrink-0 bg-blue-600" onClick={() => navigate('/suivi-disciples')}>
             Disciples
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="flex-shrink-0 bg-green-50 text-green-700 border-green-200"
-            onClick={() => navigate('/reproduction')}
-          >
+          <Button variant="outline" size="sm" className="flex-shrink-0 bg-green-50 text-green-700 border-green-200" onClick={() => navigate('/reproduction')}>
             Reproduction
           </Button>
         </div>
@@ -190,29 +187,22 @@ const SuiviDisciplesPage = () => {
           </Button>
         </div>
 
-        {/* Compteurs */}
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-green-50 border-green-200">
-            <CardContent className="pt-6 text-center">
-              <p className="text-3xl font-bold text-green-600">{totalDisciplesOui}</p>
-              <p className="text-sm text-gray-600">Disciples (Oui)</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-orange-50 border-orange-200">
-            <CardContent className="pt-6 text-center">
-              <p className="text-3xl font-bold text-orange-600">{totalDisciplesEnCours}</p>
-              <p className="text-sm text-gray-600">En Cours</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-50 border-gray-200">
-            <CardContent className="pt-6 text-center">
-              <p className="text-3xl font-bold text-gray-600">{totalNon}</p>
-              <p className="text-sm text-gray-600">Non encore</p>
-            </CardContent>
-          </Card>
+        {/* Compteurs par niveau */}
+        <div className="grid grid-cols-4 gap-3">
+          {countByLevel.map(level => (
+            <Card key={level.name} className={`${level.color} border-0`}>
+              <CardContent className="pt-4 text-center">
+                <p className="text-2xl font-bold">{level.count}</p>
+                <p className="text-sm flex items-center justify-center gap-1">
+                  <span>{level.emoji}</span>
+                  <span>{level.name}</span>
+                </p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {/* Section Nouveaux Arrivants Assignés */}
+        {/* Section Nouveaux Arrivants */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -226,11 +216,11 @@ const SuiviDisciplesPage = () => {
                 <p className="text-center text-gray-500 py-4">Aucun nouveau arrivant assigné</p>
               ) : (
                 visitors.map((visitor) => {
-                  // Utiliser les données KPI chargées
                   const kpiData = kpiStatuses[visitor.id] || {};
-                  const levelName = kpiData.level || "Non classé";
+                  const levelName = kpiData.manual_status || kpiData.level || "Non classé";
                   const levelInfo = DISCIPOLAT_LEVELS[levelName] || DISCIPOLAT_LEVELS["Non classé"];
                   const score = kpiData.average_score || 0;
+                  const isManual = !!kpiData.manual_status;
                   
                   return (
                     <div 
@@ -246,11 +236,12 @@ const SuiviDisciplesPage = () => {
                           <span className={`px-2 py-0.5 rounded-full text-xs flex items-center gap-1 ${levelInfo.color}`}>
                             <span>{levelInfo.emoji}</span>
                             <span>{levelName}</span>
-                            {score > 0 && (
+                            {!isManual && score > 0 && (
                               <span className="font-bold">({score})</span>
                             )}
+                            {isManual && <span className="text-[10px]">(manuel)</span>}
                           </span>
-                          {kpiData.months_count > 0 && (
+                          {kpiData.months_count > 0 && !isManual && (
                             <span className="text-xs text-gray-400">
                               ({kpiData.months_count} mois)
                             </span>
@@ -260,20 +251,15 @@ const SuiviDisciplesPage = () => {
                           {visitor.phone || '-'} • {visitor.visitor_type || visitor.types?.join(', ') || 'Nouveau arrivant'}
                         </p>
                       </div>
-                      <Select
-                        value={disciples[visitor.id] || 'Non'}
-                        onValueChange={(value) => handleUpdateDisciple(visitor.id, value)}
-                        onClick={(e) => e.stopPropagation()}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => openManualStatusDialog(visitor, e)}
+                        className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
                       >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Non">Non</SelectItem>
-                          <SelectItem value="En Cours">En Cours</SelectItem>
-                          <SelectItem value="Oui">Oui ✓</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <Edit3 className="h-4 w-4 mr-1" />
+                        Statut manuel
+                      </Button>
                     </div>
                   );
                 })
@@ -339,6 +325,63 @@ const SuiviDisciplesPage = () => {
         </Card>
       </div>
 
+      {/* Dialog Statut Manuel */}
+      <Dialog open={showManualStatusDialog} onOpenChange={setShowManualStatusDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Définir un statut manuel
+              {selectedVisitor && (
+                <span className="font-normal text-gray-500 ml-2">
+                  - {selectedVisitor.firstname} {selectedVisitor.lastname}
+                </span>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="mb-2 block">Niveau de Disciple</Label>
+              <Select 
+                value={manualStatusForm.level} 
+                onValueChange={(v) => setManualStatusForm({...manualStatusForm, level: v})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un niveau (ou laisser vide pour auto)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Automatique (basé sur KPIs)</SelectItem>
+                  {Object.entries(DISCIPOLAT_LEVELS).map(([name, info]) => (
+                    <SelectItem key={name} value={name}>
+                      {info.emoji} {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500 mt-1">
+                Laissez vide pour utiliser le calcul automatique basé sur les KPIs
+              </p>
+            </div>
+            <div>
+              <Label className="mb-2 block">Commentaire</Label>
+              <Textarea
+                value={manualStatusForm.commentaire}
+                onChange={(e) => setManualStatusForm({...manualStatusForm, commentaire: e.target.value})}
+                placeholder="Raison du statut manuel, observations..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowManualStatusDialog(false)}>
+              Annuler
+            </Button>
+            <Button onClick={handleSaveManualStatus} className="bg-purple-600 hover:bg-purple-700">
+              Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Dialog Méthode de calcul KPI */}
       <Dialog open={showMethodHelp} onOpenChange={setShowMethodHelp}>
         <DialogContent className="max-w-lg">
@@ -389,7 +432,8 @@ const SuiviDisciplesPage = () => {
             </div>
             
             <div className="text-sm text-gray-500 bg-blue-50 p-3 rounded-lg">
-              <strong>Note:</strong> Le statut affiché est la <strong>moyenne</strong> des scores de tous les mois enregistrés pour chaque personne.
+              <strong>Note:</strong> Le statut affiché est la <strong>moyenne</strong> des scores de tous les mois enregistrés.
+              Un statut <strong>manuel</strong> peut être défini pour remplacer le calcul automatique.
             </div>
           </div>
         </DialogContent>
