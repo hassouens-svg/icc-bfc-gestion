@@ -98,9 +98,9 @@ const HomePage = () => {
       return;
     }
 
-    // EJP - À venir
+    // EJP - Église des Jeunes Prodiges
     if (deptId === 'ejp') {
-      toast.info('EJP - Église des Jeunes Prodiges : À venir prochainement !');
+      navigate('/ejp');
       return;
     }
     
