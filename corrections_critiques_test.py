@@ -20,7 +20,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://ministry-app-7.preview.emergentagent.com/api"
+BACKEND_URL = "https://disciple-tracker.preview.emergentagent.com/api"
 
 class TestCorrectionsAPI:
     def __init__(self):
