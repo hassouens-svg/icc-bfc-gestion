@@ -1381,31 +1381,43 @@ async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict =
 class KPIDiscipolatEntry(BaseModel):
     visitor_id: Optional[str] = None  # Optionnel car fourni dans l'URL
     mois: str  # Format: "2024-01"
-    presence_dimanche: int = 0  # 1-4 (1fois, 2fois, 3fois, 4-5fois)
-    presence_fi: int = 0  # 1-4
-    presence_reunion_disciples: int = 0  # 1-4
-    service_eglise: int = 0  # 1=Membre, 2=Aide, 3=Star
-    consommation_pain_jour: int = 0  # 1=Rarement, 2=Fréquemment, 3=Tous les jours
-    bapteme: int = 0  # 0=Non, 1=Oui
+    presence_dimanche: int = 0
+    presence_fi: int = 0
+    presence_reunion_disciples: int = 0
+    service_eglise: int = 0
+    formation_pcnc: int = 0
+    consommation_pain_jour: int = 0
+    contact_bergers: int = 0
+    bapteme: int = 0
+    participation_evenements: int = 0
+    contribution_financiere: int = 0
+    devient_berger: int = 0
+    participation_evangelisation: int = 0
     commentaire: str = ""
 
-# Coefficients (poids) pour chaque KPI
+# Coefficients (poids) pour chaque KPI - Mis à jour selon les specs
 KPI_WEIGHTS = {
-    "presence_dimanche": 3,
-    "presence_fi": 3,
-    "presence_reunion_disciples": 2,
-    "service_eglise": 2,
-    "consommation_pain_jour": 1,
-    "bapteme": 1
+    "presence_dimanche": 5,
+    "presence_fi": 2,
+    "presence_reunion_disciples": 3,
+    "service_eglise": 6,
+    "formation_pcnc": 3,
+    "consommation_pain_jour": 5,
+    "contact_bergers": 2,
+    "bapteme": 2,
+    "participation_evenements": 2,
+    "contribution_financiere": 3,
+    "devient_berger": 4,
+    "participation_evangelisation": 3
 }
 
-# Niveaux de discipolat
+# Niveaux de discipolat - Ajustés pour les nouveaux scores max possibles
 def get_discipolat_level(score: float) -> str:
-    if score < 15:
+    if score < 30:
         return "Non classé"
-    elif score <= 30:
+    elif score < 60:
         return "Débutant"
-    elif score <= 51:
+    elif score < 90:
         return "Intermédiaire"
     else:
         return "Confirmé"
@@ -1413,12 +1425,8 @@ def get_discipolat_level(score: float) -> str:
 def calculate_kpi_score(kpi: dict) -> float:
     """Calcule le score KPI basé sur les coefficients"""
     score = 0
-    score += kpi.get("presence_dimanche", 0) * KPI_WEIGHTS["presence_dimanche"]
-    score += kpi.get("presence_fi", 0) * KPI_WEIGHTS["presence_fi"]
-    score += kpi.get("presence_reunion_disciples", 0) * KPI_WEIGHTS["presence_reunion_disciples"]
-    score += kpi.get("service_eglise", 0) * KPI_WEIGHTS["service_eglise"]
-    score += kpi.get("consommation_pain_jour", 0) * KPI_WEIGHTS["consommation_pain_jour"]
-    score += kpi.get("bapteme", 0) * KPI_WEIGHTS["bapteme"]
+    for key, weight in KPI_WEIGHTS.items():
+        score += kpi.get(key, 0) * weight
     return score
 
 @api_router.post("/visitors/{visitor_id}/kpi")
