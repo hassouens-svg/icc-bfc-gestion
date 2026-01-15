@@ -338,6 +338,62 @@ const SuiviDisciplesPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialog Méthode de calcul KPI */}
+      <Dialog open={showMethodHelp} onOpenChange={setShowMethodHelp}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Info className="h-5 w-5 text-purple-600" />
+              Méthode de calcul - KPI Discipolat
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-medium mb-2">Formule</h4>
+              <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                Score = Σ (Valeur × Coefficient)
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-medium mb-2">Critères et Coefficients</h4>
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="py-2 px-2 text-left">Critère</th>
+                    <th className="py-2 px-2 text-right">Poids</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(KPI_CONFIG).map(([key, config]) => (
+                    <tr key={key} className="border-b">
+                      <td className="py-1 px-2">{config.label}</td>
+                      <td className="py-1 px-2 text-right font-medium text-purple-600">×{config.poids}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            <div>
+              <h4 className="font-medium mb-2">Niveaux de Discipolat</h4>
+              <div className="space-y-1">
+                {Object.entries(DISCIPOLAT_LEVELS).map(([name, level]) => (
+                  <div key={name} className={`flex items-center justify-between p-2 rounded ${level.color}`}>
+                    <span>{level.emoji} {name}</span>
+                    <span className="text-sm">{level.min} - {level.max} pts</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="text-sm text-gray-500 bg-blue-50 p-3 rounded-lg">
+              <strong>Note:</strong> Le statut affiché est la <strong>moyenne</strong> des scores de tous les mois enregistrés pour chaque personne.
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
