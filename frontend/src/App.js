@@ -177,6 +177,7 @@ function App() {
           {/* BERGERIES - Groupes de Disciples */}
           <Route path="/bergeries-disciples" element={<BergeriesDisciplesPage />} />
           <Route path="/bergerie-disciple/:id" element={<BergerieDiscipleDetailPage />} />
+          <Route path="/bergeries-disciples/:bergerieId/membre/:membreId" element={<MembreBergerieDetailPage />} />
           
           {/* Public Bergerie Routes - UI identique à l'authentifié */}
           <Route path="/bergerie/dashboard" element={<PublicBergerieDashboardPage />} />
