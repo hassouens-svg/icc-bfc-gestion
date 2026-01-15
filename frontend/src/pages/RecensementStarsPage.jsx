@@ -56,7 +56,16 @@ const RecensementStarsPage = () => {
     'Ministère des hommes (bureau)',
     'Impact santé',
     'Évènementiel/Restauration',
-    'Modération'
+    'Modération',
+    // Départements EJP
+    'EJP-Prière - Intercession',
+    'EJP-Coordination',
+    'EJP-MLA',
+    'EJP-Sono',
+    'EJP-Modération',
+    'EJP-COM',
+    'EJP-Accueil',
+    'EJP-Communion Fraternelle'
   ];
 
   const mois = [
