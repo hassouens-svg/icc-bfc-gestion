@@ -236,7 +236,7 @@ const SuiviDisciplesPage = () => {
                     <div 
                       key={visitor.id}
                       className="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                      onClick={() => navigate(`/visitors/${visitor.id}`)}
+                      onClick={() => navigate(`/visitor/${visitor.id}`)}
                       data-testid={`visitor-row-${visitor.id}`}
                     >
                       <div className="flex-1">
