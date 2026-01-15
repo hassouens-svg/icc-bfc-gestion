@@ -99,9 +99,10 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
     bapteme: 0,
     commentaire: ""
   });
+  // Mois actuel (01-12)
   const [selectedMois, setSelectedMois] = useState(() => {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    return String(now.getMonth() + 1).padStart(2, '0');
   });
   const [allKpis, setAllKpis] = useState([]);
   const [averageScore, setAverageScore] = useState(0);
