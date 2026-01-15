@@ -321,7 +321,7 @@ const VisitorDetailPage = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>Canal d'arrivée</Label>
+              <Label>Canal d&apos;arrivée</Label>
               <Select value={editData.arrival_channel} onValueChange={(value) => setEditData({...editData, arrival_channel: value})}>
                 <SelectTrigger>
                   <SelectValue />
@@ -335,10 +335,10 @@ const VisitorDetailPage = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Tranche d'âge</Label>
+              <Label>Tranche d&apos;âge</Label>
               <Select value={editData.age_range} onValueChange={(value) => setEditData({...editData, age_range: value})}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une tranche d'âge" />
+                  <SelectValue placeholder="Sélectionner une tranche d&apos;âge" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="15-25 ans">15-25 ans</SelectItem>
