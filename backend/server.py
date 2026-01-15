@@ -1526,8 +1526,12 @@ async def get_visitor_kpi_for_month(visitor_id: str, mois: str, current_user: di
 @api_router.get("/visitors/kpi/all-statuses")
 async def get_all_visitors_kpi_statuses(current_user: dict = Depends(get_current_user)):
     """Récupérer les statuts KPI moyens de tous les visiteurs de la ville"""
-    # Récupérer tous les KPIs de cette ville
+    # Récupérer tous les KPIs
     all_kpis = await db.kpi_discipolat.find({}).to_list(10000)
+    
+    # Récupérer tous les visiteurs pour les statuts manuels
+    all_visitors = await db.visitors.find({}, {"id": 1, "manual_discipolat_status": 1, "manual_discipolat_commentaire": 1}).to_list(10000)
+    manual_statuses = {v["id"]: v for v in all_visitors if v.get("manual_discipolat_status")}
     
     # Grouper par visitor_id et calculer la moyenne
     visitor_kpis = {}
@@ -1542,15 +1546,24 @@ async def get_all_visitors_kpi_statuses(current_user: dict = Depends(get_current
     for vid, scores in visitor_kpis.items():
         if scores:
             avg = round(sum(scores) / len(scores), 1)
-            if avg < 15:
-                level = "Non classé"
-            elif avg <= 30:
-                level = "Débutant"
-            elif avg <= 51:
-                level = "Intermédiaire"
-            else:
-                level = "Confirmé"
+            level = get_discipolat_level(avg)
             result[vid] = {"average_score": avg, "level": level, "months_count": len(scores)}
+            
+            # Ajouter statut manuel si présent
+            if vid in manual_statuses:
+                result[vid]["manual_status"] = manual_statuses[vid].get("manual_discipolat_status")
+                result[vid]["manual_commentaire"] = manual_statuses[vid].get("manual_discipolat_commentaire", "")
+    
+    # Ajouter les visiteurs avec statut manuel mais sans KPIs
+    for vid, v in manual_statuses.items():
+        if vid not in result:
+            result[vid] = {
+                "average_score": 0,
+                "level": "Non classé",
+                "months_count": 0,
+                "manual_status": v.get("manual_discipolat_status"),
+                "manual_commentaire": v.get("manual_discipolat_commentaire", "")
+            }
     
     return result
 
