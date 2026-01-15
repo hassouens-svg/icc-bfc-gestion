@@ -184,6 +184,11 @@ function App() {
           <Route path="/bergerie-disciple/:id" element={<BergerieDiscipleDetailPage />} />
           <Route path="/bergeries-disciples/:bergerieId/membre/:membreId" element={<MembreBergerieDetailPage />} />
           
+          {/* EJP - Église des Jeunes Prodiges */}
+          <Route path="/ejp" element={<EJPPage />} />
+          <Route path="/ejp/cultes" element={<EJPCultesPage />} />
+          <Route path="/ejp/planning-exhortation" element={<EJPPlanningExhortationPage />} />
+          
           {/* Public Bergerie Routes - UI identique à l'authentifié */}
           <Route path="/bergerie/dashboard" element={<PublicBergerieDashboardPage />} />
           <Route path="/bergerie/visitors" element={<PublicBergerieVisitorsPage />} />
