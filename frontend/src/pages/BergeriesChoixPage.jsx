@@ -31,7 +31,8 @@ const BergeriesChoixPage = () => {
             className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-6 text-lg shadow-lg"
           >
             <BookOpen className="h-6 w-6 mr-3" />
-            Voir les différentes stratégies pour attirer et fidéliser les âmes
+            <span className="hidden sm:inline">Voir les différentes stratégies pour attirer et fidéliser les âmes</span>
+            <span className="sm:hidden">Stratégies</span>
             <Target className="h-6 w-6 ml-3" />
           </Button>
         </div>
