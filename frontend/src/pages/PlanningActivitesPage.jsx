@@ -356,6 +356,17 @@ const PlanningActivitesPage = () => {
                 {ville}
               </Button>
             ))}
+            {/* Carte EJP Dijon */}
+            <Button
+              onClick={() => handleVilleSelection('EJP Dijon')}
+              size="lg"
+              className="h-24 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
+            >
+              <div className="text-center">
+                <span className="font-bold">EJP Dijon</span>
+                <span className="block text-xs opacity-90">Église des Jeunes Prodiges</span>
+              </div>
+            </Button>
           </div>
         </div>
       </EventsLayout>
