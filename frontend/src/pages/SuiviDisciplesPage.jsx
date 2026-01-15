@@ -349,7 +349,7 @@ const SuiviDisciplesPage = () => {
                   <SelectValue placeholder="Sélectionner un niveau (ou laisser vide pour auto)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Automatique (basé sur KPIs)</SelectItem>
+                  <SelectItem value="auto">Automatique (basé sur KPIs)</SelectItem>
                   {Object.entries(DISCIPOLAT_LEVELS).map(([name, info]) => (
                     <SelectItem key={name} value={name}>
                       {info.emoji} {name}
