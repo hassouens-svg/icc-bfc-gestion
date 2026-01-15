@@ -19,7 +19,10 @@ const MinistereStarsPublicDashboardPage = () => {
     'Impact junior', 'Navette', 'Prière', 'Protocole', 'Sécurité',
     'Communication', 'Coordination', 'Ministère des promotions', 'Formation',
     'Finance', 'Ministère des femmes (bureau)', 'Ministère des hommes (bureau)',
-    'Impact santé', 'Évènementiel/Restauration'
+    'Impact santé', 'Évènementiel/Restauration', 'Modération',
+    // Départements EJP
+    'EJP-Prière - Intercession', 'EJP-Coordination', 'EJP-MLA', 'EJP-Sono',
+    'EJP-Modération', 'EJP-COM', 'EJP-Accueil', 'EJP-Communion Fraternelle'
   ];
 
   useEffect(() => {
