@@ -91,6 +91,7 @@ const Layout = ({ children }) => {
     { path: '/dashboard-superadmin-complet', label: 'Dashboard Super Admin', icon: Home, roles: ['super_admin'], department: null },
     { path: '/dashboard-pasteur', label: 'Dashboard Pasteur', icon: Home, roles: ['pasteur'], department: null },
     { path: '/dashboard-pasteur', label: 'Dashboard', icon: Home, roles: ['responsable_eglise'], department: null },
+    { path: '/admin/bergeries', label: 'Accès Bergeries/Promos', icon: Users, roles: ['super_admin', 'pasteur'], department: null },
     { path: '/gestion-acces', label: 'Gestion des Accès', icon: Shield, roles: ['super_admin', 'responsable_eglise'], department: null },
     { path: '/affectation-pilotes-fi', label: 'Attribution Pilotes FI', icon: UserPlus, roles: ['responsable_secteur', 'superviseur_fi', 'super_admin'], department: 'familles-impact' },
     { path: '/admin-data', label: 'Gestion des Données', icon: Database, roles: ['super_admin'], department: null },
