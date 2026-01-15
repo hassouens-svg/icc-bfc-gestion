@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Users, UserPlus, ArrowLeft } from 'lucide-react';
+import { Users, UserPlus, ArrowLeft, Target, BookOpen } from 'lucide-react';
 
 const BergeriesChoixPage = () => {
   const navigate = useNavigate();
@@ -19,9 +19,21 @@ const BergeriesChoixPage = () => {
 
       <div className="max-w-4xl mx-auto px-4 pb-8">
         {/* Title */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">🌿 Bergeries</h1>
           <p className="text-gray-600 mt-2">Choisissez le type de bergerie</p>
+        </div>
+
+        {/* Bouton Stratégies */}
+        <div className="mb-8">
+          <Button 
+            onClick={() => navigate('/bergeries/strategies')}
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-6 text-lg shadow-lg"
+          >
+            <BookOpen className="h-6 w-6 mr-3" />
+            Voir les différentes stratégies pour attirer et fidéliser les âmes
+            <Target className="h-6 w-6 ml-3" />
+          </Button>
         </div>
 
         {/* Choix des bergeries */}
