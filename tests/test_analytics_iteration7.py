@@ -64,8 +64,9 @@ class TestAnalyticsEndpoints:
         
         summary = data["summary"]
         # 2024 has 53 visitors based on DB check
-        assert summary["total_recus"] > 0, f"Expected 2024 visitors, got {summary['total_recus']}"
-        print(f"✓ Promotions detailed (2024): {summary['total_recus']} visitors")
+        assert summary["total_personnes_recues"] > 0, f"Expected 2024 visitors, got {summary['total_personnes_recues']}"
+        assert summary["total_personnes_recues"] == 53, f"Expected 53 visitors for 2024, got {summary['total_personnes_recues']}"
+        print(f"✓ Promotions detailed (2024): {summary['total_personnes_recues']} visitors")
     
     def test_promotions_detailed_filter_year_2025(self):
         """Test promotions-detailed with year 2025 filter"""
