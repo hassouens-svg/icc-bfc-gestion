@@ -8956,6 +8956,116 @@ async def add_contact_evangile(bergerie_id: str, contact_data: dict):
     return {"id": contact.id, "message": "Contact ajouté"}
 
 
+# ==================== KPI POUR MEMBRES BERGERIES ====================
+
+@api_router.post("/bergeries-disciples/membres/{membre_id}/kpi")
+async def save_membre_kpi(membre_id: str, kpi: KPIDiscipolatEntry, current_user: dict = Depends(get_current_user)):
+    """Enregistrer les KPIs pour un membre de bergerie"""
+    score = calculate_kpi_score(kpi.model_dump())
+    level = get_discipolat_level(score)
+    
+    kpi_data = {
+        "membre_id": membre_id,
+        "mois": kpi.mois,
+        "presence_dimanche": kpi.presence_dimanche,
+        "presence_fi": kpi.presence_fi,
+        "presence_reunion_disciples": kpi.presence_reunion_disciples,
+        "service_eglise": kpi.service_eglise,
+        "consommation_pain_jour": kpi.consommation_pain_jour,
+        "bapteme": kpi.bapteme,
+        "commentaire": kpi.commentaire,
+        "score": score,
+        "level": level,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_by": current_user["username"]
+    }
+    
+    await db.kpi_membres_bergerie.update_one(
+        {"membre_id": membre_id, "mois": kpi.mois},
+        {"$set": kpi_data},
+        upsert=True
+    )
+    
+    # Mettre à jour le membre avec le score moyen
+    all_kpis = await db.kpi_membres_bergerie.find({"membre_id": membre_id}, {"_id": 0}).to_list(100)
+    if all_kpis:
+        avg_score = sum(k.get("score", 0) for k in all_kpis) / len(all_kpis)
+        avg_level = get_discipolat_level(avg_score)
+        await db.membres_bergerie.update_one(
+            {"id": membre_id},
+            {"$set": {"discipolat_score": round(avg_score, 1), "discipolat_level": avg_level}}
+        )
+    
+    return {"message": "KPI saved successfully", "score": score, "level": level}
+
+
+@api_router.get("/bergeries-disciples/membres/{membre_id}/kpi")
+async def get_membre_kpis(membre_id: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer tous les KPIs d'un membre de bergerie"""
+    kpis = await db.kpi_membres_bergerie.find(
+        {"membre_id": membre_id}, {"_id": 0}
+    ).sort("mois", -1).to_list(100)
+    
+    avg_score = 0
+    avg_level = "Non classé"
+    if kpis:
+        avg_score = round(sum(k.get("score", 0) for k in kpis) / len(kpis), 1)
+        avg_level = get_discipolat_level(avg_score)
+    
+    # Vérifier statut manuel
+    membre = await db.membres_bergerie.find_one({"id": membre_id}, {"_id": 0, "manual_discipolat_status": 1})
+    manual_status = membre.get("manual_discipolat_status") if membre else None
+    
+    return {
+        "kpis": kpis,
+        "average_score": avg_score,
+        "average_level": avg_level,
+        "manual_status": manual_status,
+        "weights": KPI_WEIGHTS
+    }
+
+
+@api_router.get("/bergeries-disciples/membres/{membre_id}/kpi/{mois}")
+async def get_membre_kpi_for_month(membre_id: str, mois: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer le KPI d'un membre pour un mois spécifique"""
+    kpi = await db.kpi_membres_bergerie.find_one(
+        {"membre_id": membre_id, "mois": mois}, {"_id": 0}
+    )
+    
+    if not kpi:
+        return {
+            "membre_id": membre_id,
+            "mois": mois,
+            "presence_dimanche": 0,
+            "presence_fi": 0,
+            "presence_reunion_disciples": 0,
+            "service_eglise": 0,
+            "consommation_pain_jour": 0,
+            "bapteme": 0,
+            "commentaire": "",
+            "score": 0,
+            "level": "Non classé"
+        }
+    
+    return kpi
+
+
+@api_router.post("/bergeries-disciples/membres/{membre_id}/manual-status")
+async def update_membre_manual_status(membre_id: str, data: ManualStatusUpdate, current_user: dict = Depends(get_current_user)):
+    """Définir un statut manuel pour un membre de bergerie"""
+    await db.membres_bergerie.update_one(
+        {"id": membre_id},
+        {"$set": {
+            "manual_discipolat_status": data.manual_status,
+            "manual_discipolat_commentaire": data.manual_commentaire,
+            "manual_status_updated_at": datetime.now(timezone.utc).isoformat(),
+            "manual_status_updated_by": current_user["username"]
+        }}
+    )
+    
+    return {"message": "Manual status updated successfully"}
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
