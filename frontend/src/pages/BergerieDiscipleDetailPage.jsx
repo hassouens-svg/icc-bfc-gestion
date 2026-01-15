@@ -402,28 +402,38 @@ const BergerieDiscipleDetailPage = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Statut Disciple des Membres</CardTitle>
+                <p className="text-sm text-gray-500">Cliquez sur un membre pour voir ses KPIs Discipolat</p>
               </CardHeader>
               <CardContent className="divide-y">
                 {membres.map((membre) => (
-                  <div key={membre.id} className="flex justify-between items-center py-3">
-                    <span className="font-medium">{membre.prenom} {membre.nom}</span>
-                    <Select
-                      value={membre.est_disciple || 'Non'}
-                      onValueChange={(value) => handleUpdateDisciple(membre.id, value)}
+                  <div 
+                    key={membre.id} 
+                    className="flex justify-between items-center py-3 hover:bg-gray-50 cursor-pointer rounded px-2 -mx-2"
+                    onClick={() => navigate(`/bergeries-disciples/${id}/membre/${membre.id}`)}
+                  >
+                    <div className="flex-1">
+                      <span className="font-medium">{membre.prenom} {membre.nom}</span>
+                      {membre.discipolat_level && (
+                        <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                          membre.discipolat_level === 'Confirmé' ? 'bg-green-100 text-green-700' :
+                          membre.discipolat_level === 'Intermédiaire' ? 'bg-yellow-100 text-yellow-700' :
+                          membre.discipolat_level === 'Débutant' ? 'bg-blue-100 text-blue-700' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          {membre.discipolat_level} {membre.discipolat_score && `(${membre.discipolat_score})`}
+                        </span>
+                      )}
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/bergeries-disciples/${id}/membre/${membre.id}`);
+                      }}
                     >
-                      <SelectTrigger className={`w-32 ${
-                        membre.est_disciple === 'Oui' ? 'bg-green-50 border-green-300' :
-                        membre.est_disciple === 'En Cours' ? 'bg-orange-50 border-orange-300' :
-                        'bg-gray-50'
-                      }`}>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Non">Non</SelectItem>
-                        <SelectItem value="En Cours">En Cours</SelectItem>
-                        <SelectItem value="Oui">Oui ✓</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      Voir KPIs
+                    </Button>
                   </div>
                 ))}
               </CardContent>
