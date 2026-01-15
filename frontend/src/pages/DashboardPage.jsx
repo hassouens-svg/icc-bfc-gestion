@@ -259,15 +259,6 @@ const DashboardPage = () => {
             </p>
           </div>
           <div className="flex space-x-2">
-            {(user?.role === 'referent' || user?.role === 'promotions' || user?.role === 'admin') && (
-              <Button 
-                onClick={() => window.location.href = '/marquer-presences'} 
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Calendar className="h-4 w-4 mr-2" />
-                Marquer les Présences
-              </Button>
-            )}
             {(user?.role === 'admin' || user?.role === 'promotions') && (
               <Button onClick={handleExport} data-testid="export-excel-button">
                 <Download className="h-4 w-4 mr-2" />
