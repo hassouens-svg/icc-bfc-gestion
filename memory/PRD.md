@@ -174,16 +174,21 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 ├── backend/
 │   └── server.py              # Backend monolithique (à refactorer)
 ├── frontend/src/
+│   ├── components/
+│   │   └── KPIDiscipolat.jsx         # Composant KPI pour détail visiteur ✅ NEW
 │   ├── pages/
-│   │   ├── BergeriesChoixPage.jsx      # Choix Promotions/Groupes
-│   │   ├── BergeriesDisciplesPage.jsx  # Liste groupes + création
+│   │   ├── SuiviDisciplesPage.jsx    # Affiche badges KPI par visiteur ✅ UPDATED
+│   │   ├── VisitorDetailPage.jsx     # Détail visiteur avec KPIDiscipolat ✅ UPDATED
+│   │   ├── BergeriesChoixPage.jsx    # Choix Promotions/Groupes
+│   │   ├── BergeriesDisciplesPage.jsx # Liste groupes + création
 │   │   ├── BergerieDiscipleDetailPage.jsx # Détail groupe
-│   │   ├── PainDuJourAdminPage.jsx     # Admin avec 5 onglets
-│   │   ├── BergeriesPublicPage.jsx     # Liste promotions
-│   │   ├── HomePage.jsx                # Accueil avec bannière
-│   │   └── LoginPage.jsx               # Connexion
-│   └── App.js                          # Routing
+│   │   ├── PainDuJourAdminPage.jsx   # Admin avec 5 onglets
+│   │   ├── BergeriesPublicPage.jsx   # Liste promotions
+│   │   ├── HomePage.jsx              # Accueil avec bannière
+│   │   └── LoginPage.jsx             # Connexion
+│   └── App.js                        # Routing
 └── tests/
+    ├── test_kpi_discipolat.py        # Tests KPI ✅ NEW (11 tests)
     ├── test_bergeries_disciples.py
     └── test_bergeries_pain_du_jour.py
 ```
