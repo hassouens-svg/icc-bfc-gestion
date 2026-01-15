@@ -171,6 +171,7 @@ function App() {
           
           {/* BERGERIES - Page de choix (Promotions vs Groupes de disciples) */}
           <Route path="/bergeries" element={<BergeriesChoixPage />} />
+          <Route path="/bergeries/strategies" element={<StrategiesBergeriePage />} />
           <Route path="/bergeries-promotions" element={<BergeriesPublicPage />} />
           <Route path="/bergeries-select" element={<SelectBergeriePage />} />
           <Route path="/bergeries-dashboard" element={<SelectBergeriePage />} />
