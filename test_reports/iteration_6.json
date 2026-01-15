@@ -1,0 +1,87 @@
+{
+  "summary": "Completed testing of KPI Discipolat iteration 6 features. All backend endpoints working (11/11 tests passed). Frontend features verified: Suivi Disciples page with 'Statut manuel' button per row, manual status dialog, EJP card on homepage, EJP Dijon card on Planning des Activités, Bergerie detail page with 'Voir KPIs' buttons, and member detail page with KPIDiscipolat component.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/tests/test_kpi_iteration6.py",
+    "/app/test_reports/pytest/pytest_iteration6.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "KPI weights correctly updated: Présence Dimanche ×5, Présence FI ×2, Réunion Disciples ×3, Service Église ×6, Pain du Jour ×5, Baptême ×2",
+    "Max score calculation verified: (4×5)+(4×2)+(4×3)+(3×6)+(3×5)+(1×2) = 75 pts",
+    "Level boundaries correct: Non classé 0-19, Débutant 20-39, Intermédiaire 40-59, Confirmé 60+",
+    "Manual status endpoint correctly saves and returns manual_status in all-statuses endpoint",
+    "Bergerie member KPI endpoints use correct collection (membres_disciples) after fix"
+  ],
+  "updated_files": [
+    "/app/backend/server.py (fixed membres_bergerie -> membres_disciples for manual status)",
+    "/app/frontend/src/pages/SuiviDisciplesPage.jsx (fixed SelectItem empty value bug)",
+    "/app/tests/test_kpi_iteration6.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "seed_data_creation": "Test KPIs created for visitors and bergerie members during pytest execution",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "KPI Discipolat iteration 6 fully tested. New coefficients verified. Manual status feature working for both visitors and bergerie members. EJP cards visible on homepage and Planning des Activités. Bergerie detail page has 'Voir KPIs' buttons in Suivi Disciples tab.",
+  "bugs_fixed_during_testing": [
+    {
+      "file": "/app/backend/server.py",
+      "issue": "Manual status for bergerie members was using wrong collection (membres_bergerie instead of membres_disciples)",
+      "fix": "Changed db.membres_bergerie to db.membres_disciples in both POST and GET endpoints"
+    },
+    {
+      "file": "/app/frontend/src/pages/SuiviDisciplesPage.jsx",
+      "issue": "SelectItem with empty string value caused runtime error: 'A <Select.Item /> must have a value prop that is not an empty string'",
+      "fix": "Changed value='' to value='auto' and updated handler to convert 'auto' to null"
+    }
+  ],
+  "features_verified": {
+    "backend": [
+      "POST /api/visitors/{id}/kpi - Score calculation with new coefficients (verified max score 75)",
+      "POST /api/visitors/{id}/manual-status - Sets manual status correctly",
+      "GET /api/visitors/kpi/all-statuses - Returns manual_status when defined",
+      "POST /api/bergeries-disciples/membres/{id}/kpi - KPI for bergerie members",
+      "GET /api/bergeries-disciples/membres/{id}/kpi - Returns KPIs with weights and manual_status",
+      "GET /api/bergeries-disciples/membres/{id}/kpi/{mois} - Returns KPI for specific month",
+      "POST /api/bergeries-disciples/membres/{id}/manual-status - Sets manual status for members"
+    ],
+    "frontend": [
+      "Page Suivi Disciples - 'Statut manuel' button visible on each visitor row",
+      "Page Suivi Disciples - Manual status dialog opens with level selector and commentaire",
+      "Page Suivi Disciples - KPI badges show score and level (e.g., 'Débutant (29.9)')",
+      "Page Suivi Disciples - Manual status indicator '(manuel)' shown when set",
+      "Page d'accueil - EJP card visible with 'À venir' text",
+      "Planning des Activités - EJP Dijon card visible in pink/rose color",
+      "Page Bergerie Détail - 'Suivi Disciples' tab with 'Voir KPIs' buttons per member",
+      "Page Membre Bergerie - KPIDiscipolat component with all 6 criteria and correct weights"
+    ]
+  },
+  "kpi_configuration_verified": {
+    "weights": {
+      "presence_dimanche": 5,
+      "presence_fi": 2,
+      "presence_reunion_disciples": 3,
+      "service_eglise": 6,
+      "consommation_pain_jour": 5,
+      "bapteme": 2
+    },
+    "levels": {
+      "Non classé": "0-19 pts",
+      "Débutant": "20-39 pts",
+      "Intermédiaire": "40-59 pts",
+      "Confirmé": "60+ pts"
+    },
+    "max_possible_score": 75
+  }
+}
