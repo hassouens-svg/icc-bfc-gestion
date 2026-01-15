@@ -133,6 +133,15 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ---
 
+## API Endpoints - KPI Discipolat
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /api/visitors/{visitor_id}/kpi | Enregistrer KPIs pour un mois |
+| GET | /api/visitors/{visitor_id}/kpi | Récupérer tous les KPIs d'un visiteur |
+| GET | /api/visitors/{visitor_id}/kpi/{mois} | Récupérer KPI pour un mois spécifique |
+| GET | /api/visitors/kpi/all-statuses | Récupérer statuts moyens de tous les visiteurs |
+
 ## API Endpoints - Groupes de Disciples
 
 | Method | Endpoint | Description |
