@@ -5,14 +5,14 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { Info, Save, TrendingUp, Award, HelpCircle } from 'lucide-react';
+import { Info, Save, TrendingUp, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Configuration des KPIs
+// Configuration des KPIs avec les nouveaux coefficients
 const KPI_CONFIG = {
   presence_dimanche: {
-    label: "Présence Culte Dimanche",
-    poids: 3,
+    label: "Présence Dimanche Église",
+    poids: 5,
     options: [
       { value: 0, label: "Non renseigné", points: 0 },
       { value: 1, label: "1 fois", points: 1 },
@@ -23,7 +23,7 @@ const KPI_CONFIG = {
   },
   presence_fi: {
     label: "Présence FI",
-    poids: 3,
+    poids: 2,
     options: [
       { value: 0, label: "Non renseigné", points: 0 },
       { value: 1, label: "1 fois", points: 1 },
@@ -34,7 +34,7 @@ const KPI_CONFIG = {
   },
   presence_reunion_disciples: {
     label: "Présence Réunion Disciples",
-    poids: 2,
+    poids: 3,
     options: [
       { value: 0, label: "Non renseigné", points: 0 },
       { value: 1, label: "1 fois", points: 1 },
@@ -45,7 +45,7 @@ const KPI_CONFIG = {
   },
   service_eglise: {
     label: "Service à l'Église",
-    poids: 2,
+    poids: 6,
     options: [
       { value: 0, label: "Non renseigné", points: 0 },
       { value: 1, label: "Membre", points: 1 },
@@ -53,9 +53,18 @@ const KPI_CONFIG = {
       { value: 3, label: "Star", points: 3 }
     ]
   },
+  formation_pcnc: {
+    label: "Formation PCNC",
+    poids: 3,
+    options: [
+      { value: 0, label: "Non", points: 0 },
+      { value: 1, label: "En cours", points: 1 },
+      { value: 2, label: "Terminée", points: 2 }
+    ]
+  },
   consommation_pain_jour: {
     label: "Consommation Pain du Jour",
-    poids: 1,
+    poids: 5,
     options: [
       { value: 0, label: "Non renseigné", points: 0 },
       { value: 1, label: "Rarement", points: 1 },
@@ -63,36 +72,91 @@ const KPI_CONFIG = {
       { value: 3, label: "Tous les jours", points: 3 }
     ]
   },
+  contact_bergers: {
+    label: "Contact Régulier avec Bergers",
+    poids: 2,
+    options: [
+      { value: 0, label: "Jamais", points: 0 },
+      { value: 1, label: "Rarement", points: 1 },
+      { value: 2, label: "Régulièrement", points: 2 }
+    ]
+  },
   bapteme: {
     label: "Baptême",
-    poids: 1,
+    poids: 2,
     options: [
       { value: 0, label: "Non", points: 0 },
       { value: 1, label: "Oui", points: 1 }
+    ]
+  },
+  participation_evenements: {
+    label: "Participation Événements Spéciaux",
+    poids: 2,
+    options: [
+      { value: 0, label: "Jamais", points: 0 },
+      { value: 1, label: "Parfois", points: 1 },
+      { value: 2, label: "Souvent", points: 2 }
+    ]
+  },
+  contribution_financiere: {
+    label: "Contribution Financière (Dîmes & Offrandes)",
+    poids: 3,
+    options: [
+      { value: 0, label: "Non", points: 0 },
+      { value: 1, label: "Occasionnel", points: 1 },
+      { value: 2, label: "Régulier", points: 2 }
+    ]
+  },
+  devient_berger: {
+    label: "Devient Berger",
+    poids: 4,
+    options: [
+      { value: 0, label: "Non", points: 0 },
+      { value: 1, label: "En formation", points: 1 },
+      { value: 2, label: "Oui", points: 2 }
+    ]
+  },
+  participation_evangelisation: {
+    label: "Participation Évangélisation",
+    poids: 3,
+    options: [
+      { value: 0, label: "Non", points: 0 },
+      { value: 1, label: "Parfois", points: 1 },
+      { value: 2, label: "Régulièrement", points: 2 }
     ]
   }
 };
 
 // Niveaux de discipolat
 const LEVELS = [
-  { min: 0, max: 14, label: "Non classé", color: "bg-gray-100 text-gray-600", emoji: "⚪" },
-  { min: 15, max: 30, label: "Débutant", color: "bg-blue-100 text-blue-700", emoji: "🔵" },
-  { min: 31, max: 51, label: "Intermédiaire", color: "bg-yellow-100 text-yellow-700", emoji: "🟡" },
-  { min: 52, max: 100, label: "Confirmé", color: "bg-green-100 text-green-700", emoji: "🟢" }
+  { min: 0, max: 29, label: "Non classé", color: "bg-gray-100 text-gray-600", emoji: "⚪" },
+  { min: 30, max: 59, label: "Débutant", color: "bg-blue-100 text-blue-700", emoji: "🔵" },
+  { min: 60, max: 89, label: "Intermédiaire", color: "bg-yellow-100 text-yellow-700", emoji: "🟡" },
+  { min: 90, max: 200, label: "Confirmé", color: "bg-green-100 text-green-700", emoji: "🟢" }
 ];
 
 const getLevel = (score) => {
   return LEVELS.find(l => score >= l.min && score <= l.max) || LEVELS[0];
 };
 
-const KPIDiscipolat = ({ visitorId, visitorName }) => {
+const getLevelByName = (name) => {
+  return LEVELS.find(l => l.label === name) || LEVELS[0];
+};
+
+const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => {
   const [kpiData, setKpiData] = useState({
     presence_dimanche: 0,
     presence_fi: 0,
     presence_reunion_disciples: 0,
     service_eglise: 0,
+    formation_pcnc: 0,
     consommation_pain_jour: 0,
+    contact_bergers: 0,
     bapteme: 0,
+    participation_evenements: 0,
+    contribution_financiere: 0,
+    devient_berger: 0,
+    participation_evangelisation: 0,
     commentaire: ""
   });
   const [selectedMois, setSelectedMois] = useState(() => {
@@ -102,6 +166,7 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
   const [allKpis, setAllKpis] = useState([]);
   const [averageScore, setAverageScore] = useState(0);
   const [averageLevel, setAverageLevel] = useState("Non classé");
+  const [manualStatus, setManualStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
@@ -129,7 +194,11 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
 
   const loadKPIs = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi`, {
+      const endpoint = isBergerieMember 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/membres/${visitorId}/kpi`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi`;
+      
+      const response = await fetch(endpoint, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (response.ok) {
@@ -137,6 +206,7 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
         setAllKpis(data.kpis || []);
         setAverageScore(data.average_score || 0);
         setAverageLevel(data.average_level || "Non classé");
+        setManualStatus(data.manual_status || null);
       }
     } catch (error) {
       console.error('Error loading KPIs:', error);
@@ -147,7 +217,11 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
 
   const loadKPIForMonth = async (mois) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi/${mois}`, {
+      const endpoint = isBergerieMember 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/membres/${visitorId}/kpi/${mois}`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi/${mois}`;
+      
+      const response = await fetch(endpoint, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (response.ok) {
@@ -157,8 +231,14 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
           presence_fi: data.presence_fi || 0,
           presence_reunion_disciples: data.presence_reunion_disciples || 0,
           service_eglise: data.service_eglise || 0,
+          formation_pcnc: data.formation_pcnc || 0,
           consommation_pain_jour: data.consommation_pain_jour || 0,
+          contact_bergers: data.contact_bergers || 0,
           bapteme: data.bapteme || 0,
+          participation_evenements: data.participation_evenements || 0,
+          contribution_financiere: data.contribution_financiere || 0,
+          devient_berger: data.devient_berger || 0,
+          participation_evangelisation: data.participation_evangelisation || 0,
           commentaire: data.commentaire || ""
         });
       }
@@ -178,14 +258,17 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi`, {
+      const endpoint = isBergerieMember 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/membres/${visitorId}/kpi`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi`;
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          visitor_id: visitorId,
           mois: selectedMois,
           ...kpiData
         })
@@ -194,7 +277,7 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
       if (response.ok) {
         const result = await response.json();
         toast.success(`KPIs enregistrés ! Score: ${result.score} - ${result.level}`);
-        loadKPIs(); // Recharger pour mettre à jour la moyenne
+        loadKPIs();
       } else {
         toast.error("Erreur lors de l'enregistrement");
       }
@@ -207,7 +290,9 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
 
   const currentScore = calculateCurrentScore();
   const currentLevel = getLevel(currentScore);
-  const avgLevelInfo = getLevel(averageScore);
+  // Le statut affiché est le statut manuel s'il existe, sinon le statut calculé
+  const displayedStatus = manualStatus || averageLevel;
+  const displayedLevelInfo = getLevelByName(displayedStatus);
 
   return (
     <Card className="mt-4">
@@ -223,14 +308,16 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
           </Button>
         </div>
         
-        {/* Statut moyen */}
+        {/* Statut affiché (manuel ou calculé) */}
         <div className="flex items-center gap-4 mt-2">
-          <div className={`px-3 py-1 rounded-full ${avgLevelInfo.color} flex items-center gap-2`}>
-            <span>{avgLevelInfo.emoji}</span>
-            <span className="font-medium">{averageLevel}</span>
-            <span className="text-sm">({averageScore} pts)</span>
+          <div className={`px-3 py-1 rounded-full ${displayedLevelInfo.color} flex items-center gap-2`}>
+            <span>{displayedLevelInfo.emoji}</span>
+            <span className="font-medium">{displayedStatus}</span>
+            {!manualStatus && <span className="text-sm">({averageScore} pts)</span>}
           </div>
-          <span className="text-sm text-gray-500">Statut moyen sur {allKpis.length} mois</span>
+          <span className="text-sm text-gray-500">
+            {manualStatus ? "Statut manuel" : `Statut moyen sur ${allKpis.length} mois`}
+          </span>
         </div>
       </CardHeader>
 
@@ -257,21 +344,21 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
           </div>
         </div>
 
-        {/* Grille des KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Grille des KPIs - 3 colonnes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {Object.entries(KPI_CONFIG).map(([key, config]) => (
             <div key={key} className="p-3 border rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <Label className="font-medium">{config.label}</Label>
+                <Label className="font-medium text-sm">{config.label}</Label>
                 <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
-                  Poids: ×{config.poids}
+                  ×{config.poids}
                 </span>
               </div>
               <Select 
                 value={String(kpiData[key])} 
                 onValueChange={(v) => setKpiData({...kpiData, [key]: parseInt(v)})}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -328,7 +415,7 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
 
       {/* Dialog Méthode de calcul */}
       <Dialog open={showHelp} onOpenChange={setShowHelp}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Info className="h-5 w-5 text-purple-600" />
@@ -345,16 +432,14 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
             
             <div>
               <h4 className="font-medium mb-2">Coefficients (Poids)</h4>
-              <table className="w-full text-sm">
-                <tbody>
-                  {Object.entries(KPI_CONFIG).map(([key, config]) => (
-                    <tr key={key} className="border-b">
-                      <td className="py-1">{config.label}</td>
-                      <td className="py-1 text-right font-medium">×{config.poids}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                {Object.entries(KPI_CONFIG).map(([key, config]) => (
+                  <div key={key} className="flex justify-between p-2 bg-gray-50 rounded">
+                    <span>{config.label}</span>
+                    <span className="font-medium text-purple-600">×{config.poids}</span>
+                  </div>
+                ))}
+              </div>
             </div>
             
             <div>
@@ -369,8 +454,9 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
               </div>
             </div>
             
-            <div className="text-sm text-gray-500 italic">
+            <div className="text-sm text-gray-500 italic bg-blue-50 p-3 rounded">
               Le statut final est la moyenne des scores de tous les mois enregistrés.
+              Un statut manuel peut être défini pour remplacer le calcul automatique.
             </div>
           </div>
         </DialogContent>
@@ -380,3 +466,4 @@ const KPIDiscipolat = ({ visitorId, visitorName }) => {
 };
 
 export default KPIDiscipolat;
+export { KPI_CONFIG, LEVELS, getLevel, getLevelByName };
