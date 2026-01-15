@@ -25,7 +25,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://disciple-tracker.preview.emergentagent.com/api"
+BASE_URL = "https://discipleship-track.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class ComprehensiveFCMTest:

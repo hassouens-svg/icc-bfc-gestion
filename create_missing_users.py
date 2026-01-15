@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://disciple-tracker.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://discipleship-track.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 # Login as superadmin

@@ -24,7 +24,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://disciple-tracker.preview.emergentagent.com/api"
+BASE_URL = "https://discipleship-track.preview.emergentagent.com/api"
 USERNAME = "superadmin"
 PASSWORD = "superadmin123"
 CITY = "Dijon"

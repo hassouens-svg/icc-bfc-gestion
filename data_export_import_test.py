@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Backend URL
-BASE_URL = "https://disciple-tracker.preview.emergentagent.com/api"
+BASE_URL = "https://discipleship-track.preview.emergentagent.com/api"
 
 # Test credentials
 SUPER_ADMIN = {"username": "superadmin", "password": "superadmin123", "city": "Dijon"}

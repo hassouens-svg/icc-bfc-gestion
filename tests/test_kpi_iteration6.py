@@ -10,7 +10,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://disciple-tracker.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://discipleship-track.preview.emergentagent.com')
 
 # Expected KPI weights as per requirements
 EXPECTED_WEIGHTS = {

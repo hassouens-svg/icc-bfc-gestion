@@ -52,8 +52,8 @@ Application web complète pour la gestion et le suivi des visiteurs des églises
 ## URLs de l'Application
 
 ### Production
-- **Connexion**: https://disciple-tracker.preview.emergentagent.com/login
-- **Inscription Publique**: https://disciple-tracker.preview.emergentagent.com/register
+- **Connexion**: https://discipleship-track.preview.emergentagent.com/login
+- **Inscription Publique**: https://discipleship-track.preview.emergentagent.com/register
 
 ### Identifiants par Défaut
 **Admin Dijon:**
