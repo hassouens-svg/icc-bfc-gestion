@@ -31,25 +31,31 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ### ✅ Completed Features
 
-#### KPI Discipolat (Jan 15, 2026) ✅ NEW
+#### KPI Discipolat (Jan 15, 2026 - Mise à jour) ✅ UPDATED
 - **Système de scoring mensuel** avec 6 critères pondérés
-- **Critères et coefficients**:
-  - Présence Culte Dimanche (×3)
-  - Présence FI (×3)
-  - Présence Réunion Disciples (×2)
-  - Service à l'Église (×2)
-  - Consommation Pain du Jour (×1)
-  - Baptême (×1)
-- **Calcul**: Score = Σ(Valeur × Poids)
-- **Niveaux de statut**:
-  - Non classé: 0-14 pts
-  - Débutant: 15-30 pts
-  - Intermédiaire: 31-51 pts
-  - Confirmé: 52+ pts
+- **Critères et coefficients (MIS À JOUR)**:
+  - Présence Dimanche Église (×5)
+  - Présence FI (×2)
+  - Présence Réunion Disciples (×3)
+  - Service à l'Église (×6)
+  - Consommation Pain du Jour (×5)
+  - Baptême (×2)
+- **Calcul**: Score = Σ(Valeur × Poids) - Score max: 75 pts
+- **Niveaux de statut (MIS À JOUR)**:
+  - Non classé: 0-19 pts
+  - Débutant: 20-39 pts
+  - Intermédiaire: 40-59 pts
+  - Confirmé: 60+ pts
 - **Composant KPIDiscipolat** sur la page de détail visiteur
 - **Badges KPI** sur la page Suivi Disciples (score moyen + nb mois)
 - **Dialog "Méthode KPI"** expliquant la méthode de calcul
 - **Historique** des mois enregistrés avec navigation rapide
+- **Statut manuel** ✅ NEW - Bouton par visiteur pour définir un statut qui remplace le calcul automatique
+- **KPIs pour membres bergeries** ✅ NEW - Même système disponible pour les groupes de disciples
+
+#### EJP - Église des Jeunes Prodiges ✅ NEW
+- **Carte sur la page d'accueil** avec "À venir" comme description
+- **Carte dans Planning des Activités** (EJP Dijon) en rose/pink
 
 #### Authentication & Authorization
 - Login avec sélection de ville
