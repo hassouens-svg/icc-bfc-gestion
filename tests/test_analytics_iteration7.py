@@ -126,7 +126,7 @@ class TestAnalyticsEndpoints:
         data = response.json()
         
         summary = data["summary"]
-        print(f"✓ Promotions detailed (Dijon, 2024-08): {summary['total_recus']} visitors")
+        print(f"✓ Promotions detailed (Dijon, 2024-08): {summary['total_personnes_recues']} visitors")
     
     # ==================== AGE DISTRIBUTION ====================
     
