@@ -62,7 +62,6 @@ const Layout = ({ children }) => {
     { path: '/dashboard', label: 'Dashboard Bergerie', icon: Home, roles: ['referent', 'promotions', 'berger'], department: 'promotions' },
     { path: '/dashboard-superviseur-promos', label: 'Dashboard Superviseur', icon: BarChart3, roles: ['superviseur_promos'], department: 'promotions' },
     { path: '/visitors', label: 'Nouveaux Arrivants', icon: Users, roles: ['superviseur_promos', 'referent', 'accueil', 'promotions', 'berger'], department: 'promotions' },
-    { path: '/visitors-table', label: 'Vue Tableau', icon: Table, roles: ['superviseur_promos', 'referent', 'promotions', 'berger'], department: 'promotions' },
     { path: '/suivi-disciples', label: 'Suivi Disciples', icon: UserPlus, roles: ['superviseur_promos', 'referent', 'promotions', 'berger'], department: 'promotions' },
     { path: '/reproduction', label: 'Reproduction', icon: TrendingUp, roles: ['superviseur_promos', 'referent', 'promotions', 'berger'], department: 'promotions' },
     { path: '/referents', label: 'Bergers', icon: UserPlus, roles: ['superviseur_promos'], department: 'promotions' },
