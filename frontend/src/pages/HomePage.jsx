@@ -209,6 +209,15 @@ const HomePage = () => {
       description: 'Parcours de Croissance de la Nouvelle Création',
       icon: GraduationCap,
       color: 'from-teal-400 to-cyan-600'
+    },
+    {
+      id: 'ejp',
+      title: 'EJP',
+      subtitle: 'Église des Jeunes Prodiges',
+      description: 'À venir',
+      icon: Star,
+      color: 'from-pink-400 to-rose-600',
+      disabled: true
     }
   ];
 
