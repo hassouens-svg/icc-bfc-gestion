@@ -108,6 +108,9 @@ const SuiviDisciplesPage = () => {
     if (!selectedVisitor) return;
     
     try {
+      // Convert "auto" to null for automatic status
+      const statusValue = manualStatusForm.level === 'auto' || !manualStatusForm.level ? null : manualStatusForm.level;
+      
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${selectedVisitor.id}/manual-status`,
         {
@@ -117,7 +120,7 @@ const SuiviDisciplesPage = () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           },
           body: JSON.stringify({
-            manual_status: manualStatusForm.level || null,
+            manual_status: statusValue,
             manual_commentaire: manualStatusForm.commentaire
           })
         }
