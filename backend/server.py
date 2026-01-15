@@ -1379,45 +1379,33 @@ async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict =
 
 # ==================== KPI DISCIPOLAT ====================
 class KPIDiscipolatEntry(BaseModel):
-    visitor_id: Optional[str] = None  # Optionnel car fourni dans l'URL
+    visitor_id: Optional[str] = None
     mois: str  # Format: "2024-01"
     presence_dimanche: int = 0
     presence_fi: int = 0
     presence_reunion_disciples: int = 0
     service_eglise: int = 0
-    formation_pcnc: int = 0
     consommation_pain_jour: int = 0
-    contact_bergers: int = 0
     bapteme: int = 0
-    participation_evenements: int = 0
-    contribution_financiere: int = 0
-    devient_berger: int = 0
-    participation_evangelisation: int = 0
     commentaire: str = ""
 
-# Coefficients (poids) pour chaque KPI - Mis à jour selon les specs
+# Coefficients (poids) pour chaque KPI - Mis à jour
 KPI_WEIGHTS = {
     "presence_dimanche": 5,
     "presence_fi": 2,
     "presence_reunion_disciples": 3,
     "service_eglise": 6,
-    "formation_pcnc": 3,
     "consommation_pain_jour": 5,
-    "contact_bergers": 2,
-    "bapteme": 2,
-    "participation_evenements": 2,
-    "contribution_financiere": 3,
-    "devient_berger": 4,
-    "participation_evangelisation": 3
+    "bapteme": 2
 }
 
-# Niveaux de discipolat - Ajustés pour les nouveaux scores max possibles
+# Niveaux de discipolat
 def get_discipolat_level(score: float) -> str:
-    if score < 30:
+    if score < 20:
         return "Non classé"
-    elif score < 60:
+    elif score < 40:
         return "Débutant"
-    elif score < 90:
+    elif score < 60:
         return "Intermédiaire"
     else:
         return "Confirmé"
