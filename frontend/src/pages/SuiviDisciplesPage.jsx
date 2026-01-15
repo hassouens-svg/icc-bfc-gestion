@@ -5,8 +5,17 @@ import { getUser, getVisitors } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Users, UserCheck, Phone, Calendar, Heart } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { Users, UserCheck, Phone, Calendar, Heart, TrendingUp, Info, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Niveaux de discipolat pour l'affichage
+const DISCIPOLAT_LEVELS = {
+  "Non classé": { color: "bg-gray-100 text-gray-600", emoji: "⚪" },
+  "Débutant": { color: "bg-blue-100 text-blue-700", emoji: "🔵" },
+  "Intermédiaire": { color: "bg-yellow-100 text-yellow-700", emoji: "🟡" },
+  "Confirmé": { color: "bg-green-100 text-green-700", emoji: "🟢" }
+};
 
 const SuiviDisciplesPage = () => {
   const navigate = useNavigate();
