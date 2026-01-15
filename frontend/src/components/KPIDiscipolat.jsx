@@ -53,15 +53,6 @@ const KPI_CONFIG = {
       { value: 3, label: "Star", points: 3 }
     ]
   },
-  formation_pcnc: {
-    label: "Formation PCNC",
-    poids: 3,
-    options: [
-      { value: 0, label: "Non", points: 0 },
-      { value: 1, label: "En cours", points: 1 },
-      { value: 2, label: "Terminée", points: 2 }
-    ]
-  },
   consommation_pain_jour: {
     label: "Consommation Pain du Jour",
     poids: 5,
@@ -72,15 +63,6 @@ const KPI_CONFIG = {
       { value: 3, label: "Tous les jours", points: 3 }
     ]
   },
-  contact_bergers: {
-    label: "Contact Régulier avec Bergers",
-    poids: 2,
-    options: [
-      { value: 0, label: "Jamais", points: 0 },
-      { value: 1, label: "Rarement", points: 1 },
-      { value: 2, label: "Régulièrement", points: 2 }
-    ]
-  },
   bapteme: {
     label: "Baptême",
     poids: 2,
@@ -88,51 +70,15 @@ const KPI_CONFIG = {
       { value: 0, label: "Non", points: 0 },
       { value: 1, label: "Oui", points: 1 }
     ]
-  },
-  participation_evenements: {
-    label: "Participation Événements Spéciaux",
-    poids: 2,
-    options: [
-      { value: 0, label: "Jamais", points: 0 },
-      { value: 1, label: "Parfois", points: 1 },
-      { value: 2, label: "Souvent", points: 2 }
-    ]
-  },
-  contribution_financiere: {
-    label: "Contribution Financière (Dîmes & Offrandes)",
-    poids: 3,
-    options: [
-      { value: 0, label: "Non", points: 0 },
-      { value: 1, label: "Occasionnel", points: 1 },
-      { value: 2, label: "Régulier", points: 2 }
-    ]
-  },
-  devient_berger: {
-    label: "Devient Berger",
-    poids: 4,
-    options: [
-      { value: 0, label: "Non", points: 0 },
-      { value: 1, label: "En formation", points: 1 },
-      { value: 2, label: "Oui", points: 2 }
-    ]
-  },
-  participation_evangelisation: {
-    label: "Participation Évangélisation",
-    poids: 3,
-    options: [
-      { value: 0, label: "Non", points: 0 },
-      { value: 1, label: "Parfois", points: 1 },
-      { value: 2, label: "Régulièrement", points: 2 }
-    ]
   }
 };
 
-// Niveaux de discipolat
+// Niveaux de discipolat - Ajustés pour les nouveaux scores
 const LEVELS = [
-  { min: 0, max: 29, label: "Non classé", color: "bg-gray-100 text-gray-600", emoji: "⚪" },
-  { min: 30, max: 59, label: "Débutant", color: "bg-blue-100 text-blue-700", emoji: "🔵" },
-  { min: 60, max: 89, label: "Intermédiaire", color: "bg-yellow-100 text-yellow-700", emoji: "🟡" },
-  { min: 90, max: 200, label: "Confirmé", color: "bg-green-100 text-green-700", emoji: "🟢" }
+  { min: 0, max: 19, label: "Non classé", color: "bg-gray-100 text-gray-600", emoji: "⚪" },
+  { min: 20, max: 39, label: "Débutant", color: "bg-blue-100 text-blue-700", emoji: "🔵" },
+  { min: 40, max: 59, label: "Intermédiaire", color: "bg-yellow-100 text-yellow-700", emoji: "🟡" },
+  { min: 60, max: 200, label: "Confirmé", color: "bg-green-100 text-green-700", emoji: "🟢" }
 ];
 
 const getLevel = (score) => {
@@ -149,14 +95,8 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
     presence_fi: 0,
     presence_reunion_disciples: 0,
     service_eglise: 0,
-    formation_pcnc: 0,
     consommation_pain_jour: 0,
-    contact_bergers: 0,
     bapteme: 0,
-    participation_evenements: 0,
-    contribution_financiere: 0,
-    devient_berger: 0,
-    participation_evangelisation: 0,
     commentaire: ""
   });
   const [selectedMois, setSelectedMois] = useState(() => {
@@ -171,7 +111,6 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
   const [saving, setSaving] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
-  // Générer les 12 derniers mois
   const getMonthOptions = () => {
     const months = [];
     const now = new Date();
@@ -231,14 +170,8 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
           presence_fi: data.presence_fi || 0,
           presence_reunion_disciples: data.presence_reunion_disciples || 0,
           service_eglise: data.service_eglise || 0,
-          formation_pcnc: data.formation_pcnc || 0,
           consommation_pain_jour: data.consommation_pain_jour || 0,
-          contact_bergers: data.contact_bergers || 0,
           bapteme: data.bapteme || 0,
-          participation_evenements: data.participation_evenements || 0,
-          contribution_financiere: data.contribution_financiere || 0,
-          devient_berger: data.devient_berger || 0,
-          participation_evangelisation: data.participation_evangelisation || 0,
           commentaire: data.commentaire || ""
         });
       }
@@ -290,7 +223,6 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
 
   const currentScore = calculateCurrentScore();
   const currentLevel = getLevel(currentScore);
-  // Le statut affiché est le statut manuel s'il existe, sinon le statut calculé
   const displayedStatus = manualStatus || averageLevel;
   const displayedLevelInfo = getLevelByName(displayedStatus);
 
@@ -308,7 +240,6 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
           </Button>
         </div>
         
-        {/* Statut affiché (manuel ou calculé) */}
         <div className="flex items-center gap-4 mt-2">
           <div className={`px-3 py-1 rounded-full ${displayedLevelInfo.color} flex items-center gap-2`}>
             <span>{displayedLevelInfo.emoji}</span>
@@ -322,7 +253,6 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Filtre Mois */}
         <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
           <Label className="whitespace-nowrap font-medium">Mois :</Label>
           <Select value={selectedMois} onValueChange={setSelectedMois}>
@@ -336,7 +266,6 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
             </SelectContent>
           </Select>
           
-          {/* Score du mois */}
           <div className={`ml-auto px-3 py-1 rounded-full ${currentLevel.color} flex items-center gap-2`}>
             <span>{currentLevel.emoji}</span>
             <span className="font-medium">{currentLevel.label}</span>
@@ -344,12 +273,11 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
           </div>
         </div>
 
-        {/* Grille des KPIs - 3 colonnes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(KPI_CONFIG).map(([key, config]) => (
             <div key={key} className="p-3 border rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <Label className="font-medium text-sm">{config.label}</Label>
+                <Label className="font-medium">{config.label}</Label>
                 <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
                   ×{config.poids}
                 </span>
@@ -358,7 +286,7 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
                 value={String(kpiData[key])} 
                 onValueChange={(v) => setKpiData({...kpiData, [key]: parseInt(v)})}
               >
-                <SelectTrigger className="h-9">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -373,7 +301,6 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
           ))}
         </div>
 
-        {/* Commentaire */}
         <div className="p-3 border rounded-lg">
           <Label className="font-medium mb-2 block">Commentaire</Label>
           <Textarea 
@@ -384,13 +311,11 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
           />
         </div>
 
-        {/* Bouton Enregistrer */}
         <Button onClick={handleSave} disabled={saving} className="w-full bg-purple-600 hover:bg-purple-700">
           <Save className="h-4 w-4 mr-2" />
           {saving ? 'Enregistrement...' : 'Enregistrer les KPIs'}
         </Button>
 
-        {/* Historique des mois */}
         {allKpis.length > 0 && (
           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
             <h4 className="font-medium mb-2">Historique</h4>
@@ -413,9 +338,8 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
         )}
       </CardContent>
 
-      {/* Dialog Méthode de calcul */}
       <Dialog open={showHelp} onOpenChange={setShowHelp}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Info className="h-5 w-5 text-purple-600" />
@@ -432,14 +356,16 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
             
             <div>
               <h4 className="font-medium mb-2">Coefficients (Poids)</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                {Object.entries(KPI_CONFIG).map(([key, config]) => (
-                  <div key={key} className="flex justify-between p-2 bg-gray-50 rounded">
-                    <span>{config.label}</span>
-                    <span className="font-medium text-purple-600">×{config.poids}</span>
-                  </div>
-                ))}
-              </div>
+              <table className="w-full text-sm">
+                <tbody>
+                  {Object.entries(KPI_CONFIG).map(([key, config]) => (
+                    <tr key={key} className="border-b">
+                      <td className="py-1">{config.label}</td>
+                      <td className="py-1 text-right font-medium text-purple-600">×{config.poids}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
             
             <div>
