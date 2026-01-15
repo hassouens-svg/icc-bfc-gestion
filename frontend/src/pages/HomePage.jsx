@@ -97,6 +97,12 @@ const HomePage = () => {
       navigate('/acces-specifiques');
       return;
     }
+
+    // EJP - À venir
+    if (deptId === 'ejp') {
+      toast.info('EJP - Église des Jeunes Prodiges : À venir prochainement !');
+      return;
+    }
     
     // BERGERIES - Accès direct sans connexion (sélecteur de ville uniquement)
     if (deptId === 'promotions') {
