@@ -135,14 +135,6 @@ const SuiviDisciplesPage = () => {
             Nouveaux
           </Button>
           <Button 
-            variant="outline" 
-            size="sm"
-            className="flex-shrink-0"
-            onClick={() => navigate('/visitors-table')}
-          >
-            Vue Tableau
-          </Button>
-          <Button 
             variant="default" 
             size="sm"
             className="flex-shrink-0 bg-blue-600"
@@ -160,11 +152,17 @@ const SuiviDisciplesPage = () => {
           </Button>
         </div>
 
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">Suivi Disciples</h2>
-          <p className="text-gray-500 mt-1">
-            {visitors.length} nouveaux arrivants + {contacts.length} personnes contactées = {visitors.length + contacts.length} total
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Suivi Disciples</h2>
+            <p className="text-gray-500 mt-1">
+              {visitors.length} nouveaux arrivants + {contacts.length} personnes contactées = {visitors.length + contacts.length} total
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => setShowMethodHelp(true)}>
+            <HelpCircle className="h-4 w-4 mr-1" />
+            Méthode KPI
+          </Button>
         </div>
 
         {/* Compteurs */}
