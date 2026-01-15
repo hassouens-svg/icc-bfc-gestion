@@ -200,32 +200,47 @@ const SuiviDisciplesPage = () => {
               {visitors.length === 0 ? (
                 <p className="text-center text-gray-500 py-4">Aucun nouveau arrivant assigné</p>
               ) : (
-                visitors.map((visitor) => (
-                  <div 
-                    key={visitor.id}
-                    className="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium">{visitor.firstname} {visitor.lastname}</p>
-                      <p className="text-sm text-gray-500">
-                        {visitor.phone || '-'} • {visitor.visitor_type || visitor.types?.join(', ') || 'Nouveau arrivant'}
-                      </p>
-                    </div>
-                    <Select
-                      value={disciples[visitor.id] || 'Non'}
-                      onValueChange={(value) => handleUpdateDisciple(visitor.id, value)}
+                visitors.map((visitor) => {
+                  const levelInfo = DISCIPOLAT_LEVELS[visitor.discipolat_level] || DISCIPOLAT_LEVELS["Non classé"];
+                  return (
+                    <div 
+                      key={visitor.id}
+                      className="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                      onClick={() => navigate(`/visitors/${visitor.id}`)}
                     >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Non">Non</SelectItem>
-                        <SelectItem value="En Cours">En Cours</SelectItem>
-                        <SelectItem value="Oui">Oui ✓</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ))
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{visitor.firstname} {visitor.lastname}</p>
+                          {/* Badge KPI Discipolat */}
+                          <span className={`px-2 py-0.5 rounded-full text-xs flex items-center gap-1 ${levelInfo.color}`}>
+                            <span>{levelInfo.emoji}</span>
+                            <span>{visitor.discipolat_level || 'Non classé'}</span>
+                            {visitor.discipolat_score > 0 && (
+                              <span className="font-bold">({visitor.discipolat_score})</span>
+                            )}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          {visitor.phone || '-'} • {visitor.visitor_type || visitor.types?.join(', ') || 'Nouveau arrivant'}
+                        </p>
+                      </div>
+                      <Select
+                        value={disciples[visitor.id] || 'Non'}
+                        onValueChange={(value) => handleUpdateDisciple(visitor.id, value)}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Non">Non</SelectItem>
+                          <SelectItem value="En Cours">En Cours</SelectItem>
+                          <SelectItem value="Oui">Oui ✓</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  );
+                })
               )}
             </div>
           </CardContent>
