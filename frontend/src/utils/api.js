@@ -517,17 +517,21 @@ export const importAllData = async (data) => {
 
 
 // Analytics - Age Distribution
-export const getAgeDistribution = async (ville = null) => {
+export const getAgeDistribution = async (ville = null, mois = null, annee = null) => {
   const params = {};
   if (ville) params.ville = ville;
+  if (mois) params.mois = mois;
+  if (annee) params.annee = annee;
   const response = await apiClient.get('/analytics/age-distribution', { params });
   return response.data;
 };
 
 // Analytics - Arrival Channel Distribution
-export const getArrivalChannelDistribution = async (ville = null) => {
+export const getArrivalChannelDistribution = async (ville = null, mois = null, annee = null) => {
   const params = {};
   if (ville) params.ville = ville;
+  if (mois) params.mois = mois;
+  if (annee) params.annee = annee;
   const response = await apiClient.get('/analytics/arrival-channel-distribution', { params });
   return response.data;
 };
