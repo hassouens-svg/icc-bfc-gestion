@@ -99,6 +99,9 @@ import BergeriesDisciplesPage from './pages/BergeriesDisciplesPage';
 import BergerieDiscipleDetailPage from './pages/BergerieDiscipleDetailPage';
 import MembreBergerieDetailPage from './pages/MembreBergerieDetailPage';
 import StrategiesBergeriePage from './pages/StrategiesBergeriePage';
+import EJPPage from './pages/EJPPage';
+import EJPCultesPage from './pages/EJPCultesPage';
+import EJPPlanningExhortationPage from './pages/EJPPlanningExhortationPage';
 
 function App() {
   // Check if we're on the OLD production domain specifically (not preview domains)
