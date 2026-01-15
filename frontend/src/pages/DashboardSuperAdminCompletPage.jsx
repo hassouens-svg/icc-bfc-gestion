@@ -228,8 +228,8 @@ const DashboardSuperAdminCompletPage = () => {
       
       // Load all data with proper error handling for each
       const results = await Promise.allSettled([
-        getAgeDistribution(cityFilter),
-        getArrivalChannelDistribution(cityFilter),
+        getAgeDistribution(cityFilter, monthFilter, yearFilter),
+        getArrivalChannelDistribution(cityFilter, monthFilter, yearFilter),
         getPromotionsDetailed(cityFilter, monthFilter, yearFilter),
         getVisitorsTable(cityFilter),
         getDeletedVisitors()
