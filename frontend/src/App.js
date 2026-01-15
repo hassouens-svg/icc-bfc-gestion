@@ -190,6 +190,9 @@ function App() {
           <Route path="/ejp/cultes" element={<EJPCultesPage />} />
           <Route path="/ejp/planning-exhortation" element={<EJPPlanningExhortationPage />} />
           
+          {/* Accès Admin aux Bergeries (Superadmin/Pasteur) */}
+          <Route path="/admin/bergeries" element={<AccesBergeriesAdminPage />} />
+          
           {/* Public Bergerie Routes - UI identique à l'authentifié */}
           <Route path="/bergerie/dashboard" element={<PublicBergerieDashboardPage />} />
           <Route path="/bergerie/visitors" element={<PublicBergerieVisitorsPage />} />
