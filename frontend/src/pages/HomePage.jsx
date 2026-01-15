@@ -220,10 +220,9 @@ const HomePage = () => {
       id: 'ejp',
       title: 'EJP',
       subtitle: 'Église des Jeunes Prodiges',
-      description: 'À venir',
+      description: 'Cultes et Planning',
       icon: Star,
-      color: 'from-pink-400 to-rose-600',
-      disabled: true
+      color: 'from-pink-400 to-rose-600'
     }
   ];
 
