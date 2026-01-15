@@ -1376,6 +1376,158 @@ async def add_comment(visitor_id: str, comment: CommentAdd, current_user: dict =
     
     return {"message": "Comment added successfully"}
 
+
+# ==================== KPI DISCIPOLAT ====================
+class KPIDiscipolatEntry(BaseModel):
+    visitor_id: str
+    mois: str  # Format: "2024-01"
+    presence_dimanche: int = 0  # 1-4 (1fois, 2fois, 3fois, 4-5fois)
+    presence_fi: int = 0  # 1-4
+    presence_reunion_disciples: int = 0  # 1-4
+    service_eglise: int = 0  # 1=Membre, 2=Aide, 3=Star
+    consommation_pain_jour: int = 0  # 1=Rarement, 2=Fréquemment, 3=Tous les jours
+    bapteme: int = 0  # 0=Non, 1=Oui
+    commentaire: str = ""
+
+# Coefficients (poids) pour chaque KPI
+KPI_WEIGHTS = {
+    "presence_dimanche": 3,
+    "presence_fi": 3,
+    "presence_reunion_disciples": 2,
+    "service_eglise": 2,
+    "consommation_pain_jour": 1,
+    "bapteme": 1
+}
+
+# Niveaux de discipolat
+def get_discipolat_level(score: float) -> str:
+    if score < 15:
+        return "Non classé"
+    elif score <= 30:
+        return "Débutant"
+    elif score <= 51:
+        return "Intermédiaire"
+    else:
+        return "Confirmé"
+
+def calculate_kpi_score(kpi: dict) -> float:
+    """Calcule le score KPI basé sur les coefficients"""
+    score = 0
+    score += kpi.get("presence_dimanche", 0) * KPI_WEIGHTS["presence_dimanche"]
+    score += kpi.get("presence_fi", 0) * KPI_WEIGHTS["presence_fi"]
+    score += kpi.get("presence_reunion_disciples", 0) * KPI_WEIGHTS["presence_reunion_disciples"]
+    score += kpi.get("service_eglise", 0) * KPI_WEIGHTS["service_eglise"]
+    score += kpi.get("consommation_pain_jour", 0) * KPI_WEIGHTS["consommation_pain_jour"]
+    score += kpi.get("bapteme", 0) * KPI_WEIGHTS["bapteme"]
+    return score
+
+@api_router.post("/visitors/{visitor_id}/kpi")
+async def save_kpi_discipolat(visitor_id: str, kpi: KPIDiscipolatEntry, current_user: dict = Depends(get_current_user)):
+    """Enregistrer les KPIs Discipolat pour un visiteur pour un mois donné"""
+    # Vérifier que le visiteur existe
+    visitor = await db.visitors.find_one({"id": visitor_id})
+    if not visitor:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+    
+    # Calculer le score
+    score = calculate_kpi_score(kpi.model_dump())
+    level = get_discipolat_level(score)
+    
+    kpi_data = {
+        "visitor_id": visitor_id,
+        "mois": kpi.mois,
+        "presence_dimanche": kpi.presence_dimanche,
+        "presence_fi": kpi.presence_fi,
+        "presence_reunion_disciples": kpi.presence_reunion_disciples,
+        "service_eglise": kpi.service_eglise,
+        "consommation_pain_jour": kpi.consommation_pain_jour,
+        "bapteme": kpi.bapteme,
+        "commentaire": kpi.commentaire,
+        "score": score,
+        "level": level,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_by": current_user["username"]
+    }
+    
+    # Upsert: mettre à jour ou créer
+    await db.kpi_discipolat.update_one(
+        {"visitor_id": visitor_id, "mois": kpi.mois},
+        {"$set": kpi_data},
+        upsert=True
+    )
+    
+    # Recalculer le statut moyen du visiteur
+    all_kpis = await db.kpi_discipolat.find({"visitor_id": visitor_id}, {"_id": 0}).to_list(100)
+    if all_kpis:
+        avg_score = sum(k.get("score", 0) for k in all_kpis) / len(all_kpis)
+        avg_level = get_discipolat_level(avg_score)
+        
+        # Mettre à jour le statut du visiteur
+        await db.visitors.update_one(
+            {"id": visitor_id},
+            {"$set": {
+                "discipolat_score": round(avg_score, 1),
+                "discipolat_level": avg_level,
+                "discipolat_updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+    
+    return {
+        "message": "KPI saved successfully",
+        "score": score,
+        "level": level
+    }
+
+@api_router.get("/visitors/{visitor_id}/kpi")
+async def get_visitor_kpis(visitor_id: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer tous les KPIs d'un visiteur"""
+    kpis = await db.kpi_discipolat.find(
+        {"visitor_id": visitor_id},
+        {"_id": 0}
+    ).sort("mois", -1).to_list(100)
+    
+    # Calculer le statut moyen
+    if kpis:
+        avg_score = sum(k.get("score", 0) for k in kpis) / len(kpis)
+        avg_level = get_discipolat_level(avg_score)
+    else:
+        avg_score = 0
+        avg_level = "Non classé"
+    
+    return {
+        "kpis": kpis,
+        "average_score": round(avg_score, 1),
+        "average_level": avg_level,
+        "weights": KPI_WEIGHTS
+    }
+
+@api_router.get("/visitors/{visitor_id}/kpi/{mois}")
+async def get_visitor_kpi_for_month(visitor_id: str, mois: str, current_user: dict = Depends(get_current_user)):
+    """Récupérer le KPI d'un visiteur pour un mois spécifique"""
+    kpi = await db.kpi_discipolat.find_one(
+        {"visitor_id": visitor_id, "mois": mois},
+        {"_id": 0}
+    )
+    
+    if not kpi:
+        return {
+            "visitor_id": visitor_id,
+            "mois": mois,
+            "presence_dimanche": 0,
+            "presence_fi": 0,
+            "presence_reunion_disciples": 0,
+            "service_eglise": 0,
+            "consommation_pain_jour": 0,
+            "bapteme": 0,
+            "commentaire": "",
+            "score": 0,
+            "level": "Non classé"
+        }
+    
+    return kpi
+
+
+
 @api_router.post("/visitors/{visitor_id}/presence")
 async def add_presence(visitor_id: str, presence: PresenceAdd, current_user: dict = Depends(get_current_user)):
     visitor = await db.visitors.find_one({"id": visitor_id, "city": current_user["city"]})
