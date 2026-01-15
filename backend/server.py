@@ -4389,7 +4389,16 @@ async def get_arrival_channel_distribution(
         query["city"] = ville
     
     # Get visitors
-    visitors = await db.visitors.find(query, {"_id": 0, "arrival_channel": 1}).to_list(10000)
+    visitors = await db.visitors.find(query, {"_id": 0, "arrival_channel": 1, "assigned_month": 1}).to_list(10000)
+    
+    # Filtrer par année et/ou mois
+    if annee and annee != "all":
+        if mois and mois != "all":
+            visitors = [v for v in visitors if v.get("assigned_month", "").startswith(f"{annee}-{mois}")]
+        else:
+            visitors = [v for v in visitors if v.get("assigned_month", "").startswith(f"{annee}-")]
+    elif mois and mois != "all":
+        visitors = [v for v in visitors if "-" in v.get("assigned_month", "") and v.get("assigned_month", "").split("-")[1] == mois]
     
     # Count by arrival channel
     channel_counts = {}
