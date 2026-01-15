@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getVisitor, getUser, addComment, addPresence, updateFormation, stopTracking, updateVisitor } from '../utils/api';
+import { getVisitor, getUser, addComment, updateVisitor } from '../utils/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
-import { Checkbox } from '../components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
-import { ArrowLeft, MessageSquare, Calendar, Award, StopCircle, Edit } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Award, StopCircle, Edit } from 'lucide-react';
 import { toast } from 'sonner';
+import KPIDiscipolat from '../components/KPIDiscipolat';
 
 const VisitorDetailPage = () => {
   const navigate = useNavigate();
