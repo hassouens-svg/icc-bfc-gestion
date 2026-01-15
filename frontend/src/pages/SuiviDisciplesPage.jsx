@@ -24,6 +24,7 @@ const SuiviDisciplesPage = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [disciples, setDisciples] = useState({});
+  const [showMethodHelp, setShowMethodHelp] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -48,7 +49,8 @@ const SuiviDisciplesPage = () => {
       
       // Charger les contacts (personnes contactées)
       if (user.assigned_month) {
-        const monthNum = user.assigned_month.split('-')[1] || user.assigned_month;
+        const monthStr = String(user.assigned_month);
+        const monthNum = monthStr.split('-')[1] || monthStr;
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${user.city}/${monthNum}`,
           {
