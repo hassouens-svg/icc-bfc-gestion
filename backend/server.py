@@ -9013,7 +9013,7 @@ async def get_membre_kpis(membre_id: str, current_user: dict = Depends(get_curre
         avg_level = get_discipolat_level(avg_score)
     
     # Vérifier statut manuel
-    membre = await db.membres_bergerie.find_one({"id": membre_id}, {"_id": 0, "manual_discipolat_status": 1})
+    membre = await db.membres_disciples.find_one({"id": membre_id}, {"_id": 0, "manual_discipolat_status": 1})
     manual_status = membre.get("manual_discipolat_status") if membre else None
     
     return {
