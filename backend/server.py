@@ -9066,6 +9066,133 @@ async def update_membre_manual_status(membre_id: str, data: ManualStatusUpdate, 
     return {"message": "Manual status updated successfully"}
 
 
+# ==================== EJP - ÉGLISE DES JEUNES PRODIGES ====================
+
+import os
+import shutil
+from fastapi import UploadFile, File, Form
+from fastapi.responses import FileResponse
+
+# Créer le dossier pour les audios EJP si n'existe pas
+EJP_AUDIO_DIR = "/app/backend/ejp_audios"
+os.makedirs(EJP_AUDIO_DIR, exist_ok=True)
+
+
+@api_router.get("/ejp/cultes")
+async def get_ejp_cultes():
+    """Récupérer la liste des cultes EJP"""
+    cultes = await db.ejp_cultes.find({}, {"_id": 0}).sort("date", -1).to_list(100)
+    return cultes
+
+
+@api_router.post("/ejp/cultes")
+async def add_ejp_culte(
+    date: str = Form(...),
+    titre: str = Form(...),
+    orateur: str = Form(...),
+    audio: UploadFile = File(...)
+):
+    """Ajouter un culte EJP avec audio"""
+    culte_id = str(uuid.uuid4())
+    
+    # Sauvegarder le fichier audio
+    file_extension = audio.filename.split('.')[-1] if '.' in audio.filename else 'mp3'
+    audio_filename = f"{culte_id}.{file_extension}"
+    audio_path = os.path.join(EJP_AUDIO_DIR, audio_filename)
+    
+    with open(audio_path, "wb") as buffer:
+        shutil.copyfileobj(audio.file, buffer)
+    
+    # Enregistrer en BDD
+    culte_data = {
+        "id": culte_id,
+        "date": date,
+        "titre": titre,
+        "orateur": orateur,
+        "audio_filename": audio_filename,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.ejp_cultes.insert_one(culte_data)
+    
+    return {"id": culte_id, "message": "Culte ajouté avec succès"}
+
+
+@api_router.get("/ejp/cultes/{culte_id}/audio")
+async def get_ejp_culte_audio(culte_id: str):
+    """Récupérer l'audio d'un culte EJP"""
+    culte = await db.ejp_cultes.find_one({"id": culte_id}, {"_id": 0})
+    if not culte:
+        raise HTTPException(status_code=404, detail="Culte non trouvé")
+    
+    audio_path = os.path.join(EJP_AUDIO_DIR, culte["audio_filename"])
+    if not os.path.exists(audio_path):
+        raise HTTPException(status_code=404, detail="Fichier audio non trouvé")
+    
+    return FileResponse(audio_path, media_type="audio/mpeg")
+
+
+@api_router.delete("/ejp/cultes/{culte_id}")
+async def delete_ejp_culte(culte_id: str):
+    """Supprimer un culte EJP"""
+    culte = await db.ejp_cultes.find_one({"id": culte_id}, {"_id": 0})
+    if culte:
+        # Supprimer le fichier audio
+        audio_path = os.path.join(EJP_AUDIO_DIR, culte.get("audio_filename", ""))
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+        
+        await db.ejp_cultes.delete_one({"id": culte_id})
+    
+    return {"message": "Culte supprimé"}
+
+
+@api_router.get("/ejp/planning-exhortation")
+async def get_ejp_planning():
+    """Récupérer le planning des exhortations EJP"""
+    planning = await db.ejp_planning_exhortation.find({}, {"_id": 0}).sort("date", 1).to_list(100)
+    return planning
+
+
+@api_router.post("/ejp/planning-exhortation")
+async def add_ejp_exhortation(data: dict):
+    """Ajouter une exhortation au planning"""
+    exhortation_id = str(uuid.uuid4())
+    
+    exhortation_data = {
+        "id": exhortation_id,
+        "date": data.get("date"),
+        "exhortateur": data.get("exhortateur"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.ejp_planning_exhortation.insert_one(exhortation_data)
+    
+    return {"id": exhortation_id, "message": "Exhortation ajoutée"}
+
+
+@api_router.put("/ejp/planning-exhortation/{exhortation_id}")
+async def update_ejp_exhortation(exhortation_id: str, data: dict):
+    """Modifier une exhortation"""
+    await db.ejp_planning_exhortation.update_one(
+        {"id": exhortation_id},
+        {"$set": {
+            "date": data.get("date"),
+            "exhortateur": data.get("exhortateur"),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {"message": "Exhortation modifiée"}
+
+
+@api_router.delete("/ejp/planning-exhortation/{exhortation_id}")
+async def delete_ejp_exhortation(exhortation_id: str):
+    """Supprimer une exhortation"""
+    await db.ejp_planning_exhortation.delete_one({"id": exhortation_id})
+    return {"message": "Exhortation supprimée"}
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
