@@ -53,7 +53,16 @@ const MinistereStarsDashboardPage = () => {
     'Ministère des hommes (bureau)',
     'Impact santé',
     'Évènementiel/Restauration',
-    'Modération'
+    'Modération',
+    // Départements EJP
+    'EJP-Prière - Intercession',
+    'EJP-Coordination',
+    'EJP-MLA',
+    'EJP-Sono',
+    'EJP-Modération',
+    'EJP-COM',
+    'EJP-Accueil',
+    'EJP-Communion Fraternelle'
   ];
 
   const typesCulte = ['Culte 1', 'Culte 2', 'EJP', 'Tous les cultes', 'Événements spéciaux'];
