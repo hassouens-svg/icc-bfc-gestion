@@ -214,7 +214,7 @@ const VisitorDetailPage = () => {
                 <p className="font-medium">{visitor.email || 'Non renseigné'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Canal d'arrivée</p>
+                <p className="text-sm text-gray-500">Canal d&apos;arrivée</p>
                 <p className="font-medium">{visitor.arrival_channel}</p>
               </div>
               <div>
