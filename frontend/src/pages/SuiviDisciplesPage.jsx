@@ -294,7 +294,7 @@ const SuiviDisciplesPage = () => {
             <div className="space-y-2">
               {contacts.length === 0 ? (
                 <p className="text-center text-gray-500 py-4">
-                  Aucune personne contactée. Ajoutez-en dans l'onglet Reproduction.
+                  Aucune personne contactée. Ajoutez-en dans l&apos;onglet Reproduction.
                 </p>
               ) : (
                 contacts.map((contact) => (
