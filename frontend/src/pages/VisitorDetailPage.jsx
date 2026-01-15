@@ -397,7 +397,7 @@ const VisitorDetailPage = () => {
       <AlertDialog open={showStopConfirm} onOpenChange={setShowStopConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer l'arrêt du suivi</AlertDialogTitle>
+            <AlertDialogTitle>Confirmer l&apos;arrêt du suivi</AlertDialogTitle>
             <AlertDialogDescription>
               Êtes-vous sûr de vouloir arrêter le suivi de {visitor.firstname} {visitor.lastname}? 
               Cette personne sera retirée de la liste mais restera dans la base de données.
