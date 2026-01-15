@@ -98,6 +98,7 @@ import BergeriesChoixPage from './pages/BergeriesChoixPage';
 import BergeriesDisciplesPage from './pages/BergeriesDisciplesPage';
 import BergerieDiscipleDetailPage from './pages/BergerieDiscipleDetailPage';
 import MembreBergerieDetailPage from './pages/MembreBergerieDetailPage';
+import StrategiesBergeriePage from './pages/StrategiesBergeriePage';
 
 function App() {
   // Check if we're on the OLD production domain specifically (not preview domains)
