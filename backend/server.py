@@ -1527,6 +1527,37 @@ async def get_visitor_kpi_for_month(visitor_id: str, mois: str, current_user: di
     return kpi
 
 
+@api_router.get("/visitors/kpi/all-statuses")
+async def get_all_visitors_kpi_statuses(current_user: dict = Depends(get_current_user)):
+    """Récupérer les statuts KPI moyens de tous les visiteurs de la ville"""
+    # Récupérer tous les KPIs de cette ville
+    all_kpis = await db.kpi_discipolat.find({}).to_list(10000)
+    
+    # Grouper par visitor_id et calculer la moyenne
+    visitor_kpis = {}
+    for kpi in all_kpis:
+        vid = kpi.get("visitor_id")
+        if vid not in visitor_kpis:
+            visitor_kpis[vid] = []
+        visitor_kpis[vid].append(kpi.get("score", 0))
+    
+    # Calculer moyenne et niveau pour chaque visiteur
+    result = {}
+    for vid, scores in visitor_kpis.items():
+        if scores:
+            avg = round(sum(scores) / len(scores), 1)
+            if avg < 15:
+                level = "Non classé"
+            elif avg <= 30:
+                level = "Débutant"
+            elif avg <= 51:
+                level = "Intermédiaire"
+            else:
+                level = "Confirmé"
+            result[vid] = {"average_score": avg, "level": level, "months_count": len(scores)}
+    
+    return result
+
 
 @api_router.post("/visitors/{visitor_id}/presence")
 async def add_presence(visitor_id: str, presence: PresenceAdd, current_user: dict = Depends(get_current_user)):
