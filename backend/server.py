@@ -9053,7 +9053,7 @@ async def get_membre_kpi_for_month(membre_id: str, mois: str, current_user: dict
 @api_router.post("/bergeries-disciples/membres/{membre_id}/manual-status")
 async def update_membre_manual_status(membre_id: str, data: ManualStatusUpdate, current_user: dict = Depends(get_current_user)):
     """Définir un statut manuel pour un membre de bergerie"""
-    await db.membres_bergerie.update_one(
+    await db.membres_disciples.update_one(
         {"id": membre_id},
         {"$set": {
             "manual_discipolat_status": data.manual_status,
