@@ -330,13 +330,17 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
             <div className="flex flex-wrap gap-2">
               {allKpis.map(kpi => {
                 const lvl = getLevel(kpi.score);
+                // Extraire le mois (01-12) du format "2026-01" ou directement "01"
+                const moisNum = kpi.mois.includes('-') ? kpi.mois.split('-')[1] : kpi.mois;
+                const monthNames = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
+                const monthLabel = monthNames[parseInt(moisNum) - 1] || moisNum;
                 return (
                   <button
                     key={kpi.mois}
-                    onClick={() => setSelectedMois(kpi.mois)}
-                    className={`px-3 py-1 rounded-full text-sm ${selectedMois === kpi.mois ? 'ring-2 ring-purple-500' : ''} ${lvl.color}`}
+                    onClick={() => setSelectedMois(moisNum)}
+                    className={`px-3 py-1 rounded-full text-sm ${selectedMois === moisNum ? 'ring-2 ring-purple-500' : ''} ${lvl.color}`}
                   >
-                    {new Date(kpi.mois + '-01').toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })}
+                    {monthLabel}
                     <span className="ml-1 font-bold">{kpi.score}</span>
                   </button>
                 );
