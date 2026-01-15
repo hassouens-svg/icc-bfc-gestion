@@ -226,24 +226,35 @@ const SuiviDisciplesPage = () => {
                 <p className="text-center text-gray-500 py-4">Aucun nouveau arrivant assigné</p>
               ) : (
                 visitors.map((visitor) => {
-                  const levelInfo = DISCIPOLAT_LEVELS[visitor.discipolat_level] || DISCIPOLAT_LEVELS["Non classé"];
+                  // Utiliser les données KPI chargées
+                  const kpiData = kpiStatuses[visitor.id] || {};
+                  const levelName = kpiData.level || "Non classé";
+                  const levelInfo = DISCIPOLAT_LEVELS[levelName] || DISCIPOLAT_LEVELS["Non classé"];
+                  const score = kpiData.average_score || 0;
+                  
                   return (
                     <div 
                       key={visitor.id}
                       className="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
                       onClick={() => navigate(`/visitors/${visitor.id}`)}
+                      data-testid={`visitor-row-${visitor.id}`}
                     >
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium">{visitor.firstname} {visitor.lastname}</p>
                           {/* Badge KPI Discipolat */}
                           <span className={`px-2 py-0.5 rounded-full text-xs flex items-center gap-1 ${levelInfo.color}`}>
                             <span>{levelInfo.emoji}</span>
-                            <span>{visitor.discipolat_level || 'Non classé'}</span>
-                            {visitor.discipolat_score > 0 && (
-                              <span className="font-bold">({visitor.discipolat_score})</span>
+                            <span>{levelName}</span>
+                            {score > 0 && (
+                              <span className="font-bold">({score})</span>
                             )}
                           </span>
+                          {kpiData.months_count > 0 && (
+                            <span className="text-xs text-gray-400">
+                              ({kpiData.months_count} mois)
+                            </span>
+                          )}
                         </div>
                         <p className="text-sm text-gray-500">
                           {visitor.phone || '-'} • {visitor.visitor_type || visitor.types?.join(', ') || 'Nouveau arrivant'}
