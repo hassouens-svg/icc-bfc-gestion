@@ -9,6 +9,7 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 - Événements et RSVP
 - Communication (Email, SMS, WhatsApp)
 - Pain du Jour (méditation)
+- **KPI Discipolat** (Système de suivi mensuel des disciples)
 
 ## Tech Stack
 - **Frontend**: React + Shadcn/UI + TailwindCSS
@@ -29,6 +30,26 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 ## Core Features - Status
 
 ### ✅ Completed Features
+
+#### KPI Discipolat (Jan 15, 2026) ✅ NEW
+- **Système de scoring mensuel** avec 6 critères pondérés
+- **Critères et coefficients**:
+  - Présence Culte Dimanche (×3)
+  - Présence FI (×3)
+  - Présence Réunion Disciples (×2)
+  - Service à l'Église (×2)
+  - Consommation Pain du Jour (×1)
+  - Baptême (×1)
+- **Calcul**: Score = Σ(Valeur × Poids)
+- **Niveaux de statut**:
+  - Non classé: 0-14 pts
+  - Débutant: 15-30 pts
+  - Intermédiaire: 31-51 pts
+  - Confirmé: 52+ pts
+- **Composant KPIDiscipolat** sur la page de détail visiteur
+- **Badges KPI** sur la page Suivi Disciples (score moyen + nb mois)
+- **Dialog "Méthode KPI"** expliquant la méthode de calcul
+- **Historique** des mois enregistrés avec navigation rapide
 
 #### Authentication & Authorization
 - Login avec sélection de ville
