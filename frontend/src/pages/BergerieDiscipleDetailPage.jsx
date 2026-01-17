@@ -72,6 +72,7 @@ const BergerieDiscipleDetailPage = () => {
         loadDemoData();
       }
     } catch (error) {
+      console.log('Error in BergerieDiscipleDetailPage.loadData');
       console.error('Error:', error);
       loadDemoData();
     } finally {
@@ -126,6 +127,7 @@ const BergerieDiscipleDetailPage = () => {
         toast.success('Membre ajouté (local)');
       }
     } catch (error) {
+      console.log('Error in BergerieDiscipleDetailPage.handleAddMember');
       setMembres([...membres, { ...newMember, id: `m${Date.now()}`, est_disciple: 'Non', informations: [] }]);
       toast.success('Membre ajouté (local)');
     }
@@ -233,6 +235,7 @@ const BergerieDiscipleDetailPage = () => {
         body: JSON.stringify(newContact)
       });
     } catch (error) {
+      console.log('Error in BergerieDiscipleDetailPage.handleAddContact');
       console.error('Error:', error);
     }
     

@@ -46,6 +46,7 @@ const BergeriesDisciplesPage = () => {
         setCities(citiesData.filter(c => c && c.name));
       }
     } catch (error) {
+      console.log('Error in BergeriesDisciplesPage.loadCities');
       console.error('Error loading cities:', error);
     }
   };
@@ -62,6 +63,7 @@ const BergeriesDisciplesPage = () => {
         loadStaticData();
       }
     } catch (error) {
+      console.log('Error in BergeriesDisciplesPage.loadBergeriesFromSheet');
       console.error('Error:', error);
       loadStaticData();
     } finally {
@@ -151,6 +153,7 @@ const BergeriesDisciplesPage = () => {
         toast.error('Erreur lors de la création');
       }
     } catch (error) {
+      console.log('Error in BergeriesDisciplesPage.handleCreateBergerie');
       console.error('Error:', error);
       toast.error('Erreur de connexion');
     } finally {
@@ -185,6 +188,7 @@ const BergeriesDisciplesPage = () => {
         toast.error('Erreur lors de la modification');
       }
     } catch (error) {
+      console.log('Error in BergeriesDisciplesPage.handleEditBergerie');
       console.error('Error:', error);
       toast.error('Erreur de connexion');
     } finally {
@@ -210,6 +214,7 @@ const BergeriesDisciplesPage = () => {
         toast.error('Erreur lors de la suppression');
       }
     } catch (error) {
+      console.log('Error in BergeriesDisciplesPage.handleDeleteBergerie');
       console.error('Error:', error);
       toast.error('Erreur de connexion');
     } finally {

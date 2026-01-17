@@ -86,6 +86,7 @@ const SuiviDisciplesPage = () => {
         }
       }
     } catch (error) {
+      console.log('Error in SuiviDisciplesPage.loadData');
       console.error('Erreur:', error);
       toast.error('Erreur lors du chargement');
     } finally {
@@ -134,6 +135,7 @@ const SuiviDisciplesPage = () => {
         toast.error('Erreur lors de l\'enregistrement');
       }
     } catch (error) {
+      console.log('Error in SuiviDisciplesPage.handleSaveManualStatus');
       toast.error('Erreur de connexion');
     }
   };

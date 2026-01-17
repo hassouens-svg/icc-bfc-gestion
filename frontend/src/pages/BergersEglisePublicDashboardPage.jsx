@@ -51,6 +51,7 @@ const BergersEglisePublicDashboardPage = () => {
         setStats(statsData);
       }
     } catch (error) {
+      console.log('Error in BergersEglisePublicDashboardPage.loadData');
       console.error('Erreur:', error);
       toast.error('Erreur de chargement');
     } finally {

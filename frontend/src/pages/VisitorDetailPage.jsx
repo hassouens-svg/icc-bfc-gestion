@@ -51,6 +51,7 @@ const VisitorDetailPage = () => {
       const data = await getVisitor(id);
       setVisitor(data);
     } catch (error) {
+      console.log('Error in VisitorDetailPage.loadVisitor');
       toast.error('Erreur lors du chargement du nouveaux arrivants et nouveaux convertis');
       navigate('/visitors');
     } finally {
@@ -70,6 +71,7 @@ const VisitorDetailPage = () => {
       setCommentText('');
       loadVisitor();
     } catch (error) {
+      console.log('Error in VisitorDetailPage.handleAddComment');
       toast.error('Erreur lors de l\'ajout du commentaire');
     }
   };
@@ -90,6 +92,7 @@ const VisitorDetailPage = () => {
       toast.success('Suivi arrêté');
       navigate('/visitors');
     } catch (error) {
+      console.log('Error in VisitorDetailPage.confirmStopTracking');
       toast.error('Erreur lors de l\'arrêt du suivi');
     }
     setShowStopConfirm(false);
@@ -124,6 +127,7 @@ const VisitorDetailPage = () => {
       await loadVisitor();
       setIsEditDialogOpen(false);
     } catch (error) {
+      console.log('Error in VisitorDetailPage.handleSaveEdit');
       toast.error('Erreur lors de la mise à jour');
     }
   };

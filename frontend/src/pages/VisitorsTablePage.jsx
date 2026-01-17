@@ -88,6 +88,7 @@ const VisitorsTablePage = () => {
         console.warn('⚠️ No weekly_rates in data:', data);
       }
     } catch (error) {
+      console.log('Error in VisitorsTablePage.loadFidelisationData');
       console.error('❌ Erreur chargement fidélisation:', error);
     } finally {
       setLoadingFidelisation(false);
@@ -205,6 +206,7 @@ const VisitorsTablePage = () => {
       // Load fidelisation data after visitors - always refresh to get latest presences
       setTimeout(() => loadFidelisationData(), 500);
     } catch (error) {
+      console.log('Error in VisitorsTablePage.loadVisitors');
       toast.error('Erreur lors du chargement des nouveaux arrivants et nouveaux convertiss');
     } finally {
       setLoading(false);
@@ -313,6 +315,7 @@ const VisitorsTablePage = () => {
       setDeleteDialogOpen(false);
       loadVisitors();
     } catch (error) {
+      console.log('Error in VisitorsTablePage.handleDeleteVisitor');
       toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
     }
   };
@@ -393,6 +396,7 @@ const VisitorsTablePage = () => {
       setEditVisitorDialogOpen(false);
       loadVisitors();
     } catch (error) {
+      console.log('Error in VisitorsTablePage.handleSaveVisitorEdit');
       toast.error('Erreur lors de la mise à jour');
     }
   };
@@ -421,6 +425,7 @@ const VisitorsTablePage = () => {
       setEditDialogOpen(false);
       loadVisitors();
     } catch (error) {
+      console.log('Error in VisitorsTablePage.handleSavePresenceEdit');
       toast.error('Erreur lors de la mise à jour');
       console.error(error);
     }

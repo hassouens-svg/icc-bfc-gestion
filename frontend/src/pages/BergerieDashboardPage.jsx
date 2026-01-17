@@ -158,6 +158,7 @@ const BergerieDashboardPage = () => {
         }
       }
     } catch (error) {
+      console.log('Error in BergerieDashboardPage.loadAllData');
       console.error('Erreur:', error);
       toast.error('Erreur lors du chargement');
     } finally {
@@ -238,6 +239,7 @@ const BergerieDashboardPage = () => {
         loadAllData();
       }
     } catch (error) {
+      console.log('Error in BergerieDashboardPage.handleSaveData');
       toast.error('Erreur lors de l\'ajout');
     }
   };
@@ -253,6 +255,7 @@ const BergerieDashboardPage = () => {
       toast.success('Contact supprimé');
       loadAllData();
     } catch (error) {
+      console.log('Error in BergerieDashboardPage.handleDeleteContact');
       toast.error('Erreur');
     }
   };
@@ -275,6 +278,7 @@ const BergerieDashboardPage = () => {
       setDisciples(prev => ({ ...prev, [visitorId]: newStatus }));
       toast.success('Statut mis à jour');
     } catch (error) {
+      console.log('Error in BergerieDashboardPage.handleUpdateDisciple');
       toast.error('Erreur');
     }
   };
@@ -308,6 +312,7 @@ const BergerieDashboardPage = () => {
         loadAllData();
       }
     } catch (error) {
+      console.log('Error in BergerieDashboardPage.handleAddVisitor');
       toast.error('Erreur lors de l\'ajout');
     }
   };
@@ -332,6 +337,7 @@ const BergerieDashboardPage = () => {
       toast.success(isPresent ? 'Présent marqué' : 'Absent marqué');
       loadAllData();
     } catch (error) {
+      console.log('Error in BergerieDashboardPage.handleMarkPresence');
       toast.error('Erreur');
     }
   };

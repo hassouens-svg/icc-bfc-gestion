@@ -46,6 +46,7 @@ const BergeriesPublicPage = () => {
       setSelectedCity(defaultCity);
       await loadBergeries(defaultCity);
     } catch (error) {
+      console.log('Error in BergeriesPublicPage.loadCitiesAndBergeries');
       console.error('Error:', error);
       setCities([{ name: 'Dijon', country: 'France' }]);
       setSelectedCity('Dijon');
@@ -64,6 +65,7 @@ const BergeriesPublicPage = () => {
         setBergeries(data);
       }
     } catch (error) {
+      console.log('Error in BergeriesPublicPage.loadBergeries');
       console.error('Erreur:', error);
       toast.error('Erreur lors du chargement des bergeries');
     } finally {

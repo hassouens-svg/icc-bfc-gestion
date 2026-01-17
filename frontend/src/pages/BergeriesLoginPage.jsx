@@ -33,6 +33,7 @@ const BergeriesLoginPage = () => {
         setCities(['Dijon', 'Paris', 'Lyon']);
       }
     } catch (error) {
+      console.log('Error in BergeriesLoginPage.loadCities');
       console.error('Error loading cities:', error);
       setCities(['Dijon', 'Paris', 'Lyon']);
     } finally {
@@ -75,6 +76,7 @@ const BergeriesLoginPage = () => {
       navigate(`/bergeries-select?ville=${encodeURIComponent(selectedCity)}`);
       
     } catch (error) {
+      console.log('Error in BergeriesLoginPage.handleLogin');
       toast.error(error.message || 'Identifiants incorrects');
     } finally {
       setLoading(false);

@@ -50,6 +50,7 @@ const TrouverMaFIPage = () => {
       }
       return null;
     } catch (error) {
+      console.log('Error in TrouverMaFIPage.geocodeAddress');
       console.error('Erreur géocodage:', error);
       return null;
     }
@@ -148,6 +149,7 @@ const TrouverMaFIPage = () => {
       toast.success(`${nearest.length} Familles d'Impact trouvées près de chez vous !`);
       
     } catch (error) {
+      console.log('Error in TrouverMaFIPage.handleSearch');
       console.error('Erreur:', error);
       toast.error('Erreur lors de la recherche');
     } finally {

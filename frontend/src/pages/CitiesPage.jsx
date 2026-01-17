@@ -42,6 +42,7 @@ const CitiesPage = () => {
       setCities(citiesData || []);
       setStats(statsData || null);
     } catch (error) {
+      console.log('Error in CitiesPage.loadCities');
       console.error('CitiesPage: Erreur lors du chargement:', error);
       toast.error('Erreur lors du chargement des villes');
     } finally {
@@ -72,6 +73,7 @@ const CitiesPage = () => {
       setCurrentCity({ id: '', name: '', country: 'France' });
       loadCities();
     } catch (error) {
+      console.log('Error in CitiesPage.handleCreate');
       console.error('Erreur:', error);
       toast.error('Erreur lors de la création');
     }
@@ -87,6 +89,7 @@ const CitiesPage = () => {
       setCurrentCity({ id: '', name: '', country: 'France' });
       loadCities();
     } catch (error) {
+      console.log('Error in CitiesPage.handleEdit');
       console.error('Erreur:', error);
       toast.error('Erreur lors de la mise à jour');
     }
@@ -101,6 +104,7 @@ const CitiesPage = () => {
       toast.success('Ville supprimée avec succès');
       loadCities();
     } catch (error) {
+      console.log('Error in CitiesPage.handleDelete');
       console.error('Erreur:', error);
       toast.error('Erreur lors de la suppression');
     }
