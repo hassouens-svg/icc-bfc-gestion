@@ -95,6 +95,7 @@ const ReproductionPage = () => {
         setContacts(await contactsResponse.json());
       }
     } catch (error) {
+      console.log('Error in ReproductionPage.loadData');
       console.error('Erreur:', error);
       toast.error('Erreur lors du chargement');
     } finally {
@@ -138,6 +139,7 @@ const ReproductionPage = () => {
         throw new Error('Erreur');
       }
     } catch (error) {
+      console.log('Error in ReproductionPage.handleSaveObjectif');
       toast.error('Erreur lors de l\'enregistrement');
     }
   };
@@ -162,6 +164,7 @@ const ReproductionPage = () => {
       );
       loadData();
     } catch (error) {
+      console.log('Error in ReproductionPage.handleUpdateObjectifReel');
       toast.error('Erreur');
     }
   };
@@ -209,6 +212,7 @@ const ReproductionPage = () => {
         throw new Error('Erreur');
       }
     } catch (error) {
+      console.log('Error in ReproductionPage.handleSaveContact');
       toast.error('Erreur lors de l\'ajout');
     }
   };
@@ -229,6 +233,7 @@ const ReproductionPage = () => {
       toast.success('Contact supprimé');
       loadData();
     } catch (error) {
+      console.log('Error in ReproductionPage.handleDeleteContact');
       toast.error('Erreur');
     }
   };
