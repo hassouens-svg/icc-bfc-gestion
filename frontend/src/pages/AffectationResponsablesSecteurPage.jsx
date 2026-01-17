@@ -56,6 +56,7 @@ const AffectationResponsablesSecteurPage = () => {
       setResponsables(responsablesData);
       
     } catch (error) {
+      console.log('Error in AffectationResponsablesSecteurPage.loadData');
       console.error('Error loading data:', error);
       toast.error('Erreur lors du chargement des données');
     } finally {
@@ -103,6 +104,7 @@ const AffectationResponsablesSecteurPage = () => {
       setIsDialogOpen(false);
       loadData();
     } catch (error) {
+      console.log('Error in AffectationResponsablesSecteurPage.handleAssignResponsable');
       console.error('Error assigning responsable:', error);
       toast.error(error.response?.data?.detail || 'Erreur lors de l\'assignation');
     } finally {
@@ -123,6 +125,7 @@ const AffectationResponsablesSecteurPage = () => {
       toast.success('Responsable retiré avec succès');
       loadData();
     } catch (error) {
+      console.log('Error in AffectationResponsablesSecteurPage.handleRemoveResponsable');
       console.error('Error removing responsable:', error);
       toast.error('Erreur lors du retrait du responsable');
     }

@@ -59,6 +59,7 @@ const AttributionPilotesPage = () => {
       
       console.log('✅ Données chargées:', { fis: filteredFI.length, pilotes: pilotesList.length });
     } catch (error) {
+      console.log('Error in AttributionPilotesPage.loadData');
       toast.error('Erreur lors du chargement des données');
       console.error('❌ Erreur chargement:', error);
     } finally {
@@ -84,6 +85,7 @@ const AttributionPilotesPage = () => {
       setSelectedFI(null);
       setSelectedPilote('');
     } catch (error) {
+      console.log('Error in AttributionPilotesPage.handleAttribution');
       toast.error('Erreur lors de l\'attribution');
       console.error(error);
     }

@@ -36,6 +36,7 @@ const AffectationFIPage = () => {
       setFamillesImpact(fisData);
       setIndicateurs(indicData);
     } catch (error) {
+      console.log('Error in AffectationFIPage.loadData');
       toast.error('Erreur lors du chargement');
     } finally {
       setLoading(false);
@@ -57,6 +58,7 @@ const AffectationFIPage = () => {
       toast.success('Affectation réussie!');
       loadData();
     } catch (error) {
+      console.log('Error in AffectationFIPage.handleAffecter');
       toast.error(error.response?.data?.detail || 'Erreur lors de l\'affectation');
     }
   };

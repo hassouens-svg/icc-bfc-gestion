@@ -24,6 +24,7 @@ const AccesBergersEglisePage = () => {
         const citiesData = await getCities();
         setCities(citiesData);
       } catch (error) {
+        console.log('Error in AccesBergersEglisePage.useEffect');
         toast.error('Erreur lors du chargement des villes');
       } finally {
         setLoadingCities(false);
@@ -59,6 +60,7 @@ const AccesBergersEglisePage = () => {
       // Rediriger directement vers le dashboard complet
       navigate('/dashboard-superadmin-complet');
     } catch (error) {
+      console.log('Error in AccesBergersEglisePage.handleLogin');
       toast.error(error.response?.data?.detail || 'Identifiants incorrects');
     } finally {
       setLoading(false);

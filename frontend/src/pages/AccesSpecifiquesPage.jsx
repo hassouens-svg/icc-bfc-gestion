@@ -37,6 +37,7 @@ const AccesSpecifiquesPage = () => {
       // Rediriger vers la sélection de ville pour tous les rôles
       navigate('/select-ville');
     } catch (error) {
+      console.log('Error in AccesSpecifiquesPage.handleLogin');
       toast.error(error.response?.data?.detail || 'Identifiants incorrects');
     } finally {
       setLoading(false);

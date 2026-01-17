@@ -60,6 +60,7 @@ const AccesBergeriesAdminPage = () => {
         setPromotions(data);
       }
     } catch (error) {
+      console.log('Error in AccesBergeriesAdminPage.loadData');
       console.error('Error:', error);
       toast.error('Erreur lors du chargement');
     } finally {

@@ -29,6 +29,7 @@ const AnalyticsPage = () => {
       const data = await getStats();
       setStats(data);
     } catch (error) {
+      console.log('Error in AnalyticsPage.loadStats');
       toast.error('Erreur lors du chargement des statistiques');
     } finally {
       setLoading(false);

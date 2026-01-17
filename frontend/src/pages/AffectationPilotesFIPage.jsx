@@ -66,6 +66,7 @@ const AffectationPilotesFIPage = () => {
       setPilotes(pilotesData);
       
     } catch (error) {
+      console.log('Error in AffectationPilotesFIPage.loadData');
       console.error('Error loading data:', error);
       toast.error('Erreur lors du chargement des données');
     } finally {
@@ -118,6 +119,7 @@ const AffectationPilotesFIPage = () => {
       setIsDialogOpen(false);
       loadData();
     } catch (error) {
+      console.log('Error in AffectationPilotesFIPage.handleAssignPilote');
       console.error('Error assigning pilote:', error);
       toast.error(error.response?.data?.detail || 'Erreur lors de l\'assignation');
     } finally {
@@ -138,6 +140,7 @@ const AffectationPilotesFIPage = () => {
       toast.success('Pilote retiré avec succès');
       loadData();
     } catch (error) {
+      console.log('Error in AffectationPilotesFIPage.handleRemovePilote');
       console.error('Error removing pilote:', error);
       toast.error('Erreur lors du retrait du pilote');
     }

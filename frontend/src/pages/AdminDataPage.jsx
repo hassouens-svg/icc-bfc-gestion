@@ -56,6 +56,7 @@ const AdminDataPage = () => {
       });
       toast.success('Données exportées avec succès !');
     } catch (error) {
+      console.log('Error in AdminDataPage.handleExport');
       console.error('Export error:', error);
       setStatus({
         type: 'error',
@@ -113,6 +114,7 @@ const AdminDataPage = () => {
       if (fileInput) fileInput.value = '';
       
     } catch (error) {
+      console.log('Error in AdminDataPage.handleImport');
       console.error('Import error:', error);
       let errorMessage = 'Erreur lors de l\'import';
       
