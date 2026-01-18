@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
           is_guest: true
         };
       }
-    }q catch (e) {
+    } catch (e) {
       console.error('Error reading auth from localStorage:', e);
     }
     return null;
