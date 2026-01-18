@@ -105,15 +105,6 @@ import EJPPlanningExhortationPage from './pages/EJPPlanningExhortationPage';
 import AccesBergeriesAdminPage from './pages/AccesBergeriesAdminPage';
 
 function App() {
-  // Check if we're on the OLD production domain specifically (not preview domains)
-  /*const isOldProductionDomain = typeof window !== 'undefined' && 
-    window.location.hostname === 'italian-church-app.emergent.host';*/
-  
-  // If on old production domain, show redirect page
-  if (isOldProductionDomain) {
-    return <RedirectPage />;
-  }
-  
   return (
     <div className="App">
       <AuthProvider>
