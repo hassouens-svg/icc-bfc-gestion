@@ -269,20 +269,6 @@ const RecensementStarsPage = () => {
               {loading ? 'Enregistrement...' : '⭐ S\'inscrire'}
             </Button>
 
-            <div className="border-t pt-4 mt-4">
-              <p className="text-center text-sm text-gray-500 mb-3">
-                Déjà inscrit(e) ? Vous avez des questions ou suggestions ?
-              </p>
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full border-indigo-300 text-indigo-600 hover:bg-indigo-50" 
-                onClick={() => navigate('/remontee-stars')}
-              >
-                💬 Faire une remontée / suggestion
-              </Button>
-            </div>
-
             <Button 
               type="button" 
               variant="ghost" 
