@@ -73,8 +73,7 @@ const ReproductionPage = () => {
     const monthValue = currentUser?.assigned_month 
       ? (Array.isArray(currentUser.assigned_month) ? currentUser.assigned_month[0] : currentUser.assigned_month)
       : '2024-01';
-    const bergerieMonth = monthValue.split('-')[1] || monthValue; 
-      : '01';
+    const bergerieMonth = monthValue.split('-')[1] || monthValue;
       
     try {
       // Charger les visiteurs pour le compteur
