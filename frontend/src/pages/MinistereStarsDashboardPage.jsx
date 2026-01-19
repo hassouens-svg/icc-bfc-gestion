@@ -383,16 +383,22 @@ const MinistereStarsDashboardPage = () => {
                   Copier
                 </Button>
               </div>
-              {/* Bouton pour voir les remontées (admin uniquement) */}
-              {user && ['super_admin', 'pasteur'].includes(user.role) && (
-                <Button 
-                  variant="outline" 
-                  className="w-full mt-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50"
-                  onClick={() => navigate('/admin/remontees-stars')}
-                >
-                  📥 Voir les remontées reçues
-                </Button>
-              )}
+              {/* Bouton pour voir les remontées - toujours visible mais redirige vers login si pas connecté */}
+              <Button 
+                variant="outline" 
+                className="w-full mt-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+                onClick={() => {
+                  if (user && ['super_admin', 'pasteur'].includes(user.role)) {
+                    navigate('/admin/remontees-stars');
+                  } else {
+                    // Rediriger vers login avec retour vers admin remontees
+                    toast.info('Connectez-vous pour voir les remontées');
+                    navigate('/login', { state: { returnTo: '/admin/remontees-stars' } });
+                  }
+                }}
+              >
+                📥 Voir les remontées reçues
+              </Button>
             </div>
           </CardContent>
         </Card>
