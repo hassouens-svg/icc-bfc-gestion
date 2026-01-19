@@ -47,9 +47,11 @@ const SuiviDisciplesPage = () => {
       return;
     }
     loadData();
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Charge une seule fois au montage
 
   const loadData = async () => {
+    const currentUser = getUser(); // Récupérer l'utilisateur frais
     try {
       const visitorsData = await getVisitors();
       setVisitors(visitorsData);
@@ -69,11 +71,11 @@ const SuiviDisciplesPage = () => {
       }
       
       // Charger les contacts
-      if (user.assigned_month) {
-        const monthStr = String(user.assigned_month);
+      if (currentUser?.assigned_month) {
+        const monthStr = String(currentUser.assigned_month);
         const monthNum = monthStr.split('-')[1] || monthStr;
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${user.city}/${monthNum}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${currentUser.city}/${monthNum}`,
           {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -86,8 +88,9 @@ const SuiviDisciplesPage = () => {
         }
       }
     } catch (error) {
-      console.log('Error in SuiviDisciplesPage.loadData');
       console.error('Erreur:', error);
+      // N'afficher le toast qu'une seule fois
+      if (!loading) return; // Évite les toasts multiples
       toast.error('Erreur lors du chargement');
     } finally {
       setLoading(false);
