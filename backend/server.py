@@ -9154,11 +9154,31 @@ async def get_ejp_culte_audio(culte_id: str):
     if not culte:
         raise HTTPException(status_code=404, detail="Culte non trouvé")
     
-    audio_path = os.path.join(EJP_AUDIO_DIR, culte["audio_filename"])
+    audio_filename = culte.get("audio_filename", "")
+    audio_path = os.path.join(EJP_AUDIO_DIR, audio_filename)
     if not os.path.exists(audio_path):
         raise HTTPException(status_code=404, detail="Fichier audio non trouvé")
     
-    return FileResponse(audio_path, media_type="audio/mpeg")
+    # Déterminer le type MIME selon l'extension
+    extension = audio_filename.split('.')[-1].lower() if '.' in audio_filename else 'mp3'
+    media_types = {
+        'mp3': 'audio/mpeg',
+        'wav': 'audio/wav',
+        'ogg': 'audio/ogg',
+        'm4a': 'audio/mp4',
+        'aac': 'audio/aac',
+        'flac': 'audio/flac'
+    }
+    media_type = media_types.get(extension, 'audio/mpeg')
+    
+    return FileResponse(
+        audio_path, 
+        media_type=media_type,
+        headers={
+            "Accept-Ranges": "bytes",
+            "Content-Disposition": f"inline; filename={audio_filename}"
+        }
+    )
 
 
 @api_router.delete("/ejp/cultes/{culte_id}")
