@@ -149,14 +149,19 @@ const EJPCultesPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-rose-100">
-      {/* Audio element caché */}
+      {/* Audio element */}
       <audio 
         ref={audioRef} 
         onEnded={() => setPlayingId(null)}
-        onError={() => {
+        onError={(e) => {
+          console.error('Audio error event:', e);
           toast.error('Erreur de lecture audio');
+          setAudioError('Impossible de charger le fichier audio');
           setPlayingId(null);
         }}
+        onLoadStart={() => console.log('Audio loading started')}
+        onCanPlay={() => console.log('Audio can play')}
+        preload="auto"
       />
 
       {/* Header */}
