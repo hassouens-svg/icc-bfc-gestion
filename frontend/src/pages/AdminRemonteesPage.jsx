@@ -151,9 +151,12 @@ const AdminRemonteesPage = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les villes</SelectItem>
-                {cities.map(city => (
-                  <SelectItem key={city} value={city}>{city}</SelectItem>
-                ))}
+                {cities.map((city, idx) => {
+                  const cityName = typeof city === 'object' ? city.name : city;
+                  return (
+                    <SelectItem key={idx} value={cityName}>{cityName}</SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
