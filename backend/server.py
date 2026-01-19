@@ -6970,6 +6970,42 @@ async def delete_planning(departement: str, semaine: int, annee: int, current_us
     return {"message": "Planning supprimé"}
 
 
+@api_router.get("/stars/check-conflict")
+async def check_star_conflict(
+    star_id: str, 
+    semaine: int, 
+    annee: int, 
+    departement: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Vérifier si une star est déjà programmée dans un autre département pour la même semaine"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    # Récupérer tous les plannings de cette semaine (sauf le département actuel)
+    plannings = await db.stars_planning.find(
+        {
+            "semaine": semaine, 
+            "annee": annee,
+            "departement": {"$ne": departement}
+        },
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Vérifier si la star est dans un autre planning
+    for planning in plannings:
+        for entry in planning.get("entries", []):
+            membre_ids = entry.get("membre_ids", [])
+            if star_id in membre_ids:
+                return {
+                    "has_conflict": True,
+                    "conflict_department": planning.get("departement"),
+                    "conflict_culte": entry.get("type_culte", "")
+                }
+    
+    return {"has_conflict": False}
+
+
 @api_router.get("/stars/service-stats/{semaine}/{annee}")
 async def get_stars_service_stats(semaine: int, annee: int, ville: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     """Récupérer les KPIs des stars en service pour une semaine donnée (tous départements)"""
