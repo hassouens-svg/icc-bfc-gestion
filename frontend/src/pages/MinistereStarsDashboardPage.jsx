@@ -18,6 +18,7 @@ const MinistereStarsDashboardPage = () => {
   const { selectedCity } = useSelectedCity();
   const [stats, setStats] = useState(null);
   const [multiDeptStars, setMultiDeptStars] = useState([]);
+  const [singleDeptStars, setSingleDeptStars] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // Ville depuis URL param, query param ou contexte
@@ -31,6 +32,12 @@ const MinistereStarsDashboardPage = () => {
   const [selectedWeekDetail, setSelectedWeekDetail] = useState(null);
   const [weekStats, setWeekStats] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  
+  // États pour les dialogs Stars actifs/non actifs
+  const [showActiveStarsDialog, setShowActiveStarsDialog] = useState(false);
+  const [showInactiveStarsDialog, setShowInactiveStarsDialog] = useState(false);
+  const [activeStarsList, setActiveStarsList] = useState([]);
+  const [inactiveStarsList, setInactiveStarsList] = useState([]);
 
   const departements = [
     'MLA',
