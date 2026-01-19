@@ -72,8 +72,11 @@ const SuiviDisciplesPage = () => {
       
       // Charger les contacts
       if (currentUser?.assigned_month) {
-        const monthStr = String(currentUser.assigned_month);
-        const monthNum = monthStr.split('-')[1] || monthStr;
+        // assigned_month peut être un tableau ou une chaîne
+        const monthValue = Array.isArray(currentUser.assigned_month) 
+          ? currentUser.assigned_month[0] 
+          : currentUser.assigned_month;
+        const monthNum = monthValue?.split('-')[1] || monthValue;
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${currentUser.city}/${monthNum}`,
           {
