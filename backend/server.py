@@ -6701,6 +6701,85 @@ async def get_stars_list(statut: str = None, ville: str = None, current_user: di
     return result
 
 
+# ===================== REMONTEES STARS =====================
+
+class RemonteeStarsCreate(BaseModel):
+    nom: str = ""
+    prenom: str = ""
+    is_anonyme: bool = False
+    departement: str = ""
+    ville: str
+    message: str
+
+
+@api_router.post("/stars/remontees")
+async def create_remontee_stars(remontee: RemonteeStarsCreate):
+    """Créer une remontée/suggestion (public, sans authentification)"""
+    from datetime import datetime, timezone
+    
+    remontee_obj = {
+        "id": str(uuid.uuid4()),
+        "nom": remontee.nom if not remontee.is_anonyme else "",
+        "prenom": remontee.prenom if not remontee.is_anonyme else "",
+        "is_anonyme": remontee.is_anonyme,
+        "departement": remontee.departement,
+        "ville": remontee.ville,
+        "message": remontee.message,
+        "is_read": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.stars_remontees.insert_one(remontee_obj)
+    
+    return {"id": remontee_obj["id"], "message": "Remontée envoyée avec succès"}
+
+
+@api_router.get("/stars/remontees")
+async def get_remontees_stars(ville: str = None, current_user: dict = Depends(get_current_user)):
+    """Récupérer les remontées - pasteur et super_admin uniquement"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    remontees = await db.stars_remontees.find(query, {"_id": 0}).sort("created_at", -1).to_list(500)
+    
+    return remontees
+
+
+@api_router.put("/stars/remontees/{remontee_id}/read")
+async def mark_remontee_read(remontee_id: str, current_user: dict = Depends(get_current_user)):
+    """Marquer une remontée comme lue"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    result = await db.stars_remontees.update_one(
+        {"id": remontee_id},
+        {"$set": {"is_read": True}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Remontée non trouvée")
+    
+    return {"message": "Marqué comme lu"}
+
+
+@api_router.delete("/stars/remontees/{remontee_id}")
+async def delete_remontee(remontee_id: str, current_user: dict = Depends(get_current_user)):
+    """Supprimer une remontée"""
+    if current_user["role"] not in ["super_admin", "pasteur"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    result = await db.stars_remontees.delete_one({"id": remontee_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Remontée non trouvée")
+    
+    return {"message": "Supprimé"}
+
+
 @api_router.get("/stars/anniversaires")
 async def get_anniversaires():
     """Récupérer les anniversaires à venir (accessible publiquement)"""
