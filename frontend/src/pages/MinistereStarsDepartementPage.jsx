@@ -299,8 +299,53 @@ const MinistereStarsDepartementPage = () => {
     });
   };
 
-  const toggleMemberSelection = (index, starId, starName) => {
+  // Vérifier si une star a un conflit de planning
+  const checkScheduleConflict = async (starId, starName) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/check-conflict?star_id=${starId}&semaine=${selectedWeek}&annee=${selectedYear}&departement=${encodeURIComponent(decodeURIComponent(departement))}`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return data; // { has_conflict: bool, conflict_department: string }
+      }
+    } catch (error) {
+      console.error('Error checking conflict:', error);
+    }
+    return { has_conflict: false };
+  };
+
+  const toggleMemberSelection = async (index, starId, starName) => {
     if (!canEdit || !isEditMode) return;
+    
+    // Vérifier si on ajoute (pas de suppression)
+    const entry = currentPlanning.entries[index];
+    const memberIds = entry.membre_ids || [];
+    const isAdding = !memberIds.includes(starId);
+    
+    if (isAdding) {
+      // Vérifier les conflits
+      const conflict = await checkScheduleConflict(starId, starName);
+      
+      if (conflict.has_conflict) {
+        // Afficher le dialog de conflit
+        setConflictInfo({
+          starName,
+          conflictDepartment: conflict.conflict_department,
+          culte: conflict.conflict_culte || ''
+        });
+        setPendingSelection({ index, starId, starName });
+        setShowConflictDialog(true);
+        return;
+      }
+    }
+    
+    // Pas de conflit ou suppression, continuer normalement
+    performMemberSelection(index, starId, starName);
+  };
+
+  const performMemberSelection = (index, starId, starName) => {
     setCurrentPlanning(prev => {
       const newEntries = [...prev.entries];
       const entry = newEntries[index];
@@ -323,6 +368,22 @@ const MinistereStarsDepartementPage = () => {
       };
       return { ...prev, entries: newEntries };
     });
+  };
+
+  const handleForceSchedule = () => {
+    if (pendingSelection) {
+      performMemberSelection(pendingSelection.index, pendingSelection.starId, pendingSelection.starName);
+      toast.info(`${pendingSelection.starName} programmé(e) malgré le conflit`);
+    }
+    setShowConflictDialog(false);
+    setConflictInfo(null);
+    setPendingSelection(null);
+  };
+
+  const handleCancelConflict = () => {
+    setShowConflictDialog(false);
+    setConflictInfo(null);
+    setPendingSelection(null);
   };
 
   const removePlanningEntry = (index) => {
