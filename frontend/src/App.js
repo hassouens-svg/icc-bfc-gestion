@@ -238,6 +238,9 @@ function App() {
           <Route path="/ministere-stars/:ville" element={<MinistereStarsDashboardPage />} />
           <Route path="/ministere-stars/departement/:departement" element={<MinistereStarsDepartementPage />} />
           <Route path="/recensement-stars" element={<RecensementStarsPage />} />
+          <Route path="/recensement-stars/merci" element={<RecensementStarsMerciPage />} />
+          <Route path="/remontee-stars" element={<RemonteeStarsPage />} />
+          <Route path="/admin/remontees-stars" element={<AdminRemonteesPage />} />
           
           {/* Le Pain du Jour */}
           <Route path="/pain-du-jour" element={<PainDuJourPage />} />
