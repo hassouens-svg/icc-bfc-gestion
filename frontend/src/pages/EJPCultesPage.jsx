@@ -110,15 +110,32 @@ const EJPCultesPage = () => {
     }
   };
 
-  const togglePlay = (culte) => {
+  const togglePlay = async (culte) => {
+    setAudioError(null);
+    
     if (playingId === culte.id) {
-      audioRef.current?.pause();
+      // Pause
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
       setPlayingId(null);
     } else {
+      // Play new audio
       if (audioRef.current) {
-        audioRef.current.src = `${process.env.REACT_APP_BACKEND_URL}/api/ejp/cultes/${culte.id}/audio`;
-        audioRef.current.play();
-        setPlayingId(culte.id);
+        const audioUrl = `${process.env.REACT_APP_BACKEND_URL}/api/ejp/cultes/${culte.id}/audio`;
+        console.log('Playing audio from:', audioUrl);
+        
+        audioRef.current.src = audioUrl;
+        
+        try {
+          await audioRef.current.play();
+          setPlayingId(culte.id);
+        } catch (error) {
+          console.error('Audio play error:', error);
+          setAudioError(`Erreur de lecture: ${error.message}`);
+          toast.error('Erreur de lecture audio');
+          setPlayingId(null);
+        }
       }
     }
   };
