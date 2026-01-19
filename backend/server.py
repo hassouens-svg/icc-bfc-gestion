@@ -6614,6 +6614,93 @@ async def get_stars_multi_departements(current_user: dict = Depends(get_current_
     return multi_dept_stars
 
 
+@api_router.get("/stars/single-departement")
+async def get_stars_single_departement(ville: str = None, current_user: dict = Depends(get_current_user)):
+    """Récupérer les stars qui servent dans un seul département"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    if ville:
+        query["ville"] = ville
+    elif current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    
+    all_stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    # Filtrer ceux qui ont exactement un département
+    single_dept_stars = []
+    for s in all_stars:
+        depts = s.get("departements", [])
+        if len(depts) == 1:
+            single_dept_stars.append({
+                "prenom": s.get("prenom"),
+                "nom": s.get("nom"),
+                "departement": depts[0],
+                "statut": s.get("statut", "actif"),
+                "ville": s.get("ville")
+            })
+    
+    return single_dept_stars
+
+
+@api_router.get("/stars/public/single-departement")
+async def get_stars_single_departement_public(ville: str = None):
+    """Récupérer les stars qui servent dans un seul département (public)"""
+    query = {}
+    if ville:
+        query["ville"] = ville
+    
+    all_stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    # Filtrer ceux qui ont exactement un département
+    single_dept_stars = []
+    for s in all_stars:
+        depts = s.get("departements", [])
+        if len(depts) == 1:
+            single_dept_stars.append({
+                "prenom": s.get("prenom"),
+                "nom": s.get("nom"),
+                "departement": depts[0],
+                "statut": s.get("statut", "actif"),
+                "ville": s.get("ville")
+            })
+    
+    return single_dept_stars
+
+
+@api_router.get("/stars/list")
+async def get_stars_list(statut: str = None, ville: str = None, current_user: dict = Depends(get_current_user)):
+    """Récupérer la liste des stars avec filtres optionnels (statut, ville)"""
+    if current_user["role"] not in ["super_admin", "pasteur", "responsable_eglise", "ministere_stars", "respo_departement", "star"]:
+        raise HTTPException(status_code=403, detail="Permission denied")
+    
+    query = {}
+    if statut:
+        query["statut"] = statut
+    if ville:
+        query["ville"] = ville
+    elif current_user["role"] == "responsable_eglise":
+        query["ville"] = current_user["city"]
+    
+    stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    # Formater la réponse
+    result = []
+    for s in stars:
+        result.append({
+            "id": s.get("id"),
+            "prenom": s.get("prenom"),
+            "nom": s.get("nom"),
+            "departements": s.get("departements", []),
+            "departement": s.get("departements", [""])[0] if s.get("departements") else "",
+            "statut": s.get("statut", "actif"),
+            "ville": s.get("ville")
+        })
+    
+    return result
+
+
 @api_router.get("/stars/anniversaires")
 async def get_anniversaires():
     """Récupérer les anniversaires à venir (accessible publiquement)"""
