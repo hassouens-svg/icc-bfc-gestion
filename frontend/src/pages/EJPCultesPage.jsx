@@ -206,62 +206,50 @@ const EJPCultesPage = () => {
             {cultes.map((culte) => (
               <Card key={culte.id} className="overflow-hidden">
                 <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    {/* Bouton Play */}
-                    <button
-                      onClick={() => togglePlay(culte)}
-                      className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
-                        playingId === culte.id 
-                          ? 'bg-pink-600 text-white' 
-                          : 'bg-pink-100 text-pink-600 hover:bg-pink-200'
-                      }`}
-                    >
-                      {playingId === culte.id ? (
-                        <Pause className="h-6 w-6" />
-                      ) : (
-                        <Play className="h-6 w-6 ml-1" />
-                      )}
-                    </button>
-                    
-                    {/* Infos */}
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{culte.titre}</h3>
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-1">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(culte.date)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {culte.orateur}
-                        </span>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-start gap-4">
+                      {/* Icon */}
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center bg-pink-100 text-pink-600 flex-shrink-0">
+                        <Music className="h-6 w-6" />
                       </div>
-                      {/* Lecteur audio natif visible quand en lecture */}
-                      {playingId === culte.id && (
-                        <audio
-                          controls
-                          autoPlay
-                          className="w-full mt-2"
-                          src={`${process.env.REACT_APP_BACKEND_URL}/api/ejp/cultes/${culte.id}/audio`}
-                          onEnded={() => setPlayingId(null)}
-                          onError={(e) => {
-                            console.error('Audio player error:', e);
-                            toast.error('Erreur de lecture audio');
-                            setPlayingId(null);
-                          }}
-                        />
-                      )}
+                      
+                      {/* Infos */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 truncate">{culte.titre}</h3>
+                        <div className="flex flex-wrap gap-3 text-sm text-gray-500 mt-1">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {formatDate(culte.date)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <User className="h-3 w-3" />
+                            {culte.orateur}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Delete */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(culte.id)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                     
-                    {/* Delete */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(culte.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {/* Lecteur audio natif - toujours visible */}
+                    <audio
+                      controls
+                      className="w-full h-10"
+                      src={`${process.env.REACT_APP_BACKEND_URL}/api/ejp/cultes/${culte.id}/audio`}
+                      onError={(e) => {
+                        console.error('Audio player error:', e);
+                        toast.error('Erreur de lecture audio');
+                      }}
+                      preload="metadata"
+                    />
                   </div>
                 </CardContent>
               </Card>
