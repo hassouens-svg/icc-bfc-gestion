@@ -75,7 +75,7 @@ const MembreBergerieDetailPage = () => {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate(`/bergeries-disciples/${bergerieId}`)}>
+              <Button variant="ghost" onClick={() => navigate(`/bergerie-disciple/${bergerieId}`)}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Retour
               </Button>
