@@ -61,9 +61,15 @@ const ReproductionPage = () => {
       return;
     }
     loadData();
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Charge une seule fois au montage
 
   const loadData = async () => {
+    const currentUser = getUser(); // Récupérer l'utilisateur frais
+    const bergerieMonth = currentUser?.assigned_month 
+      ? (currentUser.assigned_month.split('-')[1] || currentUser.assigned_month) 
+      : '01';
+      
     try {
       // Charger les visiteurs pour le compteur
       const visitorsData = await getVisitors();
@@ -71,7 +77,7 @@ const ReproductionPage = () => {
       
       // Charger les objectifs
       const objResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/objectifs/${user.city}/${bergerieMonth}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/objectifs/${currentUser?.city}/${bergerieMonth}`,
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -84,7 +90,7 @@ const ReproductionPage = () => {
       
       // Charger les contacts
       const contactsResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${user.city}/${bergerieMonth}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/bergerie/contacts/${currentUser?.city}/${bergerieMonth}`,
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -95,8 +101,9 @@ const ReproductionPage = () => {
         setContacts(await contactsResponse.json());
       }
     } catch (error) {
-      console.log('Error in ReproductionPage.loadData');
       console.error('Erreur:', error);
+      // N'afficher le toast qu'une seule fois
+      if (!loading) return;
       toast.error('Erreur lors du chargement');
     } finally {
       setLoading(false);
