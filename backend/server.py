@@ -9020,7 +9020,7 @@ async def save_membre_kpi(membre_id: str, kpi: KPIDiscipolatEntry, current_user:
     if all_kpis:
         avg_score = sum(k.get("score", 0) for k in all_kpis) / len(all_kpis)
         avg_level = get_discipolat_level(avg_score)
-        await db.membres_bergerie.update_one(
+        await db.membres_disciples.update_one(
             {"id": membre_id},
             {"$set": {"discipolat_score": round(avg_score, 1), "discipolat_level": avg_level}}
         )
