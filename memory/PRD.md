@@ -229,7 +229,13 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 ---
 
 ## Last Updated
-- **Date**: January 15, 2026
+- **Date**: January 19, 2026
+- **Session 4 - Corrections bugs critiques**:
+  - ✅ **Bug KPIs membres bergerie** : Corrigé la collection MongoDB (`membres_disciples` au lieu de `membres_bergerie`)
+  - ✅ **Bug page blanche après Retour** : Corrigé la route (`/bergerie-disciple/` au lieu de `/bergeries-disciples/`)
+  - ✅ **Bug erreurs en boucle Suivi/Reproduction** : Corrigé la gestion de `assigned_month` (tableau vs chaîne)
+  - ✅ **Bug syntaxe AuthContext** : Corrigé `}q catch` → `} catch`
+  - ✅ **Bug isOldProductionDomain** : Supprimé le bloc de code avec variable non définie
 - **Session 3 - Vérification Analytics & Tests**:
   - ✅ **Bug Analytics RÉSOLU** : Les endpoints retournent maintenant des valeurs correctes
     - `/api/analytics/promotions-detailed` - Filtres ville/mois/année fonctionnels
