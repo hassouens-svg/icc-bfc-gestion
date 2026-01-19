@@ -958,6 +958,39 @@ const MinistereStarsDepartementPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Dialog de conflit de planning */}
+      <Dialog open={showConflictDialog} onOpenChange={setShowConflictDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-orange-600">
+              ⚠️ Conflit de planning détecté
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {conflictInfo && (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                <p className="text-gray-700">
+                  <strong>{conflictInfo.starName}</strong> est déjà programmé(e) pour servir dans le département 
+                  <strong className="text-orange-600"> {conflictInfo.conflictDepartment}</strong> 
+                  {conflictInfo.culte && <> ({conflictInfo.culte})</>} cette même semaine.
+                </p>
+              </div>
+            )}
+            <p className="text-sm text-gray-500">
+              Voulez-vous quand même programmer cette personne dans ce département ?
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleCancelConflict} className="flex-1">
+                Annuler
+              </Button>
+              <Button onClick={handleForceSchedule} className="flex-1 bg-orange-600 hover:bg-orange-700">
+                Programmer quand même
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </LayoutMinistereStars>
   );
 };
