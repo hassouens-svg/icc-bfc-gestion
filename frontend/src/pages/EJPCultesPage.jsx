@@ -15,6 +15,7 @@ const EJPCultesPage = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [playingId, setPlayingId] = useState(null);
+  const [audioError, setAudioError] = useState(null);
   const audioRef = useRef(null);
   
   const [formData, setFormData] = useState({
