@@ -266,6 +266,18 @@ const MinistereStarsDashboardPage = () => {
               )}
             </p>
           </div>
+          
+          {/* Lien discret vers admin remontées - visible uniquement pour pasteur et super_admin */}
+          {user && ['super_admin', 'pasteur'].includes(user.role) && (
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/admin/remontees-stars')}
+              className="text-gray-400 hover:text-indigo-600 text-xs"
+            >
+              💬 Remontées
+            </Button>
+          )}
         </div>
 
         {/* KPI Cards */}
