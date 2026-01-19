@@ -173,6 +173,13 @@ const MinistereStarsDepartementPage = () => {
   };
 
   const handleStatutChange = async (starId, newStatut) => {
+    // Si pas connecté, rediriger vers login
+    if (!user) {
+      toast.info('Connectez-vous pour modifier le statut');
+      navigate('/login', { state: { returnTo: window.location.pathname } });
+      return;
+    }
+    
     if (!canEdit) {
       toast.error('Vous n\'avez pas les droits pour modifier');
       return;
