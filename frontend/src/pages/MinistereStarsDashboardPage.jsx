@@ -282,24 +282,32 @@ const MinistereStarsDashboardPage = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+          <Card 
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white cursor-pointer hover:from-green-600 hover:to-green-700 transition-all"
+            onClick={openActiveStarsDialog}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100 text-sm">Stars Actives</p>
                   <h3 className="text-3xl font-bold mt-2">{stats?.actifs || 0}</h3>
+                  <p className="text-green-200 text-xs mt-1">Cliquez pour voir la liste</p>
                 </div>
                 <TrendingUp className="h-12 w-12 text-green-200 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white">
+          <Card 
+            className="bg-gradient-to-br from-red-500 to-red-600 text-white cursor-pointer hover:from-red-600 hover:to-red-700 transition-all"
+            onClick={openInactiveStarsDialog}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-red-100 text-sm">Non Actives</p>
                   <h3 className="text-3xl font-bold mt-2">{stats?.non_actifs || 0}</h3>
+                  <p className="text-red-200 text-xs mt-1">Cliquez pour voir la liste</p>
                 </div>
                 <Calendar className="h-12 w-12 text-red-200 opacity-50" />
               </div>
