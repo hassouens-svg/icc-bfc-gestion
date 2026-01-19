@@ -385,55 +385,205 @@ const MinistereStarsDashboardPage = () => {
           </CardContent>
         </Card>
 
-        {/* Stars multi-départements */}
-        <Card>
-          <CardHeader>
-            <CardTitle>👥 Stars servant dans plusieurs ministères</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 px-4">Prénom</th>
-                    <th className="text-left py-2 px-4">Nom</th>
-                    <th className="text-left py-2 px-4">Départements</th>
-                    <th className="text-center py-2 px-4">Nombre</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {multiDeptStars.length === 0 ? (
-                    <tr>
-                      <td colSpan="4" className="text-center py-8 text-gray-500">
-                        Aucune star dans plusieurs ministères
-                      </td>
+        {/* Stars multi-départements et single-département côte à côte */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Stars multi-départements */}
+          <Card>
+            <CardHeader>
+              <CardTitle>👥 Stars servant dans plusieurs ministères</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto max-h-96">
+                <table className="w-full">
+                  <thead className="sticky top-0 bg-white">
+                    <tr className="border-b">
+                      <th className="text-left py-2 px-3 text-sm">Prénom</th>
+                      <th className="text-left py-2 px-3 text-sm">Nom</th>
+                      <th className="text-left py-2 px-3 text-sm">Départements</th>
+                      <th className="text-center py-2 px-3 text-sm">Nb</th>
                     </tr>
-                  ) : (
-                    multiDeptStars.map((star, idx) => (
-                      <tr key={idx} className="border-b hover:bg-gray-50">
-                        <td className="py-3 px-4">{star.prenom}</td>
-                        <td className="py-3 px-4">{star.nom}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex flex-wrap gap-1">
-                            {star.departements.map((dept, i) => (
-                              <span key={i} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                                {dept}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          <span className="font-bold text-orange-600">{star.departements.length}</span>
+                  </thead>
+                  <tbody>
+                    {multiDeptStars.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center py-8 text-gray-500">
+                          Aucune star dans plusieurs ministères
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                    ) : (
+                      multiDeptStars.map((star, idx) => (
+                        <tr key={idx} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-3 text-sm">{star.prenom}</td>
+                          <td className="py-2 px-3 text-sm">{star.nom}</td>
+                          <td className="py-2 px-3">
+                            <div className="flex flex-wrap gap-1">
+                              {star.departements.map((dept, i) => (
+                                <span key={i} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                  {dept}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            <span className="font-bold text-orange-600">{star.departements.length}</span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stars dans un seul département */}
+          <Card>
+            <CardHeader>
+              <CardTitle>👤 Stars servant dans un seul ministère</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto max-h-96">
+                <table className="w-full">
+                  <thead className="sticky top-0 bg-white">
+                    <tr className="border-b">
+                      <th className="text-left py-2 px-3 text-sm">Prénom</th>
+                      <th className="text-left py-2 px-3 text-sm">Nom</th>
+                      <th className="text-left py-2 px-3 text-sm">Département</th>
+                      <th className="text-center py-2 px-3 text-sm">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {singleDeptStars.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center py-8 text-gray-500">
+                          Aucune star dans un seul ministère
+                        </td>
+                      </tr>
+                    ) : (
+                      singleDeptStars.map((star, idx) => (
+                        <tr key={idx} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-3 text-sm">{star.prenom}</td>
+                          <td className="py-2 px-3 text-sm">{star.nom}</td>
+                          <td className="py-2 px-3">
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                              {star.departement}
+                            </span>
+                          </td>
+                          <td className="text-center py-2 px-3">
+                            <span className={`text-xs px-2 py-0.5 rounded ${
+                              star.statut === 'actif' 
+                                ? 'bg-green-100 text-green-700' 
+                                : 'bg-red-100 text-red-700'
+                            }`}>
+                              {star.statut === 'actif' ? 'Actif' : 'Inactif'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      {/* Dialog - Liste Stars Actifs */}
+      <Dialog open={showActiveStarsDialog} onOpenChange={setShowActiveStarsDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <TrendingUp className="h-5 w-5" />
+              Stars Actives ({activeStarsList.length})
+            </DialogTitle>
+          </DialogHeader>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 px-3 text-sm">Prénom</th>
+                  <th className="text-left py-2 px-3 text-sm">Nom</th>
+                  <th className="text-left py-2 px-3 text-sm">Département(s)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeStarsList.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-8 text-gray-500">
+                      Aucune star active
+                    </td>
+                  </tr>
+                ) : (
+                  activeStarsList.map((star, idx) => (
+                    <tr key={idx} className="border-b hover:bg-gray-50">
+                      <td className="py-2 px-3">{star.prenom}</td>
+                      <td className="py-2 px-3">{star.nom}</td>
+                      <td className="py-2 px-3">
+                        <div className="flex flex-wrap gap-1">
+                          {(star.departements || [star.departement]).map((dept, i) => (
+                            <span key={i} className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                              {dept}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog - Liste Stars Non Actifs */}
+      <Dialog open={showInactiveStarsDialog} onOpenChange={setShowInactiveStarsDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Calendar className="h-5 w-5" />
+              Stars Non Actives ({inactiveStarsList.length})
+            </DialogTitle>
+          </DialogHeader>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 px-3 text-sm">Prénom</th>
+                  <th className="text-left py-2 px-3 text-sm">Nom</th>
+                  <th className="text-left py-2 px-3 text-sm">Département(s)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inactiveStarsList.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-8 text-gray-500">
+                      Aucune star non active
+                    </td>
+                  </tr>
+                ) : (
+                  inactiveStarsList.map((star, idx) => (
+                    <tr key={idx} className="border-b hover:bg-gray-50">
+                      <td className="py-2 px-3">{star.prenom}</td>
+                      <td className="py-2 px-3">{star.nom}</td>
+                      <td className="py-2 px-3">
+                        <div className="flex flex-wrap gap-1">
+                          {(star.departements || [star.departement]).map((dept, i) => (
+                            <span key={i} className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">
+                              {dept}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog - Sélection des semaines (Stars en service) avec année */}
       <Dialog open={showServiceDialog} onOpenChange={setShowServiceDialog}>
