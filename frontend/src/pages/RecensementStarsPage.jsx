@@ -141,21 +141,8 @@ const RecensementStarsPage = () => {
         throw new Error(errorData.detail || 'Erreur lors de l\'inscription');
       }
 
-      toast.success('✅ Inscription réussie ! Merci pour votre service ! ⭐');
-      
-      // Reset form
-      setFormData({
-        prenom: '',
-        nom: '',
-        jour_naissance: '',
-        mois_naissance: '',
-        ville: '',
-        departements: []
-      });
-
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
+      // Rediriger vers la page de remerciement
+      navigate('/recensement-stars/merci');
     } catch (error) {
       toast.error('Erreur lors de l\'inscription');
     } finally {
