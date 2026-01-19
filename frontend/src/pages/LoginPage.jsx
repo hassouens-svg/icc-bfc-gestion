@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { login, isAuthenticated } from '../utils/api';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -9,15 +9,19 @@ import { toast } from 'sonner';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Récupérer l'URL de retour depuis le state
+  const returnTo = location.state?.returnTo;
+
   useEffect(() => {
     if (isAuthenticated()) {
-      navigate('/dashboard');
+      navigate(returnTo || '/dashboard');
     }
-  }, [navigate]);
+  }, [navigate, returnTo]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -38,11 +42,17 @@ const LoginPage = () => {
       sessionStorage.removeItem('selectedCity');
       sessionStorage.removeItem('selectedDepartment');
       
+      // PRIORITY 1: Use returnTo from location state if exists
+      if (returnTo) {
+        navigate(returnTo);
+        return;
+      }
+      
       // Check if there's a redirect destination stored
       const redirectAfterLogin = sessionStorage.getItem('redirectAfterLogin');
       sessionStorage.removeItem('redirectAfterLogin');
       
-      // PRIORITY: Always use redirectAfterLogin if it exists
+      // PRIORITY 2: Use redirectAfterLogin if it exists
       if (redirectAfterLogin) {
         navigate(redirectAfterLogin);
         return;
