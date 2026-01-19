@@ -169,7 +169,7 @@ const MinistereStarsDashboardPage = () => {
       const effectiveCity = getEffectiveCity();
       const villeParam = effectiveCity ? `&ville=${encodeURIComponent(effectiveCity)}` : '';
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/list?statut=inactif${villeParam}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/list?statut=non_actif${villeParam}`,
         { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
       if (response.ok) {
