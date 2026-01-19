@@ -43,6 +43,11 @@ const MinistereStarsDepartementPage = () => {
     ville: ''
   });
   const [loading, setLoading] = useState(true);
+  
+  // États pour la gestion des conflits de planning
+  const [showConflictDialog, setShowConflictDialog] = useState(false);
+  const [conflictInfo, setConflictInfo] = useState(null);
+  const [pendingSelection, setPendingSelection] = useState(null);
 
   const mois = [
     { value: 1, label: 'Janvier' },
