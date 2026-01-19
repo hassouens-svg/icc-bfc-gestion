@@ -236,6 +236,21 @@ const EJPCultesPage = () => {
                           {culte.orateur}
                         </span>
                       </div>
+                      {/* Lecteur audio natif visible quand en lecture */}
+                      {playingId === culte.id && (
+                        <audio
+                          controls
+                          autoPlay
+                          className="w-full mt-2"
+                          src={`${process.env.REACT_APP_BACKEND_URL}/api/ejp/cultes/${culte.id}/audio`}
+                          onEnded={() => setPlayingId(null)}
+                          onError={(e) => {
+                            console.error('Audio player error:', e);
+                            toast.error('Erreur de lecture audio');
+                            setPlayingId(null);
+                          }}
+                        />
+                      )}
                     </div>
                     
                     {/* Delete */}
