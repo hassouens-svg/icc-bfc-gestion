@@ -49,7 +49,10 @@ const ReproductionPage = () => {
   // Extraire le mois de la bergerie
   const getBergerieMonth = () => {
     if (!user?.assigned_month) return '01';
-    const parts = user.assigned_month.split('-');
+    // assigned_month peut être un tableau ou une chaîne
+    const monthValue = Array.isArray(user.assigned_month) ? user.assigned_month[0] : user.assigned_month;
+    if (!monthValue) return '01';
+    const parts = monthValue.split('-');
     return parts.length > 1 ? parts[1] : parts[0];
   };
 
@@ -66,8 +69,11 @@ const ReproductionPage = () => {
 
   const loadData = async () => {
     const currentUser = getUser(); // Récupérer l'utilisateur frais
-    const bergerieMonth = currentUser?.assigned_month 
-      ? (currentUser.assigned_month.split('-')[1] || currentUser.assigned_month) 
+    // assigned_month peut être un tableau ou une chaîne
+    const monthValue = currentUser?.assigned_month 
+      ? (Array.isArray(currentUser.assigned_month) ? currentUser.assigned_month[0] : currentUser.assigned_month)
+      : '2024-01';
+    const bergerieMonth = monthValue.split('-')[1] || monthValue; 
       : '01';
       
     try {
