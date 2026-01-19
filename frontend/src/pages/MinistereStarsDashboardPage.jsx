@@ -371,6 +371,44 @@ const MinistereStarsDashboardPage = () => {
           </CardContent>
         </Card>
 
+        {/* Lien remontées */}
+        <Card>
+          <CardHeader>
+            <CardTitle>💬 Lien Remontées & Suggestions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600">Partagez ce lien pour que les stars puissent faire des remontées (anonymes ou non)</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/remontee-stars`}
+                  className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
+                />
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/remontee-stars`);
+                    toast.success('Lien copié !');
+                  }}
+                >
+                  Copier
+                </Button>
+              </div>
+              {/* Bouton pour voir les remontées (admin uniquement) */}
+              {user && ['super_admin', 'pasteur'].includes(user.role) && (
+                <Button 
+                  variant="outline" 
+                  className="w-full mt-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+                  onClick={() => navigate('/admin/remontees-stars')}
+                >
+                  📥 Voir les remontées reçues
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Liste des départements */}
         <Card>
           <CardHeader>
