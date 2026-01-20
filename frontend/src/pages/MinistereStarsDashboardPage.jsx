@@ -150,9 +150,11 @@ const MinistereStarsDashboardPage = () => {
   const loadActiveStars = async () => {
     try {
       const effectiveCity = getEffectiveCity();
-      const villeParam = effectiveCity ? `?ville=${encodeURIComponent(effectiveCity)}` : '';
+      const params = new URLSearchParams();
+      if (effectiveCity) params.append('ville', effectiveCity);
+      params.append('statut', 'actif');
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/list${villeParam}&statut=actif`
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/list?${params.toString()}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -166,9 +168,11 @@ const MinistereStarsDashboardPage = () => {
   const loadInactiveStars = async () => {
     try {
       const effectiveCity = getEffectiveCity();
-      const villeParam = effectiveCity ? `?ville=${encodeURIComponent(effectiveCity)}` : '';
+      const params = new URLSearchParams();
+      if (effectiveCity) params.append('ville', effectiveCity);
+      params.append('statut', 'non_actif');
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/list${villeParam}&statut=non_actif`
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/list?${params.toString()}`
       );
       if (response.ok) {
         const data = await response.json();
