@@ -527,14 +527,26 @@ const MinistereStarsDepartementPage = () => {
           </Button>
         </div>
 
-        {/* Bouton Voir Planning */}
-        <Button 
-          onClick={() => setShowPlanningDialog(true)} 
-          className="bg-purple-600 hover:bg-purple-700 w-full md:w-auto"
-        >
-          <Calendar className="h-4 w-4 mr-2" />
-          📅 {canEdit ? 'Gérer le Planning' : 'Voir le Planning'}
-        </Button>
+        {/* Bouton Voir Planning et Agenda */}
+        <div className="flex flex-wrap gap-2">
+          <Button 
+            onClick={() => setShowPlanningDialog(true)} 
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            <Calendar className="h-4 w-4 mr-2" />
+            📅 {canEdit ? 'Gérer le Planning' : 'Voir le Planning'}
+          </Button>
+          <Button 
+            onClick={() => navigate(`/agenda-departement/${encodeURIComponent(departement)}`, {
+              state: { publicMode: isPublicMode, ville: effectiveCity }
+            })} 
+            variant="outline"
+            className="border-orange-500 text-orange-600 hover:bg-orange-50"
+          >
+            <Calendar className="h-4 w-4 mr-2" />
+            📆 Voir l'Agenda Annuel
+          </Button>
+        </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
