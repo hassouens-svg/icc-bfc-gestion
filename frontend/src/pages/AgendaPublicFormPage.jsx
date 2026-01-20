@@ -317,16 +317,96 @@ const AgendaPublicFormPage = () => {
                 
                 {entries.map((entry, index) => (
                   <Card key={index} className="p-4 bg-white">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label>Date *</Label>
-                        <Input
-                          type="date"
-                          value={entry.date}
-                          onChange={(e) => updateEntry(index, 'date', e.target.value)}
-                        />
+                    {/* Toggle Récurrence */}
+                    <div className="flex items-center gap-3 p-3 mb-4 bg-orange-50 rounded-lg">
+                      <input
+                        type="checkbox"
+                        id={`isRecurring-${index}`}
+                        checked={entry.isRecurring}
+                        onChange={(e) => updateEntry(index, 'isRecurring', e.target.checked)}
+                        className="w-4 h-4 text-orange-600"
+                      />
+                      <Label htmlFor={`isRecurring-${index}`} className="cursor-pointer font-medium text-orange-800">
+                        📅 Événement récurrent (tous les mardis, samedis, etc.)
+                      </Label>
+                    </div>
+
+                    {entry.isRecurring ? (
+                      // Mode Récurrent
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>Jour de la semaine *</Label>
+                            <Select 
+                              value={entry.recurringDay} 
+                              onValueChange={(v) => updateEntry(index, 'recurringDay', v)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {joursSemaine.map(jour => (
+                                  <SelectItem key={jour.value} value={jour.value}>{jour.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label>Heure (optionnel)</Label>
+                            <Input
+                              type="time"
+                              value={entry.heure || ''}
+                              onChange={(e) => updateEntry(index, 'heure', e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>À partir du</Label>
+                            <Input
+                              type="date"
+                              value={entry.date}
+                              onChange={(e) => updateEntry(index, 'date', e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label>Jusqu'au *</Label>
+                            <Input
+                              type="date"
+                              value={entry.recurringEndDate || ''}
+                              onChange={(e) => updateEntry(index, 'recurringEndDate', e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <p className="text-sm text-gray-500 bg-gray-50 p-2 rounded">
+                          💡 Cela créera une entrée pour chaque {entry.recurringDay} entre les dates
+                        </p>
                       </div>
-                      
+                    ) : (
+                      // Mode Simple
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label>Date *</Label>
+                          <Input
+                            type="date"
+                            value={entry.date}
+                            onChange={(e) => updateEntry(index, 'date', e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label>Heure (optionnel)</Label>
+                          <Input
+                            type="time"
+                            value={entry.heure || ''}
+                            onChange={(e) => updateEntry(index, 'heure', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div>
                         <Label>Type</Label>
                         <Select 
@@ -344,7 +424,7 @@ const AgendaPublicFormPage = () => {
                         </Select>
                       </div>
                       
-                      <div className="md:col-span-2">
+                      <div>
                         <Label>Titre *</Label>
                         <Input
                           value={entry.titre}
@@ -352,16 +432,16 @@ const AgendaPublicFormPage = () => {
                           placeholder="Ex: Prière du mercredi"
                         />
                       </div>
-                      
-                      <div className="md:col-span-2">
-                        <Label>Description (optionnel)</Label>
-                        <Textarea
-                          value={entry.description}
-                          onChange={(e) => updateEntry(index, 'description', e.target.value)}
-                          placeholder="Détails supplémentaires..."
-                          rows={2}
-                        />
-                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <Label>Description (optionnel)</Label>
+                      <Textarea
+                        value={entry.description}
+                        onChange={(e) => updateEntry(index, 'description', e.target.value)}
+                        placeholder="Détails supplémentaires..."
+                        rows={2}
+                      />
                     </div>
                     
                     {entries.length > 1 && (
