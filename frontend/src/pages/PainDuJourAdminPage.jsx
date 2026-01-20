@@ -134,6 +134,8 @@ const PainDuJourAdminPage = () => {
   const [transcriptionData, setTranscriptionData] = useState(null);
   const [titreMessage, setTitreMessage] = useState('');
   const [minuteDebut, setMinuteDebut] = useState(0);
+  const [showManualTranscription, setShowManualTranscription] = useState(false);
+  const [manualTranscription, setManualTranscription] = useState('');
   
   // États pour extraction des versets
   const [extractingVersets, setExtractingVersets] = useState(false);
