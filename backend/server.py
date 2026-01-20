@@ -7721,26 +7721,28 @@ async def fetch_transcription(request: FetchTranscriptionRequest, current_user: 
             # Méthode 1: Récupérer la liste des transcriptions disponibles
             transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
             
-            # Essayer d'abord les transcriptions manuelles en français
+            # Essayer d'abord les transcriptions en français
             try:
-                transcript = transcript_list.find_manually_created_transcript(['fr', 'fr-FR'])
+                transcript = transcript_list.find_transcript(['fr', 'fr-FR'])
                 transcript_data = transcript.fetch()
-                logger.info("Transcription manuelle FR trouvée")
+                logger.info("Transcription FR trouvée")
             except:
-                # Essayer les transcriptions générées automatiquement en français
+                # Essayer en anglais
                 try:
-                    transcript = transcript_list.find_generated_transcript(['fr', 'fr-FR'])
+                    transcript = transcript_list.find_transcript(['en', 'en-US', 'en-GB'])
                     transcript_data = transcript.fetch()
-                    logger.info("Transcription auto FR trouvée")
+                    logger.info("Transcription EN trouvée")
                 except:
-                    # Essayer n'importe quelle transcription disponible
+                    # Prendre n'importe quelle transcription disponible
                     try:
-                        for transcript in transcript_list:
+                        # Récupérer toutes les transcriptions dans une liste
+                        all_transcripts = list(transcript_list)
+                        if all_transcripts:
+                            transcript = all_transcripts[0]
                             transcript_data = transcript.fetch()
                             logger.info(f"Transcription trouvée en: {transcript.language}")
-                            break
-                    except:
-                        pass
+                    except Exception as inner_e:
+                        logger.error(f"Erreur iteration transcripts: {inner_e}")
         except TranscriptsDisabled:
             error_message = "Les sous-titres sont désactivés pour cette vidéo. Activez les sous-titres dans les paramètres YouTube de la vidéo."
         except NoTranscriptFound:
@@ -7757,27 +7759,21 @@ async def fetch_transcription(request: FetchTranscriptionRequest, current_user: 
             elif "private" in error_str or "unavailable" in error_str:
                 error_message = "Cette vidéo est privée ou indisponible."
             else:
-                # Méthode 2: Essayer la méthode directe
+                # Méthode 2: Essayer avec get_transcript directement
                 try:
-                    ytt_api = YouTubeTranscriptApi()
-                    for lang in ['fr', 'fr-FR', 'en', 'en-US']:
-                        try:
-                            transcript_data = ytt_api.fetch(video_id, languages=[lang])
-                            if transcript_data:
-                                logger.info(f"Transcription trouvée avec méthode directe: {lang}")
-                                break
-                        except:
-                            continue
-                    
-                    if not transcript_data:
-                        transcript_data = ytt_api.fetch(video_id)
-                except Exception as e2:
-                    e2_str = str(e2).lower()
-                    if "body disturb" in e2_str or "locked" in e2_str or "too many requests" in e2_str:
-                        error_message = "YouTube limite temporairement les requêtes. Réessayez dans quelques minutes ou copiez-collez manuellement la transcription depuis YouTube."
-                    else:
-                        error_message = f"Impossible de récupérer la transcription. Vérifiez que la vidéo a des sous-titres activés."
-                    logger.error(f"Erreur fetch direct: {str(e2)}")
+                    transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=['fr', 'en'])
+                    logger.info("Transcription trouvée avec get_transcript")
+                except:
+                    try:
+                        transcript_data = YouTubeTranscriptApi.get_transcript(video_id)
+                        logger.info("Transcription trouvée avec get_transcript (any lang)")
+                    except Exception as e2:
+                        e2_str = str(e2).lower()
+                        if "body disturb" in e2_str or "locked" in e2_str or "too many requests" in e2_str:
+                            error_message = "YouTube limite temporairement les requêtes. Réessayez dans quelques minutes."
+                        else:
+                            error_message = f"Impossible de récupérer la transcription. Vérifiez que la vidéo a des sous-titres activés."
+                        logger.error(f"Erreur get_transcript: {str(e2)}")
         
         if not transcript_data:
             raise HTTPException(
