@@ -98,7 +98,7 @@ const AgendaPublicFormPage = () => {
       // Envoyer chaque entrée
       for (const entry of validEntries) {
         await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/public`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
