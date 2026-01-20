@@ -9549,13 +9549,27 @@ async def create_agenda_entry(departement: str, data: dict, current_user: dict =
 
 @api_router.put("/stars/agenda/entry/{entry_id}/statut")
 async def update_agenda_statut(entry_id: str, data: dict, current_user: dict = Depends(get_current_user)):
-    """Mettre à jour le statut d'une entrée d'agenda"""
+    """Mettre à jour le statut d'une entrée d'agenda (authentifié)"""
     await db.star_agendas.update_one(
         {"id": entry_id},
         {"$set": {
             "statut": data.get("statut"),
             "updated_at": datetime.now(timezone.utc).isoformat(),
             "updated_by": current_user["username"]
+        }}
+    )
+    return {"message": "Statut mis à jour"}
+
+
+@api_router.put("/stars/agenda-public/entry/{entry_id}/statut")
+async def update_agenda_statut_public(entry_id: str, data: dict):
+    """Mettre à jour le statut d'une entrée d'agenda (public)"""
+    await db.star_agendas.update_one(
+        {"id": entry_id},
+        {"$set": {
+            "statut": data.get("statut"),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_by": "public_user"
         }}
     )
     return {"message": "Statut mis à jour"}
