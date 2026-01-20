@@ -244,6 +244,10 @@ function App() {
           <Route path="/remontee-stars" element={<RemonteeStarsPage />} />
           <Route path="/admin/remontees-stars" element={<AdminRemonteesPage />} />
           
+          {/* Agenda Annuel des Départements */}
+          <Route path="/agenda-departement/:departement" element={<AgendaDepartementPage />} />
+          <Route path="/agenda-public" element={<AgendaPublicFormPage />} />
+          
           {/* Le Pain du Jour */}
           <Route path="/pain-du-jour" element={<PainDuJourPage />} />
           <Route path="/pain-du-jour/admin" element={<PainDuJourAdminPage />} />
