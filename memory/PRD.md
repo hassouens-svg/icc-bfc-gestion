@@ -198,6 +198,25 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 | POST | /api/pain-du-jour/programmation | Sauvegarder et appliquer programmation |
 | GET | /api/pain-du-jour/programmations | Liste toutes les programmations |
 
+## API Endpoints - Agenda Annuel Départements ✅ NEW
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/stars/agenda/{departement} | Récupérer l'agenda d'un département (params: semestre, annee, ville) |
+| POST | /api/stars/agenda/{departement} | Créer entrée agenda (authentifié) |
+| POST | /api/stars/agenda-public | Créer entrée agenda (formulaire public) |
+| PUT | /api/stars/agenda/entry/{id}/statut | Mettre à jour le statut d'une entrée |
+| DELETE | /api/stars/agenda/entry/{id} | Supprimer une entrée |
+
+## API Endpoints - Stars Publics ✅ VERIFIED
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/stars/public/stats | Stats publiques (total, actifs, non_actifs, par_departement) |
+| GET | /api/stars/public/list | Liste des stars (params: ville, statut) |
+| GET | /api/stars/public/multi-departements | Stars servant dans plusieurs départements |
+| GET | /api/stars/public/single-departement | Stars servant dans un seul département |
+
 ---
 
 ## Files Structure
