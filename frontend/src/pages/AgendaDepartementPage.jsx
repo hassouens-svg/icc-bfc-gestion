@@ -36,8 +36,22 @@ const AgendaDepartementPage = () => {
     type: 'priere_hebdo',
     titre: '',
     description: '',
-    statut: 'planifie'
+    statut: 'planifie',
+    heure: '',
+    isRecurring: false,
+    recurringDay: 'mardi',
+    recurringEndDate: ''
   });
+
+  const joursSemaine = [
+    { value: 'lundi', label: 'Lundi' },
+    { value: 'mardi', label: 'Mardi' },
+    { value: 'mercredi', label: 'Mercredi' },
+    { value: 'jeudi', label: 'Jeudi' },
+    { value: 'vendredi', label: 'Vendredi' },
+    { value: 'samedi', label: 'Samedi' },
+    { value: 'dimanche', label: 'Dimanche' }
+  ];
 
   const typeOptions = [
     { value: 'priere_hebdo', label: 'Temps de prière hebdomadaire' },
