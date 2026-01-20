@@ -250,6 +250,22 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ## Last Updated
 - **Date**: January 20, 2026
+- **Session 7 - Agenda Simplifié & Pain du Jour Fix**:
+  - ✅ **Agenda Département SIMPLIFIÉ** :
+    - 2 sections distinctes : "🙏 Temps de prière" et "📌 Activités"
+    - Temps de prière : sélection jour + fréquence (hebdo/bimensuel/mensuel) + période
+    - Activités : ajout libre avec titre, date, heure, description
+    - Interface épurée et intuitive
+  - ✅ **Détection de conflits Planning ↔ Agenda** :
+    - Nouvel endpoint `GET /api/planning/check-conflicts?ville=X&date=Y`
+    - Alerte avant enregistrement si département a une activité ce jour
+    - Message clair : "⚠️ ATTENTION: MLA a une activité ce jour..."
+  - ✅ **Pain du Jour - Saisie manuelle transcription** :
+    - Bouton "✏️ Entrer manuellement" ajouté
+    - Zone de texte pour coller la transcription YouTube
+    - Solution de contournement pour les blocages YouTube
+  - ✅ **Correction erreur "body stream already read"** :
+    - Lecture unique du body de réponse HTTP
 - **Session 6 - Agenda Récurrent & Pain du Jour**:
   - ✅ **Agenda Annuel - Événements récurrents IMPLÉMENTÉ** :
     - Option "Événement récurrent" dans les formulaires d'ajout
