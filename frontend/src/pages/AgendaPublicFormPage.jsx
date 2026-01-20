@@ -96,6 +96,32 @@ const AgendaPublicFormPage = () => {
     setEntries(newEntries);
   };
 
+  // Fonction pour générer les dates récurrentes
+  const generateRecurringDates = (startDate, endDate, dayOfWeek) => {
+    const dayMap = {
+      'lundi': 1, 'mardi': 2, 'mercredi': 3, 'jeudi': 4,
+      'vendredi': 5, 'samedi': 6, 'dimanche': 0
+    };
+    
+    const targetDay = dayMap[dayOfWeek];
+    const dates = [];
+    let current = new Date(startDate || new Date().toISOString().split('T')[0]);
+    const end = new Date(endDate);
+    
+    // Trouver le premier jour correspondant
+    while (current.getDay() !== targetDay) {
+      current.setDate(current.getDate() + 1);
+    }
+    
+    // Générer toutes les dates jusqu'à la fin
+    while (current <= end) {
+      dates.push(new Date(current).toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 7);
+    }
+    
+    return dates;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -104,35 +130,79 @@ const AgendaPublicFormPage = () => {
       return;
     }
 
-    const validEntries = entries.filter(e => e.date && e.titre);
-    if (validEntries.length === 0) {
-      toast.error('Veuillez ajouter au moins une entrée avec date et titre');
+    // Valider les entrées
+    const hasValidEntry = entries.some(entry => {
+      if (entry.isRecurring) {
+        return entry.recurringEndDate && entry.titre;
+      }
+      return entry.date && entry.titre;
+    });
+
+    if (!hasValidEntry) {
+      toast.error('Veuillez ajouter au moins une entrée avec les informations requises');
       return;
     }
 
     setLoading(true);
+    let totalCreated = 0;
+
     try {
-      // Envoyer chaque entrée
-      for (const entry of validEntries) {
-        await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...entry,
-              departement: selectedDepartement,
-              ville: selectedVille,
-              semestre: selectedSemestre,
-              annee: selectedYear,
-              statut: 'planifie'
-            })
+      for (const entry of entries) {
+        if (entry.isRecurring && entry.recurringEndDate && entry.titre) {
+          // Entrée récurrente
+          const dates = generateRecurringDates(entry.date, entry.recurringEndDate, entry.recurringDay);
+          
+          for (const date of dates) {
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  date,
+                  type: entry.type,
+                  titre: entry.titre,
+                  description: entry.description + (entry.heure ? ` - ${entry.heure}` : ''),
+                  heure: entry.heure,
+                  departement: selectedDepartement,
+                  ville: selectedVille,
+                  semestre: selectedSemestre,
+                  annee: selectedYear,
+                  statut: 'planifie',
+                  isRecurring: true,
+                  recurringDay: entry.recurringDay
+                })
+              }
+            );
+            totalCreated++;
           }
-        );
+        } else if (entry.date && entry.titre) {
+          // Entrée simple
+          await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                date: entry.date,
+                type: entry.type,
+                titre: entry.titre,
+                description: entry.description + (entry.heure ? ` - ${entry.heure}` : ''),
+                heure: entry.heure,
+                departement: selectedDepartement,
+                ville: selectedVille,
+                semestre: selectedSemestre,
+                annee: selectedYear,
+                statut: 'planifie'
+              })
+            }
+          );
+          totalCreated++;
+        }
       }
       
       setSubmitted(true);
-      toast.success('Agenda enregistré avec succès !');
+      toast.success(`${totalCreated} entrée(s) créée(s) avec succès !`);
     } catch (error) {
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
