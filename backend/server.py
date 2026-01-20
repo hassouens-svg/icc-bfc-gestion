@@ -9582,6 +9582,37 @@ async def delete_agenda_entry(entry_id: str, current_user: dict = Depends(get_cu
     return {"message": "Entrée supprimée"}
 
 
+@api_router.get("/planning/check-conflicts")
+async def check_planning_conflicts(ville: str, date: str, current_user: dict = Depends(get_current_user)):
+    """Vérifier les conflits avec les agendas des départements pour une date donnée"""
+    try:
+        # Chercher dans les agendas des départements pour cette ville et cette date
+        conflicts = await db.star_agendas.find(
+            {
+                "ville": ville,
+                "date": date
+            },
+            {"_id": 0}
+        ).to_list(100)
+        
+        return {
+            "has_conflicts": len(conflicts) > 0,
+            "conflicts": [
+                {
+                    "departement": c.get("departement"),
+                    "titre": c.get("titre"),
+                    "heure": c.get("heure"),
+                    "type": c.get("type"),
+                    "date": c.get("date")
+                }
+                for c in conflicts
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Erreur check-conflicts: {str(e)}")
+        return {"has_conflicts": False, "conflicts": []}
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
