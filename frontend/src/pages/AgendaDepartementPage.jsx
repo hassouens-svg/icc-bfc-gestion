@@ -216,12 +216,11 @@ const AgendaDepartementPage = () => {
                 </SelectContent>
               </Select>
               
-              {canEdit && (
-                <Button onClick={() => setShowAddDialog(true)} className="bg-orange-600 hover:bg-orange-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter
-                </Button>
-              )}
+              {/* Bouton Ajouter visible pour tous */}
+              <Button onClick={() => setShowAddDialog(true)} className="bg-orange-600 hover:bg-orange-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter
+              </Button>
             </div>
           </div>
         </div>
@@ -237,12 +236,10 @@ const AgendaDepartementPage = () => {
             <CardContent>
               <Calendar className="h-16 w-16 mx-auto text-gray-300 mb-4" />
               <p className="text-gray-500">Aucune entrée dans l'agenda pour ce semestre</p>
-              {canEdit && (
-                <Button onClick={() => setShowAddDialog(true)} className="mt-4 bg-orange-600 hover:bg-orange-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter la première entrée
-                </Button>
-              )}
+              <Button onClick={() => setShowAddDialog(true)} className="mt-4 bg-orange-600 hover:bg-orange-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter la première entrée
+              </Button>
             </CardContent>
           </Card>
         ) : (
