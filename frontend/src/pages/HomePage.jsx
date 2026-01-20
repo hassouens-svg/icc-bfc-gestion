@@ -8,88 +8,56 @@ import ChatbotAudrey from '../components/ChatbotAudrey';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [anniversaires, setAnniversaires] = React.useState([]);
-  const [evenements, setEvenements] = React.useState([]);
 
+  // Charger anniversaires et événements en arrière-plan (sans bloquer)
   React.useEffect(() => {
-    const loadEvenements = async (anniversairesCount = 0) => {
+    const loadNotifications = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/upcoming`);
-        if (!response.ok) {
-          console.error('Erreur API événements:', response.status);
-          return;
-        }
-        const data = await response.json();
-        console.log('🎉 Événements à venir chargés:', data);
-        setEvenements(data);
+        // Charger en parallèle
+        const [anniversairesRes, evenementsRes] = await Promise.all([
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/anniversaires`).catch(() => null),
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/upcoming`).catch(() => null)
+        ]);
         
-        // Calculer le délai initial après les anniversaires (minimum 2 secondes)
-        const anniversaireDelay = Math.max(anniversairesCount * 1200 + 1500, 2000);
-        
-        if (data && Array.isArray(data) && data.length > 0) {
-          data.forEach((event, idx) => {
+        // Traiter anniversaires (délai de 3s après le chargement de la page)
+        if (anniversairesRes?.ok) {
+          const anniversaires = await anniversairesRes.json();
+          if (anniversaires?.length > 0) {
             setTimeout(() => {
-              try {
-                const daysText = event.days_until === 0 
-                  ? "🎊 Aujourd'hui" 
-                  : event.days_until === 1 
-                    ? "⏰ Demain" 
-                    : `⏳ dans ${event.days_until} jours`;
-                
-                toast.info(
-                  `🎉 ${event.ville || 'ICC'}: ${event.titre}, ${daysText} 🎊`, 
-                  {
-                    duration: 7000,
-                    position: 'top-center',
-                  }
-                );
-              } catch (err) {
-                console.error('Erreur affichage toast événement:', err);
-              }
-            }, anniversaireDelay + (idx * 1800));
-          });
+              anniversaires.slice(0, 3).forEach((anniv, idx) => {
+                setTimeout(() => {
+                  const msg = anniv.days_until === 0 
+                    ? `🎂 Aujourd'hui : Anniversaire de ${anniv.prenom}`
+                    : `🎂 Dans ${anniv.days_until} jour${anniv.days_until > 1 ? 's' : ''} : ${anniv.prenom}`;
+                  toast.info(msg, { duration: 4000 });
+                }, idx * 2000);
+              });
+            }, 3000);
+          }
+        }
+        
+        // Traiter événements (délai de 8s)
+        if (evenementsRes?.ok) {
+          const evenements = await evenementsRes.json();
+          if (evenements?.length > 0) {
+            setTimeout(() => {
+              evenements.slice(0, 2).forEach((event, idx) => {
+                setTimeout(() => {
+                  const daysText = event.days_until === 0 ? "Aujourd'hui" : `dans ${event.days_until} jours`;
+                  toast.info(`🎉 ${event.titre}, ${daysText}`, { duration: 5000 });
+                }, idx * 2500);
+              });
+            }, 8000);
+          }
         }
       } catch (error) {
-        console.error('Erreur chargement événements:', error);
+        console.error('Erreur chargement notifications:', error);
       }
     };
-
-    const loadData = async () => {
-      // D'abord charger les anniversaires
-      let anniversairesCount = 0;
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stars/anniversaires`);
-        const data = await response.json();
-        console.log('🎂 Anniversaires chargés:', data);
-        setAnniversaires(data);
-        anniversairesCount = data?.length || 0;
-        
-        if (data && data.length > 0) {
-          data.forEach((anniv, idx) => {
-            setTimeout(() => {
-              if (anniv.days_until === 0) {
-                toast.info(`🎂 Aujourd'hui : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
-                  duration: 5000,
-                  position: 'top-center',
-                });
-              } else {
-                toast(`🎂 Dans ${anniv.days_until} jour${anniv.days_until > 1 ? 's' : ''} : Anniversaire de ${anniv.prenom}, ${anniv.ville || ''} (${anniv.date})`, {
-                  duration: 4000,
-                  position: 'top-center',
-                });
-              }
-            }, idx * 1000);
-          });
-        }
-      } catch (error) {
-        console.error('Erreur chargement anniversaires', error);
-      }
-      
-      // Ensuite charger les événements avec le bon délai
-      await loadEvenements(anniversairesCount);
-    };
-
-    loadData();
+    
+    // Charger les notifications après un court délai pour ne pas bloquer le rendu initial
+    const timer = setTimeout(loadNotifications, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleDepartmentChoice = (deptId) => {
