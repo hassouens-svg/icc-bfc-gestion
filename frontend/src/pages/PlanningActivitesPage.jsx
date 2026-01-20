@@ -173,7 +173,6 @@ const PlanningActivitesPage = () => {
       const dataToSave = editingId ? editData : activite;
       
       // ===== VÉRIFICATION DES CONFLITS =====
-      // Vérifier si un département a une activité ce jour-là
       const dateToCheck = dataToSave.date_debut || dataToSave.date;
       if (dateToCheck && villeSelectionnee) {
         try {
@@ -188,20 +187,14 @@ const PlanningActivitesPage = () => {
             const conflictData = await conflictResponse.json();
             
             if (conflictData.has_conflicts) {
-              const conflictMessages = conflictData.conflicts.map(c => 
-                `• ${c.departement}: ${c.titre}${c.heure ? ` à ${c.heure}` : ''}`
-              ).join('\n');
-              
-              const confirmSave = window.confirm(
-                `⚠️ ATTENTION: Des activités de département sont prévues ce jour!\n\n` +
-                `${conflictMessages}\n\n` +
-                `Voulez-vous quand même enregistrer votre activité ?`
-              );
-              
-              if (!confirmSave) {
-                setLoading(false);
-                return; // Annuler la sauvegarde
-              }
+              // Ouvrir le dialogue de conflit
+              setConflictDialog({
+                open: true,
+                conflicts: conflictData.conflicts,
+                pendingActivite: activite
+              });
+              setLoading(false);
+              return; // Attendre la décision de l'utilisateur
             }
           }
         } catch (conflictError) {
@@ -210,6 +203,21 @@ const PlanningActivitesPage = () => {
         }
       }
       // ===== FIN VÉRIFICATION DES CONFLITS =====
+      
+      // Procéder à l'enregistrement
+      await performSave(activite);
+    } catch (error) {
+      console.error('Error saving:', error);
+      toast.error('Erreur lors de l\'enregistrement');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fonction pour effectuer l'enregistrement réel
+  const performSave = async (activite) => {
+    try {
+      const dataToSave = editingId ? editData : activite;
       
       if (activite.isNew) {
         // Créer nouvelle activité
