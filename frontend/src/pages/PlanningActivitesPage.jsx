@@ -271,9 +271,24 @@ const PlanningActivitesPage = () => {
     } catch (error) {
       console.error('Erreur:', error);
       toast.error('Erreur lors de la sauvegarde');
-    } finally {
+    }
+  };
+
+  // Confirmer l'enregistrement malgré les conflits
+  const handleConfirmSaveWithConflicts = async () => {
+    const activite = conflictDialog.pendingActivite;
+    setConflictDialog({ open: false, conflicts: [], pendingActivite: null });
+    if (activite) {
+      setLoading(true);
+      await performSave(activite);
       setLoading(false);
     }
+  };
+
+  // Annuler et modifier l'événement
+  const handleCancelConflict = () => {
+    setConflictDialog({ open: false, conflicts: [], pendingActivite: null });
+    toast.info('Modifiez la date de votre événement');
   };
 
   const handleDelete = async (activite) => {
