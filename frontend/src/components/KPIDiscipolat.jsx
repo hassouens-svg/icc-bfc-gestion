@@ -145,9 +145,7 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
         ? `${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/membres/${visitorId}/kpi`
         : `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi`;
       
-      const response = await fetch(endpoint, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
+      const response = await fetch(endpoint);
       if (response.ok) {
         const data = await response.json();
         setAllKpis(data.kpis || []);
@@ -168,9 +166,7 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
         ? `${process.env.REACT_APP_BACKEND_URL}/api/bergeries-disciples/membres/${visitorId}/kpi/${mois}`
         : `${process.env.REACT_APP_BACKEND_URL}/api/visitors/${visitorId}/kpi/${mois}`;
       
-      const response = await fetch(endpoint, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
+      const response = await fetch(endpoint);
       if (response.ok) {
         const data = await response.json();
         setKpiData({
