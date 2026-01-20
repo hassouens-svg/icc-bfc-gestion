@@ -82,22 +82,29 @@ const AgendaDepartementPage = () => {
     }
     
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/${encodeURIComponent(departement)}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({
-            ...newEntry,
-            semestre: selectedSemestre,
-            annee: selectedYear,
-            ville: publicVille || user?.city
-          })
-        }
-      );
+      // Utiliser l'endpoint public si pas connecté, sinon l'endpoint authentifié
+      const url = user 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/${encodeURIComponent(departement)}`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`;
+      
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (user) {
+        headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+      }
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          ...newEntry,
+          departement: decodeURIComponent(departement),
+          semestre: selectedSemestre,
+          annee: selectedYear,
+          ville: publicVille || user?.city || ''
+        })
+      });
       
       if (response.ok) {
         toast.success('Entrée ajoutée');
