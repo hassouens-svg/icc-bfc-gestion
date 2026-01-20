@@ -27,7 +27,9 @@ const AgendaDepartementPage = () => {
   const publicVille = location.state?.ville;
   const isPublicMode = location.state?.publicMode || !user;
   
+  // Permettre l'ajout à tous, mais la modification de statut uniquement aux admins connectés
   const canEdit = user && ['super_admin', 'pasteur', 'respo_departement'].includes(user.role);
+  const canAdd = true; // Tout le monde peut ajouter des entrées
   
   const [newEntry, setNewEntry] = useState({
     date: '',
