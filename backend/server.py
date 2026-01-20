@@ -1418,8 +1418,8 @@ def calculate_kpi_score(kpi: dict) -> float:
     return score
 
 @api_router.post("/visitors/{visitor_id}/kpi")
-async def save_kpi_discipolat(visitor_id: str, kpi: KPIDiscipolatEntry, current_user: dict = Depends(get_current_user)):
-    """Enregistrer les KPIs Discipolat pour un visiteur pour un mois donné"""
+async def save_kpi_discipolat(visitor_id: str, kpi: KPIDiscipolatEntry):
+    """Enregistrer les KPIs Discipolat pour un visiteur pour un mois donné (PUBLIC)"""
     # Vérifier que le visiteur existe
     visitor = await db.visitors.find_one({"id": visitor_id})
     if not visitor:
@@ -1442,7 +1442,7 @@ async def save_kpi_discipolat(visitor_id: str, kpi: KPIDiscipolatEntry, current_
         "score": score,
         "level": level,
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "updated_by": current_user["username"]
+        "updated_by": "public"
     }
     
     # Upsert: mettre à jour ou créer
@@ -1475,8 +1475,8 @@ async def save_kpi_discipolat(visitor_id: str, kpi: KPIDiscipolatEntry, current_
     }
 
 @api_router.get("/visitors/{visitor_id}/kpi")
-async def get_visitor_kpis(visitor_id: str, current_user: dict = Depends(get_current_user)):
-    """Récupérer tous les KPIs d'un visiteur"""
+async def get_visitor_kpis(visitor_id: str):
+    """Récupérer tous les KPIs d'un visiteur (PUBLIC)"""
     kpis = await db.kpi_discipolat.find(
         {"visitor_id": visitor_id},
         {"_id": 0}
