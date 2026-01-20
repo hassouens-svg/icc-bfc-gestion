@@ -274,31 +274,25 @@ const AgendaDepartementPage = () => {
                       </div>
                       
                       <div className="flex items-center gap-2">
-                        {canEdit ? (
-                          <Select 
-                            value={entry.statut} 
-                            onValueChange={(v) => handleUpdateStatut(entry.id, v)}
-                          >
-                            <SelectTrigger className={`w-32 ${statutInfo.color}`}>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {statutOptions.map(opt => (
-                                <SelectItem key={opt.value} value={opt.value}>
-                                  <span className="flex items-center gap-2">
-                                    <opt.icon className="h-3 w-3" />
-                                    {opt.label}
-                                  </span>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <span className={`flex items-center gap-1 px-3 py-1 rounded text-sm ${statutInfo.color}`}>
-                            <StatutIcon className="h-4 w-4" />
-                            {statutInfo.label}
-                          </span>
-                        )}
+                        {/* Sélecteur de statut visible pour tous */}
+                        <Select 
+                          value={entry.statut} 
+                          onValueChange={(v) => handleUpdateStatut(entry.id, v)}
+                        >
+                          <SelectTrigger className={`w-32 ${statutInfo.color}`}>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {statutOptions.map(opt => (
+                              <SelectItem key={opt.value} value={opt.value}>
+                                <span className="flex items-center gap-2">
+                                  <opt.icon className="h-3 w-3" />
+                                  {opt.label}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         
                         {canEdit && (
                           <Button 
