@@ -300,12 +300,12 @@ const PainDuJourAdminPage = () => {
         })
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Erreur lors de la récupération');
+        throw new Error(data.detail || 'Erreur lors de la récupération');
       }
       
-      const data = await response.json();
       setTranscriptionData(data);
       setTitreMessage(form.titre_enseignement || '');
       toast.success(`Transcription récupérée ! ${data.duree_minutes} minutes de vidéo`);
