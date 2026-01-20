@@ -250,6 +250,16 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ## Last Updated
 - **Date**: January 20, 2026
+- **Session 8 - Agenda Final Simplifié**:
+  - ✅ **Temps de prière - Configuration unique** :
+    - UNE seule configuration par département (pas de liste longue)
+    - Jour + Heure + Checkbox "Récurrent" (optionnel)
+    - Si récurrent: choix de fréquence (hebdo/bimensuel/mensuel)
+    - PAS de statut (fait/pas fait) pour les temps de prière
+  - ✅ **Activités - Liste avec statut** :
+    - Liste des activités avec titre, date, heure, description
+    - Statut uniquement pour les activités (Planifié, Fait, Pas fait, En retard)
+  - ✅ **Nouvel endpoint** `/api/stars/agenda-priere` pour la config temps de prière
 - **Session 7 - Agenda Simplifié & Pain du Jour Fix**:
   - ✅ **Agenda Département SIMPLIFIÉ** :
     - 2 sections distinctes : "🙏 Temps de prière" et "📌 Activités"
