@@ -2,7 +2,7 @@
 """
 Comprehensive Role-Based Permission Testing
 Tests ALL permissions and functionalities by role as specified in review request
-Backend URL: https://discipleship-track.preview.emergentagent.com/api
+Backend URL: https://agenda-ministry.preview.emergentagent.com/api
 """
 
 import requests
@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv('/app/frontend/.env')
-BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://discipleship-track.preview.emergentagent.com')
+BASE_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://agenda-ministry.preview.emergentagent.com')
 API_URL = f"{BASE_URL}/api"
 
 class ComprehensiveRoleTester:
