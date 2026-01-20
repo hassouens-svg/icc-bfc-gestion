@@ -429,12 +429,9 @@ const MinistereStarsDashboardPage = () => {
                   Copier
                 </Button>
               </div>
-              {/* Bouton pour voir un agenda de département */}
-              {user && ['super_admin', 'pasteur', 'respo_departement'].includes(user.role) && (
-                <p className="text-sm text-gray-500 mt-2">
-                  💡 Pour voir l'agenda d'un département, cliquez sur le département ci-dessous puis sur "Voir l'agenda"
-                </p>
-              )}
+              <p className="text-sm text-gray-500 mt-2">
+                💡 Ce lien permet aux responsables de créer des événements ponctuels ou récurrents (tous les mardis, samedis, etc.)
+              </p>
             </div>
           </CardContent>
         </Card>
