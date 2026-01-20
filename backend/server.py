@@ -9472,6 +9472,30 @@ async def delete_ejp_exhortation(exhortation_id: str):
 
 # ==================== AGENDA ANNUEL DES DÉPARTEMENTS ====================
 
+@api_router.post("/stars/agenda-public")
+async def create_agenda_entry_public(data: dict):
+    """Créer une entrée dans l'agenda (accès public via formulaire)"""
+    entry_id = str(uuid.uuid4())
+    
+    entry_data = {
+        "id": entry_id,
+        "departement": data.get("departement"),
+        "date": data.get("date"),
+        "type": data.get("type", "autre"),
+        "titre": data.get("titre"),
+        "description": data.get("description", ""),
+        "statut": data.get("statut", "planifie"),
+        "semestre": data.get("semestre", "1"),
+        "annee": data.get("annee", datetime.now().year),
+        "ville": data.get("ville"),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": "public_form"
+    }
+    
+    await db.star_agendas.insert_one(entry_data)
+    return {"id": entry_id, "message": "Entrée ajoutée à l'agenda"}
+
+
 @api_router.get("/stars/agenda/{departement}")
 async def get_agenda_departement(departement: str, semestre: str = "1", annee: int = 2025, ville: Optional[str] = None):
     """Récupérer l'agenda d'un département"""
@@ -9505,30 +9529,6 @@ async def create_agenda_entry(departement: str, data: dict, current_user: dict =
         "ville": data.get("ville"),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "created_by": current_user["username"]
-    }
-    
-    await db.star_agendas.insert_one(entry_data)
-    return {"id": entry_id, "message": "Entrée ajoutée à l'agenda"}
-
-
-@api_router.post("/stars/agenda/public")
-async def create_agenda_entry_public(data: dict):
-    """Créer une entrée dans l'agenda (accès public via formulaire)"""
-    entry_id = str(uuid.uuid4())
-    
-    entry_data = {
-        "id": entry_id,
-        "departement": data.get("departement"),
-        "date": data.get("date"),
-        "type": data.get("type", "autre"),
-        "titre": data.get("titre"),
-        "description": data.get("description", ""),
-        "statut": data.get("statut", "planifie"),
-        "semestre": data.get("semestre", "1"),
-        "annee": data.get("annee", datetime.now().year),
-        "ville": data.get("ville"),
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "created_by": "public_form"
     }
     
     await db.star_agendas.insert_one(entry_data)
