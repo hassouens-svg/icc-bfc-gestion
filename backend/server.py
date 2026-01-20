@@ -8741,12 +8741,13 @@ async def get_stars_public_stats(ville: Optional[str] = None):
     # Total
     total = await db.stars.count_documents(query)
     
-    # Actifs
-    query_actifs = {**query, "statut": "Actif"}
+    # Actifs (minuscule pour correspondre aux données)
+    query_actifs = {**query, "statut": "actif"}
     actifs = await db.stars.count_documents(query_actifs)
     
     # Non actifs
-    non_actifs = total - actifs
+    query_non_actifs = {**query, "statut": "non_actif"}
+    non_actifs = await db.stars.count_documents(query_non_actifs)
     
     # Par département
     pipeline = [
