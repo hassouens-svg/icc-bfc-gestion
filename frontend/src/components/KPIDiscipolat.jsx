@@ -215,14 +215,17 @@ const KPIDiscipolat = ({ visitorId, visitorName, isBergerieMember = false }) => 
         })
       });
 
+      const data = await response.json();
+      
       if (response.ok) {
-        const result = await response.json();
-        toast.success(`KPIs enregistrés ! Score: ${result.score} - ${result.level}`);
+        toast.success(`KPIs enregistrés ! Score: ${data.score} - ${data.level}`);
         loadKPIs();
       } else {
-        toast.error("Erreur lors de l'enregistrement");
+        console.error('KPI save error:', data);
+        toast.error(data.detail || "Erreur lors de l'enregistrement");
       }
     } catch (error) {
+      console.error('KPI save exception:', error);
       toast.error("Erreur de connexion");
     } finally {
       setSaving(false);
