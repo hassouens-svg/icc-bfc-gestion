@@ -7,7 +7,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { ArrowLeft, Plus, Calendar, CheckCircle, XCircle, Clock, Trash2, Save } from 'lucide-react';
+import { ArrowLeft, Plus, Calendar, CheckCircle, XCircle, Clock, Trash2, Save, Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getUser } from '../utils/api';
 
@@ -17,27 +17,31 @@ const AgendaDepartementPage = () => {
   const location = useLocation();
   const user = getUser();
   
-  const [agenda, setAgenda] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSemestre, setSelectedSemestre] = useState('1');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [addType, setAddType] = useState(null); // 'priere' ou 'activite'
+  const [showAddActiviteDialog, setShowAddActiviteDialog] = useState(false);
+  const [showEditPriereDialog, setShowEditPriereDialog] = useState(false);
+  
+  // Configuration temps de prière (une seule config par département)
+  const [priereConfig, setPriereConfig] = useState(null);
+  
+  // Liste des activités
+  const [activites, setActivites] = useState([]);
   
   const publicVille = location.state?.ville;
   const isPublicMode = location.state?.publicMode || !user;
   const canEdit = user && ['super_admin', 'pasteur', 'respo_departement'].includes(user.role);
 
-  // Formulaire Temps de prière
+  // Formulaire temps de prière
   const [priereForm, setPriereForm] = useState({
     jour: 'mardi',
     heure: '19:00',
-    frequence: 'hebdomadaire',
-    dateDebut: '',
-    dateFin: ''
+    isRecurrent: false,
+    frequence: 'hebdomadaire'
   });
 
-  // Formulaire Activité
+  // Formulaire activité
   const [activiteForm, setActiviteForm] = useState({
     titre: '',
     date: '',
@@ -56,9 +60,9 @@ const AgendaDepartementPage = () => {
   ];
 
   const frequences = [
-    { value: 'hebdomadaire', label: 'Chaque semaine', interval: 7 },
-    { value: 'bimensuel', label: 'Toutes les 2 semaines', interval: 14 },
-    { value: 'mensuel', label: 'Chaque mois', interval: 30 }
+    { value: 'hebdomadaire', label: 'Chaque semaine' },
+    { value: 'bimensuel', label: 'Toutes les 2 semaines' },
+    { value: 'mensuel', label: 'Chaque mois' }
   ];
 
   const statutOptions = [
@@ -69,10 +73,10 @@ const AgendaDepartementPage = () => {
   ];
 
   useEffect(() => {
-    loadAgenda();
+    loadData();
   }, [departement, selectedSemestre, selectedYear]);
 
-  const loadAgenda = async () => {
+  const loadData = async () => {
     try {
       const params = new URLSearchParams({
         semestre: selectedSemestre,
@@ -84,7 +88,22 @@ const AgendaDepartementPage = () => {
         `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/${encodeURIComponent(departement)}?${params}`
       );
       const data = await response.json();
-      setAgenda(data || []);
+      
+      // Séparer la config prière des activités
+      const priere = data.find(d => d.type === 'temps_priere_config');
+      const acts = data.filter(d => d.type === 'activite');
+      
+      setPriereConfig(priere || null);
+      setActivites(acts || []);
+      
+      if (priere) {
+        setPriereForm({
+          jour: priere.jour || 'mardi',
+          heure: priere.heure || '19:00',
+          isRecurrent: priere.isRecurrent || false,
+          frequence: priere.frequence || 'hebdomadaire'
+        });
+      }
     } catch (error) {
       console.error('Error loading agenda:', error);
     } finally {
@@ -92,88 +111,33 @@ const AgendaDepartementPage = () => {
     }
   };
 
-  // Générer les dates récurrentes
-  const generateRecurringDates = (startDate, endDate, dayOfWeek, frequence) => {
-    const dayMap = {
-      'lundi': 1, 'mardi': 2, 'mercredi': 3, 'jeudi': 4,
-      'vendredi': 5, 'samedi': 6, 'dimanche': 0
-    };
-    
-    const interval = frequences.find(f => f.value === frequence)?.interval || 7;
-    const targetDay = dayMap[dayOfWeek];
-    const dates = [];
-    let current = new Date(startDate);
-    const end = new Date(endDate);
-    
-    // Trouver le premier jour correspondant
-    while (current.getDay() !== targetDay) {
-      current.setDate(current.getDate() + 1);
-    }
-    
-    // Générer les dates selon la fréquence
-    while (current <= end) {
-      dates.push(new Date(current).toISOString().split('T')[0]);
-      current.setDate(current.getDate() + interval);
-    }
-    
-    return dates;
-  };
-
-  const handleAddPriere = async () => {
-    if (!priereForm.dateDebut || !priereForm.dateFin) {
-      toast.error('Veuillez définir la période (date début et fin)');
-      return;
-    }
-
-    const dates = generateRecurringDates(
-      priereForm.dateDebut, 
-      priereForm.dateFin, 
-      priereForm.jour, 
-      priereForm.frequence
-    );
-
-    if (dates.length === 0) {
-      toast.error('Aucune date trouvée pour cette période');
-      return;
-    }
-
+  const handleSavePriere = async () => {
     try {
-      const url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`;
-      const headers = { 'Content-Type': 'application/json' };
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-priere`;
       
-      let successCount = 0;
-      const jourLabel = joursSemaine.find(j => j.value === priereForm.jour)?.label;
-      const freqLabel = frequences.find(f => f.value === priereForm.frequence)?.label;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'temps_priere_config',
+          departement: decodeURIComponent(departement),
+          jour: priereForm.jour,
+          heure: priereForm.heure,
+          isRecurrent: priereForm.isRecurrent,
+          frequence: priereForm.isRecurrent ? priereForm.frequence : null,
+          semestre: selectedSemestre,
+          annee: selectedYear,
+          ville: publicVille || user?.city || ''
+        })
+      });
       
-      for (const date of dates) {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            date,
-            type: 'temps_priere',
-            titre: `Temps de prière - ${jourLabel}`,
-            description: `${freqLabel} à ${priereForm.heure}`,
-            heure: priereForm.heure,
-            statut: 'planifie',
-            departement: decodeURIComponent(departement),
-            semestre: selectedSemestre,
-            annee: selectedYear,
-            ville: publicVille || user?.city || '',
-            frequence: priereForm.frequence,
-            jour: priereForm.jour
-          })
-        });
-        if (response.ok) successCount++;
+      if (response.ok) {
+        toast.success('Temps de prière enregistré');
+        setShowEditPriereDialog(false);
+        loadData();
       }
-      
-      toast.success(`${successCount} temps de prière créés (${freqLabel.toLowerCase()})`);
-      setShowAddDialog(false);
-      setAddType(null);
-      setPriereForm({ jour: 'mardi', heure: '19:00', frequence: 'hebdomadaire', dateDebut: '', dateFin: '' });
-      loadAgenda();
     } catch (error) {
-      toast.error('Erreur lors de la création');
+      toast.error('Erreur');
     }
   };
 
@@ -193,7 +157,7 @@ const AgendaDepartementPage = () => {
           date: activiteForm.date,
           type: 'activite',
           titre: activiteForm.titre,
-          description: activiteForm.description + (activiteForm.heure ? ` - ${activiteForm.heure}` : ''),
+          description: activiteForm.description,
           heure: activiteForm.heure,
           statut: 'planifie',
           departement: decodeURIComponent(departement),
@@ -205,10 +169,9 @@ const AgendaDepartementPage = () => {
       
       if (response.ok) {
         toast.success('Activité ajoutée');
-        setShowAddDialog(false);
-        setAddType(null);
+        setShowAddActiviteDialog(false);
         setActiviteForm({ titre: '', date: '', heure: '', description: '' });
-        loadAgenda();
+        loadData();
       }
     } catch (error) {
       toast.error('Erreur');
@@ -227,15 +190,15 @@ const AgendaDepartementPage = () => {
       
       if (response.ok) {
         toast.success('Statut mis à jour');
-        loadAgenda();
+        loadData();
       }
     } catch (error) {
       toast.error('Erreur');
     }
   };
 
-  const handleDelete = async (entryId) => {
-    if (!window.confirm('Supprimer cette entrée ?')) return;
+  const handleDeleteActivite = async (entryId) => {
+    if (!window.confirm('Supprimer cette activité ?')) return;
     
     try {
       const headers = { 'Content-Type': 'application/json' };
@@ -250,22 +213,21 @@ const AgendaDepartementPage = () => {
       
       if (response.ok) {
         toast.success('Supprimé');
-        loadAgenda();
+        loadData();
       }
     } catch (error) {
       toast.error('Erreur');
     }
   };
 
-  // Grouper l'agenda par type
-  const tempsDepriere = agenda.filter(a => a.type === 'temps_priere');
-  const activites = agenda.filter(a => a.type !== 'temps_priere');
+  const jourLabel = joursSemaine.find(j => j.value === priereForm.jour)?.label || priereForm.jour;
+  const freqLabel = frequences.find(f => f.value === priereForm.frequence)?.label || '';
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-600 to-yellow-500 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button 
@@ -277,7 +239,7 @@ const AgendaDepartementPage = () => {
               </Button>
               <div>
                 <h1 className="text-2xl font-bold">📅 Agenda - {decodeURIComponent(departement)}</h1>
-                <p className="text-orange-100">Planification annuelle du département</p>
+                <p className="text-orange-100">Semestre {selectedSemestre} - {selectedYear}</p>
               </div>
             </div>
             
@@ -307,165 +269,177 @@ const AgendaDepartementPage = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-        {/* Boutons d'ajout */}
-        <div className="flex gap-3">
-          <Button 
-            onClick={() => { setAddType('priere'); setShowAddDialog(true); }}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            🙏 Ajouter Temps de prière
-          </Button>
-          <Button 
-            onClick={() => { setAddType('activite'); setShowAddDialog(true); }}
-            className="bg-orange-600 hover:bg-orange-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            📌 Ajouter Activité
-          </Button>
-        </div>
-
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Section Temps de prière */}
+          <>
+            {/* Section Temps de prière - UNE SEULE CONFIG */}
             <Card>
-              <CardHeader className="bg-purple-50">
+              <CardHeader className="bg-purple-50 flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-purple-800">
                   🙏 Temps de prière
-                  <span className="text-sm font-normal text-purple-600">({tempsDepriere.length})</span>
                 </CardTitle>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => setShowEditPriereDialog(true)}
+                  className="border-purple-300 text-purple-700"
+                >
+                  <Edit2 className="h-4 w-4 mr-1" />
+                  Configurer
+                </Button>
               </CardHeader>
-              <CardContent className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
-                {tempsDepriere.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">Aucun temps de prière planifié</p>
-                ) : (
-                  tempsDepriere.map(entry => {
-                    const statutInfo = statutOptions.find(s => s.value === entry.statut) || statutOptions[0];
-                    return (
-                      <div key={entry.id} className="flex items-center justify-between p-3 bg-purple-50/50 rounded-lg border border-purple-100">
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-800">
-                            {new Date(entry.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
-                          </div>
-                          <div className="text-sm text-gray-500">{entry.heure || ''}</div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Select value={entry.statut} onValueChange={(v) => handleUpdateStatut(entry.id, v)}>
-                            <SelectTrigger className={`w-28 text-xs ${statutInfo.color}`}>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {statutOptions.map(opt => (
-                                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          {canEdit && (
-                            <Button variant="ghost" size="sm" onClick={() => handleDelete(entry.id)} className="text-red-500 h-8 w-8 p-0">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
+              <CardContent className="p-4">
+                {priereConfig ? (
+                  <div className="flex items-center gap-4 p-4 bg-purple-50/50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="font-medium text-lg text-purple-900">
+                        {jourLabel} à {priereConfig.heure || priereForm.heure}
                       </div>
-                    );
-                  })
+                      {priereConfig.isRecurrent && (
+                        <div className="text-sm text-purple-600 mt-1">
+                          🔄 Récurrent - {freqLabel}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-gray-500">
+                    <p>Aucun temps de prière configuré</p>
+                    <Button 
+                      onClick={() => setShowEditPriereDialog(true)}
+                      className="mt-3 bg-purple-600 hover:bg-purple-700"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Configurer le temps de prière
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>
 
             {/* Section Activités */}
             <Card>
-              <CardHeader className="bg-orange-50">
+              <CardHeader className="bg-orange-50 flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-orange-800">
                   📌 Activités
                   <span className="text-sm font-normal text-orange-600">({activites.length})</span>
                 </CardTitle>
+                <Button 
+                  size="sm"
+                  onClick={() => setShowAddActiviteDialog(true)}
+                  className="bg-orange-600 hover:bg-orange-700"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Ajouter
+                </Button>
               </CardHeader>
-              <CardContent className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
+              <CardContent className="p-4">
                 {activites.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">Aucune activité planifiée</p>
+                  <div className="text-center py-6 text-gray-500">
+                    <p>Aucune activité planifiée</p>
+                    <Button 
+                      onClick={() => setShowAddActiviteDialog(true)}
+                      className="mt-3 bg-orange-600 hover:bg-orange-700"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Ajouter une activité
+                    </Button>
+                  </div>
                 ) : (
-                  activites.map(entry => {
-                    const statutInfo = statutOptions.find(s => s.value === entry.statut) || statutOptions[0];
-                    return (
-                      <div key={entry.id} className="p-3 bg-orange-50/50 rounded-lg border border-orange-100">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-800">{entry.titre}</div>
-                            <div className="text-sm text-gray-500">
-                              {new Date(entry.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
-                              {entry.heure && ` à ${entry.heure}`}
+                  <div className="space-y-3">
+                    {activites.map(entry => {
+                      const statutInfo = statutOptions.find(s => s.value === entry.statut) || statutOptions[0];
+                      return (
+                        <div key={entry.id} className="p-3 bg-orange-50/50 rounded-lg border border-orange-100">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-800">{entry.titre}</div>
+                              <div className="text-sm text-gray-500">
+                                📅 {new Date(entry.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                                {entry.heure && ` à ${entry.heure}`}
+                              </div>
+                              {entry.description && <p className="text-xs text-gray-400 mt-1">{entry.description}</p>}
                             </div>
-                            {entry.description && <p className="text-xs text-gray-400 mt-1">{entry.description}</p>}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Select value={entry.statut} onValueChange={(v) => handleUpdateStatut(entry.id, v)}>
-                              <SelectTrigger className={`w-28 text-xs ${statutInfo.color}`}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {statutOptions.map(opt => (
-                                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            {canEdit && (
-                              <Button variant="ghost" size="sm" onClick={() => handleDelete(entry.id)} className="text-red-500 h-8 w-8 p-0">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            )}
+                            <div className="flex items-center gap-2">
+                              {/* Statut - seulement pour activités */}
+                              <Select value={entry.statut} onValueChange={(v) => handleUpdateStatut(entry.id, v)}>
+                                <SelectTrigger className={`w-28 text-xs ${statutInfo.color}`}>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {statutOptions.map(opt => (
+                                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              {canEdit && (
+                                <Button variant="ghost" size="sm" onClick={() => handleDeleteActivite(entry.id)} className="text-red-500 h-8 w-8 p-0">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })
+                      );
+                    })}
+                  </div>
                 )}
               </CardContent>
             </Card>
-          </div>
+          </>
         )}
       </div>
 
-      {/* Dialog Ajouter */}
-      <Dialog open={showAddDialog} onOpenChange={(open) => { setShowAddDialog(open); if (!open) setAddType(null); }}>
+      {/* Dialog Configurer Temps de prière */}
+      <Dialog open={showEditPriereDialog} onOpenChange={setShowEditPriereDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {addType === 'priere' ? '🙏 Ajouter Temps de prière' : '📌 Ajouter Activité'}
-            </DialogTitle>
+            <DialogTitle>🙏 Configurer le temps de prière</DialogTitle>
           </DialogHeader>
-          
-          {addType === 'priere' ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Jour</Label>
-                  <Select value={priereForm.jour} onValueChange={(v) => setPriereForm({...priereForm, jour: v})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {joursSemaine.map(j => (
-                        <SelectItem key={j.value} value={j.value}>{j.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Heure</Label>
-                  <Input
-                    type="time"
-                    value={priereForm.heure}
-                    onChange={(e) => setPriereForm({...priereForm, heure: e.target.value})}
-                  />
-                </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Jour</Label>
+                <Select value={priereForm.jour} onValueChange={(v) => setPriereForm({...priereForm, jour: v})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {joursSemaine.map(j => (
+                      <SelectItem key={j.value} value={j.value}>{j.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              
+              <div>
+                <Label>Heure</Label>
+                <Input
+                  type="time"
+                  value={priereForm.heure}
+                  onChange={(e) => setPriereForm({...priereForm, heure: e.target.value})}
+                />
+              </div>
+            </div>
+            
+            {/* Checkbox récurrence */}
+            <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
+              <input
+                type="checkbox"
+                id="isRecurrent"
+                checked={priereForm.isRecurrent}
+                onChange={(e) => setPriereForm({...priereForm, isRecurrent: e.target.checked})}
+                className="w-4 h-4 text-purple-600"
+              />
+              <Label htmlFor="isRecurrent" className="cursor-pointer font-medium text-purple-800">
+                🔄 Récurrent
+              </Label>
+            </div>
+            
+            {priereForm.isRecurrent && (
               <div>
                 <Label>Fréquence</Label>
                 <Select value={priereForm.frequence} onValueChange={(v) => setPriereForm({...priereForm, frequence: v})}>
@@ -479,82 +453,74 @@ const AgendaDepartementPage = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Du</Label>
-                  <Input
-                    type="date"
-                    value={priereForm.dateDebut}
-                    onChange={(e) => setPriereForm({...priereForm, dateDebut: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label>Au</Label>
-                  <Input
-                    type="date"
-                    value={priereForm.dateFin}
-                    onChange={(e) => setPriereForm({...priereForm, dateFin: e.target.value})}
-                  />
-                </div>
-              </div>
-              
-              <p className="text-sm text-gray-500 bg-purple-50 p-2 rounded">
-                💡 Génère automatiquement tous les {joursSemaine.find(j => j.value === priereForm.jour)?.label.toLowerCase()}s 
-                ({frequences.find(f => f.value === priereForm.frequence)?.label.toLowerCase()}) entre les dates
-              </p>
-              
-              <Button onClick={handleAddPriere} className="w-full bg-purple-600 hover:bg-purple-700">
-                <Save className="h-4 w-4 mr-2" />
-                Créer les temps de prière
-              </Button>
+            )}
+            
+            <div className="p-3 bg-gray-50 rounded-lg text-sm text-gray-600">
+              {priereForm.isRecurrent ? (
+                <>💡 Temps de prière le <strong>{joursSemaine.find(j => j.value === priereForm.jour)?.label}</strong> à <strong>{priereForm.heure}</strong> - {frequences.find(f => f.value === priereForm.frequence)?.label}</>
+              ) : (
+                <>💡 Temps de prière le <strong>{joursSemaine.find(j => j.value === priereForm.jour)?.label}</strong> à <strong>{priereForm.heure}</strong></>
+              )}
             </div>
-          ) : (
-            <div className="space-y-4">
+            
+            <Button onClick={handleSavePriere} className="w-full bg-purple-600 hover:bg-purple-700">
+              <Save className="h-4 w-4 mr-2" />
+              Enregistrer
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Ajouter Activité */}
+      <Dialog open={showAddActiviteDialog} onOpenChange={setShowAddActiviteDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>📌 Ajouter une activité</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Titre *</Label>
+              <Input
+                value={activiteForm.titre}
+                onChange={(e) => setActiviteForm({...activiteForm, titre: e.target.value})}
+                placeholder="Ex: Retraite annuelle, Formation..."
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Titre de l'activité *</Label>
+                <Label>Date *</Label>
                 <Input
-                  value={activiteForm.titre}
-                  onChange={(e) => setActiviteForm({...activiteForm, titre: e.target.value})}
-                  placeholder="Ex: Retraite annuelle, Formation..."
+                  type="date"
+                  value={activiteForm.date}
+                  onChange={(e) => setActiviteForm({...activiteForm, date: e.target.value})}
                 />
               </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Date *</Label>
-                  <Input
-                    type="date"
-                    value={activiteForm.date}
-                    onChange={(e) => setActiviteForm({...activiteForm, date: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label>Heure (optionnel)</Label>
-                  <Input
-                    type="time"
-                    value={activiteForm.heure}
-                    onChange={(e) => setActiviteForm({...activiteForm, heure: e.target.value})}
-                  />
-                </div>
-              </div>
-              
               <div>
-                <Label>Description (optionnel)</Label>
-                <Textarea
-                  value={activiteForm.description}
-                  onChange={(e) => setActiviteForm({...activiteForm, description: e.target.value})}
-                  placeholder="Détails de l'activité..."
-                  rows={2}
+                <Label>Heure</Label>
+                <Input
+                  type="time"
+                  value={activiteForm.heure}
+                  onChange={(e) => setActiviteForm({...activiteForm, heure: e.target.value})}
                 />
               </div>
-              
-              <Button onClick={handleAddActivite} className="w-full bg-orange-600 hover:bg-orange-700">
-                <Save className="h-4 w-4 mr-2" />
-                Ajouter l'activité
-              </Button>
             </div>
-          )}
+            
+            <div>
+              <Label>Description</Label>
+              <Textarea
+                value={activiteForm.description}
+                onChange={(e) => setActiviteForm({...activiteForm, description: e.target.value})}
+                placeholder="Détails de l'activité..."
+                rows={2}
+              />
+            </div>
+            
+            <Button onClick={handleAddActivite} className="w-full bg-orange-600 hover:bg-orange-700">
+              <Save className="h-4 w-4 mr-2" />
+              Ajouter l'activité
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
