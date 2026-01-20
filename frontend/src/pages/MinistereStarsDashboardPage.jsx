@@ -282,14 +282,7 @@ const MinistereStarsDashboardPage = () => {
 
           <Card 
             className="bg-gradient-to-br from-green-500 to-green-600 text-white cursor-pointer hover:from-green-600 hover:to-green-700 transition-all"
-            onClick={() => {
-              if (user) {
-                openActiveStarsDialog();
-              } else {
-                toast.info('Connectez-vous pour voir la liste');
-                navigate('/login', { state: { returnTo: window.location.pathname } });
-              }
-            }}
+            onClick={openActiveStarsDialog}
           >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
@@ -305,14 +298,7 @@ const MinistereStarsDashboardPage = () => {
 
           <Card 
             className="bg-gradient-to-br from-red-500 to-red-600 text-white cursor-pointer hover:from-red-600 hover:to-red-700 transition-all"
-            onClick={() => {
-              if (user) {
-                openInactiveStarsDialog();
-              } else {
-                toast.info('Connectez-vous pour voir la liste');
-                navigate('/login', { state: { returnTo: window.location.pathname } });
-              }
-            }}
+            onClick={openInactiveStarsDialog}
           >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
