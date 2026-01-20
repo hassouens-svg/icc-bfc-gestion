@@ -164,6 +164,45 @@ const PlanningActivitesPage = () => {
     try {
       const dataToSave = editingId ? editData : activite;
       
+      // ===== VÉRIFICATION DES CONFLITS =====
+      // Vérifier si un département a une activité ce jour-là
+      const dateToCheck = dataToSave.date_debut || dataToSave.date;
+      if (dateToCheck && villeSelectionnee) {
+        try {
+          const conflictResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/planning/check-conflicts?ville=${encodeURIComponent(villeSelectionnee)}&date=${dateToCheck}`,
+            {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            }
+          );
+          
+          if (conflictResponse.ok) {
+            const conflictData = await conflictResponse.json();
+            
+            if (conflictData.has_conflicts) {
+              const conflictMessages = conflictData.conflicts.map(c => 
+                `• ${c.departement}: ${c.titre}${c.heure ? ` à ${c.heure}` : ''}`
+              ).join('\n');
+              
+              const confirmSave = window.confirm(
+                `⚠️ ATTENTION: Des activités de département sont prévues ce jour!\n\n` +
+                `${conflictMessages}\n\n` +
+                `Voulez-vous quand même enregistrer votre activité ?`
+              );
+              
+              if (!confirmSave) {
+                setLoading(false);
+                return; // Annuler la sauvegarde
+              }
+            }
+          }
+        } catch (conflictError) {
+          console.warn('Erreur vérification conflits:', conflictError);
+          // Continuer même si la vérification échoue
+        }
+      }
+      // ===== FIN VÉRIFICATION DES CONFLITS =====
+      
       if (activite.isNew) {
         // Créer nouvelle activité
         const response = await fetch(
