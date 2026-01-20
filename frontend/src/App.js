@@ -106,6 +106,8 @@ import EJPPage from './pages/EJPPage';
 import EJPCultesPage from './pages/EJPCultesPage';
 import EJPPlanningExhortationPage from './pages/EJPPlanningExhortationPage';
 import AccesBergeriesAdminPage from './pages/AccesBergeriesAdminPage';
+import AgendaDepartementPage from './pages/AgendaDepartementPage';
+import AgendaPublicFormPage from './pages/AgendaPublicFormPage';
 
 function App() {
   return (
