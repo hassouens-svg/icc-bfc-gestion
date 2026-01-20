@@ -9291,8 +9291,8 @@ async def get_membre_kpis(membre_id: str):
 
 
 @api_router.get("/bergeries-disciples/membres/{membre_id}/kpi/{mois}")
-async def get_membre_kpi_for_month(membre_id: str, mois: str, current_user: dict = Depends(get_current_user)):
-    """Récupérer le KPI d'un membre pour un mois spécifique"""
+async def get_membre_kpi_for_month(membre_id: str, mois: str):
+    """Récupérer le KPI d'un membre pour un mois spécifique (PUBLIC)"""
     kpi = await db.kpi_membres_bergerie.find_one(
         {"membre_id": membre_id, "mois": mois}, {"_id": 0}
     )
@@ -9316,15 +9316,15 @@ async def get_membre_kpi_for_month(membre_id: str, mois: str, current_user: dict
 
 
 @api_router.post("/bergeries-disciples/membres/{membre_id}/manual-status")
-async def update_membre_manual_status(membre_id: str, data: ManualStatusUpdate, current_user: dict = Depends(get_current_user)):
-    """Définir un statut manuel pour un membre de bergerie"""
+async def update_membre_manual_status(membre_id: str, data: ManualStatusUpdate):
+    """Définir un statut manuel pour un membre de bergerie (PUBLIC)"""
     await db.membres_disciples.update_one(
         {"id": membre_id},
         {"$set": {
             "manual_discipolat_status": data.manual_status,
             "manual_discipolat_commentaire": data.manual_commentaire,
             "manual_status_updated_at": datetime.now(timezone.utc).isoformat(),
-            "manual_status_updated_by": current_user["username"]
+            "manual_status_updated_by": "public"
         }}
     )
     
