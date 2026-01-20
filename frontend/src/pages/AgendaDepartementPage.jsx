@@ -413,19 +413,101 @@ const AgendaDepartementPage = () => {
 
       {/* Dialog Ajouter */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Ajouter une entrée à l'agenda</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
-              <Label>Date *</Label>
-              <Input
-                type="date"
-                value={newEntry.date}
-                onChange={(e) => setNewEntry({...newEntry, date: e.target.value})}
+            {/* Toggle Récurrence */}
+            <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
+              <input
+                type="checkbox"
+                id="isRecurring"
+                checked={newEntry.isRecurring}
+                onChange={(e) => setNewEntry({...newEntry, isRecurring: e.target.checked})}
+                className="w-4 h-4 text-orange-600"
               />
+              <Label htmlFor="isRecurring" className="cursor-pointer font-medium text-orange-800">
+                📅 Événement récurrent (tous les mardis, samedis, etc.)
+              </Label>
             </div>
+            
+            {newEntry.isRecurring ? (
+              <>
+                {/* Mode Récurrent */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Jour de la semaine *</Label>
+                    <Select 
+                      value={newEntry.recurringDay} 
+                      onValueChange={(v) => setNewEntry({...newEntry, recurringDay: v})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {joursSemaine.map(jour => (
+                          <SelectItem key={jour.value} value={jour.value}>{jour.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Heure (optionnel)</Label>
+                    <Input
+                      type="time"
+                      value={newEntry.heure}
+                      onChange={(e) => setNewEntry({...newEntry, heure: e.target.value})}
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>À partir du</Label>
+                    <Input
+                      type="date"
+                      value={newEntry.date}
+                      onChange={(e) => setNewEntry({...newEntry, date: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label>Jusqu'au *</Label>
+                    <Input
+                      type="date"
+                      value={newEntry.recurringEndDate}
+                      onChange={(e) => setNewEntry({...newEntry, recurringEndDate: e.target.value})}
+                    />
+                  </div>
+                </div>
+                
+                <p className="text-sm text-gray-500 bg-gray-50 p-2 rounded">
+                  💡 Cela créera une entrée pour chaque {newEntry.recurringDay} entre les dates sélectionnées
+                </p>
+              </>
+            ) : (
+              <>
+                {/* Mode Simple */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Date *</Label>
+                    <Input
+                      type="date"
+                      value={newEntry.date}
+                      onChange={(e) => setNewEntry({...newEntry, date: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label>Heure (optionnel)</Label>
+                    <Input
+                      type="time"
+                      value={newEntry.heure}
+                      onChange={(e) => setNewEntry({...newEntry, heure: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
             
             <div>
               <Label>Type</Label>
@@ -464,7 +546,7 @@ const AgendaDepartementPage = () => {
             
             <Button onClick={handleAddEntry} className="w-full bg-orange-600 hover:bg-orange-700">
               <Save className="h-4 w-4 mr-2" />
-              Enregistrer
+              {newEntry.isRecurring ? 'Créer les entrées récurrentes' : 'Enregistrer'}
             </Button>
           </div>
         </DialogContent>
