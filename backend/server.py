@@ -9224,8 +9224,8 @@ async def add_contact_evangile(bergerie_id: str, contact_data: dict):
 # ==================== KPI POUR MEMBRES BERGERIES ====================
 
 @api_router.post("/bergeries-disciples/membres/{membre_id}/kpi")
-async def save_membre_kpi(membre_id: str, kpi: KPIDiscipolatEntry, current_user: dict = Depends(get_current_user)):
-    """Enregistrer les KPIs pour un membre de bergerie"""
+async def save_membre_kpi(membre_id: str, kpi: KPIDiscipolatEntry):
+    """Enregistrer les KPIs pour un membre de bergerie (PUBLIC - pas de connexion requise)"""
     score = calculate_kpi_score(kpi.model_dump())
     level = get_discipolat_level(score)
     
@@ -9242,7 +9242,7 @@ async def save_membre_kpi(membre_id: str, kpi: KPIDiscipolatEntry, current_user:
         "score": score,
         "level": level,
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "updated_by": current_user["username"]
+        "updated_by": "public"
     }
     
     await db.kpi_membres_bergerie.update_one(
@@ -9265,7 +9265,7 @@ async def save_membre_kpi(membre_id: str, kpi: KPIDiscipolatEntry, current_user:
 
 
 @api_router.get("/bergeries-disciples/membres/{membre_id}/kpi")
-async def get_membre_kpis(membre_id: str, current_user: dict = Depends(get_current_user)):
+async def get_membre_kpis(membre_id: str):
     """Récupérer tous les KPIs d'un membre de bergerie"""
     kpis = await db.kpi_membres_bergerie.find(
         {"membre_id": membre_id}, {"_id": 0}
