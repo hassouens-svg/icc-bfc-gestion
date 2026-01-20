@@ -7748,24 +7748,36 @@ async def fetch_transcription(request: FetchTranscriptionRequest, current_user: 
         except VideoUnavailable:
             error_message = "Cette vidéo n'est pas disponible ou est privée."
         except Exception as e:
+            error_str = str(e).lower()
             logger.error(f"Erreur list_transcripts: {str(e)}")
-            # Méthode 2: Essayer la méthode directe
-            try:
-                ytt_api = YouTubeTranscriptApi()
-                for lang in ['fr', 'fr-FR', 'en', 'en-US']:
-                    try:
-                        transcript_data = ytt_api.fetch(video_id, languages=[lang])
-                        if transcript_data:
-                            logger.info(f"Transcription trouvée avec méthode directe: {lang}")
-                            break
-                    except:
-                        continue
-                
-                if not transcript_data:
-                    transcript_data = ytt_api.fetch(video_id)
-            except Exception as e2:
-                error_message = f"Impossible de récupérer la transcription. Vérifiez que la vidéo a des sous-titres activés."
-                logger.error(f"Erreur fetch direct: {str(e2)}")
+            
+            # Gérer les erreurs spécifiques de YouTube
+            if "body disturb" in error_str or "locked" in error_str or "too many requests" in error_str:
+                error_message = "YouTube limite temporairement les requêtes. Réessayez dans quelques minutes ou copiez-collez manuellement la transcription depuis YouTube."
+            elif "private" in error_str or "unavailable" in error_str:
+                error_message = "Cette vidéo est privée ou indisponible."
+            else:
+                # Méthode 2: Essayer la méthode directe
+                try:
+                    ytt_api = YouTubeTranscriptApi()
+                    for lang in ['fr', 'fr-FR', 'en', 'en-US']:
+                        try:
+                            transcript_data = ytt_api.fetch(video_id, languages=[lang])
+                            if transcript_data:
+                                logger.info(f"Transcription trouvée avec méthode directe: {lang}")
+                                break
+                        except:
+                            continue
+                    
+                    if not transcript_data:
+                        transcript_data = ytt_api.fetch(video_id)
+                except Exception as e2:
+                    e2_str = str(e2).lower()
+                    if "body disturb" in e2_str or "locked" in e2_str or "too many requests" in e2_str:
+                        error_message = "YouTube limite temporairement les requêtes. Réessayez dans quelques minutes ou copiez-collez manuellement la transcription depuis YouTube."
+                    else:
+                        error_message = f"Impossible de récupérer la transcription. Vérifiez que la vidéo a des sous-titres activés."
+                    logger.error(f"Erreur fetch direct: {str(e2)}")
         
         if not transcript_data:
             raise HTTPException(
