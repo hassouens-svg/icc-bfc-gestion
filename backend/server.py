@@ -8793,6 +8793,31 @@ async def get_stars_public_multi_departements(ville: Optional[str] = None):
     return multi_dept_stars
 
 
+@api_router.get("/stars/public/list")
+async def get_stars_public_list(ville: Optional[str] = None, statut: Optional[str] = None):
+    """Récupérer la liste des stars - Accès public"""
+    query = {}
+    if ville:
+        query["ville"] = ville
+    if statut:
+        query["statut"] = statut
+    
+    stars = await db.stars.find(query, {"_id": 0}).to_list(1000)
+    
+    result = []
+    for s in stars:
+        result.append({
+            "id": s.get("id"),
+            "prenom": s.get("prenom"),
+            "nom": s.get("nom"),
+            "departements": s.get("departements", []),
+            "statut": s.get("statut", "actif"),
+            "ville": s.get("ville")
+        })
+    
+    return result
+
+
 # ========== ENDPOINTS PUBLICS - BERGERS ÉGLISE ==========
 
 @api_router.get("/bergers-eglise/public/stats")
