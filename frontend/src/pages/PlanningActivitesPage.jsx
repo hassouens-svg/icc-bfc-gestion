@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Plus, Save, Trash2, Calendar } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Plus, Save, Trash2, Calendar, AlertTriangle } from 'lucide-react';
 
 const PlanningActivitesPage = () => {
   const [activites, setActivites] = useState([]);
@@ -32,6 +33,13 @@ const PlanningActivitesPage = () => {
   const [user, setUser] = useState(null);
   const [anneeSelectionnee, setAnneeSelectionnee] = useState(new Date().getFullYear());
   const [statutFiltre, setStatutFiltre] = useState('tous');
+  
+  // État pour le dialogue de conflit
+  const [conflictDialog, setConflictDialog] = useState({
+    open: false,
+    conflicts: [],
+    pendingActivite: null
+  });
   
   const statuts = ['À venir', 'Reporté', 'Annulé', 'Fait'];
   const annees = Array.from({ length: 11 }, (_, i) => 2025 + i); // 2025-2035
