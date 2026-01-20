@@ -9470,6 +9470,92 @@ async def delete_ejp_exhortation(exhortation_id: str):
     return {"message": "Exhortation supprimée"}
 
 
+# ==================== AGENDA ANNUEL DES DÉPARTEMENTS ====================
+
+@api_router.get("/stars/agenda/{departement}")
+async def get_agenda_departement(departement: str, semestre: str = "1", annee: int = 2025, ville: Optional[str] = None):
+    """Récupérer l'agenda d'un département"""
+    query = {
+        "departement": departement,
+        "semestre": semestre,
+        "annee": annee
+    }
+    if ville:
+        query["ville"] = ville
+    
+    entries = await db.star_agendas.find(query, {"_id": 0}).sort("date", 1).to_list(500)
+    return entries
+
+
+@api_router.post("/stars/agenda/{departement}")
+async def create_agenda_entry(departement: str, data: dict, current_user: dict = Depends(get_current_user)):
+    """Créer une entrée dans l'agenda d'un département (authentifié)"""
+    entry_id = str(uuid.uuid4())
+    
+    entry_data = {
+        "id": entry_id,
+        "departement": departement,
+        "date": data.get("date"),
+        "type": data.get("type", "autre"),
+        "titre": data.get("titre"),
+        "description": data.get("description", ""),
+        "statut": data.get("statut", "planifie"),
+        "semestre": data.get("semestre", "1"),
+        "annee": data.get("annee", datetime.now().year),
+        "ville": data.get("ville"),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": current_user["username"]
+    }
+    
+    await db.star_agendas.insert_one(entry_data)
+    return {"id": entry_id, "message": "Entrée ajoutée à l'agenda"}
+
+
+@api_router.post("/stars/agenda/public")
+async def create_agenda_entry_public(data: dict):
+    """Créer une entrée dans l'agenda (accès public via formulaire)"""
+    entry_id = str(uuid.uuid4())
+    
+    entry_data = {
+        "id": entry_id,
+        "departement": data.get("departement"),
+        "date": data.get("date"),
+        "type": data.get("type", "autre"),
+        "titre": data.get("titre"),
+        "description": data.get("description", ""),
+        "statut": data.get("statut", "planifie"),
+        "semestre": data.get("semestre", "1"),
+        "annee": data.get("annee", datetime.now().year),
+        "ville": data.get("ville"),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": "public_form"
+    }
+    
+    await db.star_agendas.insert_one(entry_data)
+    return {"id": entry_id, "message": "Entrée ajoutée à l'agenda"}
+
+
+@api_router.put("/stars/agenda/entry/{entry_id}/statut")
+async def update_agenda_statut(entry_id: str, data: dict, current_user: dict = Depends(get_current_user)):
+    """Mettre à jour le statut d'une entrée d'agenda"""
+    await db.star_agendas.update_one(
+        {"id": entry_id},
+        {"$set": {
+            "statut": data.get("statut"),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_by": current_user["username"]
+        }}
+    )
+    return {"message": "Statut mis à jour"}
+
+
+@api_router.delete("/stars/agenda/entry/{entry_id}")
+async def delete_agenda_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Supprimer une entrée d'agenda"""
+    await db.star_agendas.delete_one({"id": entry_id})
+    return {"message": "Entrée supprimée"}
+
+
 # Include the router in the main app (must be at the end after all endpoints are defined)
 app.include_router(api_router)
 
