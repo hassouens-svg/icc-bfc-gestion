@@ -405,6 +405,40 @@ const MinistereStarsDashboardPage = () => {
           </CardContent>
         </Card>
 
+        {/* Lien Agenda Annuel */}
+        <Card>
+          <CardHeader>
+            <CardTitle>📅 Lien Agenda Annuel des Départements</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600">Partagez ce lien pour que les responsables de département puissent renseigner leur agenda annuel</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/agenda-public`}
+                  className="flex-1 px-3 py-2 border rounded-md bg-gray-50"
+                />
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/agenda-public`);
+                    toast.success('Lien copié !');
+                  }}
+                >
+                  Copier
+                </Button>
+              </div>
+              {/* Bouton pour voir un agenda de département */}
+              {user && ['super_admin', 'pasteur', 'respo_departement'].includes(user.role) && (
+                <p className="text-sm text-gray-500 mt-2">
+                  💡 Pour voir l'agenda d'un département, cliquez sur le département ci-dessous puis sur "Voir l'agenda"
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Liste des départements */}
         <Card>
           <CardHeader>
