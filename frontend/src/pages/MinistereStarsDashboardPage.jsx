@@ -146,14 +146,13 @@ const MinistereStarsDashboardPage = () => {
     }
   };
 
-  // Charger la liste des stars actifs/inactifs
+  // Charger la liste des stars actifs/inactifs (endpoint public)
   const loadActiveStars = async () => {
     try {
       const effectiveCity = getEffectiveCity();
-      const villeParam = effectiveCity ? `&ville=${encodeURIComponent(effectiveCity)}` : '';
+      const villeParam = effectiveCity ? `?ville=${encodeURIComponent(effectiveCity)}` : '';
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/list?statut=actif${villeParam}`,
-        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/list${villeParam}&statut=actif`
       );
       if (response.ok) {
         const data = await response.json();
@@ -167,10 +166,9 @@ const MinistereStarsDashboardPage = () => {
   const loadInactiveStars = async () => {
     try {
       const effectiveCity = getEffectiveCity();
-      const villeParam = effectiveCity ? `&ville=${encodeURIComponent(effectiveCity)}` : '';
+      const villeParam = effectiveCity ? `?ville=${encodeURIComponent(effectiveCity)}` : '';
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/list?statut=non_actif${villeParam}`,
-        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+        `${process.env.REACT_APP_BACKEND_URL}/api/stars/public/list${villeParam}&statut=non_actif`
       );
       if (response.ok) {
         const data = await response.json();
