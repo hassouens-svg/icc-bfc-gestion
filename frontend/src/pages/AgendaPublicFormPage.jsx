@@ -20,7 +20,11 @@ const AgendaPublicFormPage = () => {
     date: '',
     type: 'priere_hebdo',
     titre: '',
-    description: ''
+    description: '',
+    heure: '',
+    isRecurring: false,
+    recurringDay: 'mardi',
+    recurringEndDate: ''
   }]);
   const [selectedSemestre, setSelectedSemestre] = useState('1');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -29,6 +33,16 @@ const AgendaPublicFormPage = () => {
   const [cities, setCities] = useState([]);
   const [selectedVille, setSelectedVille] = useState(ville);
   const [selectedDepartement, setSelectedDepartement] = useState(departement);
+
+  const joursSemaine = [
+    { value: 'lundi', label: 'Lundi' },
+    { value: 'mardi', label: 'Mardi' },
+    { value: 'mercredi', label: 'Mercredi' },
+    { value: 'jeudi', label: 'Jeudi' },
+    { value: 'vendredi', label: 'Vendredi' },
+    { value: 'samedi', label: 'Samedi' },
+    { value: 'dimanche', label: 'Dimanche' }
+  ];
 
   const departements = [
     'MLA', 'Accueil', 'Soins pastoraux', 'Régie', 'Sono', 'Sainte cène',
