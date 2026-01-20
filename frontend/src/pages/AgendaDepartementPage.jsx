@@ -121,17 +121,23 @@ const AgendaDepartementPage = () => {
 
   const handleUpdateStatut = async (entryId, newStatut) => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/entry/${entryId}/statut`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({ statut: newStatut })
-        }
-      );
+      // Utiliser l'endpoint public si pas connecté
+      const url = user 
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/entry/${entryId}/statut`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public/entry/${entryId}/statut`;
+      
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (user) {
+        headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+      }
+      
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ statut: newStatut })
+      });
       
       if (response.ok) {
         toast.success('Statut mis à jour');
