@@ -78,7 +78,10 @@ const AgendaPublicFormPage = () => {
   };
 
   const addEntry = () => {
-    setEntries([...entries, { date: '', type: 'priere_hebdo', titre: '', description: '' }]);
+    setEntries([...entries, { 
+      date: '', type: 'priere_hebdo', titre: '', description: '', 
+      heure: '', isRecurring: false, recurringDay: 'mardi', recurringEndDate: '' 
+    }]);
   };
 
   const removeEntry = (index) => {
