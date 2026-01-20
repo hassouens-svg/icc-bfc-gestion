@@ -89,49 +89,132 @@ const AgendaDepartementPage = () => {
     }
   };
 
-  const handleAddEntry = async () => {
-    if (!newEntry.date || !newEntry.titre) {
-      toast.error('Veuillez remplir la date et le titre');
-      return;
+  // Fonction pour générer les dates récurrentes
+  const generateRecurringDates = (startDate, endDate, dayOfWeek) => {
+    const dayMap = {
+      'lundi': 1, 'mardi': 2, 'mercredi': 3, 'jeudi': 4,
+      'vendredi': 5, 'samedi': 6, 'dimanche': 0
+    };
+    
+    const targetDay = dayMap[dayOfWeek];
+    const dates = [];
+    let current = new Date(startDate);
+    const end = new Date(endDate);
+    
+    // Trouver le premier jour correspondant
+    while (current.getDay() !== targetDay) {
+      current.setDate(current.getDate() + 1);
     }
     
-    try {
-      // Utiliser l'endpoint public si pas connecté, sinon l'endpoint authentifié
-      const url = user 
-        ? `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/${encodeURIComponent(departement)}`
-        : `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`;
-      
-      const headers = {
-        'Content-Type': 'application/json'
-      };
-      if (user) {
-        headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+    // Générer toutes les dates jusqu'à la fin
+    while (current <= end) {
+      dates.push(new Date(current).toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 7);
+    }
+    
+    return dates;
+  };
+
+  const handleAddEntry = async () => {
+    if (newEntry.isRecurring) {
+      // Mode récurrent
+      if (!newEntry.recurringEndDate || !newEntry.titre) {
+        toast.error('Veuillez remplir le titre et la date de fin');
+        return;
       }
       
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          ...newEntry,
-          departement: decodeURIComponent(departement),
-          semestre: selectedSemestre,
-          annee: selectedYear,
-          ville: publicVille || user?.city || ''
-        })
-      });
+      const startDate = newEntry.date || new Date().toISOString().split('T')[0];
+      const dates = generateRecurringDates(startDate, newEntry.recurringEndDate, newEntry.recurringDay);
       
-      if (response.ok) {
-        toast.success('Entrée ajoutée');
+      if (dates.length === 0) {
+        toast.error('Aucune date trouvée pour cette récurrence');
+        return;
+      }
+      
+      try {
+        const url = user 
+          ? `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/${encodeURIComponent(departement)}`
+          : `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`;
+        
+        const headers = { 'Content-Type': 'application/json' };
+        if (user) {
+          headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+        }
+        
+        let successCount = 0;
+        for (const date of dates) {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              date,
+              type: newEntry.type,
+              titre: newEntry.titre,
+              description: newEntry.description + (newEntry.heure ? ` - ${newEntry.heure}` : ''),
+              statut: 'planifie',
+              heure: newEntry.heure,
+              departement: decodeURIComponent(departement),
+              semestre: selectedSemestre,
+              annee: selectedYear,
+              ville: publicVille || user?.city || '',
+              isRecurring: true,
+              recurringDay: newEntry.recurringDay
+            })
+          });
+          if (response.ok) successCount++;
+        }
+        
+        toast.success(`${successCount} entrées créées (tous les ${newEntry.recurringDay}s)`);
         setShowAddDialog(false);
-        setNewEntry({ date: '', type: 'priere_hebdo', titre: '', description: '', statut: 'planifie' });
+        setNewEntry({ date: '', type: 'priere_hebdo', titre: '', description: '', statut: 'planifie', heure: '', isRecurring: false, recurringDay: 'mardi', recurringEndDate: '' });
         loadAgenda();
-      } else {
-        toast.error('Erreur lors de l\'ajout');
+      } catch (error) {
+        toast.error('Erreur lors de la création');
       }
-    } catch (error) {
-      toast.error('Erreur');
+    } else {
+      // Mode simple (une seule date)
+      if (!newEntry.date || !newEntry.titre) {
+        toast.error('Veuillez remplir la date et le titre');
+        return;
+      }
+      
+      try {
+        const url = user 
+          ? `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda/${encodeURIComponent(departement)}`
+          : `${process.env.REACT_APP_BACKEND_URL}/api/stars/agenda-public`;
+        
+        const headers = { 'Content-Type': 'application/json' };
+        if (user) {
+          headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+        }
+        
+        const response = await fetch(url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            ...newEntry,
+            description: newEntry.description + (newEntry.heure ? ` - ${newEntry.heure}` : ''),
+            departement: decodeURIComponent(departement),
+            semestre: selectedSemestre,
+            annee: selectedYear,
+            ville: publicVille || user?.city || ''
+          })
+        });
+        
+        if (response.ok) {
+          toast.success('Entrée ajoutée');
+          setShowAddDialog(false);
+          setNewEntry({ date: '', type: 'priere_hebdo', titre: '', description: '', statut: 'planifie', heure: '', isRecurring: false, recurringDay: 'mardi', recurringEndDate: '' });
+          loadAgenda();
+        } else {
+          toast.error('Erreur lors de l\'ajout');
+        }
+      } catch (error) {
+        toast.error('Erreur');
+      }
     }
   };
+
 
   const handleUpdateStatut = async (entryId, newStatut) => {
     try {
