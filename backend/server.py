@@ -9480,6 +9480,42 @@ async def delete_ejp_exhortation(exhortation_id: str):
 
 # ==================== AGENDA ANNUEL DES DÉPARTEMENTS ====================
 
+@api_router.post("/stars/agenda-priere")
+async def save_priere_config(data: dict):
+    """Sauvegarder/Mettre à jour la configuration du temps de prière d'un département"""
+    departement = data.get("departement")
+    semestre = data.get("semestre", "1")
+    annee = data.get("annee", datetime.now().year)
+    ville = data.get("ville")
+    
+    # Supprimer l'ancienne config si elle existe
+    await db.star_agendas.delete_many({
+        "departement": departement,
+        "type": "temps_priere_config",
+        "semestre": semestre,
+        "annee": annee
+    })
+    
+    # Créer la nouvelle config
+    entry_id = str(uuid.uuid4())
+    entry_data = {
+        "id": entry_id,
+        "departement": departement,
+        "type": "temps_priere_config",
+        "jour": data.get("jour"),
+        "heure": data.get("heure"),
+        "isRecurrent": data.get("isRecurrent", False),
+        "frequence": data.get("frequence"),
+        "semestre": semestre,
+        "annee": annee,
+        "ville": ville,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.star_agendas.insert_one(entry_data)
+    return {"id": entry_id, "message": "Configuration temps de prière enregistrée"}
+
+
 @api_router.post("/stars/agenda-public")
 async def create_agenda_entry_public(data: dict):
     """Créer une entrée dans l'agenda (accès public via formulaire)"""
@@ -9496,6 +9532,7 @@ async def create_agenda_entry_public(data: dict):
         "semestre": data.get("semestre", "1"),
         "annee": data.get("annee", datetime.now().year),
         "ville": data.get("ville"),
+        "heure": data.get("heure"),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "created_by": "public_form"
     }
