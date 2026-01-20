@@ -1255,23 +1255,66 @@ const PainDuJourAdminPage = () => {
                     <p className="text-sm text-amber-600">⚠️ Ajoutez d'abord un lien YouTube dans l'onglet "Contenu"</p>
                   ) : (
                     <div className="space-y-3">
-                      <Button 
-                        onClick={fetchTranscription} 
-                        className="bg-blue-600 hover:bg-blue-700"
-                        disabled={fetchingTranscription}
-                      >
-                        {fetchingTranscription ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                            Récupération...
-                          </>
-                        ) : (
-                          <>
-                            <Youtube className="h-4 w-4 mr-2" />
-                            Récupérer la transcription YouTube
-                          </>
-                        )}
-                      </Button>
+                      <div className="flex gap-2 flex-wrap">
+                        <Button 
+                          onClick={fetchTranscription} 
+                          className="bg-blue-600 hover:bg-blue-700"
+                          disabled={fetchingTranscription}
+                        >
+                          {fetchingTranscription ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                              Récupération...
+                            </>
+                          ) : (
+                            <>
+                              <Youtube className="h-4 w-4 mr-2" />
+                              Récupérer auto (YouTube)
+                            </>
+                          )}
+                        </Button>
+                        
+                        <Button 
+                          variant="outline"
+                          onClick={() => setShowManualTranscription(!showManualTranscription)}
+                          className="border-blue-300 text-blue-700"
+                        >
+                          ✏️ Entrer manuellement
+                        </Button>
+                      </div>
+                      
+                      {/* Zone de saisie manuelle */}
+                      {showManualTranscription && (
+                        <div className="mt-3 p-3 bg-white border border-blue-200 rounded-lg">
+                          <p className="text-sm text-gray-600 mb-2">
+                            💡 Copiez la transcription depuis YouTube (Paramètres → Transcription) et collez-la ici :
+                          </p>
+                          <Textarea
+                            value={manualTranscription}
+                            onChange={(e) => setManualTranscription(e.target.value)}
+                            placeholder="Collez la transcription ici..."
+                            className="min-h-[150px] text-sm"
+                          />
+                          <Button 
+                            onClick={() => {
+                              if (manualTranscription.trim()) {
+                                setTranscriptionData({
+                                  transcription_complete: manualTranscription.trim(),
+                                  duree_minutes: Math.round(manualTranscription.length / 150), // ~150 chars/min
+                                  nombre_caracteres: manualTranscription.length
+                                });
+                                setShowManualTranscription(false);
+                                toast.success('Transcription ajoutée manuellement');
+                              } else {
+                                toast.error('Veuillez coller la transcription');
+                              }
+                            }}
+                            className="mt-2 bg-green-600 hover:bg-green-700"
+                          >
+                            ✓ Valider la transcription
+                          </Button>
+                        </div>
+                      )}
                       
                       {/* Affichage de la transcription complète */}
                       {transcriptionData && (
