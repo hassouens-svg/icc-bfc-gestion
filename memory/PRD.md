@@ -223,13 +223,33 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 └── tests/
     ├── test_kpi_discipolat.py        # Tests KPI ✅ NEW (11 tests)
     ├── test_bergeries_disciples.py
-    └── test_bergeries_pain_du_jour.py
+    ├── test_bergeries_pain_du_jour.py
+    └── test_stars_agenda_iteration8.py  # NEW - 15 tests Stars publics + Agenda
 ```
 
 ---
 
 ## Last Updated
-- **Date**: January 19, 2026
+- **Date**: January 20, 2026
+- **Session 5 - Stars Stats Publiques & Agenda Annuel**:
+  - ✅ **Bug Stats publiques Stars CORRIGÉ** : 
+    - L'URL utilisait `&statut=` au lieu de `?statut=` quand pas de ville
+    - Corrigé avec `URLSearchParams` pour construire les paramètres correctement
+    - Stats Dijon: Total=4, Actifs=3, Non-Actifs=1
+  - ✅ **Agenda Annuel des Départements IMPLÉMENTÉ** :
+    - Nouvelle page `/agenda-departement/:departement` pour visualiser l'agenda
+    - Nouveau formulaire public `/agenda-public` pour soumettre des entrées
+    - Endpoints backend: `GET /api/stars/agenda/{departement}`, `POST /api/stars/agenda-public`
+    - Filtrage par semestre et année
+    - Statuts: Planifié, Fait, Pas fait, En retard
+  - ✅ **Liens Agenda ajoutés** :
+    - Section "Lien Agenda Annuel des Départements" sur `/ministere-stars/:ville`
+    - Bouton "Voir l'Agenda Annuel" sur `/ministere-stars/departement/:departement`
+  - ✅ **Dialogs Stars actifs/inactifs fonctionnels** :
+    - Clic sur carte "Stars Actives" ouvre un dialog avec liste des stars actifs
+    - Clic sur carte "Non Actives" ouvre un dialog avec liste des stars inactifs
+  - ✅ **HomePage optimisée** : Chargement en ~1 seconde
+  - ✅ **15 nouveaux tests passés** (iteration_8) - Stars publics + Agenda
 - **Session 4 - Corrections bugs critiques**:
   - ✅ **Bug KPIs membres bergerie** : Corrigé la collection MongoDB (`membres_disciples` au lieu de `membres_bergerie`)
   - ✅ **Bug page blanche après Retour** : Corrigé la route (`/bergerie-disciple/` au lieu de `/bergeries-disciples/`)
