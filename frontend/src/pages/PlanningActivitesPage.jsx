@@ -759,6 +759,55 @@ const PlanningActivitesPage = () => {
           </Table>
         </div>
       </div>
+
+      {/* Dialogue de conflit */}
+      <Dialog open={conflictDialog.open} onOpenChange={(open) => !open && handleCancelConflict()}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-orange-600">
+              <AlertTriangle className="h-6 w-6" />
+              Attention - Conflits détectés !
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p className="text-gray-700 mb-4">
+              Des activités de département sont déjà prévues à cette date :
+            </p>
+            
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-2">
+              {conflictDialog.conflicts.map((conflict, index) => (
+                <div key={index} className="flex items-start gap-2">
+                  <span className="text-orange-500 font-bold">•</span>
+                  <div>
+                    <span className="font-semibold text-orange-800">{conflict.departement}</span>
+                    <span className="text-gray-700"> : {conflict.titre}</span>
+                    {conflict.heure && (
+                      <span className="text-gray-500"> à {conflict.heure}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <DialogFooter className="flex gap-2 sm:gap-2">
+            <Button 
+              variant="outline" 
+              onClick={handleCancelConflict}
+              className="flex-1"
+            >
+              ✏️ Modifier l'événement
+            </Button>
+            <Button 
+              onClick={handleConfirmSaveWithConflicts}
+              className="flex-1 bg-orange-600 hover:bg-orange-700"
+            >
+              ✓ Enregistrer quand même
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </EventsLayout>
   );
 };
