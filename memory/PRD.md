@@ -250,6 +250,21 @@ Application de gestion pour l'église Impact Centre Chrétien BFC-ITALIE. Systè
 
 ## Last Updated
 - **Date**: January 20, 2026
+- **Session 6 - Agenda Récurrent & Pain du Jour**:
+  - ✅ **Agenda Annuel - Événements récurrents IMPLÉMENTÉ** :
+    - Option "Événement récurrent" dans les formulaires d'ajout
+    - Sélection du jour de la semaine (lundi à dimanche)
+    - Définition de la période (date début et fin)
+    - Génération automatique de toutes les occurrences
+    - Support de l'heure optionnelle pour les événements
+    - Fonctionnel sur page département ET formulaire public
+  - ✅ **Sélecteur de statut visible pour tous** :
+    - Tous les utilisateurs peuvent maintenant changer le statut (Planifié, Fait, Pas fait, En retard)
+    - Endpoint public `/api/stars/agenda-public/entry/{id}/statut` ajouté
+  - ✅ **Pain du Jour - Gestion erreur transcription améliorée** :
+    - Meilleure gestion de l'erreur "body disturb or locked" de YouTube
+    - Message clair invitant l'utilisateur à réessayer plus tard
+  - ✅ **Lien Agenda mis à jour** avec info sur événements récurrents
 - **Session 5 - Stars Stats Publiques & Agenda Annuel**:
   - ✅ **Bug Stats publiques Stars CORRIGÉ** : 
     - L'URL utilisait `&statut=` au lieu de `?statut=` quand pas de ville
