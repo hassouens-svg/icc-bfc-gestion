@@ -1,0 +1,19 @@
+# Lancer toute l'application en une commande :  docker compose up --build
+services:
+  backend:
+    build: ./backend
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: sqlite:////data/icc.db
+      SECRET_KEY: change-moi
+      CORS_ORIGINS: http://localhost:5173
+      SEED_DEMO_DATA: "true"
+    volumes: [db:/data]
+  frontend:
+    build: ./frontend
+    ports: ["5173:5173"]
+    environment:
+      VITE_BACKEND_URL: http://backend:8000
+    depends_on: [backend]
+volumes:
+  db:
