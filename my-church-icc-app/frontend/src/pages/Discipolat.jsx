@@ -24,12 +24,18 @@ export default function Discipolat() {
   useEffect(() => { chargerListes(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { chargerPromo(); }, [promoId]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Après chaque action : on recharge la promotion affichée et les compteurs des onglets.
   const action = (fn) => async (...args) => {
     setErreur(null);
-    try { await fn(...args); chargerPromo(); } catch (e) { setErreur(e); }
+    try { await fn(...args); chargerPromo(); chargerListes(); } catch (e) { setErreur(e); chargerPromo(); }
   };
   const inscrire = action((f) => api.post('/discipolat/parcours', { fidele_id: f.id, promotion_id: promoId }));
-  const basculer = action((p, m) => api.post(`/discipolat/parcours/${p.id}/modules/${m.id}`));
+  const basculer = action((p, m) => {
+    // Mise à jour immédiate de la case (sans attendre la réponse du serveur)
+    const valides = p.modules_valides.includes(m.id) ? p.modules_valides.filter((id) => id !== m.id) : [...p.modules_valides, m.id];
+    setPromo((pr) => ({ ...pr, parcours: pr.parcours.map((x) => (x.id === p.id ? { ...x, modules_valides: valides } : x)) }));
+    return api.post(`/discipolat/parcours/${p.id}/modules/${m.id}`);
+  });
   const setMentor = action((p, mentor) => api.put(`/discipolat/parcours/${p.id}`, { mentor_id: mentor.id }));
   const setStatut = action((p, statut) => api.put(`/discipolat/parcours/${p.id}`, { statut }));
   const retirer = action((p) => confirm('Retirer ce disciple de la promotion ?') && api.del(`/discipolat/parcours/${p.id}`));

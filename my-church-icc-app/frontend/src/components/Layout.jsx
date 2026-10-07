@@ -3,7 +3,7 @@
  * 👉 Pour ajouter un lien dans le menu, ajoutez une ligne dans MENU.
  */
 import { useState } from 'react';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   BarChart3, BookOpen, CalendarDays, HandHeart, Heart, Home, LayoutDashboard, LogOut, Menu,
   Settings, Star, TrendingUp, UserCheck, Users, X, Database,
@@ -32,6 +32,9 @@ const MENU = [
 export default function Layout() {
   const { user, logout, isAdmin } = useAuth();
   const [ouvert, setOuvert] = useState(false);
+  const navigate = useNavigate();
+  // Après déconnexion, on repart de la page de connexion (sans mémoriser la page précédente)
+  const deconnexion = () => { navigate('/connexion', { replace: true }); logout(); };
 
   const nav = (
     <nav className="flex flex-col gap-0.5 p-3">
@@ -70,7 +73,7 @@ export default function Layout() {
           <Link to="/" className="hidden items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 lg:flex"><Home className="h-4 w-4" /> Accueil</Link>
           <div className="flex items-center gap-3 text-sm">
             <span className="hidden sm:inline"><b>{user?.nom_complet}</b> <span className="text-slate-400">· {user?.role}</span></span>
-            <button onClick={logout} className="btn-secondary !px-3 !py-1.5"><LogOut className="h-4 w-4" /> Déconnexion</button>
+            <button onClick={deconnexion} className="btn-secondary !px-3 !py-1.5"><LogOut className="h-4 w-4" /> Déconnexion</button>
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl flex-1 p-4 md:p-8"><Outlet /></main>
